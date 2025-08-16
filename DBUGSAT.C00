@@ -1,0 +1,44 @@
+#version
+ 4.88
+#readram2
+ 00000000  3FFFFFFF
+#readram1
+ 00000000  3FFFFFFF
+#readram0
+ 00000000  3FFFFFFF
+#writeram2
+ 00000000  3FFFFFFF 
+#writeram1
+ 00000000  3FFFFFFF 
+#writeram0
+ 00000000  3FFFFFFF 
+#update
+ FF 0008
+#video
+ 03 50 32
+#label level
+ 02 00 00
+#colour attributes
+ 17 20 60 40 1F 2F 6F 4F 3E B0 4F 5E 0C 70 C0 87 8E 8E F0 90 4F 87 7C 0E 0A 70
+#mono attributes
+ 07 07 07 07 0F 0F 0F 0F 70 70 07 70 0F 70 01 07 0F 0F 70 0F 07 07 70 07 07 70
+#default tabs
+ 68K 0F 17 28 30 00 00 00 00
+ 658 0F 17 28 30 00 00 00 00
+ Z80 0F 17 28 30 00 00 00 00
+ C   04 00 00 00 00 00 00 00
+#expression C/ASM flags
+ 00 FF 00 00 00
+#window
+ 86 00 40 00
+ 00 01 4F 2E 20 1D
+ 0000015A
+#history
+ 02 sruins.c
+ 0A 0609134e
+ 0A 060134e
+ 12 p
+ 12 lend
+ 12 lstart
+ 12 width
+ 12 j

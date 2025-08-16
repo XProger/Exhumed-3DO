@@ -1,0 +1,2 @@
+#define GOODEND 329084902
+#define BADEND  928473932
