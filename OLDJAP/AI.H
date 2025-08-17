@@ -10,25 +10,25 @@ typedef MonsterObject FishObject;
 
 typedef SpriteObject OneBubbleObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
 
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,seeCounter;
 } TorchObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
 
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,toLevel,disableTime;
-} CamelObject;  
+} CamelObject;
 
 typedef struct
 {short type,class;
@@ -76,23 +76,23 @@ typedef struct
  int distanceToRise,vel;
 } RamsesLidObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
 
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad;
  int distLeft;
-} BubbleObject;  
+} BubbleObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
 
  short health,aiSlot;
@@ -100,14 +100,14 @@ typedef struct
  short route[ROUTESIZE+1];
  short routePos;
  int anger;
-} BlobObject;  
+} BlobObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
 
  short health,aiSlot;
@@ -115,7 +115,7 @@ typedef struct
  short route[ROUTESIZE+1];
  short routePos;
  int age;
-} QeggObject;  
+} QeggObject;
 
 typedef struct
 {short type,class;
@@ -157,21 +157,21 @@ typedef struct
  MthXyz apos;
 } TeleportReturnObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  short wallNm,state,aiSlot;
 
  MthXyz center;
-} FFieldObject;  
+} FFieldObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
 
  Object *owner;
@@ -180,14 +180,14 @@ typedef struct
  unsigned short explosionColor;
  char light;
  int armTime;
-} GenericProjectileObject;  
+} GenericProjectileObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
  short health,aiSlot;
  struct __monster *enemy;
@@ -196,14 +196,14 @@ typedef struct
 
  int jinkTimer;
  short diveTimer;
-} HawkObject;  
+} HawkObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
  short health,aiSlot;
  struct __monster *enemy;
@@ -211,14 +211,14 @@ typedef struct
  short routePos;
 
  int boomTimer,iAmMapHolder;
-} BlowPotObject;  
+} BlowPotObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
  short health,aiSlot;
  struct __monster *enemy;
@@ -226,15 +226,15 @@ typedef struct
  short routePos;
 
  short hoverCounter,dartCounter;
-} WaspObject;  
+} WaspObject;
 
 #define NMCOBRABALLS 5
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
  Object *owner;
  int age;
@@ -243,15 +243,15 @@ typedef struct
  int wave;
  MonsterObject *enemy;
  int aiSlot,glow;
-} CobraObject;  
+} CobraObject;
 
 #define NMQHEADBALLS 5
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
  short health,aiSlot;
  struct __monster *enemy;
@@ -260,15 +260,15 @@ typedef struct
 
  Sprite *balls[NMQHEADBALLS];
  int wave,waitTime,nmBalls;
-} QheadObject;  
+} QheadObject;
 
 #define NMZAPBALLS 5
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
  Object *owner;
  int age;
@@ -278,15 +278,15 @@ typedef struct
  MonsterObject *enemy;
  int aiSlot,red;
  MthXyz hitPos;
-} ZapObject;  
+} ZapObject;
 
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
  short health,aiSlot;
  struct __monster *enemy;
@@ -294,14 +294,14 @@ typedef struct
  short routePos;
 
  short stunCounter;
-} AnubisObject;  
+} AnubisObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
  short health,aiSlot;
  struct __monster *enemy;
@@ -310,18 +310,18 @@ typedef struct
 
  int tailInhibit;
  short rarCount,angry;
-} MagmantisObject;  
+} MagmantisObject;
 
 typedef AnubisObject MummyObject;
 typedef AnubisObject SetObject;
 
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
  short health,aiSlot;
  struct __monster *enemy;
@@ -332,12 +332,12 @@ typedef struct
  short aimCounter,sprintCounter,decideNow;
 } SentryObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
  short health,aiSlot;
  struct __monster *enemy;
@@ -347,14 +347,14 @@ typedef struct
  short stunCounter;
  short chargeCounter;
  int sparkTimer;
-} SelkisObject;  
+} SelkisObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
  short health,aiSlot;
  struct __monster *enemy;
@@ -364,15 +364,15 @@ typedef struct
  short fireCount;
  short chargeCounter;
  short multiCharge;
-} QueenObject;  
+} QueenObject;
 
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
  short health,aiSlot;
  struct __monster *enemy;
@@ -382,42 +382,42 @@ typedef struct
  short stunCounter;
  short portTimer;
  short hasLight;
-} BastetObject;  
+} BastetObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
 
  unsigned short sequence;
  int age,soft;
-} BitObject;  
+} BitObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
 
  unsigned short sequence;
  int stuck;
-} HardBitObject;  
+} HardBitObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
 
  int age,big;
-} ZorchObject;  
+} ZorchObject;
 
 #define THINGFLAG_WAVE 1
 #define THINGFLAG_PULSE 2
@@ -426,41 +426,41 @@ typedef struct
 #define THINGFLAG_MYSTICAL 16
 #define THINGFLAG_BLUEMYSTICAL 32
 #define THINGFLAG_NOISY 64
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
 
  int baseY,sin,frame;
  int flags,light;
-} ThingObject;  
+} ThingObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
 
  int *parameters;
  int ageInc;
  int age;
-} LightObject;  
+} LightObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
 
  int waitTime;
-} OneShotObject;  
+} OneShotObject;
 
 typedef struct
 {short type,class;
@@ -468,23 +468,23 @@ typedef struct
  messHandler func;
  int wallNm;
  short aiSlot,state;
- 
+
  int firstTile,lastTile,speed;
 } AnimWallObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
  Object *owner;
  int age;
 
  MonsterObject *target;
  int damage;
-} CloudObject;  
+} CloudObject;
 
 typedef struct
 {short type,class;
@@ -562,17 +562,17 @@ typedef struct
  int channel;
 } SectorSwitchObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
 
  Object *owner;
  int age;
-} BoingRockObject;  
+} BoingRockObject;
 
 void item_func(Object *this, int message, int param1, int param2);
 void spider_func(Object *this, int message, int param1, int param2);
@@ -665,4 +665,3 @@ Object *constructEarthQuakeBlock(int pb);
 void resetLimitCounters(void);
 
 #endif
-

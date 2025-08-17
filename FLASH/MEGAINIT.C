@@ -70,8 +70,8 @@ static Sint32 *blkmfil_l(Sint32 *, Sint32, Sint32);
 #define SCSP_DSP_RAMSZ		(0x00400)
 
 
-#define	VBI_NUM			(0x40) 
-#define	VBO_NUM			(0x41) 
+#define	VBI_NUM			(0x40)
+#define	VBO_NUM			(0x41)
 #define	VB_MASK			(0x0003)
 
 
@@ -87,25 +87,25 @@ static volatile Sint16	*cramptr = COL_RAM;
 void megaInit(void)
 {yBottom  = (VD2_REG[2]&1)? SCLIP_UY_P: SCLIP_UY_N;
  ewBotRight = ((XRES/8)<<9)+(yBottom);
- SYS_SETUINT(VBI_NUM, vbIrtn); 
- SYS_SETUINT(VBO_NUM, vbOrtn); 
- SYS_CHGSCUIM( ~VB_MASK, 0);   
- 
- vd1Comfil();                  
+ SYS_SETUINT(VBI_NUM, vbIrtn);
+ SYS_SETUINT(VBO_NUM, vbOrtn);
+ SYS_CHGSCUIM( ~VB_MASK, 0);
+
+ vd1Comfil();
  for (sequence = 0; sequence < MSETDIV; sequence++)
-    {syncVbI();  
+    {syncVbI();
      colRamfil();
      vd2Ramfil();
      sndRamfil(sequence);
     }
 
- scuDspInit();               
- msh2PeriInit();             
+ scuDspInit();
+ msh2PeriInit();
  sndDspInit();
 
- SYS_CHGSCUIM( -1, VB_MASK); 
+ SYS_CHGSCUIM( -1, VB_MASK);
  SYS_SETUINT(VBI_NUM, (void(*)())0 );
- SYS_SETUINT(VBO_NUM, (void(*)())0 ); 
+ SYS_SETUINT(VBO_NUM, (void(*)())0 );
 }
 
 static void memset_w(Sint16 *buf, Sint16 pattern, Sint32 size)
@@ -171,7 +171,7 @@ static void vbOrtn(void)
 static void syncVbI(void)
 {
 	register Sint32  cur_cnt_value;
-                
+
 	cur_cnt_value = vbIcnt;
 	while (cur_cnt_value == vbIcnt);
 }
@@ -193,7 +193,7 @@ static void vd1Comfil(void)
 
 static void vd2Ramfil(void)
 {
-	vramptr = blkmfil_l(vramptr, 0, BLKMSK_VD2_VRAM); 
+	vramptr = blkmfil_l(vramptr, 0, BLKMSK_VD2_VRAM);
 }
 
 
@@ -257,7 +257,7 @@ static void scuDspInit(void)
 
 	for(i = 0; i < 256; i++)
 	  DSP_PGM_RAM_PORT = 0xf0000000;      /* ‚d‚m‚c–½—ßƒtƒBƒ‹     */
-	
+
 	for(i = 0; i < 256; i++){             /* ‚c‚r‚o ‚q‚`‚lƒNƒŠƒA  */
 		DSP_DATA_RAM_ADRS_PORT = i;
 		DSP_DATA_RAM_DATA_PORT = 0x0;

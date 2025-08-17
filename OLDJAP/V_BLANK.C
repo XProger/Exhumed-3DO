@@ -19,7 +19,7 @@ volatile short analogX;
 volatile short analogY;
 volatile char analogIndexButtonsPresent;
 volatile short analogTR;
-volatile short analogTL;		 
+volatile short analogTL;
 volatile char inputQHead,inputQTail;
 
 volatile int fadeDir,fadePos,fadeEnd;
@@ -67,7 +67,7 @@ void processInput(void)
 	     if (size==6)
 		{analogIndexButtonsPresent=1;
 		 analogTR=Pad[pos+4];
-		 analogTL=Pad[pos+5];		 
+		 analogTL=Pad[pos+5];
 		}
 	    }
 	 break;
@@ -108,7 +108,7 @@ void UsrVblankStart(void)
      POKE_W(SCL_VDP2_VRAM+0x180110,0x7f);/*enable color offset for all planes*/
      POKE_W(SCL_VDP2_VRAM+0x180112,0x00);/*use offset reg 0 for all planes*/
 #endif
-     
+
      POKE_W(SCL_VDP2_VRAM+0x180114,fadePos & 0x1ff);
      POKE_W(SCL_VDP2_VRAM+0x180116,fadePos & 0x1ff);
      POKE_W(SCL_VDP2_VRAM+0x180118,fadePos & 0x1ff);
@@ -151,7 +151,7 @@ void userBreakBlam(void)
  errorQ[errorQSize]=dummy[4];
  prQ[errorQSize]=dummy[0];
  errorQSize=(errorQSize+1)&0xf;
- 
+
  fadePos=255;
  fadeDir=-10;
  fadeEnd=0;
@@ -174,7 +174,7 @@ void userBreakBlam(void)
  POKE_W(SCL_VDP2_VRAM+0x180042,0x0);
  POKE_W(SCL_VDP2_VRAM+0x18003c,0x0);
  POKE_W(SCL_VDP2_VRAM+0x18003e,0x0);
- 
+
  POKE_W(SCL_VDP2_VRAM+0x18003e,0x0);
 
  for (i=0;i<8;i++)
@@ -204,7 +204,7 @@ void SetVblank(void)
  while(perFlag);
 
  PER_LInit(PER_KD_PERTIM,6,PER_SIZE_NCON_15,PadWorkArea,0);
- 
+
  /* V-Blank */
  INT_ChgMsk(INT_MSK_NULL,INT_MSK_VBLK_IN|INT_MSK_VBLK_OUT|INT_MSK_HBLK_IN);
 #ifdef STATUSTEXT
@@ -233,6 +233,3 @@ void SetVblank(void)
 #endif
 #endif
 }
-
-
-

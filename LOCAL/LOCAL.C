@@ -7,9 +7,9 @@
 
 #define MAXLABEL 256
 
-int LabelCount;   
+int LabelCount;
 
-int LabelFirst[MAXLABEL];  
+int LabelFirst[MAXLABEL];
 
 #define MAXBLOCK 256
 
@@ -19,7 +19,7 @@ int BlockSize[MAXBLOCK];
 
 char BlockChunk[MAXBLOCK][MAXBLOCKSIZE];
 
-int BlockCount;   
+int BlockCount;
 
 int main(int argc, char **argv)
 {
@@ -29,8 +29,8 @@ int main(int argc, char **argv)
  char *pos;
  long InWord, InBlock, i, j;
  unsigned offset, tmp;
-    
- LabelCount = BlockCount = 0;    
+
+ LabelCount = BlockCount = 0;
  LabelFirst[0] = 0;
  InWord = InBlock = FALSE;
 
@@ -50,9 +50,9 @@ int main(int argc, char **argv)
 	{case ':':
 	   line[strlen(line)-1] = '\0';
 	   if (LabelCount > 0)
-	      printf(" -> Contains %d blocks\n", 
+	      printf(" -> Contains %d blocks\n",
 		     BlockCount-LabelFirst[LabelCount-1]);
-	   printf("Processing '%s' label...\n", line+1);    
+	   printf("Processing '%s' label...\n", line+1);
 	   LabelFirst[LabelCount++] = BlockCount;
 	case '\n':
 	case ';':
@@ -69,7 +69,7 @@ int main(int argc, char **argv)
 		 {if (InWord)
 		     {BlockChunk[BlockCount]
 			 [BlockSize[BlockCount]++] = ' ';
-		     }    
+		     }
 		 }
 	   InBlock = TRUE;
 	   InWord = FALSE;
@@ -81,84 +81,82 @@ int main(int argc, char **argv)
 			 {InWord = FALSE;
 			  BlockChunk[BlockCount]
 			     [BlockSize[BlockCount]++] = ' ';
-			 }    
-		      
+			 }
+
 		      break;
-		      
+
 		   case ('\\') :
-		      
+
 		      if (*(pos+1) == 'n')
 			 {pos++;
-			  
+
 			  if (InWord)
 			     {InWord = FALSE;
-			     }    
+			     }
 			  BlockChunk[BlockCount]
 			     [BlockSize[BlockCount]++] = '\n';
 			 }
-		      
+
 		      break;
-		      default :        
+		      default :
 			 BlockChunk[BlockCount]
 			    [BlockSize[BlockCount]++] = *pos;
-		      InWord = TRUE;    
+		      InWord = TRUE;
 		      break;
 		     }
 	      }
 	   break;
 	  }
     }
- 
+
  if (LabelCount > 0)
-    printf(" -> Contains %d blocks\n", 
+    printf(" -> Contains %d blocks\n",
 	   BlockCount-LabelFirst[LabelCount-1]);
  LabelFirst[LabelCount] = BlockCount;
- 
+
  printf("\nLabels : %d BlockCount : %d\n", LabelCount, BlockCount);
- 
+
 fileout=fopen(argv[2], "wb");
  offset = 4 * LabelCount + 4 * BlockCount;
- 
+
  for (i=0; i<BlockCount; i++)
     {offset += BlockSize[i];
     }
- 
+
  tmp = ((offset & 0xff) << 24) | ((offset & 0xff00) << 8) |
     ((offset & 0xff0000) >> 8) | (offset >> 24);
- 
+
  fwrite (&tmp, sizeof(tmp), 1, fileout);
- 
- 
+
+
  offset = 4 * LabelCount;
- 
+
  for (i=0 ; i<LabelCount; i++)
     {tmp = ((offset & 0xff) << 24) | ((offset & 0xff00) << 8) |
 	((offset & 0xff0000) >> 8) | (offset >> 24);
      fwrite (&tmp, sizeof(tmp), 1, fileout);
      offset += 4 * (LabelFirst[i+1] - LabelFirst[i]);
-    }    
+    }
  for (i=0 ; i<BlockCount; i++)
     {tmp = ((offset & 0xff) << 24) | ((offset & 0xff00) << 8) |
 	    ((offset & 0xff0000) >> 8) | (offset >> 24);
-     
+
      fwrite (&tmp, sizeof(tmp), 1, fileout);
-     
+
      offset += (BlockSize[i]);
-    }    
- 
- 
+    }
+
+
  for (i=0 ; i<BlockCount; i++)
     {BlockChunk[i][BlockSize[i]-1] = '\0';
-     
+
      for (j=0; j<BlockSize[i]; j++)
 	{fwrite (&BlockChunk[i][j], sizeof(char), 1, fileout);
 	}
-    }    
- 
+    }
+
  fclose (fileout);
  fclose (filein);
 #endif
  return 0;
 }
-
-

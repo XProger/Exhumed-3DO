@@ -257,13 +257,13 @@ int writeRLE(unsigned char *input,int inputSize,FILE *ofile)
     {/* output block of blank space */
      for (size=0;size<255 && pos+size<inputSize && input[pos+size]==0;size++) ;
      if (ofile)
-	fputc(size,ofile); 
+	fputc(size,ofile);
      nmWritten++;
      pos+=size;
      /* output block of nonblank space */
      for (size=0;size<255 && pos+size<inputSize && input[pos+size]!=0;size++) ;
      if (ofile)
-	fputc(size,ofile); 
+	fputc(size,ofile);
      nmWritten++;
      if (ofile)
 	for (i=0;i<size;i++)
@@ -472,7 +472,7 @@ int loadSequenceSet(char *filename)
  fread(chunkFlags,nmChnk,2,ifile);
 
  fread(frameSounds,nmFrm,2,ifile);
- 
+
  for (i=0;i<nmFrm;i++)
     {outFrames[nmFrames].chunkIndex=nmChunks;
      outFrames[nmFrames].flags=frameFlags[i];
@@ -792,7 +792,7 @@ void writeSounds(void)
     outSoundMap[i]=-2;
 
  outSoundMap[ST_JOHN]=nmSounds;
- addSound("jon-jump.wav"); 
+ addSound("jon-jump.wav");
  addSound("jon-die4.wav");
  addSound("splash-b.wav");
  addSound("jon-hit2.wav");
@@ -808,9 +808,9 @@ void writeSounds(void)
  addSound("ammofull.wav");
  addSound("health2.wav");
  addSound("item_wrn.wav");
- 
+
  outSoundMap[ST_FLAMER]=nmSounds;
- addSound("ft-on2.wav"); 
+ addSound("ft-on2.wav");
  addSound("ft-off2.wav");
  addSound("ft-run3.wav");
 
@@ -836,7 +836,7 @@ void writeSounds(void)
  outSoundMap[ST_MANACLE]=nmSounds;
  addSound("fist2.wav");
  addSound("drone.wav");
- 
+
  writeSoundSet();
 }
 
@@ -891,6 +891,3 @@ int main(int argc,char **argv)
 
  return 0;
 }
-
-
-

@@ -23,7 +23,7 @@ int main(int argc,char **argv)
 
  fread(data,200000,1,ifile);
  printf("width=%d height=%d\n",width,height);
- 
+
  data[0]=width>>8;
  data[1]=width&0xff;
  data[2]=height>>8;
@@ -44,5 +44,3 @@ int main(int argc,char **argv)
  fclose(ifile);
  return 0;
 }
-
-

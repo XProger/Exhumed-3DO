@@ -23,7 +23,7 @@ int main(int argc,char **argv)
  for (i=0;i<nmFiles;i++)
     {fread(name,12,1,ifile);
      name[12]=0;
-     printf("file=%s\n",name);     
+     printf("file=%s\n",name);
      fread(&size,4,1,ifile);
      if (1)
 	{FILE *f2,*fout;
@@ -33,8 +33,8 @@ int main(int argc,char **argv)
 	 fout=fopen(name,"wb");
 	 fwrite(buff,size,1,fout);
 	 fclose(fout);
-	 fclose(f2);	 
+	 fclose(f2);
 	}
-     filePos+=size;	
+     filePos+=size;
     }
 }

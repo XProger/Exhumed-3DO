@@ -83,13 +83,13 @@ int main(int argc,char **argv)
 		assert(0);
 		break;
 	       }
-	 
+
 	}
      fputc('\n',ofile);
      lineNm++;
     }
  fclose(ofile);
  fclose(ifile);
- fclose(mapFile); 
+ fclose(mapFile);
  return 0;
 }

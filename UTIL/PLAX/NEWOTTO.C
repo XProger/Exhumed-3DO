@@ -6,9 +6,9 @@
 #include <malloc.h>
 #include <string.h>
 
-#define VOID	0	// My NULL 
-#define GOOD	1	// My TRUE 
-#define EVIL	0	// My FALSE 
+#define VOID	0	// My NULL
+#define GOOD	1	// My TRUE
+#define EVIL	0	// My FALSE
 
 typedef unsigned long   ULONG;
 typedef unsigned short 	UWORD;
@@ -42,7 +42,7 @@ void PrintValue (FILE *file, int trigger, char *new, char *form, ...)
 
 	if (trigger)
 		fprintf(file,",");
-	else	
+	else
 		fprintf(file,"\n\t%s\t",new);
 
 	fprintf(file,form,va_arg(arg,char *));
@@ -57,8 +57,8 @@ void PrintValue (FILE *file, int trigger, char *new, char *form, ...)
 //    for (x1=0; x1<8; x1++)
 //      if (Bitmap[y1+y][x1+x]%COLORS)
 //        return GOOD;
-//  return EVIL;  
-//}   
+//  return EVIL;
+//}
 
 
 void clearScreen()
@@ -76,7 +76,7 @@ void writePaletteFile(char *filename, PALETTE *palette)
 	int	i;
 
   file = fopen(filename, "wt");
-	
+
 	fprintf (file, "{\n");
 	for (i=0; i<256; i++)
 	{
@@ -119,12 +119,12 @@ void main(int argc, char *argv[])
 	}
 
   outfile=infile=0;
-  for (i=1; i<argc; i++) 
+  for (i=1; i<argc; i++)
   {
     ptr=strlwr(argv[i]);
     if (*ptr=='/')
     {
-      while (*(++ptr))                        
+      while (*(++ptr))
       {
         switch(*ptr)
         {
@@ -145,10 +145,10 @@ void main(int argc, char *argv[])
       if (!infile)
         infile=i;
 			else
-      	outfile=i;
-    }      
+	outfile=i;
+    }
   }
-   
+
   if (!infile)
 	{
 		printf("No input file specified!\n");
@@ -157,19 +157,19 @@ void main(int argc, char *argv[])
 
 	if (!outfile)
 		outfile=infile;
- 
+
   _splitpath(argv[infile], drive, dir, fname, ext);
 
 	if (*ext && strcmp(strupr(ext), ".ANM"))
 	{
-		printf("File extension '%s' is unrecognized!\n", ext);		    	
+		printf("File extension '%s' is unrecognized!\n", ext);
 		exit(0);
-	}	
+	}
 	strcat(strcpy (filename, fname), ".anm");	// Build up Anim name
 
 	if (!(Anim=CreateAnim(filename)))
 		exit(0);
-                         
+
 	ConvertPaletteFromDA (Anim->A.palette, palette);
 
   _splitpath(argv[outfile], drive, dir, fname, ext);
@@ -181,15 +181,15 @@ void main(int argc, char *argv[])
 
 	initScreen();
 
- 	for (Frame=0; Frame<Anim->LastFrame; Frame++)
- 	{
+	for (Frame=0; Frame<Anim->LastFrame; Frame++)
+	{
 		clearScreen();
 
     DrawAnimPage(Anim);
-        
+
     Xmax = Ymax = 0;
 
-    for (y=0; y<200; y++)       
+    for (y=0; y<200; y++)
 		{
       for (x=0; x<320; x++)
 			{
@@ -197,21 +197,21 @@ void main(int argc, char *argv[])
 				{
 					if (x>Xmax)
 						Xmax=x;
-				
+
 					if (y>Ymax)
 						Ymax=y;
 				}
 			}
-		}				  
-	
+		}
+
 		Xmax=(Xmax+4)&0xfffc;
 		Ymax=(Ymax+4)&0xfffc;
-	
+
 		fname[5]=0;
 		sprintf(fname2, "%03d.til", Frame);
 		strcat(strcpy (filename, fname), fname2);
-  
-  	file = fopen(filename, "wt");
+
+	file = fopen(filename, "wt");
 //  	file = fopen(filename, "wb");
 
 //		fwrite(&Xmax, 2, 1, file);
@@ -221,7 +221,7 @@ void main(int argc, char *argv[])
 
 		xcenter=(width-Xmax)/2;
 		ycenter=(height-Ymax)/2;
-		
+
 		fprintf (file, "%s", "{\n");
 
 		for (y=0; y<Ymax; y++)
@@ -241,18 +241,16 @@ void main(int argc, char *argv[])
 		}
 
 		fprintf (file, "%s", "};\n");
-	
+
 		fclose (file);
 
 		setVisiblePage(page);
 		page = (page+1)&1;
-  	setActivePage(page);
+	setActivePage(page);
 
 	}
-	
+
 	DeleteAnim(Anim);
 
-  setvmode(0x3); 
+  setvmode(0x3);
 }
-
-

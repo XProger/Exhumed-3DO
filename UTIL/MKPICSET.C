@@ -28,17 +28,17 @@ int rlePic(FILE *ofile)
  pos=0;
  while (pos<tempBufferSize)
     {/* output block of blank space */
-     for (size=0;size<255 && pos+size<tempBufferSize && 
+     for (size=0;size<255 && pos+size<tempBufferSize &&
 	  tempBuffer[pos+size]==0;size++) ;
      if (ofile)
-	fputc(size,ofile); 
+	fputc(size,ofile);
      nmWritten++;
      pos+=size;
      /* output block of nonblank space */
-     for (size=0;size<255 && pos+size<tempBufferSize && 
+     for (size=0;size<255 && pos+size<tempBufferSize &&
 	  tempBuffer[pos+size]!=0;size++) ;
      if (ofile)
-	fputc(size,ofile); 
+	fputc(size,ofile);
      nmWritten++;
      if (ofile)
 	for (i=0;i<size;i++)
@@ -76,17 +76,17 @@ int rle2Pic(FILE *ofile)
  pos=0;
  while (pos<tempBufferSize)
     {/* output block of blank space */
-     for (size=0;size<255 && pos+size<tempBufferSize && 
+     for (size=0;size<255 && pos+size<tempBufferSize &&
 	  tempBuffer[pos+size]!=255;size++) ;
      if (ofile)
-	fputc(size,ofile); 
+	fputc(size,ofile);
      nmWritten++;
      pos+=size;
      /* output block of nonblank space */
-     for (size=0;size<255 && pos+size<tempBufferSize && 
+     for (size=0;size<255 && pos+size<tempBufferSize &&
 	  tempBuffer[pos+size]==255;size++) ;
      if (ofile)
-	fputc(size,ofile); 
+	fputc(size,ofile);
      nmWritten++;
      pos+=size;
     }
@@ -140,7 +140,7 @@ void readBmp(char *filename)
   picPal[255]=swap;
  }
  if (forceTransp)
-    picPal[0]=0; 
+    picPal[0]=0;
 #endif
 
  for (i=picHeight-1;i>=0;i--)
@@ -215,7 +215,7 @@ int main(int argc,char **argv)
 	     continue;
 	    }
 	 printf("Arg! Unknown arg!\n");
-	 exit(-1);	     
+	 exit(-1);
 	}
      if (!ofile)
 	ofile=fopen(argv[i],"wb");

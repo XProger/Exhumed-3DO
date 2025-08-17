@@ -63,7 +63,7 @@ void initMap(void)
 				     getVertex(level_wall[w].v[2],&t)));
 	     if (f>minDiff)
 		minDiff=f;
-	     
+
 	     if (minDiff>F(1))
 		{mapColor[w]=2;
 		 if (minDiff<F(32))
@@ -97,7 +97,7 @@ static unsigned short colors[4]=
     0x8000| 31<<10 | 31<<5 | 31,
     0x8000| 25<<10 | 25<<5 | 25,
     0x8000| 18<<10 | 18<<5 | 18};
-       
+
 
 #define ARROWR 5
 
@@ -150,7 +150,7 @@ void drawMap(int cx,int cy,int cz,int yaw,int currentSector)
 	}
      else
 	color=RGB(31,31,31);
-     
+
      for (w=level_sector[s].firstWall;
 	  w<=level_sector[s].lastWall;w++)
 	{if (!mapColor[w] || !(level_wall[w].flags & WALLFLAG_SEEN))
@@ -161,7 +161,7 @@ void drawMap(int cx,int cy,int cz,int yaw,int currentSector)
 	 getVertex(level_wall[w].v[1],&wallP);
 	 p2.x=f(wallP.x-cx);
 	 p2.y=f(wallP.z-cy);
-	 
+
 	 mapLine[0].x=f(p1.x*north.x+p1.y*north.y);
 	 mapLine[0].y=f(p1.x*east.x+p1.y*east.y);
 	 mapLine[1].x=f(p2.x*north.x+p2.y*north.y);
@@ -175,7 +175,7 @@ void drawMap(int cx,int cy,int cz,int yaw,int currentSector)
 	    continue;
 	 if (mapLine[0].y>MAXY && mapLine[1].y>MAXY)
 	    continue;
-	 if (transp)	    
+	 if (transp)
 	    EZ_line(ECDSPD_DISABLE|COLOR_5|COMPO_TRANS,color,mapLine,NULL);
 	 else
 	    EZ_line(ECDSPD_DISABLE|COLOR_5|COMPO_REP,color,mapLine,NULL);
@@ -185,25 +185,16 @@ void drawMap(int cx,int cy,int cz,int yaw,int currentSector)
  mapLine[0].x=0;
  mapLine[0].y=-ARROWR;
  mapLine[1].x=0;
- mapLine[1].y=+ARROWR; 
+ mapLine[1].y=+ARROWR;
  EZ_line(ECDSPD_DISABLE|COLOR_5|COMPO_REP,colors[1],mapLine,NULL);
  mapLine[0].x=-ARROWR;
  mapLine[0].y=0;
  mapLine[1].x=0;
- mapLine[1].y=-ARROWR; 
+ mapLine[1].y=-ARROWR;
  EZ_line(ECDSPD_DISABLE|COLOR_5|COMPO_REP, colors[1], mapLine, NULL);
  mapLine[0].x=ARROWR;
  mapLine[0].y=0;
  mapLine[1].x=0;
- mapLine[1].y=-ARROWR; 
+ mapLine[1].y=-ARROWR;
  EZ_line(ECDSPD_DISABLE|COLOR_5|COMPO_REP, colors[1], mapLine, NULL);
 }
-
-
-
-
-
-
-
-
-

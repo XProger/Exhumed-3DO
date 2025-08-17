@@ -29,6 +29,3 @@
 	cnop	0,4
 
 ipsize
-
-
-

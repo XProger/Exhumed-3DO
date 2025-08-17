@@ -220,10 +220,10 @@ static void optionMenu(int hx,int hy,int lx,int ly)
  if (menuSel!=-1)
     {dlg_selectButton(menuSel);
      dlgItem[menuSel].x1=dlgItem[menuSel].x2;
-     dlgItem[menuSel].y1=dlgItem[menuSel].y2;	  
+     dlgItem[menuSel].y1=dlgItem[menuSel].y2;
     }
  else
-    {dlgItem[4].x1=dlgItem[4].x2; 
+    {dlgItem[4].x1=dlgItem[4].x2;
      dlgItem[4].y1=dlgItem[4].y2;
     }
  dlg_runSlideIn();
@@ -231,7 +231,7 @@ static void optionMenu(int hx,int hy,int lx,int ly)
  while (1)
     {menuSel=dlg_run(0,1,MENUMOVE_VERT);
      switch (menuSel)
-	{case 0: 
+	{case 0:
 	    dlg_setupSlideOut();
 	    dlgItem[0].x2=dlgItem[0].x1;
 #ifndef JAPAN
@@ -252,7 +252,7 @@ static void optionMenu(int hx,int hy,int lx,int ly)
 	    dlgItem[1].text=getText(LB_OPTIONMENU,0+!enable_stereo);
 	    dlgItem[5].xp=dlgItem[1].xp; dlgItem[5].yp=dlgItem[1].yp;
 	    dlg_centerStuff();
-	    dlg_setupNoSlide();	    
+	    dlg_setupNoSlide();
 	    dlgItem[5].x2+=250;
 	    dlgItem[1].x1+=-250;
 	    dlg_runSlideIn();
@@ -263,7 +263,7 @@ static void optionMenu(int hx,int hy,int lx,int ly)
 	    dlgItem[2].text=getText(LB_OPTIONMENU,2+!enable_music);
 	    dlgItem[5].xp=dlgItem[2].xp; dlgItem[5].yp=dlgItem[2].yp;
 	    dlg_centerStuff();
-	    dlg_setupNoSlide();	    
+	    dlg_setupNoSlide();
 	    dlgItem[5].x2+=-300;
 	    dlgItem[2].x1+=300;
 	    dlg_runSlideIn();
@@ -306,7 +306,7 @@ static int loadMenu(int hx,int hy,int lx,int ly)
     else
        dlg_addFontString(-getStringWidth(2,emptyText)/2,
 			 -84+30+20*i,2,(char *)emptyText);
- 
+
 #ifndef JAPAN
  dlg_addBigWavyButton(100,0,-84+30+20*7,getText(LB_PROMPTS,1));
 #else
@@ -317,10 +317,10 @@ static int loadMenu(int hx,int hy,int lx,int ly)
  if (menuSel!=-1)
     {dlg_selectButton(menuSel);
      dlgItem[menuSel].x1=dlgItem[menuSel].x2;
-     dlgItem[menuSel].y1=dlgItem[menuSel].y2;	  
+     dlgItem[menuSel].y1=dlgItem[menuSel].y2;
     }
  else
-    {dlgItem[0].x1=dlgItem[0].x2; 
+    {dlgItem[0].x1=dlgItem[0].x2;
      dlgItem[0].y1=dlgItem[0].y2;
     }
  dlg_runSlideIn();
@@ -369,7 +369,7 @@ static int newMenu(int hx,int hy,int lx,int ly)
 #endif
 
  dlg_centerStuff();
- dlg_setupSlideIn(); 
+ dlg_setupSlideIn();
 /* dlg_setupSlideUp();*/
  if (menuSel==-1)
     {dlgItem[0].x1=dlgItem[0].x2; dlgItem[0].y1=dlgItem[0].y2;
@@ -402,10 +402,10 @@ void playIntro(void)
 		  240,0x0000);
 #ifndef JAPAN
  i=initFonts(0,7);
- initPicSystem(i,((int []){50,0,0,0,0,-1})); 
+ initPicSystem(i,((int []){50,0,0,0,0,-1}));
 #else
  i=initFonts(0,4);
- initPicSystem(i,((int []){40,0,0,0,0,70,-1})); 
+ initPicSystem(i,((int []){40,0,0,0,0,70,-1}));
 #endif
  stopCD();
  {
@@ -416,8 +416,8 @@ void playIntro(void)
 #endif
   loadPicSet(fd,picPals,picDatas,MAXNMPICS);
   loadPicSetAsPics(fd,TILE16BPP);
-  loadSound(fd); 
-  loadSound(fd); 
+  loadSound(fd);
+  loadSound(fd);
   fs_close(fd);
  }
 #ifdef JAPAN
@@ -437,25 +437,25 @@ void playIntro(void)
 #ifndef PAL
  loadVDPPic(0,1);
  loadVDPPic(0,0);
-#else 
+#else
  loadVDPPic(1,1);
  loadVDPPic(1,0);
-#endif 
+#endif
  {int y,m,d,h,min;
   getDateTime(&y,&m,&d,&h,&min);
   if (m==12 && d==10)
      {loadVDPPic(2,1);
       loadVDPPic(2,0);
      }
- }    
+ }
  SCL_SetColMixRate(SCL_NBG0,31);
  SCL_SET_N0CCEN(0);
  if (enable_music)
     playCDTrack(titleMusic,1);
 
  Scl_s_reg.dispenbl|=0xf00;
- if (SclProcess==0) 
-    SclProcess=1; 
+ if (SclProcess==0)
+    SclProcess=1;
 
  displayEnable(1);
 
@@ -499,12 +499,12 @@ void playIntro(void)
 	   dlg_addBigWavyButton(69,-len>>1,-10,"DEATH TANK");
 	  }
       }
-      
+
       dlg_setupSlideIn();
       if (menuSel!=-1)
 	 {dlg_selectButton(menuSel);
 	  dlgItem[menuSel].x1=dlgItem[menuSel].x2;
-	  dlgItem[menuSel].y1=dlgItem[menuSel].y2;	  
+	  dlgItem[menuSel].y1=dlgItem[menuSel].y2;
 	 }
 
       dlg_runSlideIn();
@@ -513,29 +513,29 @@ void playIntro(void)
       fadeEnd=-60;
       fadeDir=-2;
       switch (menuSel)
-	 {case 0: 
+	 {case 0:
 	     if (!bup_canSaveGame())
 		{bup_initCurrentGame();
 		 EZ_clearScreen();
 		 return;
-		}	     
+		}
 	     dlgItem[0].x2=dlgItem[0].x1;
 	     dlgItem[0].y2=-84;
 	     dlg_runSlideIn();
 	     if (newMenu(dlgItem[0].x2,dlgItem[0].y2,
 			  dlgItem[0].x1,dlgItem[0].y1))
 		{EZ_clearScreen();
-		 return;		 
+		 return;
 		}
 	     break;
-	  case 1: 
+	  case 1:
 	     dlgItem[1].x2=dlgItem[1].x1;
 	     dlgItem[1].y2=-84;
 	     dlg_runSlideIn();
 	     if (loadMenu(dlgItem[1].x2,dlgItem[1].y2,
 			  dlgItem[1].x1,dlgItem[1].y1))
 		{EZ_clearScreen();
-		 return;		 
+		 return;
 		}
 	     break;
 	  case 2:
@@ -556,7 +556,7 @@ void playIntro(void)
 	    }
      }
  }
- 
+
 }
 
 
@@ -586,7 +586,7 @@ void teleportEffect(void)
 	}
      while (MTH_Mul(s->spermX[i][0],s->spermX[i][0])+
 	    MTH_Mul(s->spermY[i][0],s->spermY[i][0])>(1<<22));
-	    
+
      for (j=1;j<HISTORY;j++)
 	{s->spermX[i][j]=s->spermX[i][0];
 	 s->spermY[i][j]=s->spermY[i][0];
@@ -607,7 +607,7 @@ void teleportEffect(void)
 	     EZ_line(COLOR_5,lcolor[j],pos,NULL);
 	    }
 	}
-     
+
      for (i=0;i<NMSPERM;i++)
 	{int xo,yo;
 	 for (j=HISTORY-1;j>0;j--)
@@ -633,5 +633,3 @@ void teleportEffect(void)
     }
  while (!done);
 }
-
-

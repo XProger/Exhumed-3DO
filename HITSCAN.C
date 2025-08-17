@@ -29,13 +29,13 @@ int hitSpriteP(Fixed32 ray[3],Fixed32 pos[3],Sprite *sprite,
  assert(ray[0]>=-F(1) && ray[0]<=F(1));
  assert(ray[1]>=-F(1) && ray[1]<=F(1));
  assert(ray[2]>=-F(1) && ray[2]<=F(1));
- 
+
  if (sprite->flags & SPRITEFLAG_NOHITSCAN)
     return 0;
  EO[0]=sprite->pos.x-pos[0];
  EO[1]=sprite->pos.y-pos[1];
  EO[2]=sprite->pos.z-pos[2];
- 
+
  v=MTH_Product(ray,EO);
 
  if (v<0)
@@ -61,7 +61,7 @@ int hitSpriteP(Fixed32 ray[3],Fixed32 pos[3],Sprite *sprite,
      sprintf(buff,"(%d,%d,%d)",EO[0],EO[1],EO[2]);
      message(buff); message(buff); message(buff);
      sprintf(buff," %d %d %d ",disc,d,v);
-     message(buff); message(buff); message(buff); 
+     message(buff); message(buff); message(buff);
     }
 #endif
 #endif
@@ -87,7 +87,7 @@ int hitWallP(Fixed32 ray[3],Fixed32 pos[3],sWallType *wall,
        two sectors */
     return 0;
  t=-MTH_Div(wall->d+MTH_Product((Fixed32 *)wall->normal,pos) ,f);
- if (t<=F(-3)) 
+ if (t<=F(-3))
     /* reject walls where the collision point is behind the origin of the
        ray.  We can be loose here because we have convex sectors
        if everything was perfect, t would always be positive.  Loosening this
@@ -125,7 +125,7 @@ int hitWallP(Fixed32 ray[3],Fixed32 pos[3],sWallType *wall,
  axis[0]=biggest; /* largest */
 
  /* get endpoint and plane intersection into V[] and p[] */
- 
+
  switch (biggest)
     {case 0:
 	for (i=0;i<4;i++)
@@ -149,7 +149,7 @@ int hitWallP(Fixed32 ray[3],Fixed32 pos[3],sWallType *wall,
 	p[0]=P[0]; p[1]=P[1];
 	break;
        }
- 
+
  inside=0;
  for (p1=0;p1<4;p1++)
     {p2=p1+1;
@@ -166,14 +166,14 @@ int hitWallP(Fixed32 ray[3],Fixed32 pos[3],sWallType *wall,
 	    inside=!inside;
 	 continue;
 	}
-     
+
      if (p[0]<=V[p1][0] && p[0]<=V[p2][0])
 	{inside=!inside;
 	 continue;
 	}
      if (p[0]>V[p1][0] && p[0]>V[p2][0])
 	continue;
-     
+
      x=V[p1][0]+
 	MTH_Mul((V[p2][0]-V[p1][0]),
 		MTH_Div(p[1]-V[p1][1],
@@ -181,7 +181,7 @@ int hitWallP(Fixed32 ray[3],Fixed32 pos[3],sWallType *wall,
      if (p[0]<=x)
 	inside=!inside;
     }
- 
+
  if (inside)
     {for (i=0;i<3;i++)
 	out_pos[i]=P[i];
@@ -207,7 +207,7 @@ int hitScan(Sprite *dontHit,MthXyz *ray,MthXyz *pos,int sector,
      collideSprite=NULL;
      collideSpriteDist=F(30000);
      for (spr=sectorSpriteList[sector];spr;spr=spr->next)
-	{if (spr!=dontHit && 
+	{if (spr!=dontHit &&
 	     hitSpriteP((Fixed32 *)ray,(Fixed32 *)pos,spr,
 			(Fixed32 *)&tempPos,&tempDist))
 	    {assert(tempDist>=0);
@@ -221,7 +221,7 @@ int hitScan(Sprite *dontHit,MthXyz *ray,MthXyz *pos,int sector,
      if (collideSprite)
 	{*outSector=sector;
 	 return COLLIDE_SPRITE|(collideSprite-sprites);
-	}     
+	}
      /* collide with walls in this sector */
      s=level_sector+sector;
      for (w=s->firstWall;w<=s->lastWall;w++)
@@ -369,9 +369,5 @@ int canSee(Sprite *s1,Sprite *s2)
  if (d2s>d2w)
     return 0;
  else
-    return 1; 
+    return 1;
 }
-
-
-
-

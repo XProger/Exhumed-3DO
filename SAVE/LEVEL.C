@@ -65,12 +65,12 @@ int loadLevel(int fd,int tileBase)
  level_objectParams=(unsigned char *)(level_PBWall+head->nmPBWalls);
  level_texture=(char *)(level_objectParams+head->nmObjectParams);
  level_vertexLight=level_texture+head->nmTextureIndexes;
- 
+
  for (i=0;i<head->nmTextureIndexes;i++)
     level_texture[i]+=tileBase;
  for (i=0;i<head->nmFaces;i++)
     level_face[i].tile+=tileBase;
- 
+
  /* paranoia checks */
  assert(!(((int)level_sector) & 3));
  assert(!(((int)level_wall) & 3));
@@ -80,7 +80,3 @@ int loadLevel(int fd,int tileBase)
 
  return 1;
 }
-
-
-
-

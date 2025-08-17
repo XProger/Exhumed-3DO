@@ -76,7 +76,7 @@ int main(int argc,char **argv)
 	"; take the following comments out if you wish to include\n"
 	"; redbook audio tracks\n"
 	"\n");
- 
+
  for (i=0;audioList[i];i++)
     printf("Track CDDA\n"
 	   "Pause 150\n"
@@ -93,4 +93,3 @@ int main(int argc,char **argv)
 
  return 0;
 }
-

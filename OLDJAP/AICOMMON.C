@@ -33,7 +33,7 @@ void movePlayerToSector(int playerSec)
  pos.y=F(level_sector[playerSec].center[1]);
  pos.z=F(level_sector[playerSec].center[2]);
  pos.y+=camera->radius-findFloorDistance(playerSec,&pos);
- moveSpriteTo(camera,playerSec,&pos);      
+ moveSpriteTo(camera,playerSec,&pos);
 }
 
 void markSectorFloor(int sec,Object *this)
@@ -104,7 +104,7 @@ int PlotCourseToObject(SpriteObject *from,SpriteObject *to)
  assert(from);
  assert(to);
  assert(from!=to);
- 
+
  xdiff = to->sprite->pos.x-from->sprite->pos.x;
  zdiff = to->sprite->pos.z-from->sprite->pos.z;
 
@@ -165,7 +165,7 @@ void spriteObject_makeZorch(SpriteObject *this)
 		   this->sprite->pos.z,
 		   (getNextRand()&0x40)?OT_REDZORCH:OT_BLUEZORCH);
 }
- 
+
 int monsterObject_signalHurt(MonsterObject *this,int param1,int param2)
 {Object *hurter=(Object *)param2;
  assert(this->class==CLASS_MONSTER);
@@ -175,7 +175,7 @@ int monsterObject_signalHurt(MonsterObject *this,int param1,int param2)
     this->enemy=(MonsterObject *)hurter;
  if (hurter->class==CLASS_PROJECTILE)
     {ProjectileObject *po=(ProjectileObject *)hurter;
-     if (po->owner && po->owner->class==CLASS_MONSTER && 
+     if (po->owner && po->owner->class==CLASS_MONSTER &&
 	 po->owner!=(Object *)this)
 	this->enemy=(MonsterObject *)(po->owner);
     }
@@ -191,7 +191,7 @@ void monsterObject_signalDestroyed(MonsterObject *this,int param1)
     freeSprite(this->sprite);
  if (killed==(Object *)this->enemy)
     this->enemy=NULL;
-}     
+}
 
 MthXyz followRoute(MonsterObject *this)
 {int v,w;
@@ -323,7 +323,7 @@ void normalMonster_idle(MonsterObject *this,int speed,int icuSound)
 	 else
 	    this->enemy=findPlayer(this->sprite,F(1600));
 	}
-     if (this->enemy) 
+     if (this->enemy)
 	{if (icuSound>=0)
 	    spriteObject_makeSound((SpriteObject *)this,icuSound);
 	 setState((SpriteObject *)this,STATE_WALK);
@@ -339,8 +339,8 @@ enum {DO_RANDOMWANDER,DO_CHARGE,DO_FOLLOWROUTE,DO_GOIDLE};
 int decideWhatToDo(MonsterObject *this,int route,int floater)
 {int distance;
 #if 0
- if ((this->sprite->flags ^ this->enemy->sprite->flags) & 
-     SPRITEFLAG_UNDERWATER) 
+ if ((this->sprite->flags ^ this->enemy->sprite->flags) &
+     SPRITEFLAG_UNDERWATER)
     /* we and our enemy are on different sides of the water */
     return DO_RANDOMWANDER;
 #endif
@@ -352,7 +352,7 @@ int decideWhatToDo(MonsterObject *this,int route,int floater)
     {if (level_sector[this->enemy->sprite->s].flags & SECFLAG_WATER)
 	return DO_RANDOMWANDER;
     }
- if ((this->enemy!=player || !invisibleCounter) && 
+ if ((this->enemy!=player || !invisibleCounter) &&
      canSee(this->sprite,this->enemy->sprite))
     return DO_CHARGE;
  distance=spriteDistApprox(this->sprite,this->enemy->sprite);
@@ -366,7 +366,7 @@ int decideWhatToDo(MonsterObject *this,int route,int floater)
     }
  if (distance>F(1000))
     return DO_GOIDLE;
- return DO_RANDOMWANDER;    
+ return DO_RANDOMWANDER;
 }
 
 void normalMonster_walking(MonsterObject *this,int collide,int fflags,
@@ -410,7 +410,7 @@ void normalMonster_walking(MonsterObject *this,int collide,int fflags,
 			       (SpriteObject *)this->enemy);
 	    /* if we get here, we know we can see the player */
 	    if (getNextRand()&0x20)
-	       {/* shoot player */		       
+	       {/* shoot player */
 		setState((SpriteObject *)this,STATE_LRA);
 		this->sprite->vel.x=0;
 		this->sprite->vel.z=0;
@@ -503,7 +503,7 @@ void explodeMaskedWall(int wallNm)
      p.z=origin.z+MTH_Mul(u,v1.z)+MTH_Mul(v,v2.z);
      constructOneShot(sector,
 		      p.x,p.y,p.z,
-		      OT_GRENPOW,F(2),0,i);     
+		      OT_GRENPOW,F(2),0,i);
      constructHardBit(sector,&p,level_sequenceMap[OT_BRICK],0,i%4);
     }
  /* explode other side of wall if appilcable */

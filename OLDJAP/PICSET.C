@@ -76,4 +76,3 @@ int loadPicSet(int fd,unsigned short **palletes,
     }
  return pic;
 }
-

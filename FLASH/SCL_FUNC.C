@@ -8,7 +8,7 @@
  *
  *  AUTHOR(S):
  *	K.M
- *		
+ *
  *  MOD HISTORY:
  *	Written by K.M on 1994-06-21 Ver.1.00
  *	Updated by K.M on 1994-06-22 Ver.1.00
@@ -21,8 +21,8 @@
 
 #define SEGA_SCL_PROTO
 
-#include <sega_scl.h> 
-#include <sega_dma.h> 
+#include <sega_scl.h>
+#include <sega_dma.h>
 #include	<sgl_work.h>
 #include	<sgl.h>
 
@@ -120,9 +120,9 @@ extern	void   SCL_Rotate(Fixed32 xy,Fixed32 z,Fixed32 disp);
  * PRECONDITIONS
  *
  * POSTCONDITIONS
- * 
+ *
  * CAVEATS
- * 
+ *
  *------------------------------------------------------------------------
  */
 void SCL_Vdp2Init(void)
@@ -147,7 +147,7 @@ void SCL_Vdp2Init(void)
 
     SclRbgKtbOffset[0] = 0;
     SclRbgKtbOffset[1] = 0;
-	
+
 	/*
 	**追加 1995.11.06 C.Yoshida
 	**SclRotateTableAddressはポインタだがSCL_RotateInitが呼ばれない限り
@@ -155,7 +155,7 @@ void SCL_Vdp2Init(void)
 	**えらいことになる。
 	*/
 	SclRotateTableAddress = 0;
-	
+
     SCL_PriorityInit();
     SCL_ParametersInit();
 }
@@ -172,9 +172,9 @@ void SCL_Vdp2Init(void)
  * PRECONDITIONS
  *
  * POSTCONDITIONS
- * 
+ *
  * CAVEATS
- * 
+ *
  *------------------------------------------------------------------------
  */
 void SCL_ParametersInit(void)
@@ -235,7 +235,7 @@ void SCL_ParametersInit(void)
 	Scl_n_reg.lineaddr[1] = 0;
 	Scl_n_reg.linecolmode = 0;
 	Scl_n_reg.backcolmode = 0;
-	
+
 /*
  *	Rotate Scroll Extension Registers Area Initialization
  */
@@ -284,7 +284,7 @@ void SCL_ParametersInit(void)
  * POSTCONDITIONS
  * 			None
  * CAVEATS
- * 		
+ *
  *---------------------------------------------------------------------
  */
 void SCL_Open(Uint32 sclnum)
@@ -307,7 +307,7 @@ void SCL_Open(Uint32 sclnum)
  * POSTCONDITIONS
  * 			None
  * CAVEATS
- * 		should be used as the pair of SCL_Open		
+ * 		should be used as the pair of SCL_Open
  *---------------------------------------------------------------------
  */
 void SCL_Close(void)
@@ -330,9 +330,9 @@ void SCL_Close(void)
  * PRECONDITIONS
  *
  * POSTCONDITIONS
- * 
+ *
  * CAVEATS
- * 
+ *
  *------------------------------------------------------------------------
  */
 void SCL_MoveTo(Fixed32 x,Fixed32 y,Fixed32 z)
@@ -390,9 +390,9 @@ void SCL_MoveTo(Fixed32 x,Fixed32 y,Fixed32 z)
  * PRECONDITIONS
  *
  * POSTCONDITIONS
- * 
+ *
  * CAVEATS
- * 
+ *
  *------------------------------------------------------------------------
  */
 void SCL_Move(Fixed32 x,Fixed32 y,Fixed32 z)
@@ -449,9 +449,9 @@ void SCL_Move(Fixed32 x,Fixed32 y,Fixed32 z)
  * PRECONDITIONS
  *
  * POSTCONDITIONS
- * 
+ *
  * CAVEATS
- * 
+ *
  *------------------------------------------------------------------------
  */
 void SCL_Scale(Fixed32 Sx, Fixed32 Sy)
@@ -508,7 +508,7 @@ void SCL_Scale(Fixed32 Sx, Fixed32 Sy)
  * NAME : SCL_CopyReg
  *
  * PARAMETERS
- *	param1 - 
+ *	param1 -
  *	param2 -
  *
  * DESCRIPTION
@@ -516,7 +516,7 @@ void SCL_Scale(Fixed32 Sx, Fixed32 Sy)
  * PRECONDITIONS
  *
  * POSTCONDITIONS
- * 
+ *
  * CAVEATS
  * 		used by interrupt routine only(V_BLANK)
  *		***DON'T CALL IT DIRECTLY!***
@@ -530,19 +530,19 @@ void SCL_Scale(Fixed32 Sx, Fixed32 Sy)
 void SCL_CopyReg()
 {Uint16	i;
 
- if(SclK_TableFlag[0] && SclRbgKtbAddr[0])	
+ if(SclK_TableFlag[0] && SclRbgKtbAddr[0])
     {SCL_Memcpyw((void *)SclRbgKtbAddr[0],
 		 SclK_TableBuff[0],SclK_TableNum[0]*2);
      SclK_TableFlag[0] = 0;
     }
- if(SclK_TableFlag[1] && SclRbgKtbAddr[1])	
+ if(SclK_TableFlag[1] && SclRbgKtbAddr[1])
     {SCL_Memcpyw((void *)SclRbgKtbAddr[1],SclK_TableBuff[1],
 		 SclK_TableNum[1]*2);
      SclK_TableFlag[1] = 0;
     }
 
 #if 0 /* yoshida did this */
- switch(SclRotateTableMode)	
+ switch(SclRotateTableMode)
     {case 2:
 	SCL_Memcpyw((void *)SclRotateTableAddress,
 		    &SclRotregBuff[0],sizeof(SclRotregBuff[0])*2);
@@ -563,7 +563,7 @@ if (SclRotateTableAddress) /* if added by ezra */
     const	Uint32	p=(Uint32)SclRotateTableAddress;
     void	*const	pA=(void *)p;
     void	*const	pB=(void *)(p+0x80);
-    
+
     SCL_Memcpyw(pA,&SclRotregBuff[0],size);
     SCL_Memcpyw(pB,&SclRotregBuff[1],size);
    }
@@ -629,7 +629,7 @@ void	SCL_ScrollShow(void)
      case 7:			/* line window */
 	break;
        }
- SCL_PriIntProc(); 
+ SCL_PriIntProc();
 }
 
 
@@ -675,8 +675,8 @@ void  SCL_SetColRamMode(Uint32 ComRamMode)
 
 
 /***************************************************************
- *	Priority Interrupt Routine 
- *      この関数はVB interval の割り込み関数から呼ばれる 
+ *	Priority Interrupt Routine
+ *      この関数はVB interval の割り込み関数から呼ばれる
  ***************************************************************/
 void  SCL_PriIntProc(void)
 {
@@ -785,14 +785,14 @@ void SCL_Vdp2_SGLInit(Uint16 tvmod)
     SclPriBuffDirty.SclSpColMix = 1;
 
 	/* スプライトプライオリティ	*/
-    SCL_SET_S0PRIN(7); 
-    SCL_SET_S1PRIN(7); 
-    SCL_SET_S2PRIN(7); 
-    SCL_SET_S3PRIN(7); 
-    SCL_SET_S4PRIN(7); 
-    SCL_SET_S5PRIN(7); 
-    SCL_SET_S6PRIN(7); 
-    SCL_SET_S7PRIN(7); 
+    SCL_SET_S0PRIN(7);
+    SCL_SET_S1PRIN(7);
+    SCL_SET_S2PRIN(7);
+    SCL_SET_S3PRIN(7);
+    SCL_SET_S4PRIN(7);
+    SCL_SET_S5PRIN(7);
+    SCL_SET_S6PRIN(7);
+    SCL_SET_S7PRIN(7);
     SclPriBuffDirty.SclSpPriNum = 1;
 
 	/* スプライトコントロール	*/

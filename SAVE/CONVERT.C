@@ -15,25 +15,25 @@
 enum
 {
 	PLAYER_TYPE=0,
-	ANUBIS_TYPE, 
-	BASTET_TYPE, 
-	HAWK_TYPE, 
-	QUEEN_TYPE, 
+	ANUBIS_TYPE,
+	BASTET_TYPE,
+	HAWK_TYPE,
+	QUEEN_TYPE,
 	MANTIS_TYPE, MAGMANTIS_TYPE=MANTIS_TYPE,
-	MUMMY_TYPE, 
-	OMENWASP_TYPE, WASP_TYPE=OMENWASP_TYPE, 
+	MUMMY_TYPE,
+	OMENWASP_TYPE, WASP_TYPE=OMENWASP_TYPE,
 	PIRHANA_TYPE, PIRANHA_TYPE=PIRHANA_TYPE,
-	SELKIS_TYPE, 
-	SENTRY_TYPE, 
-	SET_TYPE, 
-	SPIDER_TYPE, 
+	SELKIS_TYPE,
+	SENTRY_TYPE,
+	SET_TYPE,
+	SPIDER_TYPE,
 	SPINEYBALL_TYPE,
 	ITEM_TYPE,
-	TORCH_TYPE, 
+	TORCH_TYPE,
 	PART_TYPE,
 	ONCE_TYPE,
 	FIREBALL_TYPE,
-	SENTRYBALL_TYPE, 
+	SENTRYBALL_TYPE,
 	COBRABALL_TYPE,
 	FLAMEBALL_TYPE,
 	ORB_TYPE,
@@ -163,7 +163,7 @@ enum
 
 	DOOR_TYPE,
 	LIFT_TYPE,
-	MAX_TYPES 
+	MAX_TYPES
 };
 
 void addPB(void);
@@ -230,7 +230,7 @@ int nmWaveFace;
 short outSequenceMap[OT_NMTYPES];
 short outSoundMap[OT_NMTYPES];
 
-struct 
+struct
 {int isPB,isInternal;
  int floorClearance,thickness;
 } pbList[MAXNMSECTORS];
@@ -339,7 +339,7 @@ void loadLightMap(char *filename)
     {/* light map does not exist, use random light */
      printf("Light map %s does not exist, using random light\n",filename);
      for (i=0;i<vertexcount;i++)
-	vertexLight[i]=outLight[i]=80;/*rand()&0x7f*/; 
+	vertexLight[i]=outLight[i]=80;/*rand()&0x7f*/;
      return;
     }
  printf("Reading light info from %s\n",filename);
@@ -365,7 +365,7 @@ struct jeffMonsterRec
 short nmJeffMonsters;
 
 
-struct 
+struct
 {short jeff,me;
 } jeffMonsterMap[]=
 {
@@ -464,7 +464,7 @@ struct
  {KBANG_TYPE,OT_CONTAIN16},
  {CBANG_TYPE,OT_CONTAIN17},
  {POT1_TYPE,OT_BOOMPOT1},
- {POT2_TYPE,OT_BOOMPOT2}, 
+ {POT2_TYPE,OT_BOOMPOT2},
  {PYRAMID_TYPE,OT_PYRAMID},
  {VESSEL1_TYPE,OT_BLOODBOWL},
  {VESSEL2_TYPE,OT_BLOODBOWL},
@@ -526,7 +526,7 @@ char *translateWallTileNm(int n)
     {if (!yell)
 	{printf("Warning: wall tile out of range\n");
 	 yell=1;
-	}     
+	}
      return wallTileMap[0];
     }
  return wallTileMap[n];
@@ -565,7 +565,7 @@ void loadWallTileMap(char *filename)
       useCount[face[i].tile]++;
      }
  }
- 
+
  ifile=fopen(filename,"rb");
  if (!ifile)
     {printf("Can't read tile map file %s.\n",filename);
@@ -804,7 +804,7 @@ void clearTileWithRim(int sx,int sy,int width,int height)
     {if (sy-1<0 || picdata[sy-1][x]==255)
 	picdata[sy][x]=255;
      if (sy+height>=picHeight || picdata[sy+height][x]==255)
-	picdata[sy+height-1][x]=255;     
+	picdata[sy+height-1][x]=255;
     }
 
  for (y=sy;y<sy+height;y++)
@@ -816,7 +816,7 @@ void clearTileWithRim(int sx,int sy,int width,int height)
 
  /* do corners */
  {int ok,xc,yc;
- 
+
   /* tl */
   ok=1;
   xc=sx; yc=sy;
@@ -861,7 +861,7 @@ void clearTileWithRim(int sx,int sy,int width,int height)
 	}
   if (ok)
      picdata[yc][xc]=255;
-  
+
   /* bl */
   ok=1;
   xc=sx; yc=sy+picHeight-1;
@@ -909,7 +909,7 @@ int doSmartDecomp(TileInfo *tile,int tweek,int bestSoFar)
 	      {x=0;
 	       first=0;
 	      }
-	   
+
 	   tile->subx[n]=x;
 	   tile->suby[n]=y;
 
@@ -924,7 +924,7 @@ int doSmartDecomp(TileInfo *tile,int tweek,int bestSoFar)
     {int i;
      printf("Tile: %s\n",tile->filename);
      for (i=0;i<n;i++)
-	printf(" (%d,%d)\n",tile->subx[i],tile->suby[i]);     
+	printf(" (%d,%d)\n",tile->subx[i],tile->suby[i]);
     }
  tile->nmSubTiles=n;
  return n;
@@ -933,7 +933,7 @@ int doSmartDecomp(TileInfo *tile,int tweek,int bestSoFar)
 void computeSubTiles(TileInfo *tile)
 {int best,bestMethod,i;
  bestMethod=0;
- best=doStupidDecomp(tile); 
+ best=doStupidDecomp(tile);
  if (tile->width<=64 && tile->height<=64)
     return;
  i=doSmartDecomp(tile,0,best);
@@ -1077,13 +1077,13 @@ int writeRLE(unsigned char *input,int inputSize,FILE *ofile)
     {/* output block of blank space */
      for (size=0;size<255 && pos+size<inputSize && input[pos+size]==0;size++) ;
      if (ofile)
-	fputc(size,ofile); 
+	fputc(size,ofile);
      nmWritten++;
      pos+=size;
      /* output block of nonblank space */
      for (size=0;size<255 && pos+size<inputSize && input[pos+size]!=0;size++) ;
      if (ofile)
-	fputc(size,ofile); 
+	fputc(size,ofile);
      nmWritten++;
      if (ofile)
 	for (i=0;i<size;i++)
@@ -1153,7 +1153,7 @@ int writeTile(int tileNm)
        if (x>=picWidth || y>=picHeight)
 	  picdata[y][x]=255;
 
- if (picWidth<=32 && picHeight<=32 && 
+ if (picWidth<=32 && picHeight<=32 &&
      (tiles[tileNm].flags & TILEFLAG_16BPP))
     {tiles[tileNm].flags&=~TILEFLAG_64x64;
      tiles[tileNm].flags|=TILEFLAG_32x32;
@@ -1241,7 +1241,7 @@ void getInVert(int v,fVert *out)
  assert(v<vertexcount);
  out->x=(vertex[v].x<<15)/65536.0;
  out->y=(vertex[v].z<<15)/65536.0;
- out->z=(vertex[v].y<<15)/65536.0; 
+ out->z=(vertex[v].y<<15)/65536.0;
 }
 
 void getVertex(cVertexType *v,fVert *out)
@@ -1257,7 +1257,7 @@ int addFace(facetype *face,int sector,int wallFirstVertex)
  outFace[nmFaces].v[2]=addVertex(face->v2)-wallFirstVertex;
  outFace[nmFaces].v[3]=addVertex(face->v3)-wallFirstVertex;
  outFace[nmFaces].tile=face->tile;
- 
+
  {fVert v[5];
   int i;
 #if 0
@@ -1278,11 +1278,11 @@ int addFace(facetype *face,int sector,int wallFirstVertex)
 	  /* exit(0);*/
 	  return nmFaces;
 	 }
-     
+
      }
 #endif
  }
-	     
+
  addTile(translateWallTileNm(face->tile),
 	 TILEFLAG_64x64|TILEFLAG_16BPP|TILEFLAG_PALLETE);
  return nmFaces++;
@@ -1301,16 +1301,16 @@ int wallIsRect(walltype *wall,
      out->z=origin.z+length.z*x+height.z*y;
     }
  double distance(fVert *one,fVert *two)
-    {return 
+    {return
 	(one->x-two->x)*(one->x-two->x)+
 	(one->y-two->y)*(one->y-two->y)+
-	(one->z-two->z)*(one->z-two->z);	
+	(one->z-two->z)*(one->z-two->z);
     }
 
  if (wall->firstface<0)
     /* boundry wall */
     return 0;
-     
+
  /* see if there are the right number of faces */
  if (wall->lastface-wall->firstface+1!=tileHeight*tileLength)
     {/*printf("wrong # of faces.\n");*/
@@ -1334,7 +1334,7 @@ int wallIsRect(walltype *wall,
      fVert v1,v2;
      x=c % (tileLength);
      y=c / (tileLength);
-     
+
      grid(x,y,&v1);
      getInVert(face[f].v0,&v2);
      if (distance(&v1,&v2)>2.0)
@@ -1418,7 +1418,7 @@ int computeLightValue(int oldVertex,int oldWall)
 	 face[f].v3==oldVertex)
 	{vertexValue+=tiles[brewTileToOurTile[face[f].tile]].value;
 	 nmAdjacentFaces++;
-	}	 
+	}
     }
  assert(nmAdjacentFaces>0);
  vertexValue=vertexValue/nmAdjacentFaces;
@@ -1466,12 +1466,12 @@ int mapRectWall(walltype *wall,
      out->z=origin.z+length.z*x+height.z*y;
     }
  double distance(fVert *one,fVert *two)
-    {return 
+    {return
 	(one->x-two->x)*(one->x-two->x)+
 	(one->y-two->y)*(one->y-two->y)+
-	(one->z-two->z)*(one->z-two->z);	
+	(one->z-two->z)*(one->z-two->z);
     }
- 
+
  double map(fVert *v,int *l,int *h)
     /* returns distance from closest grid point */
     {int x,y;
@@ -1495,7 +1495,7 @@ int mapRectWall(walltype *wall,
  if (wall->firstface<0)
     /* boundry wall */
     return 0;
-     
+
  /* see if there are the right number of faces */
  if (wall->lastface-wall->firstface+1!=tileHeight*tileLength)
     {/*printf("wrong # of faces.\n");*/
@@ -1518,7 +1518,7 @@ int mapRectWall(walltype *wall,
 	wallTileFlip[y][x]=0;
 	wallVertMap[y][x]=-1;
        }
- 
+
  for (f=wall->firstface,c=0;
       f<=wall->lastface;
       f++,c++)
@@ -1547,7 +1547,7 @@ int mapRectWall(walltype *wall,
 	    bx=l[i];
 	}
      for (i=0;i<4;i++)
-	p[i]=-1;      
+	p[i]=-1;
      for (i=0;i<4;i++)
 	{slot=-1;
 	 if (h[i]-by==0 && l[i]-bx==0)
@@ -1562,7 +1562,7 @@ int mapRectWall(walltype *wall,
 	    return 0;
 	 if (p[slot]!=-1)
 	    return 0;
-	 p[slot]=i;	  
+	 p[slot]=i;
 	}
      /* match pattern in p to pattern list */
      for (j=0;j<8;j++)
@@ -1576,7 +1576,7 @@ int mapRectWall(walltype *wall,
 	return 0;
      if (wallFaceMap[by][bx]!=-1)
 	return 0;
-     
+
      if (wallVertMap[h[0]][l[0]]==-1)
 	wallVertMap[h[0]][l[0]]=face[f].v0;
      else
@@ -1602,7 +1602,7 @@ int mapRectWall(walltype *wall,
     }
 
  for (y=0;y<tileHeight;y++)
-    for (x=0;x<tileLength;x++) 
+    for (x=0;x<tileLength;x++)
        assert(wallVertMap[y][x]!=-1);
 
  return 1;
@@ -1627,13 +1627,13 @@ int addWall(walltype *wall,int sectorNm,int wallNm)
      pbList[wall->nextsector].isInternal)
     outWalls[nmWalls].flags|=WALLFLAG_NOTONCONVEXHULL;
 #endif
-        
+
  if (wall->firstface==-1)
     outWalls[nmWalls].flags|=WALLFLAG_INVISIBLE;
 
  if (wall->nextsector==-1 || wall->isblocked)
     outWalls[nmWalls].flags|=WALLFLAG_BLOCKED;
- 
+
  /* find tile length and tile height of wall and decide if its a rectangle*/
  {fVert v0,v1,v2,v3;
   double len;
@@ -1674,9 +1674,9 @@ int addWall(walltype *wall,int sectorNm,int wallNm)
      assert(0);
      rectangle=1; /* fix broken doors */
     }
- 
+
  if (elevTags[wallNm].wallIsElevatorWall)
-    {rectangle=1;     
+    {rectangle=1;
      outWalls[nmWalls].tileHeight=
 	(elevTags[wallNm].approxElevHeight+TILESIZE/2)/TILESIZE;
      if (outWalls[nmWalls].tileHeight<=0)
@@ -1699,7 +1699,7 @@ int addWall(walltype *wall,int sectorNm,int wallNm)
     rectangle=0; /* water surface */
 
  /* find parallax walls */
- if (wall->firstface>=0 && 
+ if (wall->firstface>=0 &&
      !stricmp(translateWallTileNm(face[wall->firstface].tile),
 	      "1default\\def2_c.bmp"))
     {/* parallax face */
@@ -1767,7 +1767,7 @@ int addWall(walltype *wall,int sectorNm,int wallNm)
 	     outLight[nmLight++]=computeLightValue(wallVertMap[h][w],wallNm);
 	    }
 #endif
-      
+
 
       for (h=0;h<height;h++)
 	 for (w=0;w<width;w++)
@@ -1811,20 +1811,20 @@ int addWall(walltype *wall,int sectorNm,int wallNm)
 	     outWalls[nmWalls].v[1],
 	     outWalls[nmWalls].v[2],
 	     outWalls[nmWalls].v[3]);
-	     
+
       printf("Vertexes:%d %d %d %d\n",
 	     reverseMapVertex(outWalls[nmWalls].v[0]),
 	     reverseMapVertex(outWalls[nmWalls].v[1]),
 	     reverseMapVertex(outWalls[nmWalls].v[2]),
 	     reverseMapVertex(outWalls[nmWalls].v[3]));
-						       
+
       printVert(v[0]);
       printVert(v[1]);
       printVert(v[2]);
-      printVert(v[3]);      
+      printVert(v[3]);
       return nmWalls;
      }
-	     
+
   assert(f>0.000001);
   n.x/=f; n.y/=f; n.z/=f;
   P.x=(v[0].x+v[1].x+v[2].x+v[3].x)/4;
@@ -1836,7 +1836,7 @@ int addWall(walltype *wall,int sectorNm,int wallNm)
   outWalls[nmWalls].normal[2]=n.z*65536.0;
   outWalls[nmWalls].d=d*65536.0;
  }
- if (outWalls[nmWalls].nextSector!=-1 && 
+ if (outWalls[nmWalls].nextSector!=-1 &&
      outWalls[nmWalls].normal[1]!=0)
     outWalls[nmWalls].flags&=~WALLFLAG_INVISIBLE;
 
@@ -1859,7 +1859,7 @@ int addWall(walltype *wall,int sectorNm,int wallNm)
 	 if (type!=-1)
 	    {object_addObject(type);
 	     object_addShort(sectorNm);
-	     object_addShort(nmWalls);	     
+	     object_addShort(nmWalls);
 	     /* tile's center */
 	     {int x,y,z;
 	      findFaceCenter(i,&x,&y,&z);
@@ -1870,7 +1870,7 @@ int addWall(walltype *wall,int sectorNm,int wallNm)
 	     /* add normal */
 	     object_addInt(outWalls[nmWalls].normal[0]);
 	     object_addInt(outWalls[nmWalls].normal[1]);
-	     object_addInt(outWalls[nmWalls].normal[2]);	      
+	     object_addInt(outWalls[nmWalls].normal[2]);
 	     continue;
 	    }
 	 if (wallTileType[face[i].tile]==WT_SW1)
@@ -1884,7 +1884,7 @@ int addWall(walltype *wall,int sectorNm,int wallNm)
 	 if (type!=-1)
 	    {printf("Found switch on wall %d\n",nmWalls);
 	     object_addObject(type);
-	     object_addShort(sectorNm);	     
+	     object_addShort(sectorNm);
 	     if (sectorprops[sectorNm].type==SR_SPECIAL_ROLE_11)
 		object_addShort(sectorprops[sectorNm].index); /* channel */
 	     else
@@ -1899,7 +1899,7 @@ int addWall(walltype *wall,int sectorNm,int wallNm)
 	    }
 	}
     }
- 
+
  return nmWalls++;
 }
 
@@ -1933,7 +1933,7 @@ void addSector(sectortype *s,int sNm)
  /* find sector's floor level */
  {int level;
   int w,v,n;
-  level=0; 
+  level=0;
   n=0;
   for (w=outSector[nmSectors].firstWall;w<=outSector[nmSectors].lastWall;w++)
      {if (outWalls[w].normal[1]<=0)
@@ -1976,16 +1976,16 @@ void addSector(sectortype *s,int sNm)
      assert(w<=outSector[nmSectors].lastWall);
      for (i=0;i<4;i++)
 	p[i+4][1]=outVert[outWalls[w].v[0]].y;
-     
+
 
      /* add walls */
-     
-	 
-	 
+
+
+
     }
- 
+
 #endif
-  
+
  nmSectors++;
 }
 
@@ -2129,7 +2129,7 @@ void checkForConcaveSectors(void)
      if (sectorprops[sec].type>=SR_DOORWAY_STYLE_1 &&
 	 sectorprops[sec].type<=SR_LIFT_SHAFT_STYLE_20)
 	continue;
-	 
+
      for (wall=s->firstWall;wall<=s->lastWall;wall++)
 	{/* if any verticies in sector s are on the back face of wall
 	    w then the sector is not convex */
@@ -2230,7 +2230,7 @@ int testWall(sWallType *testWall,int sector)
 int wallUsedForCut[MAXNMWALLS];
 
 int findCutWall(int s1,int s2,int i1,int i2)
-{int w; 
+{int w;
  /* check walls that are already used for cut planes */
  if (s1==s2)
     return 0;
@@ -2280,7 +2280,7 @@ int findCutWall(int s1,int s2,int i1,int i2)
 	 return 0x80|(w-outSector[s2].firstWall);
 	}
     }
- printf("Warning: no cut plane for sectors %d and %d.\n",s1,s2); 
+ printf("Warning: no cut plane for sectors %d and %d.\n",s1,s2);
  return 0;
 }
 
@@ -2345,7 +2345,7 @@ void printSectorsWaterNodes(int s)
  printf("Sector %d:\n",s);
  for (w=outSector[s].firstWall;
       w<=outSector[s].lastWall;w++)
-    if (outWalls[w].nextSector!=-1 && abs(outWalls[w].normal[1])==F(1)) 
+    if (outWalls[w].nextSector!=-1 && abs(outWalls[w].normal[1])==F(1))
        {int wface=(int)outWalls[w].object;
 	int v;
 	for (v=0;v<4;v++)
@@ -2357,7 +2357,7 @@ void printSectorsWaterNodes(int s)
 		   break;
 		printf("%d ",outWaveVert[wvert].connect[j]);
 	       }
-	    printf("\n");	
+	    printf("\n");
 	   }
        }
 }
@@ -2386,7 +2386,7 @@ void setBlockingBits(void)
 	    assert(!(outWalls[w].flags & WALLFLAG_PARALLELOGRAM));
 	   }
        }
- 
+
  /* mark water boundries */
  for (s=0;s<nmSectors;s++)
     for (w=outSector[s].firstWall;w<=outSector[s].lastWall;w++)
@@ -2423,10 +2423,10 @@ void setBlockingBits(void)
 	     miny=v.y;
 	 }
       if (maxy-miny<90.0 && maxy-miny>1.0)
-	 outWalls[w].flags|=WALLFLAG_SHORTOPENING;     
+	 outWalls[w].flags|=WALLFLAG_SHORTOPENING;
      }
     }
- 
+
  /* mark cliff boundries */
  for (s=0;s<nmSectors;s++)
     for (w=outSector[s].firstWall;w<=outSector[s].lastWall;w++)
@@ -2443,12 +2443,12 @@ void setBlockingBits(void)
 
 void initWater(void)
 {int w,s,c,i,w1,s1,w2,j;
- /* we will only track the top surface of the water, the 
+ /* we will only track the top surface of the water, the
     bottom surface will be the top's mirror image */
  nmWaveFace=0;
  /* assign waveFaces to water faces */
  for (w=0;w<nmWalls;w++)
-    if (outWalls[w].nextSector!=-1 && 
+    if (outWalls[w].nextSector!=-1 &&
 	outWalls[w].normal[1]==F(1))
        {for (i=0;i<4;i++)
 	   outWaveFace[nmWaveFace].connect[i]=-1;
@@ -2462,7 +2462,7 @@ void initWater(void)
     for (w=outSector[s].firstWall;
 	 w<=outSector[s].lastWall;w++)
        if (outWalls[w].nextSector!=-1 && outWalls[w].normal[1]==F(1))
-	  /* if there is a water surface in that sector */	  
+	  /* if there is a water surface in that sector */
 	  {for (w1=outSector[s].firstWall;
 		w1<=outSector[s].lastWall;w1++)
 	      if (outWalls[w1].nextSector!=-1 && outWalls[w1].normal[1]==0)
@@ -2470,7 +2470,7 @@ void initWater(void)
 		  /* ... then for each ajoining sector */
 		  for (w2=outSector[s1].firstWall;
 		       w2<=outSector[s1].lastWall;w2++)
-		     if (outWalls[w2].nextSector!=-1 && 
+		     if (outWalls[w2].nextSector!=-1 &&
 			 outWalls[w2].normal[1]==F(1))
 			/* any water surface in that sector */
 			{/* w=the surface under consideration &
@@ -2524,7 +2524,7 @@ void initWater(void)
 		       break;
 		 if (g<4 && outWaveVert[i].connect[g]==-1)
 		    outWaveVert[i].connect[g]=z;
-		 
+
 		 w=p+1;
 		 if (w>3)
 		    w=0;
@@ -2534,7 +2534,7 @@ void initWater(void)
 			outWaveVert[i].connect[g]==-1)
 		       break;
 		 if (g<4 && outWaveVert[i].connect[g]==-1)
-		    outWaveVert[i].connect[g]=z;		 
+		    outWaveVert[i].connect[g]=z;
 		}
 	    }
 	}
@@ -2546,7 +2546,7 @@ void initWater(void)
     for (w=outSector[s].firstWall;
 	 w<=outSector[s].lastWall;w++)
        if (outWalls[w].nextSector!=-1 && outWalls[w].normal[1]==F(1))
-	  /* if there is a water surface in that sector */	  
+	  /* if there is a water surface in that sector */
 	  {s1=outWalls[w].nextSector;
 	   /***************** temp auto tagging for water *****************/
 	   /* outSector[s1].flags|=SECFLAG_WATER; */
@@ -2555,7 +2555,7 @@ void initWater(void)
 	      {/* find the underside of the surface */
 	       if (outWalls[w2].nextSector==s)
 		  {int i1,i2;
-		   outWalls[w2].object=(void *)nmWaveFace;		   
+		   outWalls[w2].object=(void *)nmWaveFace;
 		   for (i2=0;i2<4;i2++)
 		      for (i1=0;i1<4;i1++)
 			 {if (outVert[outWalls[w].v[i1]].x==
@@ -2600,7 +2600,7 @@ void initWater(void)
 		}
 	 }
      }
-  while (!done);      
+  while (!done);
  }
 }
 
@@ -2608,16 +2608,16 @@ void object_addInt(int s)
 {outObjectParams[nmObjectParams++]=(s>>24)&0xff;
  outObjectParams[nmObjectParams++]=(s>>16)&0xff;
  outObjectParams[nmObjectParams++]=(s>>8)&0xff;
- outObjectParams[nmObjectParams++]=(s)&0xff; 
+ outObjectParams[nmObjectParams++]=(s)&0xff;
 }
 
 void object_addShort(int s)
 {outObjectParams[nmObjectParams++]=(s>>8)&0xff;
- outObjectParams[nmObjectParams++]=(s)&0xff; 
+ outObjectParams[nmObjectParams++]=(s)&0xff;
 }
 
 void object_addChar(int s)
-{outObjectParams[nmObjectParams++]=(s)&0xff; 
+{outObjectParams[nmObjectParams++]=(s)&0xff;
 }
 
 void object_addObject(int type)
@@ -2692,7 +2692,7 @@ void addExtraObjects(void)
      {OT_TELEPSECTOR,"teleport"},
      {OT_TELEPRETURN,"teleportReturn"},
      {OT_DEAD,""}};
- 
+
  int args[5];
  int i,nmArgs;
  if (!extraFile)
@@ -2705,7 +2705,7 @@ void addExtraObjects(void)
      fgets(buff,160,extraFile);
      name[0]=0;
      nmArgs=sscanf(buff,"%s %d %d %d %d %d",name,args,args+1,args+2,args+3,
-		   args+4);     
+		   args+4);
      if (nmArgs==EOF)
 	return;
      if (name[0]==0)
@@ -2740,9 +2740,9 @@ void addExtraObjects(void)
      object_addShort(args[0]);
      object_addShort(outSector[args[0]].center[0]);
      object_addShort(outSector[args[0]].center[1]);
-     object_addShort(outSector[args[0]].center[2]);     
+     object_addShort(outSector[args[0]].center[2]);
      object_addShort(0);
-    }     
+    }
 }
 
 int pointIsInSector(fVert *p,int s)
@@ -2774,7 +2774,7 @@ void addJeffObjects(void)
      if (jeffMonster[i].type==-2)
 	continue;
      for (type=0;
-	  jeffMonsterMap[type].jeff!=-1 && 
+	  jeffMonsterMap[type].jeff!=-1 &&
 	  jeffMonsterMap[type].jeff!=jeffMonster[i].type;
 	  type++) ;
      if (jeffMonsterMap[type].jeff==-1)
@@ -2802,7 +2802,7 @@ void addJeffObjects(void)
 	     }
 	 } */
      }
-     if (levelHasRamses && (jeffMonsterMap[type].me==OT_MUMMY || 
+     if (levelHasRamses && (jeffMonsterMap[type].me==OT_MUMMY ||
 			    jeffMonsterMap[type].me==OT_TORCH19))
 	{if (jeffMonsterMap[type].me==OT_MUMMY)
 	    ram_homeSector=sec;
@@ -2820,7 +2820,7 @@ void addJeffObjects(void)
      object_addShort(jeffMonster[i].x>>1);
      object_addShort(jeffMonster[i].z>>1);
      object_addShort(jeffMonster[i].y>>1);
-     object_addShort(jeffMonster[i].a);     
+     object_addShort(jeffMonster[i].a);
     }
 }
 
@@ -2860,7 +2860,7 @@ int convertLevel(void)
     }
 #endif
  addJeffObjects();
- addExtraObjects(); 
+ addExtraObjects();
  /* hack to make all boundries into force fields */
 #if 0
  for (w=0;w<nmWalls;w++)
@@ -2886,7 +2886,7 @@ int convertLevel(void)
  checkForIntersectingSectors();
 #endif
  printf("Finding cut planes.\n");
- findCutPlanes(); 
+ findCutPlanes();
  printf("Done.\n");
 
  printf("Concave\n");
@@ -3137,9 +3137,9 @@ void makeBobbingBlock(int s)
 	 sectorprops[i].type!=SR_SPECIAL_ROLE_7 &&
 	 sectorprops[i].type!=SR_SPECIAL_ROLE_8 &&
 	 sectorprops[i].type!=SR_SPECIAL_ROLE_9 &&
-	 sectorprops[i].type!=SR_SPECIAL_ROLE_20)	 
+	 sectorprops[i].type!=SR_SPECIAL_ROLE_20)
 	continue;
- 
+
      x=(outSector[s].center[0]-outSector[i].center[0]);
      x=x*x;
      z=(outSector[s].center[2]-outSector[i].center[2]);
@@ -3191,7 +3191,7 @@ void makeBobbingBlock(int s)
       if (outWalls[w].nextSector!=-1)
 	 {outPBVertex[nmPBVert].vStart=outWalls[w].v[0];
 	  outPBVertex[nmPBVert].vNm=2;
-	  outPBVertex[nmPBVert++].flags=0;	 
+	  outPBVertex[nmPBVert++].flags=0;
 	 }
      }
  if (sectorprops[mate].type==SR_SPECIAL_ROLE_8)
@@ -3207,7 +3207,7 @@ void makeBobbingBlock(int s)
       if (outWalls[w].nextSector!=-1)
 	 {outPBVertex[nmPBVert].vStart=outWalls[w].v[2];
 	  outPBVertex[nmPBVert].vNm=2;
-	  outPBVertex[nmPBVert++].flags=0;	 
+	  outPBVertex[nmPBVert++].flags=0;
 	 }
      }
  }
@@ -3219,7 +3219,7 @@ void makeBobbingBlock(int s)
 	    {yes=w;
 	     outPBVertex[nmPBVert].vStart=outWalls[w].v[2];
 	     outPBVertex[nmPBVert].vNm=2;
-	     outPBVertex[nmPBVert++].flags=0;	 
+	     outPBVertex[nmPBVert++].flags=0;
 	    }
 	 if (outWalls[w].nextSector==mate)
 	    {yes=w;
@@ -3227,7 +3227,7 @@ void makeBobbingBlock(int s)
 	     outPBVertex[nmPBVert].vNm=2;
 	     outPBVertex[nmPBVert++].flags=0;
 	    }
-	}     
+	}
      if (yes!=-1)
 	{w=yes;
 	 for (w1=outSector[s1].firstWall;w1<=outSector[s1].lastWall;w1++)
@@ -3237,7 +3237,7 @@ void makeBobbingBlock(int s)
 		outWalls[w1].normal[2]==outWalls[w].normal[2] &&
 		outVert[outWalls[w1].v[0]].x==outVert[outWalls[w].v[0]].x &&
 		outVert[outWalls[w1].v[0]].z==outVert[outWalls[w].v[0]].z)
-	       addPBWall(w1);		
+	       addPBWall(w1);
 	}
     }
  outPBs[nmPBs].endVertex=nmPBVert-1;
@@ -3302,7 +3302,7 @@ void makeDoorWay(int s,int type)
 		  outVert[outWalls[w1].v[0]].x==outVert[outWalls[w].v[0]].x &&
 		  outVert[outWalls[w1].v[0]].y>outVert[outWalls[w].v[3]].y &&
 		  outVert[outWalls[w1].v[0]].z==outVert[outWalls[w].v[0]].z)
-		 addPBWall(w1);		
+		 addPBWall(w1);
 	  }
  outPBs[nmPBs].endVertex=nmPBVert-1;
  outPBs[nmPBs].endWall=nmPBWalls-1;
@@ -3368,7 +3368,7 @@ void makeElevator(int s)
 	  upperFloorLevel=outVert[outWalls[w].v[0]].y;
 if (sectorprops[s].type==SR_LIFT_SHAFT_STYLE_3)
    upperFloorLevel=lowerFloorLevel+F(4);
-    
+
  object_addShort(lowerFloorLevel>>16);
  object_addShort(upperFloorLevel>>16);
 
@@ -3384,7 +3384,7 @@ if (sectorprops[s].type==SR_LIFT_SHAFT_STYLE_3)
 	object_addShort(-1);
 	break;
        }
- 
+
  /* add floor */
  for (w=outSector[s].firstWall;w<=outSector[s].lastWall;w++)
     if (outWalls[w].normal[1]>0)
@@ -3399,14 +3399,14 @@ if (sectorprops[s].type==SR_LIFT_SHAFT_STYLE_3)
        }
  /* add out red walls */
  for (w=outSector[s].firstWall;w<=outSector[s].lastWall;w++)
-    if (outWalls[w].nextSector!=-1 && 
+    if (outWalls[w].nextSector!=-1 &&
 	outVert[outWalls[w].v[2]].y==lowerFloorLevel)
        {outPBVertex[nmPBVert].vStart=outWalls[w].v[2];
 	outPBVertex[nmPBVert].vNm=2;
 	outPBVertex[nmPBVert++].flags=0;
 
 	outVert[outWalls[w].v[2]].y=upperFloorLevel;
-	outVert[outWalls[w].v[3]].y=upperFloorLevel;	
+	outVert[outWalls[w].v[3]].y=upperFloorLevel;
        }
  /* add in red walls & walls that belong to other sectors */
  for (s1=0;s1<nmSectors;s1++)
@@ -3736,7 +3736,7 @@ int loadSequenceSet(char *filename,int bpp16)
 	}
      *p=0;
     }
- 
+
  fread(&nmSeq,2,1,ifile);
  assert(nmSeq<MAXNMTHINGS);
  fread(sequenceIndex,nmSeq,2,ifile);
@@ -3798,7 +3798,7 @@ int loadSequenceSet(char *filename,int bpp16)
 	 frameSize=frameList[i+1]-frameList[i];
       else
 	 frameSize=nmChnk-frameList[i];
-      
+
       for (c=frameList[i];c<frameList[i]+frameSize;c++)
 	 {ti=tiles+tileMap[chunkPic[c]];
 	  for (s=0;s<ti->nmSubTiles;s++)
@@ -3873,7 +3873,7 @@ int loadSequences(void)
    {"switches\\0282.bmp","switches\\swc2.seq",OT_SW2},
    {"switches\\0285.bmp","switches\\swc3.seq",OT_SW3},
    {"switches\\0295.bmp","switches\\swc4.seq",OT_SW4},
-   
+
    {NULL,NULL,0}
   };
   for (i=0;i<nmWallTileMaps;i++)
@@ -3883,7 +3883,7 @@ int loadSequences(void)
 		loadSequenceSet(animMap[j].seqName,1);
 	 }
      }
-  
+
  }
  if (levelHasWater)
     {outSequenceMap[OT_BUBBLES]=loadSequenceSet("bubls.seq",0);
@@ -3901,7 +3901,7 @@ int loadSequences(void)
  outSequenceMap[OT_LANDGUTS]=loadSequenceSet("gutss1.seq",0);
  outSequenceMap[OT_AIRGUTS]=loadSequenceSet("gutss2.seq",0);
  outSequenceMap[OT_BLUEZORCH]=loadSequenceSet("blue.seq",0);
- outSequenceMap[OT_REDZORCH]=loadSequenceSet("red.seq",0); 
+ outSequenceMap[OT_REDZORCH]=loadSequenceSet("red.seq",0);
  outSequenceMap[OT_GRENPOW]=loadSequenceSet("grenpoww.seq",0);
 
  outSequenceMap[OT_AMMOBALL]=loadSequenceSet("ammo.seq",0);
@@ -3948,7 +3948,7 @@ int loadSequences(void)
 	    break;
 	 case OT_MUMMY:
 	    outSequenceMap[OT_MUMMY]=loadSequenceSet("mummyy.seq",0);
-	    outSoundMap[outObjects[o].type]=nmSounds;	    
+	    outSoundMap[outObjects[o].type]=nmSounds;
 	    addSound("m-deth3.wav");
 	    outSequenceMap[OT_MUMBALL]=loadSequenceSet("projmumm.seq",0);
 	    break;
@@ -4131,7 +4131,7 @@ int loadSequences(void)
 	 case OT_BOOMPOT2:
 	    outSequenceMap[OT_BOOMPOT2]=
 	       loadSequenceSet("torches\\snkpot1.seq",0);
-	    break;	    
+	    break;
 	 case OT_TORCH1:
 	    outSequenceMap[OT_TORCH1]=
 	       loadSequenceSet("torches\\bowl.seq",0);
@@ -4283,108 +4283,108 @@ int loadSequences(void)
 	 case OT_TORCH38:
 	    outSequenceMap[OT_TORCH38]=
 	       loadSequenceSet("torches\\wtrlite.seq",0);
-	    break;	    
-	    
+	    break;
+
 	 case OT_CONTAIN1:
 	    outSequenceMap[OT_CONTAIN1]=
 	       loadSequenceSet("explode\\tomb1.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN2:
 	    outSequenceMap[OT_CONTAIN2]=
 	       loadSequenceSet("explode\\tbang.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN3:
 	    outSequenceMap[OT_CONTAIN3]=
 	       loadSequenceSet("explode\\blow3.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN4:
 	    outSequenceMap[OT_CONTAIN4]=
 	       loadSequenceSet("explode\\blow8.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN5:
 	    outSequenceMap[OT_CONTAIN5]=
 	       loadSequenceSet("explode\\sbang.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN6:
 	    outSequenceMap[OT_CONTAIN6]=
 	       loadSequenceSet("explode\\blow1.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN7:
 	    outSequenceMap[OT_CONTAIN7]=
 	       loadSequenceSet("explode\\blow7.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN8:
 	    outSequenceMap[OT_CONTAIN8]=
 	       loadSequenceSet("explode\\vas.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN9:
 	    outSequenceMap[OT_CONTAIN9]=
 	       loadSequenceSet("explode\\pbang.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN10:
 	    outSequenceMap[OT_CONTAIN10]=
 	       loadSequenceSet("explode\\blow4.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN11:
 	    outSequenceMap[OT_CONTAIN11]=
 	       loadSequenceSet("explode\\mbang.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN12:
 	    outSequenceMap[OT_CONTAIN12]=
 	       loadSequenceSet("explode\\blow5.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN13:
 	    outSequenceMap[OT_CONTAIN13]=
 	       loadSequenceSet("explode\\dog.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN14:
 	    outSequenceMap[OT_CONTAIN14]=
 	       loadSequenceSet("explode\\blow6.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN15:
 	    outSequenceMap[OT_CONTAIN15]=
 	       loadSequenceSet("explode\\blow2.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN16:
 	    outSequenceMap[OT_CONTAIN16]=
 	       loadSequenceSet("explode\\kbang.seq",0);
-	    break;	    
+	    break;
 	 case OT_CONTAIN17:
 	    outSequenceMap[OT_CONTAIN17]=
 	       loadSequenceSet("explode\\cbang.seq",0);
-	    break;	    
+	    break;
 	 case OT_COMM_BATTERY:
 	    outSequenceMap[OT_COMM_BATTERY]=
 	       loadSequenceSet("comm\\battery.seq",0);
-	    break;	    
+	    break;
 	 case OT_COMM_BOTTOM:
 	    outSequenceMap[OT_COMM_BOTTOM]=
 	       loadSequenceSet("comm\\bottom.seq",0);
-	    break;	    
+	    break;
 	 case OT_COMM_DISH:
 	    outSequenceMap[OT_COMM_DISH]=
 	       loadSequenceSet("comm\\dish.seq",0);
-	    break;	    
+	    break;
 	 case OT_COMM_HEAD:
 	    outSequenceMap[OT_COMM_HEAD]=
 	       loadSequenceSet("comm\\head.seq",0);
-	    break;	    
+	    break;
 	 case OT_COMM_KEYBOARD:
 	    outSequenceMap[OT_COMM_KEYBOARD]=
 	       loadSequenceSet("comm\\keyboard.seq",0);
-	    break;	    
+	    break;
 	 case OT_COMM_MOUSE:
 	    outSequenceMap[OT_COMM_MOUSE]=
 	       loadSequenceSet("comm\\mouse.seq",0);
-	    break;	    
+	    break;
 	 case OT_COMM_SCREEN:
 	    outSequenceMap[OT_COMM_SCREEN]=
 	       loadSequenceSet("comm\\screen.seq",0);
-	    break;	    
+	    break;
 	 case OT_COMM_TOP:
 	    outSequenceMap[OT_COMM_TOP]=
 	       loadSequenceSet("comm\\top.seq",0);
-	    break;	    
+	    break;
 	   }
     }
 
@@ -4467,7 +4467,7 @@ int main(int argc,char **argv)
 {int totalSize=0,footPrint=0,soundSize=0;
  int i,j,objectPallete;
  int levelSize,size,seqSize;
- 
+
  if (argc<4)
     {printf("Args bad.\n");
      exit(-1);
@@ -4501,7 +4501,7 @@ int main(int argc,char **argv)
      };
   for (i=0;amMap[i].lev;i++)
      if (strstr(argv[1],amMap[i].lev))
-	break;  
+	break;
   ambientTerm=amMap[i].term;
  }
 
@@ -4536,7 +4536,7 @@ int main(int argc,char **argv)
      };
   for (i=0;plaxMap[i].lev;i++)
      if (strstr(argv[1],plaxMap[i].lev))
-	break;  
+	break;
   printf("level #%d\n",i);
   if (!i)
      levelHasRamses=1; /* :-o */
@@ -4562,14 +4562,14 @@ int main(int argc,char **argv)
        if (abs(x-160)>1)
 	  {f=f/(x-160);
 	   d=f*65536.0;
-	   d=d&0x007fffff;	  
+	   d=d&0x007fffff;
 	  }
        else
 	  d=66754/*83200*/ /*0x400*/;
        writeInt(d);
       }
   }
-  
+
  }
  /* load the ruins pallete into pallete space 0 */
  {readBmp("ruinspal.bmp");
@@ -4604,7 +4604,7 @@ int main(int argc,char **argv)
  }
  exit(-1);
 #endif
- 
+
  /* map tiles */
  sortTiles();
  computeTileNms();
@@ -4672,6 +4672,3 @@ int main(int argc,char **argv)
  printf("Sound Memory used:%d\n",soundSize);
  return 0;
 }
-
-
-

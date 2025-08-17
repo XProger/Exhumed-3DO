@@ -27,7 +27,7 @@ void loadLocalText(int fd)
  skip=getLanguageNumber();
  for (;skip>=0;skip--)
     {fs_read(fd,(char *)&size,4);
-     assert(size<7*1024);       
+     assert(size<7*1024);
      fs_read(fd,(char *)textData,size);
     }
 }
@@ -37,4 +37,3 @@ char *getText(int block,int string)
  addr=((int)textData)+textData[(textData[block]>>2)+string];
  return (char *)addr;
 }
-

@@ -46,6 +46,3 @@ void   CheckVblankEnd(void)
 {
 	perFlag = 0;
 }
-
-
-

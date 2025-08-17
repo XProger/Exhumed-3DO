@@ -68,7 +68,7 @@ int initFonts(int spriteNm,int fontMask)
 	  if (charMap[f][two]==-1 && charMap[f][one]!=-1)
 	     {charMap[f][two]=charMap[f][one];
 	      widths[f][two]=widths[f][one];
-	     }	  
+	     }
 	 }
      }
     }
@@ -206,4 +206,3 @@ int getCharWidth(int font,unsigned char c)
 int getFontHeight(int font)
 {return heights[font];
 }
-

@@ -142,7 +142,7 @@ static int wait(int nmFrames)
 
 #if 0
 static int waitForFAD(int fad)
-{while (getCurrentFAD()<fad) 
+{while (getCurrentFAD()<fad)
     if ((inputAccum & CANCELKEYS)!=CANCELKEYS)
        return 1;
  return 0;
@@ -168,8 +168,8 @@ void playIntro(void)
  SPR_SetTvMode(SPR_TV_NORMAL,SPR_TV_320X240,OFF);
 
  Scl_s_reg.dispenbl|=0xf00;
- if (SclProcess==0) 
-    SclProcess=1; 
+ if (SclProcess==0)
+    SclProcess=1;
 
  SCL_Open(SCL_NBG0); SCL_MoveTo(0,0,0); SCL_Close();
  SCL_Open(SCL_NBG1); SCL_MoveTo(0,0,0); SCL_Close();
@@ -188,7 +188,7 @@ void playIntro(void)
  if (wait(210))
     goto skipIntro;
  fadeDown();
- playMovie("OPEN.MOV"); 
+ playMovie("OPEN.MOV");
  skipIntro:
 }
 
@@ -202,7 +202,7 @@ static void fadeSegaLogo(void)
      r=f(evalHermite(pos,0,F(-255),0,0));
      g=f(evalHermite(pos,0,F(-255),0,0));
      b=f(evalHermite(pos,0,F(-255),0,0));
-     
+
      while (!(PEEK_W(SCL_VDP2_VRAM+0x180004) & 8)) ;
      POKE_W(SCL_VDP2_VRAM+0x180114,r & 0x1ff);
      POKE_W(SCL_VDP2_VRAM+0x180116,g & 0x1ff);
@@ -249,7 +249,7 @@ static void stepWaterVel(int *pos,int *vel,int nmRows)
  for (y=0;y<nmRows;y++)
     {ppos=pos+y*XD+1;
      pvel=vel+y*XD+1;
-     
+
      for (x=1;x<XD-1;x++)
 	{*pvel+=*(ppos+XD)+*(ppos-XD)+*(ppos+1)+*(ppos-1)-
 	    (*ppos<<2);
@@ -298,7 +298,7 @@ void creditsSlaveMain(void)
      while (!(*FTCSR & 0x80)) ;
      /* sync */
      *FTCSR=0x0;
-     
+
      *(Uint16 volatile *)0x21800000=0xffff; /* return sync signal */
     }
 }
@@ -317,7 +317,7 @@ void credits(void)
  displayEnable(0);
  SCL_DisplayFrame();
  SCL_DisplayFrame();
- 
+
  checkStack();
  mem_init();
  {int section,ypos;
@@ -333,7 +333,7 @@ void credits(void)
 	     bulge[nmStrings]=-127;
 	  else
 	     bulge[nmStrings]=-127;
-	  nmStrings++;	  
+	  nmStrings++;
 	  ypos+=13;
 	 }
       ypos+=13;
@@ -433,14 +433,14 @@ void credits(void)
 #endif
      if (screen)
 	{Scl_s_reg.dispenbl&=~1;
-	 Scl_s_reg.dispenbl|=2;	 
+	 Scl_s_reg.dispenbl|=2;
 	}
      else
 	{Scl_s_reg.dispenbl&=~2;
-	 Scl_s_reg.dispenbl|=1;	 
+	 Scl_s_reg.dispenbl|=1;
 	}
-     if (SclProcess==0) 
-	SclProcess=1; 
+     if (SclProcess==0)
+	SclProcess=1;
      screen=!screen;
      /* draw credit text */
      EZ_openCommand();
@@ -465,7 +465,7 @@ void credits(void)
 	}
      /* if (screen) */
 	textYPos++;
-	     
+
      vtimer=0;
      EZ_closeCommand();
      SPR_WaitDrawEnd();
@@ -486,10 +486,10 @@ void main(void)
  /* aquire system info */
  {PerGetSys *sys_data;
   PER_LInit(PER_KD_SYS,6,PER_SIZE_DGT,PadWorkArea,0);
-  while (!(sys_data=PER_GET_SYS())); 
+  while (!(sys_data=PER_GET_SYS()));
   systemMemory=sys_data->sm;
  }
- 
+
  SCL_Vdp2Init();
  SCL_SetDisplayMode(SCL_NON_INTER,SCL_240LINE,SCL_NORMAL_A);
  SPR_SetEraseData(RGB(0,0,0),0,0,319,239);
@@ -505,7 +505,7 @@ void main(void)
     {int fd=fs_open("+INITLOAD.DAT");
      skipPicSet(fd);
      loadLocalText(fd); /* locks memory */
-     fs_close(fd); 
+     fs_close(fd);
      if (token==GOODEND)
 	playMovie("GOOD.MOV");
      else

@@ -147,7 +147,7 @@
 #define INT_SCU_HBLK_IN     0x42        /* H-ブランク-IN                     */
 #define INT_SCU_VBLK_OUT    0x41        /* V-ブランク-OUT                    */
 #define INT_SCU_VBLK_IN     0x40        /* V-ブランク-IN                     */
-     
+
 /********* CPU ***************************************************************/
 #define INT_CPU_DIVU        0v6e        /* 除算器                            */
 #define INT_CPU_DMAC0       0x6d        /* DMACチャネル0                     */
@@ -337,7 +337,7 @@
 
 /******************************************************************************
  *
- * NAME:    INT_SetFunc()       -   割り込み関数登録 
+ * NAME:    INT_SetFunc()       -   割り込み関数登録
  *
  * PARAMETERS :
  *      (1) Uint32 num      <i>   ベクタ番号
@@ -360,7 +360,7 @@
 
 /******************************************************************************
  *
- * NAME:    INT_SetScuFunc()    -   SCU関数登録 
+ * NAME:    INT_SetScuFunc()    -   SCU関数登録
  *
  * PARAMETERS :
  *      (1) Uint32 num      <i>   ベクタ番号(SCUベクタ番号)

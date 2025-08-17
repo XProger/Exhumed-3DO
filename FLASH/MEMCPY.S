@@ -135,4 +135,3 @@ L_cleanup_loop:
 L_exit:
 	rts
 	mov	r3,r0	! return dest
-

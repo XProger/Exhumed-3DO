@@ -18,7 +18,7 @@ static short slotSound[32];
 static char slotDirty[32];
 
 #define SCSP_REG_SET    0x0200
-#define ADR_SCSP_REG    ((volatile Uint8 *)0x25b00400)   
+#define ADR_SCSP_REG    ((volatile Uint8 *)0x25b00400)
 
 short level_objectSoundMap[OT_NMTYPES];
 short level_staticSoundMap[ST_NMSTATICSOUNDGROUPS];
@@ -64,9 +64,9 @@ static void silenceVoice(void)
 	}
      silentQ[qHead]=slot;
      qHead=(qHead+1)&(SILENCE-1);
-     POKE_W(0x20*slot+SNDBASE+0x100000+0,0x1000);     
+     POKE_W(0x20*slot+SNDBASE+0x100000+0,0x1000);
      slotOwner[slot]=-1;
-    }     
+    }
 }
 
 void stopAllLoopedSounds(void)
@@ -74,9 +74,9 @@ void stopAllLoopedSounds(void)
  for (i=0;i<32;i++)
     if (sounds[slotSound[i]].loopStart!=-1)
        {POKE_W(0x20*i+SNDBASE+0x100000,
-	       PEEK_W(0x20*i+SNDBASE+0x100000) & 0x7ff); 
+	       PEEK_W(0x20*i+SNDBASE+0x100000) & 0x7ff);
 	/* set key off on all voices without disturbing other settings */
-	slotOwner[i]=-1; 
+	slotOwner[i]=-1;
        }
  /* konex */
  POKE_W(SNDBASE+0x100000+0,
@@ -88,9 +88,9 @@ void stopAllSound(int source)
  for (i=0;i<32;i++)
     {if (slotOwner[i]==source)
 	{POKE_W(0x20*i+SNDBASE+0x100000,
-		PEEK_W(0x20*i+SNDBASE+0x100000) & 0x7ff); 
+		PEEK_W(0x20*i+SNDBASE+0x100000) & 0x7ff);
 	 /* set key off on all voices without disturbing other settings */
-	 slotOwner[i]=-1; 
+	 slotOwner[i]=-1;
 	}
     }
  /* konex */
@@ -155,7 +155,7 @@ void initSound(void)
  /* must wait 30us for sound cpu to init */
 #endif
 
- soundTop=0; 
+ soundTop=0;
  nmSounds=0;
 
  setMasterVolume(15);
@@ -269,7 +269,7 @@ void initSoundRegs(int sNm,int vol,int pan,struct soundSlotRegister *ssr)
  ssr->reg[1]=sounds[sNm].startAddr;  /* start address */
  if (sounds[sNm].loopStart!=-1)
     {ssr->reg[2]=sounds[sNm].loopStart; /* loop start */
-     ssr->reg[0]|=1<<5; /* normal loop */ 
+     ssr->reg[0]|=1<<5; /* normal loop */
     }
  else
     ssr->reg[2]=0x0000;  /* loop start address */
@@ -295,13 +295,13 @@ struct soundSlotRegister *playSoundMegaE(int source,
  dPrint("choose slot %d\n",slot);
  slotOwner[slot]=source;
  slotSound[slot]=ssr->soundNm;
- base=0x20*slot+SNDBASE+0x100000; 
+ base=0x20*slot+SNDBASE+0x100000;
  for (i=1;i<12;i++)
     POKE_W(base+(i<<1),ssr->reg[i]);
  POKE_W(base,ssr->reg[0]);
  slotDirty[slot]=1;
  return (struct soundSlotRegister *)(base);
-}  
+}
 
 void playSoundE(int source,int sNm,int vol,int pan)
 {int slot,i;
@@ -350,7 +350,7 @@ void playSoundE(int source,int sNm,int vol,int pan)
 
  if (sounds[sNm].loopStart!=-1)
     {POKE_W(base+0x4,sounds[sNm].loopStart); /* loop start */
-     zeroReg|=1<<5; /* normal loop */ 
+     zeroReg|=1<<5; /* normal loop */
     }
  if (sounds[sNm].bps==8)
     zeroReg|=0x10;
@@ -388,11 +388,11 @@ void posGetSoundParams(MthXyz *pos,int *vol,int *pan)
 {int angle;
  *vol=f(approxDist(pos->x-camera->pos.x,
 		   pos->y-camera->pos.y,
-		   pos->z-camera->pos.z));		  
+		   pos->z-camera->pos.z));
  *vol=(*vol>>5)-15;
  if (*vol>255) return;
  if (*vol<0) *vol=0;
- 
+
  angle=getAngle(camera->pos.x-pos->x,
 		camera->pos.z-pos->z);
  angle=normalizeAngle(F(90)+angle-camera->angle);
@@ -431,9 +431,3 @@ void adjustSounds(int source,int vol,int pan)
 	POKE_W(base+0x16,(7<<13)|(pan<<8));
        }
 }
-
-
-
-
-
-

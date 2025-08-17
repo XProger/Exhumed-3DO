@@ -32,7 +32,7 @@ typedef struct __object
  struct __object *next,*prev;
  messHandler func;
  char pad[128];
-} Object;  
+} Object;
 
 typedef struct
 {short type,class;
@@ -60,41 +60,41 @@ typedef struct
  Fixed32 offset;
 } PushBlockObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
 
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
-} SpriteObject;  
+} SpriteObject;
 
-typedef struct 
+typedef struct
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
 
  Object *owner;
  int age;
-} ProjectileObject;  
+} ProjectileObject;
 
 typedef struct __monster
 {short type,class;
  struct __object *next,*prev;
  messHandler func;
  struct __sprite *sprite;
- unsigned short *sequenceMap; 
+ unsigned short *sequenceMap;
  short state,pad1;
 
  short health,aiSlot;
  struct __monster *enemy;
  short route[ROUTESIZE+1];
  short routePos;
-} MonsterObject;  
+} MonsterObject;
 
 extern Object *objectRunList; /* these lists have head nodes */
 extern Object *objectIdleList;
@@ -127,8 +127,3 @@ short suckShort(void);
 int suckInt(void);
 
 #endif
-
-
-
-
-

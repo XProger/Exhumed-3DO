@@ -21,7 +21,7 @@ extern volatile short analogX;
 extern volatile short analogY;
 extern volatile char analogIndexButtonsPresent;
 extern volatile short analogTR;
-extern volatile short analogTL;		 
+extern volatile short analogTL;
 extern volatile char enableDoorReset;
 void initInput(void);
 

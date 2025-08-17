@@ -134,7 +134,7 @@ void markAnimTiles(void)
      seq=level_sequenceMap[animObjectList[i]];
      animTileStart[nmAnimTileSets]=level_frame[level_sequence[seq]].chunkIndex;
      animTileEnd[nmAnimTileSets]=level_frame[level_sequence[seq+1]].chunkIndex;
-     
+
      for (frame=level_sequence[seq];frame<level_sequence[seq+1];frame++)
 	{tile=level_chunk[level_frame[frame].chunkIndex].tile;
 	 pics[tile].flags=(pics[tile].flags&0xf)|
@@ -283,7 +283,7 @@ static void map(Pic *p)
      if (p->class==TILESMALL8BPP)
 	nmPixels=32*32;
      else
-	nmPixels=64*64;	
+	nmPixels=64*64;
      while (outSize<nmPixels)
 	{/* decode blank space */
 	 i=*(inPos++);
@@ -341,9 +341,9 @@ static void map(Pic *p)
      (unsigned char *)
 	((EZ_charNoToVram(p->charNm)<<3)+
 	 0x25c00000);
-  
+
   /* DMA_ScuMemCopy(pos,srcData,classType[(int)p->class].dataSize); */
-  
+
   dmaMemCpy(srcData,pos,classType[(int)p->class].dataSize);
 
 /*  qmemcpy(pos,srcData,classType[(int)p->class].dataSize); */
@@ -511,7 +511,7 @@ static void load8BPPRLETile(int fd,int lock)
  assert(buffer);
  fs_read(fd,buffer,size);
  addPic(TILE8BPP,buffer,NULL,(lock?PICFLAG_LOCKED:0)|PICFLAG_RLE);
- if (lock) 
+ if (lock)
     mem_free(buffer);
 }
 
@@ -525,7 +525,7 @@ static void loadSmall8BPPRLETile(int fd,int lock)
  assert(buffer);
  fs_read(fd,buffer,size);
  addPic(TILESMALL8BPP,buffer,NULL,(lock?PICFLAG_LOCKED:0)|PICFLAG_RLE);
- if (lock) 
+ if (lock)
     mem_free(buffer);
 }
 
@@ -540,7 +540,7 @@ static void load16BPPRLETile(fd,lock)
  fs_read(fd,buffer,size);
  pal=palletes+256*palNm+1;
  addPic(TILE16BPP,buffer,pal,(lock?PICFLAG_LOCKED:0)|PICFLAG_RLE);
- if (lock) 
+ if (lock)
     mem_free(buffer);
 }
 
@@ -567,7 +567,7 @@ void loadPalletes(int fd)
   objectPal[255]=0xffff;
 
   for (i=0;i<256;i++)
-     colorRam[i]=objectPal[i]; 
+     colorRam[i]=objectPal[i];
   /* SCL_SetColRam(0,0,256,objectPal); */
 
   for (i=1;i<NMOBJECTPALLETES;i++)
@@ -588,7 +588,7 @@ void loadPalletes(int fd)
 	  tempSpace[c]=RGB(r,g,b);
 	 }
       for (j=0;j<256;j++)
-	 colorRam[i*256+j]=tempSpace[j]; 
+	 colorRam[i*256+j]=tempSpace[j];
       /* SCL_SetColRam(0,i*256,256,tempSpace); */
      }
   /* make flash pallete */
@@ -597,7 +597,7 @@ void loadPalletes(int fd)
   tempSpace[0]=0x8000;
 
   for (j=0;j<256;j++)
-     colorRam[NMOBJECTPALLETES*256+j]=tempSpace[j]; 
+     colorRam[NMOBJECTPALLETES*256+j]=tempSpace[j];
   /* SCL_SetColRam(0,NMOBJECTPALLETES*256,256,tempSpace); */
 
  }
@@ -661,7 +661,7 @@ int loadPicSetAsPics(int fd,int class)
  int nmSetPics,i,x,y,c,picBase;
  picBase=nmPics;
  nmSetPics=loadPicSet(fd,palletes,datas,50);
- 
+
  for (i=0;i<nmSetPics;i++)
     {switch (class)
 	{case TILESMALL16BPP:
@@ -685,4 +685,3 @@ int loadPicSetAsPics(int fd,int class)
     }
  return picBase;
 }
-

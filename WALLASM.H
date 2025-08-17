@@ -7,6 +7,6 @@ void rectTransform(Fixed32 wx,Fixed32 wy,Fixed32 wz,
 					       MthXyz *pos));
 
 void normTransform(sVertexType *firstVertex,MthMatrix *viewMatrix,
-		   int nmVert,void *output, 	       
+		   int nmVert,void *output,
 		   unsigned short (*lightFunc)(char vLightIndex,
 					       MthXyz *pos));

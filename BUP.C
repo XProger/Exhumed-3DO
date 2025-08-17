@@ -136,7 +136,7 @@ static int saveGameFile(int device,int savingGame)
 #endif
 
  resetDisable();
- ret=BUP_Write(device,&writetb,(Uint8 *)saveGames,OFF); 
+ ret=BUP_Write(device,&writetb,(Uint8 *)saveGames,OFF);
  resetEnable();
  return ret;
 }
@@ -190,7 +190,7 @@ void bup_initCurrentGame(void)
  currentState.health=200;
  currentState.dolls=0;
  for (i=0;i<WP_NMWEAPONS;i++)
-    currentState.weaponAmmo[i]=weaponMaxAmmo[i]; 
+    currentState.weaponAmmo[i]=weaponMaxAmmo[i];
  for (i=0;i<NMLEVELS;i++)
     currentState.levFlags[i]=0;
  currentState.currentLevel=3;
@@ -233,7 +233,7 @@ void bup_initialProc(void)
 {BupStat sttb;
  int i;
  int device; /* = backup device of save file or -1 if not found */
- 
+
  loadBUP();
  /* check to make sure all backup devices are formatted */
  if (BUP_Stat(0,SPACENEEDED*64,&sttb)==BUP_UNFORMAT)
@@ -300,12 +300,7 @@ void bup_initialProc(void)
 	{/* we found a place for our game file */
 	 saveGameFile(device,0);
 	 saveDevice=device;
-	}     
+	}
     }
  unloadBup();
 }
-
-
-
-
-

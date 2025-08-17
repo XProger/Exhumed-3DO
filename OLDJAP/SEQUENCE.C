@@ -197,7 +197,7 @@ int advanceWeaponSequence(int xbase,int ybase,int hack)
  int overlay;
  int xo,yo;
  static int loadedPal=0;
- 
+
  XyInt pos;
 
  sequence=sequenceQ[qTail].seq;
@@ -250,7 +250,7 @@ int advanceWeaponSequence(int xbase,int ybase,int hack)
  VDP2PicOn=0;
  overlay=0;
  if (sequence>=50)
-    overlay=0x4000; 
+    overlay=0x4000;
  {XyInt pos[2];
   pos[0].x=0;
   pos[0].y=0;
@@ -266,7 +266,7 @@ int advanceWeaponSequence(int xbase,int ybase,int hack)
 	{sChunkType *c=level_wChunk+chunk;
 	 if (getPicClass(c->tile)==TILEVDP)
 	    {unsigned short *colorRam=(unsigned short *)SCL_COLRAM_ADDR;
-	     SCL_SET_N0CAOS(0); 
+	     SCL_SET_N0CAOS(0);
 	     if (sequence>=30 && sequence<35)
 		{if (loadedPal!=1)
 		    {for (j=0;j<256;j++)
@@ -287,10 +287,10 @@ int advanceWeaponSequence(int xbase,int ybase,int hack)
 		}
 	     displayVDP2Pic(c->tile,
 			    xo+c->chunkx,
-			    yo+c->chunky); 
+			    yo+c->chunky);
 	     VDP2PicOn=1;
 	     if (hack)
-		break; 
+		break;
 	    }
 	 else
 	    {pos.x=xo-320/2+c->chunkx;
@@ -302,7 +302,7 @@ int advanceWeaponSequence(int xbase,int ybase,int hack)
 		flip|=DIR_TBREV;
 	     assert(getPicClass(c->tile)==TILE8BPP);
 	     EZ_normSpr(flip,UCLPIN_ENABLE|COLOR_4|HSS_ENABLE|ECD_DISABLE,
-			overlay,mapPic(c->tile),&pos,NULL); 
+			overlay,mapPic(c->tile),&pos,NULL);
 	    }
 	}
      if (sequenceQ[qTail].seqWith==-1 || sequence==sequenceQ[qTail].seqWith)
@@ -321,4 +321,3 @@ int advanceWeaponSequence(int xbase,int ybase,int hack)
 void clearWeaponQ(void)
 {initWeaponQ();
 }
-

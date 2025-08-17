@@ -19,4 +19,3 @@ void runWeapon(int nmFrames,int invisible,int boost);
 void weaponChangeAmmo(int weapon,int deltaAmmo);
 void switchWeapons(int on);
 #endif
-

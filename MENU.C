@@ -67,7 +67,7 @@ void dlg_centerStuff(void)
 	    dlgItem[i].xp=F(-(getStringWidth(3,dlgItem[i].text)/2));
 	    break;
 #endif
-	   }    
+	   }
     }
 }
 
@@ -116,7 +116,7 @@ void loadOverPic(int picNm)
  assert(vramUsed<512*1024);
 }
 
-typedef struct 
+typedef struct
 {int x1,y1,x2,y2,width,type;
 } BevelData;
 
@@ -152,22 +152,22 @@ int loadOverBase(unsigned char *picData,unsigned short *pallete,int xsize,
 		 x1<bevels[b].x2-bevels[b].width &&
 		 y1<bevels[b].y2-bevels[b].width)
 		continue;
-		 
-		 
+
+
 	     lineSide[0]=(x1-bevels[b].x1)>(y1-bevels[b].y1);
 	     lineSide[1]=-(y1-bevels[b].y1)>(x1-bevels[b].x2);
 	     lineSide[2]=(x1-bevels[b].x2)>(y1-bevels[b].y2);
 	     lineSide[3]=-(y1-bevels[b].y2)>(x1-bevels[b].x1);
-	     
+
 	     if (y1<bevels[b].y1+bevels[b].width && lineSide[0] && lineSide[1])
 		bevel=1;
-	     if (x1>=bevels[b].x2-bevels[b].width && !lineSide[1] && 
+	     if (x1>=bevels[b].x2-bevels[b].width && !lineSide[1] &&
 		 lineSide[2])
 		bevel=2;
-	     if (y1>=bevels[b].y2-bevels[b].width && !lineSide[2] && 
+	     if (y1>=bevels[b].y2-bevels[b].width && !lineSide[2] &&
 		 !lineSide[3])
 		bevel=3;
-	     if (x1<bevels[b].x1+bevels[b].width && lineSide[3] && 
+	     if (x1<bevels[b].x1+bevels[b].width && lineSide[3] &&
 		 !lineSide[0])
 		bevel=4;
 	     if (bevels[b].type==1)
@@ -178,16 +178,16 @@ int loadOverBase(unsigned char *picData,unsigned short *pallete,int xsize,
 	     if (bevel)
 		break;
 	    }
-	 
+
 	 c=tempData[tx+ty*width];
 	  /* pallete[picData[tx+ty*width+8]]; */
 	 if (bevel)
 	    {int r,g,b,off;
-	     
+
 	     r=c & 0x1f;
 	     g=(c>>5) & 0x1f;
 	     b=(c>>10) & 0x1f;
-	     
+
 	     off=0;
 	     if (bevel==2)
 		off=-5;
@@ -199,10 +199,10 @@ int loadOverBase(unsigned char *picData,unsigned short *pallete,int xsize,
 		off=5;
 	     if (bevel==5)
 		off=-3;
-	     
-	     r+=off; 
-	     g+=off; 
-	     b+=off; 
+
+	     r+=off;
+	     g+=off;
+	     b+=off;
 	     if (b<0) b=0;
 	     if (g<0) g=0;
 	     if (r<0) r=0;
@@ -211,7 +211,7 @@ int loadOverBase(unsigned char *picData,unsigned short *pallete,int xsize,
 	     if (r>31) r=31;
 	     c=RGB(r,g,b);
 	    }
-	 POKE_W(VRAMSTART+vramUsed,c); 
+	 POKE_W(VRAMSTART+vramUsed,c);
 	 vramUsed+=2;
 	 assert(vramUsed<512*1024);
 	 if (++tx>=width)
@@ -265,7 +265,7 @@ void dlg_clear(void)
 
 void dlg_init(int fd)
 {loadPicSet(fd,picPals,picDatas,MAXNMPICS);
- mem_lock(); 
+ mem_lock();
  dlg_clear();
 }
 
@@ -337,7 +337,7 @@ void dlg_addButton(int pressCode,int x,int y,int w,int h,char *text)
  dlgItem[nmItems].w=w;
  dlgItem[nmItems].h=h;
  dlgItem[nmItems].code=pressCode;
- 
+
  dlgItem[nmItems].type=IT_BUTTON;
  dlgItem[nmItems].text=text;
  if (currentButton==-1)
@@ -524,7 +524,7 @@ static void dlg_draw(int currentButton,int pressed)
 	     p[2].x=x+dlgItem[i].w; p[2].y=y+dlgItem[i].h;
 	     p[3].x=x; p[3].y=y+dlgItem[i].h;
 	     EZ_polygon(drawWord,BUTTONBASECOLOR,p,NULL);
-	     EZ_polyLine(drawWord,0x8000,p,NULL); 
+	     EZ_polyLine(drawWord,0x8000,p,NULL);
 	     p[0].x++; p[0].y++;
 	     p[1].x--; p[1].y++;
 	     p[2].x--; p[2].y--;
@@ -542,9 +542,9 @@ static void dlg_draw(int currentButton,int pressed)
 		 p[1].x--; p[1].y++;
 		 p[2].x--; p[2].y--;
 		 p[3].x++; p[3].y--;
-		 EZ_polyLine(drawWord,BUTTONLOCOLOR,p,NULL); 
+		 EZ_polyLine(drawWord,BUTTONLOCOLOR,p,NULL);
 		}
-		 
+
 	     x=f(dlgItem[i].xp)+dlgItem[i].w/2;
 	     y=f(dlgItem[i].yp)+dlgItem[i].h/2;
 	     y-=fontHeight/2;
@@ -593,7 +593,7 @@ static void dlg_draw(int currentButton,int pressed)
 		}
 	     else
 		drawString(f(dlgItem[i].xp),f(dlgItem[i].yp),2,
-			   dlgItem[i].text);	    
+			   dlgItem[i].text);
 	     break;
 	    }
 #ifdef JAPAN
@@ -610,7 +610,7 @@ static void dlg_draw(int currentButton,int pressed)
 		}
 	     else
 		drawString(f(dlgItem[i].xp),f(dlgItem[i].yp),3,
-			   dlgItem[i].text);	    
+			   dlgItem[i].text);
 	     break;
 	    }
 #endif
@@ -661,10 +661,10 @@ static void dlg_draw(int currentButton,int pressed)
 	     pos.x=f(dlgItem[i].xp)+135;
 	     {static char xw[6]={40,20,15,40,20,20};
 	      static char yo[6]={2,0,0,0,0,0};
-	      
+
 	      for (a=0;a<6;a++)
 		 {pos.y=f(dlgItem[i].yp)+yo[a];
-		  if ((stat->inventory>>a)&1) 
+		  if ((stat->inventory>>a)&1)
 		     EZ_normSpr(0,COLOR_5,0,mapPic(a),&pos,NULL);
 		  else
 		     EZ_normSpr(0,COMPO_HARF|COLOR_5,0,mapPic(a+6),&pos,NULL);
@@ -693,7 +693,7 @@ static int moveSel(int cb,int dx,int dy,int movement)
 	 dlgItem[i].type!=IT_GAMEBUTTON
 #ifdef JAPAN
 	  && dlgItem[i].type!=IT_WAVYJBUTTON
-#endif	 
+#endif
 	 )
 	continue;
      icx=f(dlgItem[i].xp)+(dlgItem[i].w>>1);
@@ -752,7 +752,7 @@ int dlg_run(int selSound,int pushSound,int movement)
      if (texVramPos>=0)
 	plotOverPicW(texX,texY,texWidth,texHeight,texVramPos,
 		     COLOR_5|ECD_DISABLE);
-     dlg_draw(currentButton,pressed); 
+     dlg_draw(currentButton,pressed);
      SPR_WaitDrawEnd();
      EZ_closeCommand();
 #if 0
@@ -803,15 +803,15 @@ int dlg_run(int selSound,int pushSound,int movement)
 	    currentButton=moveSel(currentButton,1,0,movement);
 	}
      if (i!=currentButton && selSound>=0)
-	playSound(0,selSound);	
+	playSound(0,selSound);
 
-     if ((changeData&~data)&SELKEYS) 
+     if ((changeData&~data)&SELKEYS)
 	{lastUsedSelButton=(changeData&~data) & SELKEYS;
 	 if (pushSound>=0)
-	    playSound(0,pushSound);	
+	    playSound(0,pushSound);
 	 pressed=1;
 	}
-     
+
      if ((data & SELKEYS)==SELKEYS && pressed)
 	{returnTime=5;
 	 pressed=0;
@@ -873,7 +873,7 @@ int dlg_runYesNo(char *message,int w)
  static BevelData bevel[2]=
     {{0,0,0,0,5,0},
      {9,9,0,0,2,1}};
- 
+
  dlg_clear();
  w=(w+7)&(~7);
  textHeight=drawCenteredText(0,0,w-30,message,DM_NODRAW,DLGFONT);
@@ -882,7 +882,7 @@ int dlg_runYesNo(char *message,int w)
  bevel[0].x2=w; bevel[0].y2=h;
  bevel[1].x2=w-9; bevel[1].y2=h-40;
  initOverPics();
- 
+
  dlg_addBase(-w/2,-h/2,w,h,bevel,2);
 
  dlg_addText(-w/2+15,-h/2+12,w-30,message);
@@ -916,7 +916,7 @@ int runTravelQuestion(char *destination)
  EZ_openCommand(); EZ_closeCommand(); SCL_DisplayFrame();
  EZ_openCommand(); EZ_closeCommand(); SCL_DisplayFrame();
  SCL_SetColOffset(SCL_OFFSET_A,SCL_SP0|SCL_NBG0,
-		  0,0,0); 
+		  0,0,0);
  sprintf(buff,getText(LB_PROMPTS,5),destination);
  return dlg_runYesNo(buff,200);
 }
@@ -996,7 +996,7 @@ void runInventory(int inventory,int keyMask,int *mapState,
  initOverPics();
  for (i=1;i<41;i++)
     loadOverPic(i);
- 
+
  data=lastInputSample;
  lastData=data;
  SCL_SetFrameInterval(0xfffe);
@@ -1028,14 +1028,14 @@ void runInventory(int inventory,int keyMask,int *mapState,
       tinkleSound=playSoundMegaE(54,&ssr);
      }
     }
- 
+
  frameCount=0;
  while (1)
     {EZ_openCommand();
      EZ_sysClip();
      EZ_localCoord(320/2,240/2);
 
-#if 0 
+#if 0
 #ifndef JAPAN
      /* game paused message */
      drawString(-(getStringWidth(1,getText(LB_PROMPTS,2))>>1),
@@ -1045,7 +1045,7 @@ void runInventory(int inventory,int keyMask,int *mapState,
 #endif
      /* draw background */
      plotOverPicW(texX,texY,texWidth,texHeight,texVramPos,COLOR_5|ECD_DISABLE);
-     
+
      /* buttons */
 #ifndef JAPAN
      for (i=0;i<NMINVBUTTONS;i++)
@@ -1060,7 +1060,7 @@ void runInventory(int inventory,int keyMask,int *mapState,
 	else
 	   plotOverPic(-130,-91+i*26,1);
 #endif
-     
+
      for (i=0;i<NMINVBUTTONS;i++)
 	{int x,y;
 #ifndef JAPAN
@@ -1097,7 +1097,7 @@ void runInventory(int inventory,int keyMask,int *mapState,
      for (i=0;i<4;i++)
 	plotOverPic(28+19*i,6,i+4+(((keyMask>>i)&1)?4:0));
 #endif
-     
+
      /* decide mobility */
      canGoUp=-1;
      canGoDown=-1;
@@ -1181,7 +1181,7 @@ void runInventory(int inventory,int keyMask,int *mapState,
 			    tempData[i];
 			 if (color)
 			    POKE_W(VRAMSTART+picVram[39]+(i<<1),
-				   greyTable[getNextRand()&0x0f]); 
+				   greyTable[getNextRand()&0x0f]);
 			}
 		    }
 		 else
@@ -1192,8 +1192,8 @@ void runInventory(int inventory,int keyMask,int *mapState,
 		     for (i=0;i<commScreenSize;i++)
 			{unsigned short color=
 			    tempData[i];
-			 POKE_W(VRAMSTART+picVram[39]+(i<<1),color); 
-			}			 
+			 POKE_W(VRAMSTART+picVram[39]+(i<<1),color);
+			}
 		    }
 		 plotOverPic(PICX+offsets[6][0],PICY+offsets[6][1],
 			     picStart+8);
@@ -1220,7 +1220,7 @@ void runInventory(int inventory,int keyMask,int *mapState,
 			 /*pallete[((unsigned char *)(picDatas[fadePic]))
 				    [fadeReg+8]]; */
 			 POKE_W(VRAMSTART+picVram[fadePic]+(fadeReg<<1),color);
-			 
+
 			 if (color && !(i&7))
 			    {int x,y;
 			     for (x=fadeReg,y=0;x>=fadeWidth;x-=fadeWidth,y++);
@@ -1244,21 +1244,21 @@ void runInventory(int inventory,int keyMask,int *mapState,
 		 do
 		    {dust[i].y+=1;
 		     line[1]=dust[i];
-		     line[0]=dust[i];		 
+		     line[0]=dust[i];
 		     EZ_line(COMPO_TRANS|ECD_DISABLE|SPD_DISABLE,
 			     greyTable[31-fadeCount+dustAge[i]],line,
 			     NULL);
-		     
+
 		     i=(i+1)&(NMDUSTMOTES-1);
 		    }
 		 while (i!=dustHead);
 		}
 	    }
 	}
-     
+
      /* text window */
      if (slidePos[selectedButton]!=-1/* && inventoryNum[selectedButton]*/)
-	{int nmLines=1;	 
+	{int nmLines=1;
 	 char *c;
 	 char *string;
 	 char buffer[80];
@@ -1266,7 +1266,7 @@ void runInventory(int inventory,int keyMask,int *mapState,
 	 int bpos;
 	 string=getText(LB_INVTEXT,slidePos[selectedButton]+
 			textStart[selectedButton]);
-	 
+
 	 if (selectedButton==3)
 	    {int cnt,q;
 	     q=(currentState.inventory & INV_TRANSMITTER)>>16;
@@ -1299,7 +1299,7 @@ void runInventory(int inventory,int keyMask,int *mapState,
 		     string);
 	     string=buff2;
 	    }
-	 
+
 	 for (c=string;*c;c++)
 	    if (*c=='\n')
 	       nmLines++;
@@ -1335,23 +1335,23 @@ void runInventory(int inventory,int keyMask,int *mapState,
 
      if (!fade)
 	{if ((changeData & PER_DGT_D) && !(data & PER_DGT_D))
-	    if (selectedButton<4) 
+	    if (selectedButton<4)
 	       {selectedButton++;
 		playStaticSound(ST_INTERFACE,0);
 	       }
 	 if ((changeData & PER_DGT_U) && !(data & PER_DGT_U))
-	    if (selectedButton>0) 
+	    if (selectedButton>0)
 	       {selectedButton--;
 		playStaticSound(ST_INTERFACE,0);
 	       }
 	 if ((changeData & PER_DGT_L) && !(data & PER_DGT_L))
-	    if (canGoDown!=-1) 
+	    if (canGoDown!=-1)
 	       {slidePos[selectedButton]=canGoDown;
 		playStaticSound(ST_INTERFACE,1);
 	       }
 	 if ((changeData & PER_DGT_R) && !(data & PER_DGT_R))
-	    if (canGoUp!=-1) 
-	       {slidePos[selectedButton]=canGoUp;     
+	    if (canGoUp!=-1)
+	       {slidePos[selectedButton]=canGoUp;
 		playStaticSound(ST_INTERFACE,1);
 	       }
 	 if ((selectedButton==4 || !(data & PER_DGT_S)) &&
@@ -1362,7 +1362,7 @@ void runInventory(int inventory,int keyMask,int *mapState,
 	     return;
 	    }
 
-	 if (endUserCheatsEnabled && (changeData & PER_DGT_X) 
+	 if (endUserCheatsEnabled && (changeData & PER_DGT_X)
 	     && !(data & PER_DGT_X))
 	    {currentState.health=currentState.nmBowls*200;
 	     for (i=0;i<WP_NMWEAPONS;i++)
@@ -1394,7 +1394,7 @@ void runInventory(int inventory,int keyMask,int *mapState,
 	     SCL_DisplayFrame();
 	     EZ_openCommand();
 	     EZ_closeCommand();
-	     SCL_DisplayFrame();	    
+	     SCL_DisplayFrame();
 	     stopAllSound(54);
 	     restoreSoundState();
 	     return;
@@ -1407,7 +1407,7 @@ void runInventory(int inventory,int keyMask,int *mapState,
      pic_nextFrame(NULL,NULL);
      if (frameCount++==2)
 	displayEnable(1);
-    } 
+    }
 }
 
 void dlg_setupSlideIn(void)
@@ -1418,7 +1418,7 @@ void dlg_setupSlideIn(void)
      dlgItem[i].x1=dlgItem[i].x2+(i&1?-300:300);
      dlgItem[i].y1=dlgItem[i].y2;
      dlgItem[i].xv=0;
-     dlgItem[i].yv=0;     
+     dlgItem[i].yv=0;
      if (dlgItem[i].type==IT_RECT)
 	{dlgItem[i].x1=0;
 	}
@@ -1433,7 +1433,7 @@ void dlg_setupSlideUp(void)
      dlgItem[i].x1=dlgItem[i].x2+(i&1?-100:100);
      dlgItem[i].y1=180;
      dlgItem[i].xv=0;
-     dlgItem[i].yv=0;     
+     dlgItem[i].yv=0;
      if (dlgItem[i].type==IT_RECT)
 	{dlgItem[i].x1=0;
 	}
@@ -1448,7 +1448,7 @@ void dlg_setupSlideOut(void)
      dlgItem[i].x2=dlgItem[i].x2+(i&1?-300:300);
      dlgItem[i].y2=dlgItem[i].y2;
      dlgItem[i].xv=0;
-     dlgItem[i].yv=0;     
+     dlgItem[i].yv=0;
      if (dlgItem[i].type==IT_RECT)
 	{dlgItem[i].x2=0;
 	}
@@ -1463,7 +1463,7 @@ void dlg_setupNoSlide(void)
      dlgItem[i].x2=f(dlgItem[i].xp);
      dlgItem[i].y2=f(dlgItem[i].yp);
      dlgItem[i].xv=0;
-     dlgItem[i].yv=0;     
+     dlgItem[i].yv=0;
     }
 }
 
@@ -1491,13 +1491,9 @@ void dlg_runSlideIn(void)
      pic_nextFrame(NULL,NULL);
 #endif
     }
- 
+
  for (i=0;i<nmItems;i++)
     {dlgItem[i].xp=F(dlgItem[i].x2);
      dlgItem[i].yp=F(dlgItem[i].y2);
     }
 }
-
-
-
-

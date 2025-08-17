@@ -71,7 +71,7 @@ static unsigned char deQByte(void)
      if (qTail==nmBuffers)
 	qTail=0;
      qPos=0;
-    }  
+    }
  return r;
 }
 
@@ -103,9 +103,9 @@ static void deQCopy(void *dest,int size)
 	 /* assert(!(((int)dest) & 3));
 	    assert(!(qPos & 3)); */
 #if USEDMA
-	 dmaMemCpy(buffer[qTail]+qPos,dest,size); 
+	 dmaMemCpy(buffer[qTail]+qPos,dest,size);
 #else
-	 qmemcpy(dest,buffer[qTail]+qPos,size); 
+	 qmemcpy(dest,buffer[qTail]+qPos,size);
 #endif
 	 qPos+=size;
 	 break;
@@ -113,17 +113,17 @@ static void deQCopy(void *dest,int size)
      /* assert(!(((int)dest) & 3));
 	assert(!(qPos & 3)); */
 #if USEDMA
-     dmaMemCpy(buffer[qTail]+qPos,dest,s); 
+     dmaMemCpy(buffer[qTail]+qPos,dest,s);
 #else
-     qmemcpy(dest,buffer[qTail]+qPos,s); 
+     qmemcpy(dest,buffer[qTail]+qPos,s);
 #endif
      dest+=s;
      size-=s;
      assert(qTail<nmBuffers);
      qTail++;
      if (qTail==nmBuffers)
-	qTail=0; 
-     qPos=0; 
+	qTail=0;
+     qPos=0;
     }
 }
 
@@ -152,8 +152,8 @@ static void deQSound(void)
      else
 	deQCopy((void *)(SNDBASE+(sndRingPos)),s);
      sndRingPos=0;
-     amount-=s;     
-    }	
+     amount-=s;
+    }
  if (waveChannels==1)
     return;
  amount=saveAmount;
@@ -174,14 +174,14 @@ static void deQSound(void)
 	deQCopy((void *)(1024*128+SNDBASE+(sndRingPos)),s);
      sndRingPos=0;
      amount-=s;
-    }	
+    }
 }
 
 #define FRAMESKIP 3
 #define NMLINES 6
 
 void playMovie(char *fileName)
-{unsigned char *booffer[MAXNMBUFFERS]; 
+{unsigned char *booffer[MAXNMBUFFERS];
  short nmFrames,frame;
  int waveRate;
  char *text;
@@ -193,8 +193,8 @@ void playMovie(char *fileName)
  checkStack();
 
  Scl_s_reg.dispenbl=0x000;
- if (SclProcess==0) 
-    SclProcess=1; 
+ if (SclProcess==0)
+    SclProcess=1;
 
  buffer=booffer; /* naf */
  mem_init();
@@ -206,7 +206,7 @@ void playMovie(char *fileName)
 /* for (i=0;i<512*1024;i+=2048)
     buffer[nmBuffers++]=(char *)(SCL_VDP2_VRAM+i);*/
 
- do 
+ do
     buffer[nmBuffers++]=mem_nocheck_malloc(!(nmBuffers&1),2048);
  while (buffer[nmBuffers-1]);
  nmBuffers--;
@@ -237,7 +237,7 @@ void playMovie(char *fileName)
   if (size)
      {deQCopy(textData,4092);
       text=(char *)
-	 (((int)textData)+textData[textData[getLanguageNumber()]>>2]);      
+	 (((int)textData)+textData[textData[getLanguageNumber()]>>2]);
       dPrint("%d %d offset=%d\n",
 	     getLanguageNumber(),
 	     textData[getLanguageNumber()],
@@ -266,18 +266,18 @@ void playMovie(char *fileName)
 #endif
  EZ_setChar(charNm,COLOR_5,320,240,NULL);
  vdp1Vram=(EZ_charNoToVram(charNm)<<3)+0x25c00000;
- 
+
  SCL_SetDisplayMode(SCL_NON_INTER,SCL_240LINE,SCL_NORMAL_A);
  SCL_SetFrameInterval(FRAMESKIP);
  SPR_SetTvMode(SPR_TV_NORMAL,SPR_TV_320X240,OFF);
  SPR_SetEraseData(0x0000,0,0,319,239);
 
- SCL_DisplayFrame();      
+ SCL_DisplayFrame();
 
  for (i=0;i<320*240*2;i+=2)
-    POKE_W(vdp1Vram+i,RGB(0,0,0)); 
+    POKE_W(vdp1Vram+i,RGB(0,0,0));
  /* POKE_W(SCL_VDP2_VRAM+0x180020,0x0f03); *//* transparency and enables */
- 
+
  /* read movie header */
  for (i=0;i<6;i++)
     deQByte();
@@ -319,7 +319,7 @@ void playMovie(char *fileName)
      if (BPS==16)
 	POKE_W(base,0x1800|(1<<5)); /* kon, ex and loop */
      else
-	POKE_W(base,0x1800|(1<<5)|0x10); /* kon, ex and loop */     
+	POKE_W(base,0x1800|(1<<5)|0x10); /* kon, ex and loop */
     }
 
 #define ALLKEYS  (PER_DGT_A|PER_DGT_B|PER_DGT_C|PER_DGT_X|PER_DGT_Y|PER_DGT_Z|PER_DGT_S|PER_DGT_TL|PER_DGT_TR)
@@ -331,10 +331,10 @@ void playMovie(char *fileName)
 			 4*(frame-60),4*(frame-60),4*(frame-60));
      vtimer=0;
      screenPos=0;
-     if ((lastInputSample & ALLKEYS)!=ALLKEYS)	   
+     if ((lastInputSample & ALLKEYS)!=ALLKEYS)
 	{break;
 	 /* while (maybeReadBuffer());
-	    SCL_DisplayFrame();     
+	    SCL_DisplayFrame();
 	    continue; */
 	}
      while (1)
@@ -368,23 +368,23 @@ void playMovie(char *fileName)
       parms[0].x=0; parms[0].y=220;
       parms[1].x=0; parms[1].y=230;
       parms[2].x=fullBuffers>>2; parms[2].y=230;
-      parms[3].x=fullBuffers>>2; parms[3].y=220;      
+      parms[3].x=fullBuffers>>2; parms[3].y=220;
       EZ_polygon(ECD_DISABLE|SPD_DISABLE,RGB(0,0,31),
-		 parms,NULL);      
+		 parms,NULL);
      }
-#endif     
+#endif
      /* draw subtitle */
      if (text)
 	{int y;
 	 XyInt pos[4];
 	 pos[0].x=0; pos[0].y=170;
-	 pos[1].x=319; pos[1].y=239;	 
+	 pos[1].x=319; pos[1].y=239;
 	 EZ_userClip(pos);
 
 	 pos[0].x=15; pos[0].y=165;
 	 pos[1].x=304; pos[1].y=165;
 	 pos[2].x=304; pos[2].y=229;
-	 pos[3].x=15; pos[3].y=229;	 
+	 pos[3].x=15; pos[3].y=229;
 	 EZ_polygon(COMPO_TRANS|ECDSPD_DISABLE,RGB(0,0,0),pos,NULL);
 
 	 y=160+textOffset;
@@ -403,7 +403,7 @@ void playMovie(char *fileName)
 	     /* ... move all lines up one */
 	     for (i=0;i<NMLINES-1;i++)
 		{line[i]=line[i+1];
-		 linePos[i]=linePos[i+1];	     
+		 linePos[i]=linePos[i+1];
 		 nmChars[i]=nmChars[i+1];
 		}
 	     /* ... add new line on end */
@@ -416,7 +416,7 @@ void playMovie(char *fileName)
 		{c=text;
 		 /* skip initial white space */
 		 while (*c==' ')
-		    c++;	 
+		    c++;
 		 line[NMLINES-1]=c;
 		 width=0;
 		 for (;*c;c++)
@@ -438,25 +438,25 @@ void playMovie(char *fileName)
 		 if (*c=='\n')
 		    c--;
 		 linePos[NMLINES-1]=160-(width>>1);
-		 nmChars[NMLINES-1]=c-line[NMLINES-1];	     
+		 nmChars[NMLINES-1]=c-line[NMLINES-1];
 		}
 	    }
 	}
      EZ_closeCommand();
-     EZ_executeCommand(); 
+     EZ_executeCommand();
      deQSound();
 #if 1
      PEEK_W(SCL_VDP2_VRAM+0x180002);
-     while ((vtimer<FRAMESKIP-1 || 
-	     (0x3ff & PEEK_W(SCL_VDP2_VRAM+0x18000a))<150) && 
+     while ((vtimer<FRAMESKIP-1 ||
+	     (0x3ff & PEEK_W(SCL_VDP2_VRAM+0x18000a))<150) &&
 	    maybeReadBuffer())
 	PEEK_W(SCL_VDP2_VRAM+0x180002);
 #else
      while (maybeReadBuffer());
 #endif
      SPR_WaitDrawEnd();
-     EZ_clearCommand(); 
-     SCL_DisplayFrame();     
+     EZ_clearCommand();
+     SCL_DisplayFrame();
     }
  POKE_W(SNDBASE+0x100000+0x00,0x0000|(1<<5));
  POKE_W(SNDBASE+0x100000+0x40,0x1000|(1<<5)|0x02);

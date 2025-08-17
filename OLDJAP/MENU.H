@@ -50,6 +50,3 @@ void dlg_runSlideIn(void);
 int runTravelQuestion(char *destination);
 
 #endif
-
-
-

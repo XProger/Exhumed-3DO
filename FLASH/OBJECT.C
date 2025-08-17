@@ -37,7 +37,7 @@ void moveObject(Object *o,Object *toList)
  o->prev->next=o->next;
  if (o->next)
     o->next->prev=o->prev;
- 
+
  o->next=toList->next;
  if (o->next)
     o->next->prev=o;
@@ -53,7 +53,7 @@ void processDelayedMoves(void)
 }
 
 void initObjects(void)
-{int i;	
+{int i;
  objectRunList=objects+0;
  objectIdleList=objects+1;
  objectFreeList=objects+2;
@@ -93,7 +93,7 @@ void signalObject(Object *object,int message,int param1,int param2)
  assert(object);
  assert(object!=objectRunList);
  assert(object!=objectIdleList);
- assert(object!=objectFreeList); 
+ assert(object!=objectFreeList);
 #if 1
  assert(object->type!=OT_DEAD); /* here */
  assert(object->type<OT_NMTYPES);
@@ -119,7 +119,7 @@ void delayKill(Object *o)
 {int oldClass;
  int oldType;
  checkStack();
- assert(o->class!=CLASS_DEAD); 
+ assert(o->class!=CLASS_DEAD);
  assert(o->type!=OT_DEAD);
  signalObject(o,SIGNAL_OBJECTDESTROYED,(int)o,0);
  o->type=OT_DEAD;
@@ -144,7 +144,7 @@ void registerPBObject(int pbNm,Object *me)
       w<=level_pushBlock[pbNm].endWall;
       w++)
     {assert(level_PBWall[w]>=0);
-     assert(level_PBWall[w]<level_nmWalls);     
+     assert(level_PBWall[w]<level_nmWalls);
      level_wall[level_PBWall[w]].object=me;
      /* dPrint("  has wall %d\n",level_PBWall[w]); */
     }
@@ -186,7 +186,7 @@ void suckSpriteParams(Sprite *s)
 
 void placeObjects(void)
 {int o,p1,p2,p3,p4,i;
- 
+
  for (o=0;o<level_nmObjects;o++)
     {if (level_object[o].type==OT_PLAYER)
 	{objectPPos=level_object[o].firstParam;
@@ -209,7 +209,7 @@ void placeObjects(void)
 	    break;
          case OT_SHOOTER1:
 	 case OT_SHOOTER2:
-	 case OT_SHOOTER3:	    
+	 case OT_SHOOTER3:
 	    constructShooter(level_object[o].type);
 	    break;
          case OT_TELEPSECTOR:
@@ -219,8 +219,8 @@ void placeObjects(void)
 	    constructTeleportReturn();
 	    break;
          case OT_PLAYER:
-	    for (i=0;i<5;i++)	       
-	       suckShort();	    
+	    for (i=0;i<5;i++)
+	       suckShort();
 	    break;
 	 case OT_BLOB:
 	    constructBlob(suckShort());
@@ -316,7 +316,7 @@ void placeObjects(void)
 	    suckShort();
 	    suckShort();
 	    suckShort();
-	    suckShort();	    
+	    suckShort();
 	    break;
 	 case OT_BUGKEY:
 	 case OT_TIMEKEY:
@@ -349,8 +349,8 @@ void placeObjects(void)
 	 case OT_COMM_BATTERY ... OT_COMM_TOP:
 	    p1=suckShort();
 	    p2=suckShort();
-	    p3=suckShort();	    
-	    p4=suckShort();	 
+	    p3=suckShort();
+	    p4=suckShort();
 	    constructThing(p1,F(p2),F(p3),F(p4),
 			   level_object[o].type);
 	    suckShort(); /* discard angle */
@@ -369,10 +369,10 @@ void placeObjects(void)
  {int i;
   /* put objects on the ground */
   for (i=0;i<MAXOBJECTS;i++)
-     {if (objects[i].type!=OT_DEAD) 
+     {if (objects[i].type!=OT_DEAD)
 	 if ((objects[i].type!=OT_BLOB && objects[i].type!=OT_HAWK &&
 	      objects[i].class==CLASS_MONSTER) ||
-	     objects[i].type==OT_CAMEL) 
+	     objects[i].type==OT_CAMEL)
 	    {Sprite *s=((SpriteObject *)&(objects[i]))->sprite;
 	     int d=findFloorDistance(s->s,&(s->pos));
 	     s->pos.y+=s->radius-d;
@@ -459,7 +459,7 @@ void radialDamage(Object *this,MthXyz *center,int sector,int damage,
 		sp->vel.y+=normal.y;
 		sp->vel.z+=normal.z;
 		signalObject((Object *)list[nmToHurt],SIGNAL_HURT,
-			     dam,(int)this);     
+			     dam,(int)this);
 	       }
 	    /* add close adjacent sectors */
 	    for (w=level_sector[s].firstWall;w<=level_sector[s].lastWall;w++)
@@ -477,10 +477,10 @@ void radialDamage(Object *this,MthXyz *center,int sector,int damage,
 		       done=0;
 		      }
 	       }
-	    processed[s]=2;		   
+	    processed[s]=2;
 	   }
     }
- while (!done); 
+ while (!done);
 }
 
 #if 0
@@ -489,7 +489,7 @@ void radialDamage(Object *this,MthXyz *center,int damage,Fixed32 radius)
  MthXyz normal;
  Object *o,*list[MAXOBJECTS];
  Sprite *s;
- 
+
  checkStack();
  nmList=0;
  for (o=objectRunList->next;o;o=o->next)
@@ -519,13 +519,13 @@ void radialDamage(Object *this,MthXyz *center,int damage,Fixed32 radius)
 	and kills something that is still in an earlier explosion's list */
      assert(s->owner->class!=CLASS_DEAD);
      assert(s->owner->type!=OT_DEAD);
-     signalObject(s->owner,SIGNAL_HURT,dam,(int)this);     
+     signalObject(s->owner,SIGNAL_HURT,dam,(int)this);
     }
 }
 #endif
 
 void pushBlockMakeSound(PushBlockObject *source,int sndNm)
-{MthXyz pos; 
+{MthXyz pos;
  int s=source->pbNum;
  pos.x=F(level_sector[level_pushBlock[s].enclosingSector].center[0]);
  pos.y=F(level_sector[level_pushBlock[s].enclosingSector].center[1]);
@@ -534,7 +534,7 @@ void pushBlockMakeSound(PushBlockObject *source,int sndNm)
 }
 
 void pushBlockAdjustSound(PushBlockObject *source)
-{MthXyz pos; 
+{MthXyz pos;
  int s=source->pbNum;
  pos.x=F(level_sector[level_pushBlock[s].enclosingSector].center[0]);
  pos.y=F(level_sector[level_pushBlock[s].enclosingSector].center[1]);

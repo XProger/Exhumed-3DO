@@ -193,7 +193,7 @@ int main(int argc,char **argv)
 	}
      fread(buffer,1024,1,f);
      fclose(f);
-     map=buffer;     
+     map=buffer;
     }
  readBmp(argv[1]);
  sscanf(argv[2],"%d",&fontHeight);
@@ -215,7 +215,7 @@ int main(int argc,char **argv)
     {map+=suckChars(y,map);
      y++;
     }
- 
+
  dumpChars();
 
  printf("};\n");

@@ -30,7 +30,7 @@ int main(int argc,char **argv)
      exit(-1);
     }
  fprintf(ofile,"unsigned char %s[] = {",argv[3]);
- 
+
  for (y=0;y<size;y++)
     {if (count++>30)
 	{count=0;

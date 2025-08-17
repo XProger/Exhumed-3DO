@@ -28,7 +28,7 @@ int main(int argc,char **argv)
       exit(0);
      }
  }
- 
+
  fread(waveBuff,8,1,ifile);
  fread(waveBuff,4,1,ifile);
  waveBuff[4]=0;
@@ -56,7 +56,7 @@ int main(int argc,char **argv)
      exit(-1);
     }
  fread(&waveSize,4,1,ifile);
- 
+
  min=0;
  max=0;
  while (waveSize>0)
@@ -77,4 +77,3 @@ int main(int argc,char **argv)
  fclose(ofile);
  return 0;
 }
-

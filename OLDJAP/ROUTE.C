@@ -25,7 +25,7 @@ void initRoutePlotter(void)
     {nodes[i].next=freeNodes;
      freeNodes=nodes+i;
     }
- 
+
  /* compute stepability for all doorways */
  for (s=0;s<level_nmSectors;s++)
     {for (w=level_sector[s].firstWall;w<=level_sector[s].lastWall;w++)
@@ -87,7 +87,7 @@ int plotRouteToObject(MonsterObject *from,SpriteObject *to,int floater)
 	{if (level_wall[w].nextSector==-1)
 	    break;
 	 if ((level_wall[w].flags & from->sprite->flags) & WALLFLAG_BLOCKBITS)
-	    continue;	 
+	    continue;
 	 if (!floater && (level_wall[w].flags & WALLFLAG_NOTSTEPABLE))
 	    continue;
 	 if (level_wall[w].flags & WALLFLAG_DOORWALL)

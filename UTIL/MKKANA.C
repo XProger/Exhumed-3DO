@@ -13,7 +13,7 @@ int main(int argc,char **argv)
        {ch=(y>>5)*20+(x>>4);
 	cx=x&0xf;
 	cy=y&0x1f;
-	if (cx<8 && cy<16 && 
+	if (cx<8 && cy<16 &&
 	    ((FntKanaFontData[ch*16+cy]>>cx)&1))
 	   fprintf(ofile,"111");
 	else

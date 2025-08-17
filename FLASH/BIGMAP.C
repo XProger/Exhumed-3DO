@@ -42,44 +42,44 @@ typedef struct
 /* up, right, down, left */
 static LevData levelGraph[NMLEVELS]=
 {
-/* 0*/ {{ 2, 1, 5, 3},"+KARNAK.LEV"}, 
-/* 1*/ {{18,-1,-1,-1},"+SANCTUAR.LEV"},       
-/* 2*/ {{ 4,-1,-1,-1},"+PASS.LEV"},         
-/* 3*/ {{-1,-1,-1,-1},"+TOMB.LEV"},         
-/* 4*/ {{-1,-1,-1,16},"+SHRINE.LEV"},         
+/* 0*/ {{ 2, 1, 5, 3},"+KARNAK.LEV"},
+/* 1*/ {{18,-1,-1,-1},"+SANCTUAR.LEV"},
+/* 2*/ {{ 4,-1,-1,-1},"+PASS.LEV"},
+/* 3*/ {{-1,-1,-1,-1},"+TOMB.LEV"},
+/* 4*/ {{-1,-1,-1,16},"+SHRINE.LEV"},
 
-/* 5*/ {{-1, 6,-1, 8},"+MINES.LEV"},  
+/* 5*/ {{-1, 6,-1, 8},"+MINES.LEV"},
 /* 6*/ {{-1, 7,-1, 5},"+SETPALAC.LEV"},
 /* 7*/ {{-1,-1,-1,-1},"+SETARENA.LEV"},
 /* 8*/ {{-1,-1,-1,21},"+CAVERN.LEV"},
-/* 9*/ {{10,21,-1,-1},"+THOTH.LEV"}, 
+/* 9*/ {{10,21,-1,-1},"+THOTH.LEV"},
 
-/*10*/ {{11,-1,-1,-1},"+CHAOS.LEV"},  
-/*11*/ {{29,-1,-1,-1},"+COLONY.LEV"},  
-/*12*/ {{-1,20,-1,15},"+SELPATH.LEV"},  
-/*13*/ {{-1,-1,-1,-1},"+KILENTRY.LEV"},  
-/*14*/ {{-1,-1,-1,-1},"+QUARRY.LEV"},  
+/*10*/ {{11,-1,-1,-1},"+CHAOS.LEV"},
+/*11*/ {{29,-1,-1,-1},"+COLONY.LEV"},
+/*12*/ {{-1,20,-1,15},"+SELPATH.LEV"},
+/*13*/ {{-1,-1,-1,-1},"+KILENTRY.LEV"},
+/*14*/ {{-1,-1,-1,-1},"+QUARRY.LEV"},
 
 /*15*/ {{-1,-1,-1,-1},"+SELBUROW.LEV"},
 /*16*/ {{-1,-1,17,-1},"+MAGMA.LEV"},
-/*17*/ {{-1,-1,-1,-1},"+PEAK.LEV"}, 
+/*17*/ {{-1,-1,-1,-1},"+PEAK.LEV"},
 /*18*/ {{19,-1,-1,-1},"+MARSH.LEV"},
 /*19*/ {{-1,-1,-1,20},"+SUNKEN.LEV"},
 
 /*20*/ {{-1,-1,-1,-1},"+SLAVCAMP.LEV"},
 /*21*/ {{-1,-1,-1,-1},"+GORGE.LEV"},
-/*22*/ {{-1,-1,-1,-1},"+TEST.LEV"},  
-/*23*/ {{-1,-1,-1,-1},"+KILMAAT1.LEV"},  
+/*22*/ {{-1,-1,-1,-1},"+TEST.LEV"},
+/*23*/ {{-1,-1,-1,-1},"+KILMAAT1.LEV"},
 /*24*/ {{-1,-1,-1,-1},"+KILMAAT2.LEV"},
 
-/*25*/ {{-1,-1,-1,-1},"+KILMAAT3.LEV"}, 
-/*26*/ {{-1,-1,-1,-1},"+KILMAAT4.LEV"}, 
-/*27*/ {{-1,-1,-1,-1},"+KILMAAT5.LEV"}, 
-/*28*/ {{-1,-1,-1,-1},"+KILMAAT6.LEV"}, 
-/*29*/ {{-1,-1,-1,-1},"+KILARENA.LEV"}, 
+/*25*/ {{-1,-1,-1,-1},"+KILMAAT3.LEV"},
+/*26*/ {{-1,-1,-1,-1},"+KILMAAT4.LEV"},
+/*27*/ {{-1,-1,-1,-1},"+KILMAAT5.LEV"},
+/*28*/ {{-1,-1,-1,-1},"+KILMAAT6.LEV"},
+/*29*/ {{-1,-1,-1,-1},"+KILARENA.LEV"},
 
-/*30*/ {{-1,-1,-1,-1},"+TOMBEND.LEV"}, 
-}; 
+/*30*/ {{-1,-1,-1,-1},"+TOMBEND.LEV"},
+};
 
 char *getLevelName(int lNm)
 {return levelGraph[lNm].levelFile;
@@ -142,7 +142,7 @@ int runMap(int currentLevel,char **outFileName)
  int fadeCount,mapFadeDir;
  int arrowOffs,eyeFrame,eyeClock;
  Fixed32 scaleFactor;
- 
+
  XyInt pos;
  XyInt poly[4];
 
@@ -173,7 +173,7 @@ int runMap(int currentLevel,char **outFileName)
  }
  if (enable_music)
     playCDTrack(mapMusic,1);
- SCL_SetFrameInterval(0xfffe); 
+ SCL_SetFrameInterval(0xfffe);
  SPR_SetTvMode(SPR_TV_NORMAL,SPR_TV_320X240,OFF);
 
  selectedLevel=currentLevel;
@@ -189,7 +189,7 @@ int runMap(int currentLevel,char **outFileName)
  fadeCount=1;
  mapFadeDir=1;
  arrowOffs=0; eyeFrame=0; eyeClock=5;
- scaleFactor=F(1)+((F(1)>>4)*31); 
+ scaleFactor=F(1)+((F(1)>>4)*31);
 
  while (1)
     {if (!(frame & 0x3f))
@@ -244,8 +244,8 @@ int runMap(int currentLevel,char **outFileName)
 		poly[1].x=f(((x+1)*64-xoffs-scx)*scaleFactor)+scx;
 		poly[1].y=f(((y+1)*64-yoffs-scy)*scaleFactor)+scy;
 		if (poly[0].x>320 || poly[1].x<0 ||
-		    poly[0].y>240 || poly[1].y<0) 
-		   continue;		
+		    poly[0].y>240 || poly[1].y<0)
+		   continue;
 		EZ_scaleSpr(0,COLOR_5|HSS_ENABLE|ECD_DISABLE,
 			    0,mapPic(firstMapTile+y*MAPTILEWIDTH+x),
 			    poly,NULL);
@@ -259,7 +259,7 @@ int runMap(int currentLevel,char **outFileName)
 	     poly[0].y=levelPos[i][1]-yoffs-5;
 	     if (i==selectedLevel)
 		{int pic;
-		 if (eyeClock & 1) 
+		 if (eyeClock & 1)
 		    {eyeFrame++;
 		     if (eyeFrame>=30)
 			eyeFrame=0;
@@ -276,7 +276,7 @@ int runMap(int currentLevel,char **outFileName)
 		 poly[0].x-=2;
 		 poly[0].y-=2;
 		 EZ_normSpr(DIR_NOREV,COLOR_5,0,mapPic(pic),
-			    poly,NULL); 
+			    poly,NULL);
 		 for (j=0;j<4;j++)
 		    {if (levelGraph[selectedLevel].link[j]!=-1)
 			{static struct {short pic,xo,yo,dx,dy;} arrows[]=
@@ -340,12 +340,12 @@ int runMap(int currentLevel,char **outFileName)
 	{fadeCount++;
 	 if (mapFadeDir==-1)
 	    {if (fadeCount==32)
-		{*outFileName=levelGraph[selectedLevel].levelFile; 
+		{*outFileName=levelGraph[selectedLevel].levelFile;
 		 EZ_clearScreen();
 		 return selectedLevel;
 		}
 	     setMasterVolume(15-(fadeCount>>1));
-	     scaleFactor+=F(1)>>4; 
+	     scaleFactor+=F(1)>>4;
 	     SCL_SetColOffset(SCL_OFFSET_A,SCL_SP0,
 			      -fadeCount<<3,
 			      -fadeCount<<3,
@@ -354,17 +354,17 @@ int runMap(int currentLevel,char **outFileName)
 	 else
 	    {if (fadeCount==32)
 		{fadeCount=0;
-		 scaleFactor=F(1); 
-		 SCL_SetColOffset(SCL_OFFSET_A,SCL_SP0,0,0,0); 
+		 scaleFactor=F(1);
+		 SCL_SetColOffset(SCL_OFFSET_A,SCL_SP0,0,0,0);
 		}
 	     else
 		{scaleFactor-=F(1)>>4;
 		 SCL_SetColOffset(SCL_OFFSET_A,SCL_SP0,
 				  -(31-fadeCount)<<3,
 				  -(31-fadeCount)<<3,
-				  -(31-fadeCount)<<3); 
-		} 
-	    }  
+				  -(31-fadeCount)<<3);
+		}
+	    }
 	}
      else
 	{
@@ -449,14 +449,9 @@ int runMap(int currentLevel,char **outFileName)
 	 if (newPos[0]>640-320)
 	    newPos[0]=640-320;
 	 if (newPos[1]>512-240)
-	    newPos[1]=512-240; 
+	    newPos[1]=512-240;
 	}
      displayEnable(1);
      frame++;
     }
 }
-
-
-
-
-

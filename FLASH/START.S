@@ -14,7 +14,7 @@ __MYENTRYPOINT
 ;	mov.l r3,@r2
 ;	bf/s @1
 ;	add.l #4,r2
-	
+
 	mov.l	=__SN_ENTRY_POINT,r0
 	jmp	@r0
 	nop

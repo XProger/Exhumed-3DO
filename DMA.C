@@ -17,7 +17,7 @@
 
 
        dma is idle
-       dma requests are queued and dma buffers are used 
+       dma requests are queued and dma buffers are used
        sprite draw end interrupt -- begin dma transfer.
        dma requests are queued
        dma end interrupt -- dma buffers are freed, next dma transfer is
@@ -31,7 +31,7 @@
 
 #define DMAQSIZE 16 /* must be power of 2 */
 
-typedef struct 
+typedef struct
 {int from,to,size;
 } QType;
 QType dmaQ[DMAQSIZE];
@@ -75,7 +75,7 @@ void startNextDma(void)
      POKE(BASE+0x10,0x100); /* enable */
      POKE(BASE+0x10,0x101); /* enable and start */
     }
- qTail=(qTail+1)&(DMAQSIZE-1);   
+ qTail=(qTail+1)&(DMAQSIZE-1);
 }
 
 void dmaMemCpy(void *from,void *to,int size)
@@ -88,7 +88,7 @@ void dmaMemCpy(void *from,void *to,int size)
 #endif
      from<(void *)0x06000000 || from>(void *)0x06100000 ||
      (to>=(void *)0x00200000 && to<=(void *)0x00300000))
-    {qmemcpy((void *)to,from,size); 
+    {qmemcpy((void *)to,from,size);
     }
  else
     {POKE(BASE+0,from);

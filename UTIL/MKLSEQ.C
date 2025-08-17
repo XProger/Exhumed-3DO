@@ -81,7 +81,7 @@ void main(int argc,char **argv)
  loadWave(argv[1]);
  printf("Wave BPS:%d RATE:%d SIZE:%d\n",waveBPS,waveSampleRate,waveSize);
  ofile=fopen(argv[2],"wb");
- steps=(waveSize/4)/SAMPLESPERSTEP; 
+ steps=(waveSize/4)/SAMPLESPERSTEP;
         /*steps= # of 30th second chunks in wave file*/
  printf("%d steps.\n",steps);
  nmFrames=0;
@@ -176,5 +176,3 @@ void main(int argc,char **argv)
  }
  fclose(ofile);
 }
-
-

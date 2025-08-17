@@ -100,7 +100,7 @@ static unsigned char deQByte(void)
      if (qTail==nmBuffers)
 	qTail=0;
      qPos=0;
-    }  
+    }
  return r;
 }
 
@@ -129,8 +129,8 @@ static void deQCopy(void *dest,int size)
      assert(qTail<nmBuffers);
      qTail++;
      if (qTail==nmBuffers)
-	qTail=0; 
-     qPos=0; 
+	qTail=0;
+     qPos=0;
     }
 }
 
@@ -139,7 +139,7 @@ static void deQSound(void)
 {int amount;
  int s;
  amount=deQByte()<<8;
- amount+=deQByte(); 
+ amount+=deQByte();
  while (amount)
     {s=65536-sndRingPos;
      if (s>amount)
@@ -155,14 +155,14 @@ static void deQSound(void)
      else
 	deQCopy((void *)(SNDBASE+(sndRingPos)),s);
      sndRingPos=0;
-     amount-=s;     
-    }	
+     amount-=s;
+    }
 }
 
 #define FRAMESKIP 3
 
 void playMovie(void)
-{unsigned char *booffer[MAXNMBUFFERS]; 
+{unsigned char *booffer[MAXNMBUFFERS];
  unsigned short black[300];
  short nmFrames,frame;
  int waveRate;
@@ -211,16 +211,16 @@ void playMovie(void)
  SCL_SetFrameInterval(FRAMESKIP);
  SPR_SetTvMode(SPR_TV_NORMAL,SPR_TV_320X240,OFF);
  SPR_SetEraseData(0x0000,0,0,319,239);
- 
+
  POKE_W(SCL_VDP2_VRAM+0x180020,0x0f03); /* transparency and enables */
- 
+
  /* read movie header */
  nmFrames=*(short *)(buffer[qTail]+6);
  dPrint("Movie has %d frames\n",nmFrames);
 
  BPS=*(short *)(buffer[qTail]+8);
  waveRate=*(unsigned short *)(buffer[qTail]+10);
- 
+
  qPos=12;
  qTail=0;
 
@@ -238,7 +238,7 @@ void playMovie(void)
      if (BPS==16)
 	POKE_W(base,0x1800|(1<<5)); /* kon, ex and loop */
      else
-	POKE_W(base,0x1800|(1<<5)|0x10); /* kon, ex and loop */     
+	POKE_W(base,0x1800|(1<<5)|0x10); /* kon, ex and loop */
     }
 
  for (frame=0;frame<nmFrames;frame++)
@@ -289,24 +289,24 @@ void playMovie(void)
       parms[0].x=0; parms[0].y=220;
       parms[1].x=0; parms[1].y=230;
       parms[2].x=fullBuffers>>2; parms[2].y=230;
-      parms[3].x=fullBuffers>>2; parms[3].y=220;      
+      parms[3].x=fullBuffers>>2; parms[3].y=220;
       EZ_openCommand();
       EZ_polygon(ECD_DISABLE|SPD_DISABLE,RGB(0,0,31),
-		 parms,NULL);      
+		 parms,NULL);
       EZ_closeCommand();
      }
-#endif     
+#endif
      PEEK_W(SCL_VDP2_VRAM+0x180002);
-     while ((vtimer<FRAMESKIP-1 || 
-	     (0x3ff & PEEK_W(SCL_VDP2_VRAM+0x18000a))<200) && 
+     while ((vtimer<FRAMESKIP-1 ||
+	     (0x3ff & PEEK_W(SCL_VDP2_VRAM+0x18000a))<200) &&
 	    maybeReadBuffer())
 	PEEK_W(SCL_VDP2_VRAM+0x180002);
-     SCL_DisplayFrame();     
+     SCL_DisplayFrame();
     }
 
  for (i=0;i<512*1024;i+=2)
-    POKE_W(SCL_VDP2_VRAM+i,0x8000); 
- 
+    POKE_W(SCL_VDP2_VRAM+i,0x8000);
+
  GFS_NwStop(cdFile); /* stop prefetch */
  GFS_Close(cdFile);
  goto doItAgain;

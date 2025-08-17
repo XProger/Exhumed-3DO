@@ -9,23 +9,23 @@
 
  Modification History:
  $Log: /PSX_CMN/PSX_CMN_H/SONYFIX.H $
- 
+
  8     2/20/96 4:32p Borden
  removed prototypes that appear to be included in version 3.4
- 
+
  7     2/08/96 9:40a Joe
  added extern "C"
- 
+
  6     8/21/95 9:53a Borden
  removed cdInit prototype, it is in libcd.h
- 
+
  5     8/11/95 4:41p Joe
  Added prototype GsSetFarClip
- 
+
  4     8/10/95 6:31p Joe
  Added protoype for DecDCTinCallback (spelling is different than Sony
  docs)
- 
+
  3     6/14/95 10:00a Dan
  Modified prototypes for lib 3.1
 
@@ -95,4 +95,3 @@ long DecDCTinCallback(long (*func)());
 #endif
 
 #endif
-

@@ -93,18 +93,18 @@ void project_point(MthXyz *v,XyInt *p);
 #if 0
 void project_point(MthXyz *v,XyInt *p)
 {unsigned int newZ;
- if (v->z<=F(1)) 
+ if (v->z<=F(1))
     newZ=F(1);
  else
     newZ=(unsigned int)v->z;
  {Fixed32 r;
-  Set_Hardware_DivideFixed((10<<20),newZ); 
+  Set_Hardware_DivideFixed((10<<20),newZ);
   r=Get_Hardware_Divide();
   p->x = f(MTH_Mul(r,v->x));
   p->y = -f(MTH_Mul(r,v->y));
  }
 #if 0
- Set_Hardware_Divide(v->y*(-FOCALDIST>>4),newZ>>4); 
+ Set_Hardware_Divide(v->y*(-FOCALDIST>>4),newZ>>4);
  p->x = PROJECT(v->x,newZ);
  p->y = Get_Hardware_Divide();
 /* p->y = -PROJECT(v->y,newZ); */
@@ -119,7 +119,7 @@ void project_point(MthXyz *v,XyInt *p)
 Bool clip_visible( XyInt *poly,SectorDrawRecord *s);
 
 #if 0
-__asm__ 
+__asm__
     (".align 4\n"
      ".global _clip_visible\n"
      "_clip_visible:\n"
@@ -156,7 +156,7 @@ __asm__
 
      "rts\n"
      "sts.l macl,r8\n"
-     
+
      );
 #endif
 
@@ -303,7 +303,7 @@ void clipZSub(int clipAxis,Fixed32 clipLine,int greater,
 	{/* consider the lines one at a time */
 	 next=p+1;
 	 if (next>=4) next-=4;
-	 
+
 	 if ((i=goodPoint(pointsIn+p)))
 	    {shadeRing[nmRing]=shadeIn[p];
 	     ring[nmRing++]=pointsIn[p];
@@ -341,7 +341,7 @@ void clipZSub(int clipAxis,Fixed32 clipLine,int greater,
 		MTH_Mul(shadeIn[next]-shadeIn[p],ratio);
 	     nmRing++;
 	     assert(nmRing<10);
-	    }	 
+	    }
 	}
      /* now look at the points in the ring and translate them into quads */
      switch (nmRing)
@@ -388,7 +388,7 @@ void clipZSub(int clipAxis,Fixed32 clipLine,int greater,
 	       {dPrint(" p(%d,%d,%d)\n",
 		       pointsIn[p].x,
 		       pointsIn[p].y,
-		       pointsIn[p].z);		       
+		       pointsIn[p].z);
 		dPrint("axis %d   line %d  greater %d\n",clipAxis,
 		       clipLine,greater);
 	       }
@@ -503,10 +503,10 @@ void changeLightColor(Sprite *s,int r,int g,int b)
 {int i;
  for (i=0;i<MAXNMLIGHTSOURCES && lightSource[i]!=s;i++) ;
  if (i==MAXNMLIGHTSOURCES)
-    return;    
+    return;
  delayColor[i][0]=r;
  delayColor[i][1]=g;
- delayColor[i][2]=b; 
+ delayColor[i][2]=b;
  lightColorChanged=1;
 }
 
@@ -523,7 +523,7 @@ void removeLight(Sprite *s)
 void updateLights(void)
 {int i,j;
  nmLights=delayNmLights;
- 
+
  if (lightColorChanged)
     {lightColorChanged=0;
      for (i=0;i<MAXNMLIGHTSOURCES;i++)
@@ -559,7 +559,7 @@ void updateLights(void)
 int nmWallLights;
 static char wallLightP[MAXNMLIGHTSOURCES];
 #if BETTERLIGHT
-static int wallLightDist[MAXNMLIGHTSOURCES]; 
+static int wallLightDist[MAXNMLIGHTSOURCES];
 #endif
 static void buildLightList(sWallType *wall)
 {int l;
@@ -627,7 +627,7 @@ static void sbuildLightList(sWallType *wall)
 #define NEARCLIP F(32)
 #define SECTORBNDRYNEARCLIP F(-1)
 #define FARCLIP F(1024)
-#define FARCLIP2 10 
+#define FARCLIP2 10
 /*#define FARCLIP F(256)
   #define FARCLIP2 8 */
 
@@ -658,10 +658,10 @@ unsigned short getLight(char vlight,
      if (light<=0) continue;
 #if BETTERLIGHT
      if (dist>10)
-	light=(light*(wallLightDist[i]/dist))>>16; 
+	light=(light*(wallLightDist[i]/dist))>>16;
      else
 #else
-	light=light>>11;     
+	light=light>>11;
 #endif
      if (light-lColor[i][0]>0)
 	r+=light-lColor[i][0];
@@ -682,7 +682,7 @@ unsigned short sgetLight(char vlight,
 {int r,g,b,i,light,dist;
  if (sWavyIndex)
     {vlight+=((*(((char *)waterBright)+sWavyIndex))-20)>>1;
-     if (vlight>31) vlight=31; 
+     if (vlight>31) vlight=31;
      if (vlight<0) vlight=0;
      sWavyIndex=(sWavyIndex+7)&0xff;
      if (!sWavyIndex)
@@ -701,7 +701,7 @@ unsigned short sgetLight(char vlight,
      if (light<=0) continue;
 #if BETTERLIGHT
      if (dist>10)
-	light=(light*(swallLightDist[i]/dist))>>16; 
+	light=(light*(swallLightDist[i]/dist))>>16;
      else
 #else
 	light=light>>11;
@@ -752,18 +752,18 @@ void drawClippedFace(sFaceType *face,Fixed32 *shades,MthMatrix *view,
      buff2[i].y=F(xy.y);
 #else
      buff2[i].x=F(PROJECT(buff1[i].x,buff1[i].z));
-     buff2[i].y=-F(PROJECT(buff1[i].y,buff1[i].z)); 
+     buff2[i].y=-F(PROJECT(buff1[i].y,buff1[i].z));
 #endif
      shade2[i]=shade1[i];
      if (buff2[i].x>F(2000))
 	buff2[i].x=F(2000);
      if (buff2[i].x<F(-2000))
-	buff2[i].x=F(-2000); 
+	buff2[i].x=F(-2000);
      if (buff2[i].y>F(2000))
 	buff2[i].y=F(2000);
      if (buff2[i].y<F(-2000))
-	buff2[i].y=F(-2000); 
-     buff2[i].z=0; 
+	buff2[i].y=F(-2000);
+     buff2[i].z=0;
     }
  buff2Size=buff1Size;
  clipZSub(0,F(-160),1,
@@ -805,7 +805,7 @@ void drawClippedFace(sFaceType *face,Fixed32 *shades,MthMatrix *view,
 
 #if 0
 void drawWater(sWallType *theWall,MthXyz *coords)
-{int i,z,field; 
+{int i,z,field;
  int buff1Size,buff2Size;
  MthXyz buff1[MAXSUBS*4];
  MthXyz buff2[MAXSUBS*4];
@@ -863,7 +863,7 @@ void drawWater(sWallType *theWall,MthXyz *coords)
      shade2[i]=shade1[i];
     }
  buff2Size=buff1Size;
- 
+
  clipZSub(0,F(-160),1,
 	  buff2,shade2,buff2Size,
 	  buff1,shade1,&buff1Size);
@@ -899,12 +899,12 @@ void drawWater(sWallType *theWall,MthXyz *coords)
      EZ_polygon(DRAW_MESH|ECD_DISABLE|SPD_DISABLE,
 		field?RGB(15,10,0):WATERCOLOR,poly,&gtable);
     }
-} 
+}
 #endif
 
 #if 0
 void drawPlax(sWallType *theWall,MthXyz *coords)
-{int i,z; 
+{int i,z;
  int buff1Size,buff2Size;
  MthXyz buff1[MAXSUBS*4];
  MthXyz buff2[MAXSUBS*4];
@@ -924,7 +924,7 @@ void drawPlax(sWallType *theWall,MthXyz *coords)
      shade2[i]=shade1[i];
     }
  buff2Size=buff1Size;
- 
+
  clipZSub(0,F(-160),1,
 	  buff2,shade2,buff2Size,
 	  buff1,shade1,&buff1Size);
@@ -956,7 +956,7 @@ void drawPlax(sWallType *theWall,MthXyz *coords)
 	}
      EZ_polygon(ECD_DISABLE|SPD_DISABLE,0x0000,poly,NULL);
     }
-} 
+}
 #endif
 
 #define MAXVPERWALL 700
@@ -1066,12 +1066,12 @@ void drawRectWall(sWallType *theWall,MthXyz *coords,
 	 clip&=vCalc[row2+w].light;
 	 poly[(int)*ppattern].x=vCalc[row2+w].x;
 	 poly[(int)*ppattern].y=vCalc[row2+w].y;
-	 
+
 	 if (clip || !clip_visible(poly,s))
 	    {tex++;
 	     continue;
 	    }
-	 
+
 	 assert(getPicClass(level_texture[tex])==TILE16BPP);
 #if 0
 	 EZ_distSpr(DIR_NOREV,
@@ -1135,7 +1135,7 @@ void drawWall(sWallType *wall,MthMatrix *view,SectorDrawRecord *s)
 	}
      if (clip || !clip_visible(poly,s))
 	continue;
-     
+
      assert(getPicClass(level_face[f].tile)==TILE16BPP);
 #if 0
      EZ_distSpr(DIR_NOREV,
@@ -1216,13 +1216,13 @@ void drawWaterSurface(sWallType *wall,MthMatrix *view,SectorDrawRecord *s)
 	     shades[i]=vCalc[v].light&0x1f;
 	    }
 	 drawClippedFace(level_face+f,shades,view,
-			 wall->firstVertex);  
+			 wall->firstVertex);
 	 continue;
 	}
 
      if (clip || !clip_visible(poly,s))
 	continue;
-     
+
      assert(getPicClass(level_face[f].tile)==TILE16BPP);
      EZ_polygon(DRAW_MESH|ECDSPD_DISABLE|UCLPIN_ENABLE|COLOR_5|
 		DRAW_GOURAU,
@@ -1347,7 +1347,7 @@ void slave_drawRectWall(sWallType *theWall,MthXyz *coords,
 	 clip&=slave_vCalc[row2+w].light;
 	 poly[(int)*ppattern].x=slave_vCalc[row2+w].x;
 	 poly[(int)*ppattern].y=slave_vCalc[row2+w].y;
-	 
+
 	 if (clip || !clip_visible(poly,s))
 	    {tex++;
 	     continue;
@@ -1399,7 +1399,7 @@ void slave_drawWall(sWallType *wall,MthMatrix *view,SectorDrawRecord *s)
 	}
      if (clip || !clip_visible(poly,s))
 	continue;
-     
+
      cacheThruResult[nmSlavePolys].gtable=gtable;
      for (i=0;i<4;i++)
 	cacheThruResult[nmSlavePolys].poly[i]=poly[i];
@@ -1482,7 +1482,7 @@ void drawSector(int sectorNm,MthMatrix *view,int slave)
 #if WATER
      if (theWall->flags & WALLFLAG_WATERSURFACE)
 	{if (slave)
-	    slave_drawWater(theWall); 
+	    slave_drawWater(theWall);
 	 else
 	    drawWaterSurface(theWall,view,sectorDraw+sectorNm);
 	 continue;
@@ -1522,7 +1522,7 @@ void drawSector(int sectorNm,MthMatrix *view,int slave)
 	{if (level_sector[sectorNm].flags & SECFLAG_WATER)
 	    sWavyIndex=(w & 0x1f)+1;
 	 else
-	    sWavyIndex=0; 
+	    sWavyIndex=0;
 	 if (theWall->flags & WALLFLAG_PARALLELOGRAM)
 	    slave_drawRectWall(theWall,tformed,sectorDraw+sectorNm);
 	 else
@@ -1532,7 +1532,7 @@ void drawSector(int sectorNm,MthMatrix *view,int slave)
 	{if (level_sector[sectorNm].flags & SECFLAG_WATER)
 	    wavyIndex=(w & 0x1f)+1;
 	 else
-	    wavyIndex=0; 
+	    wavyIndex=0;
 	 if (theWall->flags & WALLFLAG_PARALLELOGRAM)
 	    drawRectWall(theWall,tformed,sectorDraw+sectorNm);
 	 else
@@ -1574,7 +1574,7 @@ void findDoorways(int sectorNm,MthMatrix *view)
 
 	 /* back face clipping */
 	 getVertex(theWall->v[0],wallV+0);
-	 
+
 	 wallDist=(f(camera->pos.x-wallV[0].x))*theWall->normal[0]+
 	          (f(camera->pos.y-wallV[0].y))*theWall->normal[1]+
 	          (f(camera->pos.z-wallV[0].z))*theWall->normal[2];
@@ -1592,14 +1592,14 @@ void findDoorways(int sectorNm,MthMatrix *view)
 	 getVertex(theWall->v[1],wallV+1);
 	 getVertex(theWall->v[2],wallV+2);
 	 getVertex(theWall->v[3],wallV+3);
-	 
+
 	 /* clip out doorways that have 0 height, so can't see under doors */
 	 if (theWall->normal[1]==0 &&
 	     wallV[0].y==wallV[3].y &&
 	     wallV[0].y==wallV[2].y &&
 	     wallV[0].y==wallV[1].y)
 	    continue;
-	 
+
 	 /* far plane clipping */
 	 for (i=0;i<4;i++)
 	    MTH_CoordTrans(view,wallV+i,tformed+i);
@@ -1617,7 +1617,7 @@ void findDoorways(int sectorNm,MthMatrix *view)
 	     tformed[3].z<SECTORBNDRYNEARCLIP)
 	    continue;
 
-	 if (wallDist<F(48) && 
+	 if (wallDist<F(48) &&
 	     (tformed[0].z<NEARCLIP ||
 	      tformed[1].z<NEARCLIP ||
 	      tformed[2].z<NEARCLIP ||
@@ -1625,11 +1625,11 @@ void findDoorways(int sectorNm,MthMatrix *view)
 	    polyGood=0;
 	 else
 	    {
-	     /* clip to near plane */	     
-	     clipZ(tformed,clipped,NEARCLIP);  
+	     /* clip to near plane */
+	     clipZ(tformed,clipped,NEARCLIP);
 	     for (i=0;i<4;i++)
 		project_point(clipped+i,poly+i);
-	     
+
 	     polyGood=1;
 	     if (!clip_visible(poly,
 			       sectorDraw+camera->s/*so cache will be good */))
@@ -1651,7 +1651,7 @@ void findDoorways(int sectorNm,MthMatrix *view)
 		 addDebugLine(poly[2].x,poly[2].y,poly[3].x,poly[3].y);
 		 addDebugLine(poly[3].x,poly[3].y,poly[0].x,poly[0].y);
 		}
-#endif     
+#endif
 	     xmin=1000;
 	     ymin=1000;
 	     xmax=-1000;
@@ -1670,7 +1670,7 @@ void findDoorways(int sectorNm,MthMatrix *view)
 	 doorwayCache[w].xmin=xmin;
 	 doorwayCache[w].ymin=ymin;
 	 doorwayCache[w].xmax=xmax;
-	 doorwayCache[w].ymax=ymax;	 
+	 doorwayCache[w].ymax=ymax;
 
 	 /* doorwayCache[w].distance=
 	    (tformed[0].z+tformed[1].z+tformed[2].z+tformed[3].z)>>2; */
@@ -1742,7 +1742,7 @@ void findDoorways(int sectorNm,MthMatrix *view)
 	 ymin=doorwayCache[w].ymin;
 	 ymax=doorwayCache[w].ymax;
 	}
-	 
+
      next=sectorDraw+theWall->nextSector;
 
      /* clip to our bounding box */
@@ -1800,14 +1800,14 @@ void findDoorways(int sectorNm,MthMatrix *view)
 #define FTCSR (Uint8 volatile *)0xfffffe11
 #define CACHECNTRL (Uint8 volatile *)0xfffffe92
 
-volatile int slaveDrawStart; 
+volatile int slaveDrawStart;
        /* index in the update list at which to start drawing */
 MthMatrix *slaveView;
 void slaveDraw(void)
 {int i;
  /* flush cache */
  *CACHECNTRL=0x10;
- *CACHECNTRL=0x01; 
+ *CACHECNTRL=0x01;
  nmSlavePolys=0;
  for (i=slaveDrawStart;i>=0;i--)
     {drawSector(updateList[i]-sectorDraw,slaveView,1);
@@ -1825,7 +1825,7 @@ void drawSlaveWalls(void)
  XyInt parms[2];
  /* flush cache */
  *CACHECNTRL=0x10;
- *CACHECNTRL=0x01; 
+ *CACHECNTRL=0x01;
  s=slaveDrawStart;
  assert(nmSlavePolys<MAXNMSLAVEPOLYS);
  assert(nmSlavePolys>=0);
@@ -1860,7 +1860,7 @@ void drawSlaveWalls(void)
 		    {getVertex(w->v[j],&wallV);
 		     MTH_CoordTrans(slaveView,&wallV,tformed+j);
 		    }
-		 drawPlax(w,tformed); 
+		 drawPlax(w,tformed);
 		 continue;
 		}
 #endif
@@ -1886,8 +1886,8 @@ void drawSlaveWalls(void)
 		    slaveResult[i].gtable.entry[0]); */
 		 if (updateList[s]->spriteCommandStart)
 		    EZ_linkCommand(EZ_getNextCmdNm()-1,JUMP_CALL,
-				   updateList[s]->spriteCommandStart); 
-		 
+				   updateList[s]->spriteCommandStart);
+
 		 assert(updateList[s]-sectorDraw==
 			slaveResult[i].gtable.entry[0]);
 		 s--;
@@ -1946,7 +1946,7 @@ void startSlave(void *slaveMain)
  SYS_SETSINT(0x94,slaveMain);
  *SMPC_SF=1;
  *SMPC_COM=SMPC_SSHON;
- while ((*SMPC_SF & 0x01)==0x01) ; 
+ while ((*SMPC_SF & 0x01)==0x01) ;
 }
 
 
@@ -1966,15 +1966,15 @@ void buildTree(void)
 	    continue;
 	 /* each wall is two sided, so we may only do the ancestor->child
 	    relationships */
-	 
+
 	 assert(sectorDraw[adjoin].flags & SDFLAG_CACHEVALID);
 	 if (doorwayCache[w].xmin==-32000)
 	    /* this means wall normal points away from eye */
 	    continue;
-	 
+
 	 /* here we know that this wall represents an arrow from s to
 	    adjoin; s is adjoin's child */
-	 
+
 	 assert(sectorDraw[adjoin].nmAncestors<MAXFANIN);
 	 sectorDraw[adjoin].ancestor[(int)sectorDraw[adjoin].nmAncestors++]=s;
 	 sectorDraw[s].nmChildren++;
@@ -2035,9 +2035,9 @@ static void sortLeafList(SectorDrawRecord **leafList,int leafListSize)
 	  p.x=camera->pos.x-testV.x;
 	  p.y=camera->pos.y-testV.y;
 	  p.z=camera->pos.z-testV.z;
-	  if (((plane & 0x80) 
+	  if (((plane & 0x80)
 	       && MTH_Product((Fixed32 *)&p,(Fixed32 *)cutWall->normal)<0)||
-	      (!(plane & 0x80) 
+	      (!(plane & 0x80)
 	       && MTH_Product((Fixed32 *)&p,(Fixed32 *)cutWall->normal)>0))
 	     {/* move s1 so that it is after s2 */
 	      int k;
@@ -2089,7 +2089,7 @@ void drawWalls(MthMatrix *view)
  autoTarget=NULL;
  bestAutoAimRating=INT_MAX;
  for (i=0;i<level_nmSectors;i++)
-    sectorDraw[i].flags=0; 
+    sectorDraw[i].flags=0;
  assert(camera->s>=0 && camera->s<level_nmSectors);
 
  sectorDraw[camera->s].xmin=XMIN;
@@ -2126,8 +2126,8 @@ void drawWalls(MthMatrix *view)
      addDebugLine(updateList[i]->xmin,updateList[i]->ymax,
 		  updateList[i]->xmin,updateList[i]->ymin);
     }
-#endif     
-		  
+#endif
+
  /* build tree */
  for (i=0;i<updateListSize;i++)
     {updateList[i]->nmAncestors=0;
@@ -2190,7 +2190,7 @@ void drawWalls(MthMatrix *view)
      leafToDraw=0;
 
      if (leafListSize<=0)
-	{/* there are still sectors we haven't drawn, we must have a 
+	{/* there are still sectors we haven't drawn, we must have a
 	    circular dependancy, try to break it */
 	 /* this doesn't happen normally */
 	 /* ... find the sector in the updateList which has the minimum
@@ -2209,7 +2209,7 @@ void drawWalls(MthMatrix *view)
 	 /* NOTE: this breaks the tree structure somewhat, as breakLeaf is
 	    still referenced by ancestor pointers in other sectors. */
 	 breakLeaf->nmChildren=0;
-	 leafList[leafListSize++]=breakLeaf;		
+	 leafList[leafListSize++]=breakLeaf;
 	 assert(leafListSize>0);
 	}
      assert(leafListSize>0);
@@ -2243,7 +2243,7 @@ void drawWalls(MthMatrix *view)
     slaveSize=updateListSize-1;
  slaveDrawStart=slaveSize;
  /* start slave */
- *(Uint16 volatile *)0x21000000=0xffff; 
+ *(Uint16 volatile *)0x21000000=0xffff;
  for (i=updateListSize-1;i>slaveDrawStart;i--)
     {parms[0].x=updateList[i]->xmin+160;parms[0].y=updateList[i]->ymin+120;
      parms[1].x=updateList[i]->xmax+160;parms[1].y=updateList[i]->ymax+120;
@@ -2257,8 +2257,8 @@ void drawWalls(MthMatrix *view)
  lastWallCmd=EZ_getNextCmdNm()-1;
  /* draw sprites in slave rendered sectors */
  for (;i>=0;i--)
-    {int last=EZ_getNextCmdNm();     
-     drawSprites(&(camera->pos),view,updateList[i]-sectorDraw);     
+    {int last=EZ_getNextCmdNm();
+     drawSprites(&(camera->pos),view,updateList[i]-sectorDraw);
      if (EZ_getNextCmdNm()!=last)
 	{EZ_linkCommand(EZ_getNextCmdNm()-1,JUMP_RETURN,0);
 	 updateList[i]->spriteCommandStart=last;
@@ -2274,8 +2274,8 @@ void drawWallsFinish(void)
 {int i;
  /* wait for slave to finish */
  i=0;
- while (!(*FTCSR & 0x80)) 
-    i++; 
+ while (!(*FTCSR & 0x80))
+    i++;
  /* sync */
  *FTCSR=0x0;
  if (i>100 && slaveSize>0)
@@ -2387,9 +2387,9 @@ int frustumClip(Fixed32 *p1,Fixed32 *p2,int dx,int dy,int dz,int neg)
  if (neg)
     badPoint[dy]=-badPoint[dx];
  else
-    badPoint[dy]=badPoint[dx]; 
+    badPoint[dy]=badPoint[dx];
  badPoint[dz]=p1[dz]+MTH_Mul(t,delZ);
- return 0; 
+ return 0;
 }
 
 void drawSprites(MthXyz *playerPos,MthMatrix *view,int sector)
@@ -2457,7 +2457,7 @@ void drawSprites(MthXyz *playerPos,MthMatrix *view,int sector)
 /* assert(nmDraw<=1);*/
 
 #if RECTCLIP
- pos[0].x=XMIN+160; pos[0].y=YMIN+120; 
+ pos[0].x=XMIN+160; pos[0].y=YMIN+120;
  pos[1].x=XMAX+160; pos[1].y=YMAX+120;
  EZ_userClip(pos);
 #endif
@@ -2485,18 +2485,18 @@ void drawSprites(MthXyz *playerPos,MthMatrix *view,int sector)
 	 MTH_CoordTrans(view,&o->pos,&p1);
 	 feetPos.x=o->angle;
 	 feetPos.y=o->scale;
-	 feetPos.z=o->frame;	 
+	 feetPos.z=o->frame;
 	 MTH_CoordTrans(view,&feetPos,&p2);
 	 /* p1 & p2 hold view space endpoints of line */
 	 if (o->flags & SPRITEFLAG_THINLINE)
 	    {if (frustumClip((Fixed32 *)&p1,(Fixed32 *)&p2,0,2,1,1) ||
 		 frustumClip((Fixed32 *)&p1,(Fixed32 *)&p2,0,2,1,0) ||
 		 frustumClip((Fixed32 *)&p1,(Fixed32 *)&p2,1,2,0,0) ||
-		 frustumClip((Fixed32 *)&p1,(Fixed32 *)&p2,1,2,0,1)) 
+		 frustumClip((Fixed32 *)&p1,(Fixed32 *)&p2,1,2,0,1))
 		continue;
 	     project_point(&p1,pos);
-	     project_point(&p2,pos+1);	     
-	     
+	     project_point(&p2,pos+1);
+
 	     EZ_line(UCLPIN_ENABLE|COMPO_TRANS|ECDSPD_DISABLE|COLOR_5,
 		     RGB(abs(laserColor-31),
 			 15,
@@ -2514,7 +2514,7 @@ void drawSprites(MthXyz *playerPos,MthMatrix *view,int sector)
 	 pos[2].y=pos[1].y-width;
 	 pos[3].x=pos[0].x;
 	 pos[3].y=pos[0].y-width;
-	 EZ_polygon(UCLPIN_ENABLE|ECDSPD_DISABLE|COLOR_5,o->color,pos,NULL); 
+	 EZ_polygon(UCLPIN_ENABLE|ECDSPD_DISABLE|COLOR_5,o->color,pos,NULL);
 	 continue;
 	}
      if (o->owner)
@@ -2524,7 +2524,7 @@ void drawSprites(MthXyz *playerPos,MthMatrix *view,int sector)
      feetPos.z=o->pos.z;
      MTH_CoordTrans(view,&feetPos,&tformed);
      if (tformed.z<F(32))
-	continue; 
+	continue;
      /* if (tformed.z>FARCLIP)
 	continue; */
 
@@ -2575,7 +2575,7 @@ void drawSprites(MthXyz *playerPos,MthMatrix *view,int sector)
 		 shadowScale=MTH_Mul(shadowScale,scale);
 		 shadowWidth=48*shadowScale;
 		 shadowHeight=48*shadowScale;
-		 
+
 		 shadowHeight=MTH_Mul(shadowHeight,
 				      MTH_Div(abs(shadowPos.y-playerPos->y),
 					      tformed.z));
@@ -2653,7 +2653,7 @@ void drawSprites(MthXyz *playerPos,MthMatrix *view,int sector)
 	      gtable.entry[3]=gtable.entry[0];
 	      EZ_scaleSpr(ZOOM_TL|flip,
 			  UCLPIN_ENABLE|COLOR_5|HSS_ENABLE|ECD_DISABLE|
-			  DRAW_GOURAU,0,pic,pos,&gtable); 
+			  DRAW_GOURAU,0,pic,pos,&gtable);
 	     }
 	  else
 	     {if (i==TILESMALL8BPP)
@@ -2666,16 +2666,16 @@ void drawSprites(MthXyz *playerPos,MthMatrix *view,int sector)
 			  NULL);
 	     }
 	 }
-	 
-	} 
+
+	}
      /* done drawing sprite */
      if (o->flags & SPRITEFLAG_FOOTCLIP)
 	{/* pos[0].x=sectorDraw[sector].xmin+160;
 	    pos[0].y=sectorDraw[sector].ymin+120;
 	    pos[1].x=sectorDraw[sector].xmax+160;
 	    pos[1].y=sectorDraw[sector].ymax+120; */
-	 pos[0].x=XMIN+160; pos[0].y=YMIN+120; 
-	 pos[1].x=XMAX+160; pos[1].y=YMAX+120;	  
+	 pos[0].x=XMIN+160; pos[0].y=YMIN+120;
+	 pos[1].x=XMAX+160; pos[1].y=YMAX+120;
 	 EZ_userClip(pos);
 	}
     }
@@ -2685,5 +2685,3 @@ void drawSprites(MthXyz *playerPos,MthMatrix *view,int sector)
 void initWallRenderer(void)
 {lightInit();
 }
-
-

@@ -94,7 +94,7 @@ static int cdWork[(GFS_WORK_SIZE(OPENMAX)+3)/4];
 static GfsDirName dir[DIRMAX];
 static GfsDirTbl dirtbl;
 
-static char sectorBuff[2048] __attribute__ ((aligned (4))); 
+static char sectorBuff[2048] __attribute__ ((aligned (4)));
 static char *sectorBuffPos;
 static GfsHn openCDFile; /* only one cd file may be open at a time */
 #define CDHANDLE 8000
@@ -134,7 +134,7 @@ void fs_init(void)
 	}
      SYS_EXECDMP();
     }
- GFS_SetErrFunc(errorFunc,NULL); 
+ GFS_SetErrFunc(errorFunc,NULL);
  changeDir("G3");
 }
 
@@ -197,7 +197,7 @@ void fs_read(int fd,char *buf,int n)
  assert(fd==CDHANDLE);
  assert(openCDFile);
  while (n)
-    {assert(n>0);     
+    {assert(n>0);
      bufferLeft=2048-(sectorBuffPos-sectorBuff);
      assert(bufferLeft>=0);
      assert(bufferLeft<=2048);
@@ -229,14 +229,14 @@ void fs_read(int fd,char *buf,int n)
 			     parms,NULL);
 		 drawString(-getStringWidth(1,getText(LB_PROMPTS,0))/2,-20,
 			    1,getText(LB_PROMPTS,0));
-			    
+
 		 EZ_closeCommand();
 		 SPR_WaitDrawEnd();
-		 SCL_DisplayFrame();		 
+		 SCL_DisplayFrame();
 		}
 	    }
 	 GFS_NwExecOne(openCDFile);
-	 
+
 	 sectorBuffPos=sectorBuff;
 	 bufferLeft=2048;
 	}
@@ -275,7 +275,7 @@ void playCDTrack(int track,int repeat)
 /* CDC_PLY_ETNO(&cp)=track; demo */
  CDC_PLY_ETNO(&cp)=GFS_ConvTno(2); /* demo */
  CDC_PLY_EIDX(&cp)=0;
- CDC_PLY_PMODE(&cp)=repeat?0x0f:0x00; 
+ CDC_PLY_PMODE(&cp)=repeat?0x0f:0x00;
  CDC_CdPlay(&cp);
 }
 
@@ -363,13 +363,5 @@ void link(char *filename)
  INT_SetScuFunc(INT_SCU_VBLK_IN,NULL);
  INT_SetScuFunc(INT_SCU_VBLK_OUT,NULL);
 /* set_imask(0xffffffff); */
- (*code)(data,size>>2); 
+ (*code)(data,size>>2);
 }
-
-
-
-
-
-
-
-

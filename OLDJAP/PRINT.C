@@ -30,7 +30,7 @@ static int nmJChars;
 
 void loadJapanFontData(int fd)
 {unsigned short *palData[MAXNMJCHARS];
- nmJChars=loadPicSet(fd,palData,charData,MAXNMJCHARS); 
+ nmJChars=loadPicSet(fd,palData,charData,MAXNMJCHARS);
 }
 
 #define PICDATA(d) (((unsigned char *)d)+8)
@@ -38,7 +38,7 @@ static int firstJFontPic;
 void loadJapanFontPics(void)
 {int i,res;
  for (i=0;i<nmJChars;i++)
-    {res=addPic(TILEJCHAR,PICDATA(charData[i]),NULL,4); 
+    {res=addPic(TILEJCHAR,PICDATA(charData[i]),NULL,4);
      if (i==0)
 	firstJFontPic=res;
      widths[3][i]=22;
@@ -101,7 +101,7 @@ int initFonts(int spriteNm,int fontMask)
 	  if (charMap[f][two]==-1 && charMap[f][one]!=-1)
 	     {charMap[f][two]=charMap[f][one];
 	      widths[f][two]=widths[f][one];
-	     }	  
+	     }
 	 }
      }
     }
@@ -268,5 +268,3 @@ int getCharWidth(int font,unsigned char c)
 int getFontHeight(int font)
 {return heights[font];
 }
-
-

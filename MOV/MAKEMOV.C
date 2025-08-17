@@ -141,7 +141,7 @@ void writeSound(int amount)
     readAmount=waveSize/4;
  else
     readAmount=amount;
- waveSize-=readAmount*4; 
+ waveSize-=readAmount*4;
  if (readAmount>0)
     {read=fread(waveBuff,4,readAmount,waveFile);
      assert(read==readAmount);
@@ -200,10 +200,10 @@ int addFrame(char *bmpName,double fps)
 	  size+=2)
 	{picdata[y][x][0]=lastFrame[y][x][0];
 	 picdata[y][x][1]=lastFrame[y][x][1];
-	 picdata[y][x][2]=lastFrame[y][x][2];	     
+	 picdata[y][x][2]=lastFrame[y][x][2];
 	 picdata[y][x+1][0]=lastFrame[y][x+1][0];
 	 picdata[y][x+1][1]=lastFrame[y][x+1][1];
-	 picdata[y][x+1][2]=lastFrame[y][x+1][2];	     
+	 picdata[y][x+1][2]=lastFrame[y][x+1][2];
 	 x+=2;
 	 if (x>=320)
 	    {x=0;
@@ -225,7 +225,7 @@ int addFrame(char *bmpName,double fps)
 	{if (same(x,y) && same(x+1,y))
 	    {if (delay>=4)
 		break;
-	     delay++; 
+	     delay++;
 	    }
 	 else
 	    delay=0;
@@ -266,7 +266,7 @@ int addFrame(char *bmpName,double fps)
  frameNumber++;
  return runCount;
 }
- 
+
 
 int main(int argc,char **argv)
 {char buff[160];
@@ -365,8 +365,8 @@ int main(int argc,char **argv)
 	    {frNm++;
 	     if (frNm%3)
 		lose=5;
-	     else 
-		lose=1; 
+	     else
+		lose=1;
 	     lose=1;
 	     sprintf(buff,argv[frame],i);
 	     totalRuns+=addFrame(buff,fps);
@@ -377,8 +377,8 @@ int main(int argc,char **argv)
 	{frNm++;
 	 if (frNm%3)
 	    lose=5;
-	 else 
-	    lose=1; 
+	 else
+	    lose=1;
 	 lose=1;
 	 totalRuns+=addFrame(argv[frame],fps);
 	}
@@ -387,8 +387,3 @@ int main(int argc,char **argv)
  fclose(ofile);
  exit(0);
 }
-
-
-
-
-

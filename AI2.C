@@ -26,7 +26,7 @@
 
 /********************************\
  *        RAMSESLID STUFF       *
-\********************************/                            
+\********************************/
 enum {AI_RLID_RISE,AI_RLID_FALL,AI_RLID_IDLE};
 #define CHANNEL_RISE 839402849
 #define CHANNEL_DROP 290808021
@@ -47,7 +47,7 @@ void ramsesLid_func(Object *_this,int msg,int param1,int param2)
 	    break;
 	   }
 	break;
-     case SIGNAL_MOVE:		
+     case SIGNAL_MOVE:
 	switch (this->state)
 	   {case AI_RLID_RISE:
 	       {int d;
@@ -63,7 +63,7 @@ void ramsesLid_func(Object *_this,int msg,int param1,int param2)
 		break;
 	       }
 	    case AI_RLID_FALL:
-	       this->vel-=GRAVITY>>1;	       
+	       this->vel-=GRAVITY>>1;
 	       pbObject_move((PushBlockObject *)this,this->vel);
 	       if (this->offset<0)
 		  {pbObject_moveTo((PushBlockObject *)this,0);
@@ -108,7 +108,7 @@ Object *constructRamsesLid(int pb)
 
 /********************************\
  *        RTRIGGER STUFF        *
-\********************************/                            
+\********************************/
 enum  {AI_RTRIGGER_WAIT,AI_RTRIGGER_ALIGNPLAYER,
 	  AI_RTRIGGER_RISE,
 	  AI_RTRIGGER_TALK,
@@ -230,12 +230,12 @@ void ramsesTrigger_func(Object *_this,int msg,int param1,int param2)
 	if (this->disabled)
 	   {this->disabled=5;
 	    break;
-	   } 
+	   }
 	delay_moveObject((Object *)this,objectRunList);
 	switchWeapons(0);
 	this->state=AI_RTRIGGER_ALIGNPLAYER;
 	if (currentState.gameFlags & GAMEFLAG_FIRSTLEVEL)
-	   signalAllObjects(SIGNAL_SWITCH,CHANNEL_RISE,0); 
+	   signalAllObjects(SIGNAL_SWITCH,CHANNEL_RISE,0);
 	{char name[80];
 	 chooseVoiceFile(name);
 	 this->fd=fs_open(name);
@@ -268,7 +268,7 @@ void ramsesTrigger_func(Object *_this,int msg,int param1,int param2)
 	switch (this->state)
 	   {case AI_RTRIGGER_ALIGNPLAYER:
 /* #ifndef PSYQ */
-	       fs_execOne();  
+	       fs_execOne();
 /* #endif */
 	       camera->vel.x+=(F(level_sector[this->sectorNm].center[0])-
 			       camera->pos.x)>>5;
@@ -276,11 +276,11 @@ void ramsesTrigger_func(Object *_this,int msg,int param1,int param2)
 			       camera->pos.z)>>5;
 	       camera->vel.x-=camera->vel.x>>3;
 	       camera->vel.z-=camera->vel.z>>3;
-	       
+
 	       playerAngle.yaw-=playerAngle.yaw>>3;
 	       playerAngle.pitch-=playerAngle.pitch>>3;
 	       playerAngle.roll=0;
-	       
+
 	       if (this->timer++<=30)
 		  break;
 	       if (currentState.currentLevel!=3 && !droppedMummy)
@@ -315,7 +315,7 @@ void ramsesTrigger_func(Object *_this,int msg,int param1,int param2)
 	       this->ramses->pos.z=F(level_sector[this->homeSector].
 				     center[2]);
 	       this->ramses->scale=65536+16000;
-	       
+
 	       addLight(this->ramses,0,0,0);
 	       this->timer=0;
 	       this->soundRingBase=(getSoundTop()+3)&~3;
@@ -324,7 +324,7 @@ void ramsesTrigger_func(Object *_this,int msg,int param1,int param2)
 	       this->soundRingBase2=this->soundRingBase+2*RINGSIZE;
 	       assert(this->soundRingBase2+2*RINGSIZE<1024*512);
 #endif
-	       this->soundRingHead=0;		   
+	       this->soundRingHead=0;
 	       {short s;
 		fs_read(this->fd,(char *)&s,2);
 		this->nmFrames=s;
@@ -366,7 +366,7 @@ void ramsesTrigger_func(Object *_this,int msg,int param1,int param2)
 		 playSoundMegaE((int)this,&ssr);
 #endif
 		}
-	       }	
+	       }
 	       POKE_W(SNDBASE+0x100408,this->sndSlot<<11);
 	       this->lastSndPos=0;
 	       /* set slot to monitor */
@@ -442,7 +442,7 @@ void ramsesTrigger_func(Object *_this,int msg,int param1,int param2)
 	       break;
 	    case AI_RTRIGGER_FADE:
 	       fflag=spriteAdvanceFrame(this->ramses);
-	       if (this->ramses->frame>8)		  
+	       if (this->ramses->frame>8)
 		  {playerAngle.pitch-=playerAngle.pitch>>2;
 		   if (abs(playerAngle.pitch)<F(1))
 		      playerAngle.pitch=0;
@@ -464,7 +464,7 @@ void ramsesTrigger_func(Object *_this,int msg,int param1,int param2)
 		      }
 		   playCDTrackForLevel(currentState.currentLevel);
 		  }
-	       break;	       
+	       break;
 	    case AI_RTRIGGER_WAITFORDISABLE:
 	       if (--this->disabled<=0)
 		  {if (currentState.currentLevel==30)
@@ -512,7 +512,7 @@ Object *constructRamsesTrigger(int triggerSec,int homeSector)
 
 /********************************\
  *         SWITCH STUFF         *
-\********************************/                            
+\********************************/
 enum {AI_SWITCH_OFF,AI_SWITCH_SWITCHING,AI_SWITCH_ON,AI_SWITCH_OFFING};
 
 void switch_func(Object *_this,int msg,int param1,int param2)
@@ -542,7 +542,7 @@ void switch_func(Object *_this,int msg,int param1,int param2)
 	    delay_moveObject((Object *)this,objectRunList);
 	   }
 	break;
-     case SIGNAL_MOVE:	
+     case SIGNAL_MOVE:
 	frame=level_sequence[this->sequence]+this->frame;
 	/* dPrint("fr:%d\n",level_chunk[level_frame[frame].chunkIndex].tile);
 	assert(level_chunk[level_frame[frame].chunkIndex].tile<127); */
@@ -586,7 +586,7 @@ Object *constructSwitch(int type)
     getFreeObject(switch_func,type,CLASS_WALL);
  assert(sizeof(*this)<sizeof(Object));
  assert(this);
- this->sectorNm=suckShort(); 
+ this->sectorNm=suckShort();
  this->channel=suckShort();
  this->orficePos.x=F(suckShort());
  this->orficePos.y=F(suckShort());
@@ -594,7 +594,7 @@ Object *constructSwitch(int type)
 
  this->state=AI_SWITCH_OFF;
  this->aiSlot=nextAiSlot++;
- 
+
  this->sequence=level_sequenceMap[this->type];
  this->frame=0;
  if (level_sequence[this->sequence]==
@@ -630,7 +630,7 @@ Object *constructSwitch(int type)
      if (this->tilePos)
 	break;
     }
- assert(this->tilePos); 
+ assert(this->tilePos);
 
  w->object=(Object *)this;
  return (Object *)this;
@@ -639,7 +639,7 @@ Object *constructSwitch(int type)
 
 /********************************\
  *         SSWITCH STUFF        *
-\********************************/                            
+\********************************/
 enum  {AI_SSWITCH_OFF,AI_SSWITCH_ON};
 
 void sswitch_func(Object *_this,int msg,int param1,int param2)
@@ -656,7 +656,7 @@ void sswitch_func(Object *_this,int msg,int param1,int param2)
 	   break;
 	if (camera->s==this->sectorNm)
 	   signalAllObjects(SIGNAL_SWITCH,this->channel,0);
-	else	   
+	else
 	   this->state=AI_SSWITCH_OFF;
 	break;
        }
@@ -678,7 +678,7 @@ Object *constructSectorSwitch(void)
 
 /********************************\
  *         BLOWPOT STUFF        *
-\********************************/                            
+\********************************/
 
 unsigned short blowPotSequenceMap[]={0};
 
@@ -739,11 +739,11 @@ void blowPot_func(Object *_this,int msg,int param1,int param2)
 		for (type=0;type<NMEVENTS;type++)
 		   if ((goodie-=prob[type])<=0)
 		      break;
-		
+
 		if (this->iAmMapHolder)
 		   type=E_MAP;
 
-		exitPoint.x=this->sprite->pos.x;		
+		exitPoint.x=this->sprite->pos.x;
 		exitPoint.y=this->sprite->pos.y+F(30);;
 		exitPoint.z=this->sprite->pos.z;
 		if (type<NMEVENTS)
@@ -785,7 +785,7 @@ void blowPot_func(Object *_this,int msg,int param1,int param2)
 		     default:
 			break;
 		      }
-		       
+
 
 		/* make incidental effects */
 		constructLight(this->sprite->s,
@@ -812,7 +812,7 @@ void blowPot_func(Object *_this,int msg,int param1,int param2)
 		if (this->type!=OT_CONTAIN10)
 		   posMakeSound((int)this,&this->sprite->pos,
 				level_staticSoundMap[ST_BLOWPOT]+3);
-		delayKill(_this);		
+		delayKill(_this);
 	       }
 	   }
 	break;
@@ -851,14 +851,14 @@ Object *constructBlowPot(int sector,int type)
 
 /********************************\
  *    EARTHQUAKEBLOCK STUFF     *
-\********************************/                            
+\********************************/
 
 enum {AI_EARTHQUAKEBLOCK_WAIT,AI_EARTHQUAKEBLOCK_MOVE};
 
 void earthQuakeBlock_func(Object *_this,int msg,int param1,int param2)
 {EarthQuakeBlockObject *this=(EarthQuakeBlockObject *)_this;
  switch (msg)
-    {case SIGNAL_MOVE:	
+    {case SIGNAL_MOVE:
 	switch (this->state)
 	   {case AI_EARTHQUAKEBLOCK_WAIT:
 	       if (getEarthQuake()<=0)

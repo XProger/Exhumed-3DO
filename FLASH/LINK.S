@@ -1,9 +1,9 @@
 	xdef executeLink
-	
+
 	section .text
-	
+
 	.align 4
-	
+
 ; void executeLink(void *data,int sizeInDWords)
 executeLink:
 	mov =$06004000,r1
@@ -14,7 +14,7 @@ executeLink:
 	add #4,r1
 	dt r5
 	bf @1
-	
+
 	; setup stack register
 	mov.l =$06001000,r15
 	; jump to start

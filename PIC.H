@@ -6,7 +6,7 @@
 enum Class {TILE16BPP,TILE8BPP,TILEVDP,TILESMALL16BPP,TILESMALL8BPP,
 #ifdef JAPAN
 	       TILEJCHAR,
-#endif	       
+#endif
 	       NMCLASSES};
 
 int initPicSystem(int _picNmBase,int *classSizes);

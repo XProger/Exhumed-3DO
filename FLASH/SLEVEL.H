@@ -19,7 +19,7 @@ struct sLevelHeader
  int nmCutSectors;
 };
 
-enum ObjectType 
+enum ObjectType
 {
  OT_PISTOL,OT_M60,OT_GRENADEAMMO,OT_FLAMER,OT_COBRASTAFF,OT_RING,OT_MANACLE,
  OT_SANDALS,OT_MASK,OT_CAPE,OT_ANKLETS,OT_SCEPTER,OT_FEATHER,
@@ -70,7 +70,7 @@ enum ObjectType
  OT_ANIM_SWAMP,OT_ANM1,OT_ANM2,OT_ANM3,OT_ANM4,OT_ANM5,OT_ANM6,OT_ANM7,OT_ANM8,
  OT_ANM9,OT_ANM10,
 
- OT_NMTYPES,OT_DEAD=8196, 
+ OT_NMTYPES,OT_DEAD=8196,
 };
 
 typedef struct
@@ -78,12 +78,12 @@ typedef struct
  short connect[4]; /* -1 means no connection */
 } WaveVert;
 
-typedef struct 
+typedef struct
 {short connect[4];
 } WaveFace;
 
-typedef struct 
-{short type; 
+typedef struct
+{short type;
  short firstParam;
 } sObjectType;
 
@@ -91,7 +91,7 @@ typedef struct
 {short enclosingSector;
  short startWall,endWall;  /* indexes into the pbwall array */
  short startVertex,endVertex; /* indexes into the pbvertex array */
- short floorSector; /* a sector's floor that moves with the block, 
+ short floorSector; /* a sector's floor that moves with the block,
 		       or -1 if none */
  short dx,dy,dz;
 } sPBType;
@@ -197,7 +197,7 @@ struct seqHeader
 /* sequence data */
 /*short *sequenceList; declared elsewhere */
    /*index into the frame array for start of each sequence*/
-/* there is always an extra entry on the end which points to the element past 
+/* there is always an extra entry on the end which points to the element past
    the end of the frameArray */
 
 #define FRAMEFLAG_ENDOFSEQUENCE 0x4000
@@ -218,5 +218,3 @@ typedef struct
 } sChunkType;
 
 #endif
-
-

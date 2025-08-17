@@ -1,7 +1,7 @@
 /* stuff to do:
 
      poison effect
-     
+
      problem: water surface walls can be near clipped out when still visible,
      and never get to the water specific routines
 
@@ -128,14 +128,14 @@ void stepColorOffset(void)
 void changeColorOffset(int r,int g,int b,int rate)
 {colorOffset[0]=r;
  colorOffset[1]=g;
- colorOffset[2]=b; 
+ colorOffset[2]=b;
  colorStepRate=rate;
 }
 
 void addColorOffset(int r,int g,int b)
 {colorOffset[0]+=r;
  colorOffset[1]+=g;
- colorOffset[2]+=b; 
+ colorOffset[2]+=b;
 }
 
 static int ouchTime=0;
@@ -150,7 +150,7 @@ void playerHurt(int hpLost)
  if (ouchTime<=0)
     {do
 	i=getNextRand()&0x3;
-     while (i>2);	 
+     while (i>2);
      playStaticSound(ST_JOHN,3+i);
      ouchTime=60;
     }
@@ -241,7 +241,7 @@ void underWaterControl(unsigned short input)
      run=1;
     }
  vel=vel>>1;
- 
+
  if ((input & PER_DGT_D) == 0)
     {xavel += TURNVELOCITY;
      if (xavel>maxTVel) xavel=maxTVel;
@@ -249,7 +249,7 @@ void underWaterControl(unsigned short input)
     }
  else
     if (xavel>0)
-       {if (xavel>=TURNFRICTION) 
+       {if (xavel>=TURNFRICTION)
 	   xavel-=TURNFRICTION;
        else
 	  xavel=0;
@@ -261,7 +261,7 @@ void underWaterControl(unsigned short input)
     }
  else
     {if (xavel<0)
-	{if (xavel<=TURNFRICTION) 
+	{if (xavel<=TURNFRICTION)
 	    xavel+=TURNFRICTION;
 	else
 	   xavel=0;
@@ -284,18 +284,18 @@ void underWaterControl(unsigned short input)
  if (!turningRight)
     if (yavel<0)
        if (run)
-	  {if (yavel<=-RTURNFRICTION) 
+	  {if (yavel<=-RTURNFRICTION)
 	      yavel+=RTURNFRICTION;
 	  else
 	     yavel=0;
 	  }
        else
-	  {if (yavel<=-RTURNFRICTION) 
+	  {if (yavel<=-RTURNFRICTION)
 	      yavel+=RTURNFRICTION;
 	  else
 	     yavel=0;
 	  }
- 
+
  if ((input & PER_DGT_L) == 0)
     if ((input & IMASK(ACTION_STRAFE)) == 0)
        {force.x += (MTH_Cos( dir ) * -vel)>>2;
@@ -312,13 +312,13 @@ void underWaterControl(unsigned short input)
  if (!turningLeft)
     {if (yavel>0)
 	if (run)
-	   {if (yavel>=RTURNFRICTION) 
+	   {if (yavel>=RTURNFRICTION)
 	       yavel-=RTURNFRICTION;
 	   else
 	      yavel=0;
 	   }
 	else
-	   {if (yavel>=RTURNFRICTION) 
+	   {if (yavel>=RTURNFRICTION)
 	       yavel-=RTURNFRICTION;
 	   else
 	      yavel=0;
@@ -329,7 +329,7 @@ void underWaterControl(unsigned short input)
     {ray.x=-MTH_Sin(playerAngle.yaw); ray.y=0; ray.z=MTH_Cos(playerAngle.yaw);
      ray.x=MTH_Mul(ray.x,MTH_Cos(playerAngle.pitch));
      ray.z=MTH_Mul(ray.z,MTH_Cos(playerAngle.pitch));
-     ray.y=MTH_Sin(playerAngle.pitch);     
+     ray.y=MTH_Sin(playerAngle.pitch);
      force.x=ray.x<<4;
      force.y=ray.y<<4;
      force.z=ray.z<<4;
@@ -394,7 +394,7 @@ void underWaterControl(unsigned short input)
  maxTVel=MAXTVELOCITY;
  run=0;
  vel=vel>>1;
- 
+
  if ((input & PER_DGT_D) == 0)
     {xavel += TURNVELOCITY;
      if (xavel>maxTVel) xavel=maxTVel;
@@ -402,7 +402,7 @@ void underWaterControl(unsigned short input)
     }
  else
     if (xavel>0)
-       {if (xavel>=TURNFRICTION) 
+       {if (xavel>=TURNFRICTION)
 	   xavel-=TURNFRICTION;
        else
 	  xavel=0;
@@ -414,7 +414,7 @@ void underWaterControl(unsigned short input)
     }
  else
     {if (xavel<0)
-	{if (xavel<=TURNFRICTION) 
+	{if (xavel<=TURNFRICTION)
 	    xavel+=TURNFRICTION;
 	else
 	   xavel=0;
@@ -440,18 +440,18 @@ void underWaterControl(unsigned short input)
  if (!turningRight)
     if (yavel<0)
        if (run)
-	  {if (yavel<=-RTURNFRICTION) 
+	  {if (yavel<=-RTURNFRICTION)
 	      yavel+=RTURNFRICTION;
 	  else
 	     yavel=0;
 	  }
        else
-	  {if (yavel<=-RTURNFRICTION) 
+	  {if (yavel<=-RTURNFRICTION)
 	      yavel+=RTURNFRICTION;
 	  else
 	     yavel=0;
 	  }
- 
+
  if ((input & PER_DGT_L) == 0)
     {yavel += tvel;
      if (run)
@@ -463,13 +463,13 @@ void underWaterControl(unsigned short input)
  if (!turningLeft)
     {if (yavel>0)
 	if (run)
-	   {if (yavel>=RTURNFRICTION) 
+	   {if (yavel>=RTURNFRICTION)
 	       yavel-=RTURNFRICTION;
 	   else
 	      yavel=0;
 	   }
 	else
-	   {if (yavel>=RTURNFRICTION) 
+	   {if (yavel>=RTURNFRICTION)
 	       yavel-=RTURNFRICTION;
 	   else
 	      yavel=0;
@@ -480,7 +480,7 @@ void underWaterControl(unsigned short input)
     {ray.x=-MTH_Sin(playerAngle.yaw); ray.y=0; ray.z=MTH_Cos(playerAngle.yaw);
      ray.x=MTH_Mul(ray.x,MTH_Cos(playerAngle.pitch));
      ray.z=MTH_Mul(ray.z,MTH_Cos(playerAngle.pitch));
-     ray.y=MTH_Sin(playerAngle.pitch);     
+     ray.y=MTH_Sin(playerAngle.pitch);
      force.x=ray.x<<4;
      force.y=ray.y<<4;
      force.z=ray.z<<4;
@@ -604,7 +604,7 @@ void controlInput(unsigned short input,unsigned short changeInput)
 
  if (!turningUp)
     {if (xavel>0)
-	{if (xavel>=TURNFRICTION) 
+	{if (xavel>=TURNFRICTION)
 	    xavel-=TURNFRICTION;
 	else
 	   xavel=0;
@@ -612,7 +612,7 @@ void controlInput(unsigned short input,unsigned short changeInput)
     }
  if (!turningDown)
     {if (xavel<0)
-	{if (xavel<=TURNFRICTION) 
+	{if (xavel<=TURNFRICTION)
 	    xavel+=TURNFRICTION;
 	else
 	   xavel=0;
@@ -635,18 +635,18 @@ void controlInput(unsigned short input,unsigned short changeInput)
  if (!turningRight)
     if (yavel<0)
        if (run)
-	  {if (yavel<=-RTURNFRICTION) 
+	  {if (yavel<=-RTURNFRICTION)
 	      yavel+=RTURNFRICTION;
 	  else
 	     yavel=0;
 	  }
        else
-	  {if (yavel<=-TURNFRICTION) 
+	  {if (yavel<=-TURNFRICTION)
 	      yavel+=TURNFRICTION;
 	  else
 	     yavel=0;
 	  }
- 
+
  if ((input & PER_DGT_L) == 0)
     if ((input & IMASK(ACTION_STRAFE)) == 0)
        {force.x += (MTH_Cos( dir ) * -vel)>>2;
@@ -663,20 +663,20 @@ void controlInput(unsigned short input,unsigned short changeInput)
  if (!turningLeft)
     {if (yavel>0)
 	if (run)
-	   {if (yavel>=RTURNFRICTION) 
+	   {if (yavel>=RTURNFRICTION)
 	       yavel-=RTURNFRICTION;
 	   else
 	      yavel=0;
 	   }
 	else
-	   {if (yavel>=TURNFRICTION) 
+	   {if (yavel>=TURNFRICTION)
 	       yavel-=TURNFRICTION;
 	   else
 	      yavel=0;
 	   }
     }
 
- if (((input & IMASK(ACTION_JUMP)) == 0) && 
+ if (((input & IMASK(ACTION_JUMP)) == 0) &&
      !(camera->flags & SPRITEFLAG_ONSLIPPERYSLOPE))
     {camera->vel.y+=3<<12;
      if (changeInput & IMASK(ACTION_JUMP))
@@ -707,7 +707,7 @@ void controlInput(unsigned short input,unsigned short changeInput)
        {camera->vel.x=(15*camera->vel.x+force.x)>>4;
 	camera->vel.z=(15*camera->vel.z+force.z)>>4;
        }
- 
+
  if (shawlActive)
     {if (currentState.inventory & INV_FEATHER)
 	{if (camera->vel.y<camera->gravity)
@@ -816,7 +816,7 @@ void controlInput(unsigned short input,unsigned short changeInput)
 
  if (!turningUp)
     {if (xavel>0)
-	{if (xavel>=TURNFRICTION) 
+	{if (xavel>=TURNFRICTION)
 	    xavel-=TURNFRICTION;
 	else
 	   xavel=0;
@@ -824,7 +824,7 @@ void controlInput(unsigned short input,unsigned short changeInput)
     }
  if (!turningDown)
     {if (xavel<0)
-	{if (xavel<=TURNFRICTION) 
+	{if (xavel<=TURNFRICTION)
 	    xavel+=TURNFRICTION;
 	else
 	   xavel=0;
@@ -849,12 +849,12 @@ void controlInput(unsigned short input,unsigned short changeInput)
 
  if (!turningRight)
     if (yavel<0)
-       {if (yavel<=-RTURNFRICTION) 
+       {if (yavel<=-RTURNFRICTION)
 	   yavel+=RTURNFRICTION;
        else
 	  yavel=0;
        }
- 
+
  if ((input & PER_DGT_L) == 0)
     {yavel += tvel;
      weaponForce(1<<15,0);
@@ -864,13 +864,13 @@ void controlInput(unsigned short input,unsigned short changeInput)
 
  if (!turningLeft)
     {if (yavel>0)
-	if (yavel>=RTURNFRICTION) 
+	if (yavel>=RTURNFRICTION)
 	   yavel-=RTURNFRICTION;
 	else
 	   yavel=0;
     }
 
- if (((input & IMASK(ACTION_JUMP)) == 0) && 
+ if (((input & IMASK(ACTION_JUMP)) == 0) &&
      !(camera->flags & SPRITEFLAG_ONSLIPPERYSLOPE))
     {camera->vel.y+=3<<12;
      if (changeInput & IMASK(ACTION_JUMP))
@@ -902,7 +902,7 @@ void controlInput(unsigned short input,unsigned short changeInput)
        {camera->vel.x=(15*camera->vel.x+force.x)>>4;
 	camera->vel.z=(15*camera->vel.z+force.z)>>4;
        }
- 
+
  if (shawlActive)
     {if (currentState.inventory & INV_FEATHER)
 	{if (camera->vel.y<camera->gravity)
@@ -954,7 +954,7 @@ static void push(void)
  ray.x=-MTH_Sin(yaw); ray.y=0; ray.z=MTH_Cos(yaw);
  ray.x=MTH_Mul(ray.x,MTH_Cos(pitch));
  ray.z=MTH_Mul(ray.z,MTH_Cos(pitch));
- ray.y=MTH_Sin(pitch);     
+ ray.y=MTH_Sin(pitch);
  hscan=hitScan(camera,&ray,&pos,camera->s,&collidePos,&sector);
 
  if ((hscan & COLLIDE_WALL) &&
@@ -969,7 +969,7 @@ static void push(void)
 	}
     }
 }
-   
+
 void movePlayer(int inputEnd,int nmFrames)
 {unsigned short input;
  unsigned short changeInput=0;
@@ -1021,7 +1021,7 @@ void movePlayer(int inputEnd,int nmFrames)
 			 SECFLAG_WATER)
 			s=level_wall[k].nextSector;
 		     assert(s>=0);
-		    }		 
+		    }
 		 /* now s=sector to put bubble in */
 		 {MthXyz pos,v;
 		  pos.x=F(level_sector[s].center[0]);
@@ -1033,7 +1033,7 @@ void movePlayer(int inputEnd,int nmFrames)
 		      if (k>level_sector[s].lastWall)
 			 k=level_sector[s].firstWall;
 		     }
-		  getVertex(level_wall[k].v[0],&v);		  
+		  getVertex(level_wall[k].v[0],&v);
 		  pos.x=(pos.x+v.x)>>1;
 		  pos.z=(pos.z+v.z)>>1;
 		  pos.y-=findFloorDistance(s,&pos);
@@ -1045,53 +1045,53 @@ void movePlayer(int inputEnd,int nmFrames)
 	   {if (wasUnderWater)
 	       {wasUnderWater--;
 		input&=~PER_DGT_U;
-		camera->vel.y+=(int)(0.45*65536); 
-	       }		
+		camera->vel.y+=(int)(0.45*65536);
+	       }
 	    controlInput(input,changeInput);
 	   }
 	 if (currentState.health<=0)
-	    {playerIsDead=1;	     
+	    {playerIsDead=1;
 	     colorCenter[0]=-255;
 	     colorCenter[1]=-255;
 	     colorCenter[2]=-255;
-	     
+
 	     playStaticSound(ST_JOHN,1);
 	     switchPlayerMotion(0);
 	     switchWeapons(0);
 	     xavel=0;
 	     yavel=0;
 	     camera->vel.y+=F(6);
-	     camera->vel.x+=MTH_Sin(playerAngle.yaw)*5;	     
+	     camera->vel.x+=MTH_Sin(playerAngle.yaw)*5;
 	     camera->vel.z-=MTH_Cos(playerAngle.yaw)*5;
 	     deathTimer=0;
 	    }
-	 
+
 	 if (!(input & IMASK(ACTION_FIRE)))
 	    {if (weaponSequenceQEmpty())
 		fireWeapon();
 	    }
-	 
+
 	 if (pushed&IMASK(ACTION_WEPUP))
 	    {weaponUp(WEAPONINV(currentState.inventory));
 	     redrawBowlDots();
 	    }
-	 
+
 	 if (pushed&IMASK(ACTION_WEPDN))
 	    {weaponDown(WEAPONINV(currentState.inventory));
 	     redrawBowlDots();
 	    }
-	 
+
 	 if (pushed&IMASK(ACTION_PUSH))
 	    {push();
 	     debugFlag=1;
-	     dumpProfileData(); 
+	     dumpProfileData();
 	    }
-	 
+
 #ifndef NOCHEATS
 	 if (!(input&(PER_DGT_A|PER_DGT_C)))
 	    camera->vel.y=F(3);
 #endif
-	 
+
 	 /* player angle update */
 	 playerAngle.yaw += yavel;
 	 playerAngle.pitch += xavel;
@@ -1243,7 +1243,7 @@ void drawStatBar(int time)
  XyInt compass = {-14,93};
  static int healthMeterPos=0;
  int hmp;
- 
+
  if (abs(healthMeterPos-F(currentState.health))<F(1))
     healthMeterPos=F(currentState.health);
  else
@@ -1273,7 +1273,7 @@ void drawStatBar(int time)
      int i;
      ammoPos=(87*currentState.weaponAmmo[weapon])/
 	weaponMaxAmmo[weapon];
-     
+
      ammoBar[0].x=-105; ammoBar[0].y=95;
      ammoBar[1].x=-105; ammoBar[1].y=99;
      ammoBar[2].x=-105+ammoPos; ammoBar[2].y=99;
@@ -1304,7 +1304,7 @@ void drawStatBar(int time)
   rect[3].x=35+pos; rect[3].y=95;
   EZ_polygon(ECD_DISABLE|SPD_DISABLE,RGB(17,3,2),rect,NULL);
  }
- 
+
  EZ_normSpr(DIR_NOREV,COLOR_4,0x4000,0,&statusbar,NULL);
 
  /* draw compass */
@@ -1353,7 +1353,7 @@ static void drawMessage(int nmFrames)
  s=(MTH_Sin(normalizeAngle(F(messageAge)<<4))>>13);
  t=15+s;
  b=15-s;
-       
+
  drawStringGouro(messageXPos,-100,MESSAGEFONT,RGB(t,t,t),RGB(b,b,b),
 		 currentMessage);
  messageAge+=nmFrames;
@@ -1382,7 +1382,7 @@ int playerGetObject(int objectType)
  switch (objectType)
     {case OT_COMM_BATTERY ... OT_COMM_TOP:
 	currentState.inventory|=0x10000<<(objectType-OT_COMM_BATTERY);
-	delayed_fade=1;	delayed_fadeButton=3; 
+	delayed_fade=1;	delayed_fadeButton=3;
 	delayed_fadeSel=objectType-OT_COMM_BATTERY;
 	break;
      case OT_PYRAMID:
@@ -1391,58 +1391,58 @@ int playerGetObject(int objectType)
 	   LEVFLAG_GOTPYRAMID;
 	break;
      case OT_M60:
-	currentState.inventory|=INV_M60; 
-	setCurrentWeapon(WP_M60); 
+	currentState.inventory|=INV_M60;
+	setCurrentWeapon(WP_M60);
 	redrawBowlDots();
 	changeMessage(getText(LB_ITEMMESSAGE,5));
 	break;
      case OT_COBRASTAFF:
-	currentState.inventory|=INV_COBRA; 
-	setCurrentWeapon(WP_COBRA); 
+	currentState.inventory|=INV_COBRA;
+	setCurrentWeapon(WP_COBRA);
 	redrawBowlDots();
 	changeMessage(getText(LB_ITEMMESSAGE,8));
 	break;
      case OT_FLAMER:
-	currentState.inventory|=INV_FLAMER; 
+	currentState.inventory|=INV_FLAMER;
 	setCurrentWeapon(WP_FLAMER);
 	redrawBowlDots();
 	changeMessage(getText(LB_ITEMMESSAGE,6));
 	break;
      case OT_GRENADEAMMO:
-	currentState.inventory|=INV_GRENADE; 
+	currentState.inventory|=INV_GRENADE;
 	setCurrentWeapon(WP_GRENADE);
 	redrawBowlDots();
 	changeMessage(getText(LB_ITEMMESSAGE,7));
 	break;
      case OT_MANACLE:
-	currentState.inventory|=INV_MANACLE; 
-	setCurrentWeapon(WP_RAVOLT); 
+	currentState.inventory|=INV_MANACLE;
+	setCurrentWeapon(WP_RAVOLT);
 	redrawBowlDots();
 	changeMessage(getText(LB_ITEMMESSAGE,9));
 	break;
      case OT_PISTOL:
-	currentState.inventory|=INV_PISTOL; 
+	currentState.inventory|=INV_PISTOL;
 	setCurrentWeapon(WP_PISTOL);
 	redrawBowlDots();
 	changeMessage(getText(LB_ITEMMESSAGE,4));
 	break;
-     case OT_BUGKEY: 
-	keyMask|=1; 
+     case OT_BUGKEY:
+	keyMask|=1;
 	playStaticSound(ST_ITEM,0);
 	changeMessage(getText(LB_ITEMMESSAGE,0));
 	break;
-     case OT_TIMEKEY: 
-	keyMask|=2; 
+     case OT_TIMEKEY:
+	keyMask|=2;
 	playStaticSound(ST_ITEM,0);
 	changeMessage(getText(LB_ITEMMESSAGE,1));
 	break;
-     case OT_XKEY: 
-	keyMask|=4; 
+     case OT_XKEY:
+	keyMask|=4;
 	playStaticSound(ST_ITEM,0);
 	changeMessage(getText(LB_ITEMMESSAGE,2));
 	break;
-     case OT_PLANTKEY: 
-	keyMask|=8; 
+     case OT_PLANTKEY:
+	keyMask|=8;
 	playStaticSound(ST_ITEM,0);
 	changeMessage(getText(LB_ITEMMESSAGE,3));
 	break;
@@ -1465,7 +1465,7 @@ int playerGetObject(int objectType)
      case OT_ANKLETS:
 	currentState.inventory|=INV_ANKLET;
 	delayed_fade=1;	delayed_fadeButton=2; delayed_fadeSel=3;
-	break;	
+	break;
      case OT_SCEPTER:
 	currentState.inventory|=INV_SCEPTER;
 	delayed_fade=1;	delayed_fadeButton=2; delayed_fadeSel=4;
@@ -1495,8 +1495,8 @@ int playerGetObject(int objectType)
 	if (objectType==OT_HEALTHSPHERE)
 	   {currentState.health=currentState.nmBowls*200;
 	    changeMessage(getText(LB_ITEMMESSAGE,14));
-	    playStaticSound(ST_ITEM,3);	    
-	   }	
+	    playStaticSound(ST_ITEM,3);
+	   }
 	if (currentState.health>currentState.nmBowls*200)
 	   currentState.health=currentState.nmBowls*200;
 	break;
@@ -1511,7 +1511,7 @@ int playerGetObject(int objectType)
 	 if (diff<1) diff=1;
 	 weaponChangeAmmo(currentWeapon,diff);
 	 changeMessage(getText(LB_ITEMMESSAGE,11));
-	 playStaticSound(ST_ITEM,1);	    
+	 playStaticSound(ST_ITEM,1);
 	 if (currentState.weaponAmmo[currentWeapon]>
 	     weaponMaxAmmo[currentWeapon])
 	    currentState.weaponAmmo[currentWeapon]=
@@ -1560,7 +1560,7 @@ void rotateRectangle(int width,int height,int cx,int cy,
  x-=width;
  result[3].x=f(x*north.x+y*north.y);
  result[3].y=f(x*east.x+y*east.y);
- 
+
 }
 
 #if 0
@@ -1641,7 +1641,7 @@ void makeDial(void)
  nmDialLines=line>>2;
 }
 #endif
-		     
+
 static Fixed32 airStatus=0;
 static int drownStatus=0;
 static int meterPos=0;
@@ -1652,11 +1652,11 @@ void drawAirMeter(int frames)
  static int transitionTimer=0;
  Fixed32 angle=0;
  static Fixed32 dialPos=0;
- static Fixed32 dialVel=0; 
+ static Fixed32 dialVel=0;
  static int underCount=0;
  static airFrom,airTo;
  XyInt pos[4];
-  
+
  switch (meterState)
     {case METERUP:
 	if (camera->flags & SPRITEFLAG_UNDERWATER)
@@ -1696,7 +1696,7 @@ void drawAirMeter(int frames)
 	     airStatus+=F(27);
 	     if (airStatus>F(270) || !(currentState.inventory & INV_MASK))
 		{playerHurt(30);
-		 airStatus=F(270);	    
+		 airStatus=F(270);
 #if 0
 		 if (currentState.health<100 && !playerIsDead)
 		    {int j;
@@ -1715,7 +1715,7 @@ void drawAirMeter(int frames)
 		}
 	    }
 	 airTo=airStatus;
-	 
+
 	 if (underCount==240)
 	    {underCount=0;
 	     dialPos=airStatus;
@@ -1791,7 +1791,7 @@ void drawAirMeter(int frames)
 	 color=RGB(31,31,15);
       if (i==30)
 	 color=RGB(31,31,31);
-      
+
      }
  }
 #endif
@@ -1829,7 +1829,7 @@ int runLevel(char *filename,int levelNm)
 
  MthMatrixTbl viewTransform;
  MthMatrix matstack[4];
- 
+
  startSlave(wallRenderSlaveMain);
  initSound();
 
@@ -1842,7 +1842,7 @@ int runLevel(char *filename,int levelNm)
  EZ_initSprSystem(1448,4,1224,
 		  240,0x8000);
 
- SCL_SetFrameInterval(0xfffe); 
+ SCL_SetFrameInterval(0xfffe);
 
  for (i=0;i<3;i++)
     {EZ_openCommand();
@@ -1857,7 +1857,7 @@ int runLevel(char *filename,int levelNm)
 	    (Uint8 *)stat_compass1+8);
  EZ_setChar(3,COLOR_4,*(int *)stat_compass2,*(int *)(stat_compass2+4),
 	    (Uint8 *)stat_compass2+8);
- 
+
  i=initFonts(4);
  initPicSystem(i,((int []){27,32,1,10,-1}));
 
@@ -1870,11 +1870,11 @@ int runLevel(char *filename,int levelNm)
  initObjects();
  initFlames();
 
- SCL_SetWindow(SCL_W1,0,SCL_RBG0,0xfffffff,0,0,0,0); 
+ SCL_SetWindow(SCL_W1,0,SCL_RBG0,0xfffffff,0,0,0,0);
  SCL_SetColOffset(SCL_OFFSET_A,SCL_SP0|SCL_NBG0|SCL_RBG0,0,0,0);
  fs_startProgress();
  fs_addToProgress("+STATIC.DAT");
- fs_addToProgress(filename); 
+ fs_addToProgress(filename);
  /* load static data */
  {int fd;
   fd=fs_open("+STATIC.DAT");
@@ -1902,10 +1902,10 @@ int runLevel(char *filename,int levelNm)
  /* air meter stuff */
  airBase=addPic(TILE16BPP,meter_bubble+8,NULL,0);
  addPic(TILE16BPP,meter_back+8,NULL,0);
- 
+
 
  SCL_SetColOffset(SCL_OFFSET_A,SCL_SP0|SCL_NBG0|SCL_RBG0,-255,-255,-255);
- colorOffset[0]=-255; colorOffset[1]=-255; colorOffset[2]=-255; 
+ colorOffset[0]=-255; colorOffset[1]=-255; colorOffset[2]=-255;
  EZ_setErase(240,0x0000);
 
  debugPrint("Loaded dynamic\n");
@@ -1918,7 +1918,7 @@ int runLevel(char *filename,int levelNm)
  assert(level_nmWalls<=MAXNMWALLS);
  initSpriteSystem();
 
- 
+
  switchPlayerMotion(1);
  colorCenter[0]=0;
  colorCenter[1]=0;
@@ -1926,7 +1926,7 @@ int runLevel(char *filename,int levelNm)
  player=NULL;
  playerAngle.pitch=0;
  playerAngle.yaw=F(0);
- placeObjects(); 
+ placeObjects();
  if (!player)
     player=constructPlayer(0,0);
  assert(player);
@@ -1939,8 +1939,8 @@ int runLevel(char *filename,int levelNm)
  hitPyramid=0;
  hitTeleport=0;
  initInput();
- playCDTrackForLevel(levelNm); 
- 
+ playCDTrackForLevel(levelNm);
+
  initWater();
 #if 0
  makeDial();
@@ -1982,8 +1982,8 @@ int runLevel(char *filename,int levelNm)
 	 camera->pos.z+=(MTH_GetRand()%(earthQuake<<15))-(earthQuake<<14);
 	 earthQuake--;
 	}
-     MTH_MoveMatrix(&viewTransform, 
-		    -camera->pos.x, 
+     MTH_MoveMatrix(&viewTransform,
+		    -camera->pos.x,
 		    -camera->pos.y+playerHeightOffset,
 		    -camera->pos.z);
 
@@ -1995,7 +1995,7 @@ int runLevel(char *filename,int levelNm)
 
      EZ_localCoord(320/2,240/2);
      pushProfile("Walls");
-     drawWalls(viewTransform.current); 
+     drawWalls(viewTransform.current);
      popProfile();
 
      EZ_userClip(noUserClip);
@@ -2006,7 +2006,7 @@ int runLevel(char *filename,int levelNm)
 #if 0
      if (autoTarget)
 	{Fixed32 dist,pitch;
-	 
+
 	 dist=approxDist(camera->pos.x-autoTarget->pos.x,
 			 camera->pos.z-autoTarget->pos.z,
 			 0);
@@ -2014,9 +2014,9 @@ int runLevel(char *filename,int levelNm)
 	 playerAngle.pitch=pitch;
 	}
      else
-	playerAngle.pitch=F(0); 
+	playerAngle.pitch=F(0);
 #endif
-     if (monsterMoveCounter>8) 
+     if (monsterMoveCounter>8)
 	monsterMoveCounter=8;
      mmcSave=monsterMoveCounter;
      for (;monsterMoveCounter>1;monsterMoveCounter-=2)
@@ -2054,7 +2054,7 @@ int runLevel(char *filename,int levelNm)
 
      drawMessage(framesElapsed);
      drawStatBar(framesElapsed);
-     
+
      drawAirMeter(framesElapsed);
 
 #ifndef NOSTATUSTEXT
@@ -2130,7 +2130,7 @@ int runLevel(char *filename,int levelNm)
      while (vtimer<smoothVTime) ;
 
      /* sometimes a vtimer switch can occur in here */
-     SCL_DisplayFrame(); 
+     SCL_DisplayFrame();
 
      DISABLE;
      if (vtimer-1>smoothVTime)
@@ -2155,7 +2155,7 @@ int runLevel(char *filename,int levelNm)
 		   plaxBBxmin+160,plaxBBymin+120+8,
 		   plaxBBxmax+160,plaxBBymax+120+8);
 #endif
-		   
+
      lastYaw=playerAngle.yaw; lastPitch=playerAngle.pitch;
 
      if (playerIsDead && colorOffset[0]==-255)
@@ -2169,7 +2169,7 @@ int runLevel(char *filename,int levelNm)
 	 hitCamel=0;
 	 vtimer=smoothVTime;
 	}
-     if (playerMotionEnable && 
+     if (playerMotionEnable &&
 	 (!(lastInputSample & PER_DGT_S) || !controlerPresent || delayed_fade))
 	{enablePlax(0);
 	 runInventory(currentState.inventory,keyMask,&mapOn,
@@ -2196,7 +2196,7 @@ void logo(void)
      r=f(evalHermite(pos,0,F(-255),0,0));
      g=f(evalHermite(pos,0,F(-255),0,0));
      b=f(evalHermite(pos,0,F(-255),0,0));
-     
+
      while (!(PEEK_W(SCL_VDP2_VRAM+0x180004) & 8)) ;
      POKE_W(SCL_VDP2_VRAM+0x180114,r & 0x1ff);
      POKE_W(SCL_VDP2_VRAM+0x180116,g & 0x1ff);
@@ -2223,7 +2223,7 @@ void main(void)
  /* aquire system info */
  {PerGetSys *sys_data;
   PER_LInit(PER_KD_SYS,6,PER_SIZE_DGT,PadWorkArea,0);
-  while (!(sys_data=PER_GET_SYS())); 
+  while (!(sys_data=PER_GET_SYS()));
   systemMemory=sys_data->sm;
  }
 
@@ -2265,10 +2265,10 @@ intro:
 /* credits(); */
 /* playMovie();*/
 #ifndef TESTCODE
- playIntro(); 
+ playIntro();
 #else
  bup_initCurrentGame();
- currentState.inventory=0x3fffff; 
+ currentState.inventory=0x3fffff;
 #endif
 
 SCL_Vdp2Init();
@@ -2281,7 +2281,7 @@ SCL_Vdp2Init();
 #endif
  setVDP2();
 #ifndef TESTCODE
- level=runMap(currentState.currentLevel,&levelFile); 
+ level=runMap(currentState.currentLevel,&levelFile);
 #else
  level=22;
  levelFile="+TEST.LEV";
@@ -2322,9 +2322,3 @@ SCL_Vdp2Init();
 	   }
     }
 }
-
-
-
-
-
-

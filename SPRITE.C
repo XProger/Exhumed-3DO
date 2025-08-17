@@ -36,7 +36,7 @@ void initSpriteSystem(void)
   MthXyz v;
   for (w=0;w<level_nmWalls;w++)
      {if (level_wall[w].normal[1]>=((int)(0.75*65536.0)) ||
-	  level_wall[w].normal[1]<0)	 
+	  level_wall[w].normal[1]<0)
 	 level_wall[w].flags|=WALLFLAG_COLLIDEASFLOOR;
      }
   for (s=0;s<level_nmSectors;s++)
@@ -47,7 +47,7 @@ void initSpriteSystem(void)
 	    if (level_wall[w].normal[1]==F(-1))
 	       /* prevent door cielings from being included */
 	       continue;
-	    
+
 	    for (i=0;i<4;i++)
 	       {getVertex(level_wall[w].v[i],&v);
 		if (abs(findFloorDistance(s,&v))<F(1))
@@ -78,11 +78,11 @@ Sprite *newSprite(int sector,Fixed32 radius,Fixed32 friction,Fixed32 gravity,
  o->vel.x=0; o->vel.y=0; o->vel.z=0;
  o->radius=radius; o->radius2=MTH_Mul(o->radius,o->radius);
  o->s=sector;
- o->angle=0; 
+ o->angle=0;
  o->owner=owner;
  o->friction=friction;
  o->gravity=gravity;
- o->sequence=sequence; 
+ o->sequence=sequence;
  o->scale=48000;
  o->floorSector=-1;
  o->frame=0;
@@ -113,7 +113,7 @@ void freeSprite(Sprite *o)
      prev->next=o->next;
     }
  o->next=freeList;
- freeList=o; 
+ freeList=o;
 }
 
 static sWallType *behindWall;
@@ -141,11 +141,11 @@ int bumpWall(sWallType *wall,Sprite *o,int sector)
  if (planeDist-o->radius>0/* || planeDist<-o->radius*/)
     {return 0;
     }
- 
+
  if (wall->nextSector!=-1 && planeDist>o->radius-F(1))
     /* hack to avoid elevators acting like steps */
     return 0;
- 
+
 #if 0
  if (level_vertex[wall->v[0]].y<level_vertex[wall->v[3]].y)
     /* ignore the inside-out walls created when doors and elevators move */
@@ -154,11 +154,11 @@ int bumpWall(sWallType *wall,Sprite *o,int sector)
        be considered walls */
     return 0;
 #endif
- 
+
  if (planeDist<F(15) && wall->nextSector!=-1 &&
      (level_sector[wall->nextSector].flags & SECFLAG_WATER))
     o->flags|=SPRITEFLAG_UNDERWATER;
- 
+
  if (wall->normal[1]==0)
     {/* its a wall */
      int edge=0;
@@ -167,7 +167,7 @@ int bumpWall(sWallType *wall,Sprite *o,int sector)
      Fixed32 len;
      Fixed32 wallTop;
      Fixed32 wallBottom;
-     
+
      if (planeDist<F(-1) && wall->nextSector==-1)
 	behindWall=wall;
 
@@ -178,14 +178,14 @@ int bumpWall(sWallType *wall,Sprite *o,int sector)
 	{crossDist=crossCoord-F(wall->pixelLength);
          wallTop=F(level_vertex[wall->v[1]].y);
          wallBottom=F(level_vertex[wall->v[2]].y);
-         edge=1; 
+         edge=1;
 	}
      else
 	if (crossCoord<0)
 	   {crossDist=crossCoord;
             wallTop=F(level_vertex[wall->v[0]].y);
             wallBottom=F(level_vertex[wall->v[3]].y);
-	    edge=1; 
+	    edge=1;
 	   }
 	else
            {crossDist=0;
@@ -199,16 +199,16 @@ int bumpWall(sWallType *wall,Sprite *o,int sector)
            }
      if (o->pos.y>wallTop)
         {yDist=wallTop-o->pos.y;
-	 edge=1; 
+	 edge=1;
 	}
      else
         {if (o->pos.y<wallBottom)
             {yDist=wallBottom-o->pos.y;
-	     edge=1; 
+	     edge=1;
 	    }
-	else  
+	else
 	   yDist=0;
-	} 
+	}
 
      if (edge)
 	{realDist=f(planeDist)*f(planeDist)+f(crossDist)*f(crossDist)+
@@ -274,7 +274,7 @@ int bumpWall(sWallType *wall,Sprite *o,int sector)
     {if (/* wall->nextSector!=o->s &&  turned out not to be nescessary */
 	 /*newSector==sector &&*//* kind of a hack, to prevent water problem */
 	 /* caused problems under bridges for unknown reason */
-	 planeDist<0 && 
+	 planeDist<0 &&
 	 planeDist>closestSectorBoundry)
 	{newSector=wall->nextSector;
 	 closestSectorBoundry=planeDist;
@@ -288,13 +288,13 @@ int bumpWall(sWallType *wall,Sprite *o,int sector)
 
  velPush=MTH_Product((Fixed32 *)&(o->vel),(Fixed32 *)wall->normal);
  /*if (velPush>0)
-   return 0;*/ 
+   return 0;*/
  /* this was bad for when sprites pushed you thru the walls */
  pushDistance=o->radius-planeDist;
  o->pos.x+=MTH_Mul(wall->normal[0],pushDistance);
  o->pos.y+=MTH_Mul(wall->normal[1],pushDistance);
  o->pos.z+=MTH_Mul(wall->normal[2],pushDistance);
- 
+
  if (velPush<0)
     {/* cancel velocity in direction of normal */
      if (o->flags & SPRITEFLAG_BOUNCY)
@@ -304,7 +304,7 @@ int bumpWall(sWallType *wall,Sprite *o,int sector)
      o->vel.z-=MTH_Mul(wall->normal[2],velPush);
      if (o==camera)
 	{if (wall->flags & WALLFLAG_LAVA)
-	    {playerLongHurt(1);			 
+	    {playerLongHurt(1);
 	    }
 	 if (wall->flags & WALLFLAG_SWAMP)
 	    {playerLongHurt(0);
@@ -347,13 +347,13 @@ void bumpFloor(sWallType *floor,Sprite *o,int sector)
 	(f(o->pos.z-wallP.z))*floor->normal[2];
      floorHeight=wallP.y-MTH_Div(planeDist,floor->normal[1]);
     }
-     
+
  if (floor->normal[1]>0)
     {/* floor */
      if (floorValid==2)
 	return;
      if (!floorValid)
-	{ourSectorFloorHeight=floorHeight; /* we collide with our sector's 
+	{ourSectorFloorHeight=floorHeight; /* we collide with our sector's
 					      floor first */
 	 bestFloorHeight=floorHeight;
 	 floorSector=sector;
@@ -402,7 +402,7 @@ void bumpFloor(sWallType *floor,Sprite *o,int sector)
     }
 }
 
-/* if a sector is in the penetrate list then it means we are penetrating 
+/* if a sector is in the penetrate list then it means we are penetrating
    that sector.  */
 void bumpSectorBoundries(int s,Sprite *o,short *penetrate,int *nmPenetrate)
 {sSectorType *sec=level_sector+s;
@@ -556,7 +556,7 @@ void splash(Sprite *o)
 	}
     }
  constructOneShot(o->s,o->pos.x,o->pos.y,o->pos.z,OT_SPLASH,65000,0,0);
- 
+
  posGetSoundParams(&(o->pos),&vol,&pan);
  if (f(o->radius)<48)
     vol+=48-f(o->radius);
@@ -641,14 +641,14 @@ int collideSprite(Sprite *o)
  if (floorValid)
     {int floorDistance=o->radius+bestFloorHeight-o->pos.y;
      if (o==camera)
-	floorDistance+=F(8); 
+	floorDistance+=F(8);
      if (floorDistance>0 ||
 	 /* if we were on the floor last round, and our yvel is <=0 and
-	    the best floor is the same as the one we were on last round 
+	    the best floor is the same as the one we were on last round
 	    then put us on the floor.  (prevents bumping down slopes) */
 	 (floorValid==2 && floorSector==o->floorSector && o->vel.y<=0))
 	{if (o->vel.y<F(-1)  /* if we hit the floor really fast */
-	     || floorDistance<F(1) /* or we're not far below 
+	     || floorDistance<F(1) /* or we're not far below
 				      the floor */
 	     || bestFloor->normal[1]<60000 /* or we're on a steep slope */
 	     || spriteCollideNm!=-1 /* or we collided with a sprite */)
@@ -675,7 +675,7 @@ int collideSprite(Sprite *o)
 		{if (o==camera)
 		    {playerDYChange(abs(o->vel.y));
 		     if (bestFloor->flags & WALLFLAG_LAVA)
-			{playerLongHurt(1);			 
+			{playerLongHurt(1);
 			}
 		     if (bestFloor->flags & WALLFLAG_SWAMP)
 			{playerLongHurt(0);
@@ -685,7 +685,7 @@ int collideSprite(Sprite *o)
 		    o->vel.y=-o->vel.y;
 		 else
 		    o->vel.y=0;
-		 if (o==camera && bestFloor->object && 
+		 if (o==camera && bestFloor->object &&
 		     !(bestFloor->flags & WALLFLAG_WATERSURFACE))
 		    signalObject((Object *)bestFloor->object,
 				 SIGNAL_FLOORCONTACT,0,0);
@@ -695,10 +695,10 @@ int collideSprite(Sprite *o)
 	 o->floorSector=floorSector;
 	}
      else
-	o->floorSector=-1; 
+	o->floorSector=-1;
     }
  else
-    o->floorSector=-1; 
+    o->floorSector=-1;
 
  if (ceilValid && o->pos.y>bestCeilingHeight-o->radius)
     {if (floorCollideNm!=-1)
@@ -732,7 +732,7 @@ int collideSprite(Sprite *o)
 	signalObject((Object *)level_sector[newSector].object,
 		     SIGNAL_ENTER,0,0);
     }
- 
+
  if (level_sector[o->s].flags & SECFLAG_WATER)
     o->flags|=SPRITEFLAG_UNDERWATER;
 
@@ -756,10 +756,10 @@ int collideSprite(Sprite *o)
 
  if (spriteCollideNm!=-1)
     retVal=((retVal|COLLIDE_SPRITE)&0x0ffff0000)|spriteCollideNm;
- 
+
 
 #ifndef NDEBUG
- assert(spriteCollideNm==-1 || 
+ assert(spriteCollideNm==-1 ||
 	(spriteCollideNm>=0 && spriteCollideNm<MAXNMSPRITES));
 
  if (retVal & COLLIDE_SPRITE)
@@ -828,7 +828,7 @@ void updatePushBlockPositions(void)
 	}
      fs=level_pushBlock[block].floorSector;
      if (fs!=-1)
-	{/* look thru sprites in floorSector, moving ones that are on 
+	{/* look thru sprites in floorSector, moving ones that are on
 	    that floor */
 	 for (o=sectorSpriteList[fs];
 	      o;o=o->next)
@@ -872,7 +872,7 @@ void updatePushBlockPositions(void)
 	}
      fs=level_pushBlock[block].floorSector;
      if (fs!=-1)
-	{/* look thru sprites in floorSector, moving ones that are on 
+	{/* look thru sprites in floorSector, moving ones that are on
 	    that floor */
 	 for (o=sectorSpriteList[fs];
 	      o;o=o->next)

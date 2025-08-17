@@ -120,7 +120,7 @@ static int weaponOK(void)
      currentState.desiredWeapon!=WP_GRENADE &&
      currentState.desiredWeapon!=WP_COBRA)
     return 0;
- return 1;    
+ return 1;
 }
 
 void fireWeapon(void)
@@ -136,7 +136,7 @@ void fireWeapon(void)
 	{w=currentState.desiredWeapon;
 	 weaponDown(WEAPONINV(currentState.inventory));
 	}
-     while (w!=currentState.desiredWeapon && 
+     while (w!=currentState.desiredWeapon &&
 	    !currentState.weaponAmmo[(int)currentState.desiredWeapon]);
      redrawBowlDots();
      return;
@@ -176,7 +176,7 @@ void fireWeapon(void)
 	   addWeaponSequence(weaponMap[WP_M60]+5);
 	if (currentState.weaponAmmo[WP_M60]==1)
 	   addWeaponSequence(weaponMap[WP_M60]+6);
-	
+
 	queueWeaponSequence(weaponMap[WP_M60]+1,
 			    weaponCenter[WP_M60].x,
 			    weaponCenter[WP_M60].y);
@@ -252,7 +252,7 @@ static void getRay(Fixed32 yaw,Fixed32 pitch,MthXyz *outRay)
  c=MTH_Cos(pitch);
  outRay->x=MTH_Mul(outRay->x,c);
  outRay->z=MTH_Mul(outRay->z,c);
- outRay->y=MTH_Sin(pitch);     
+ outRay->y=MTH_Sin(pitch);
 }
 
 static void getAutoAimRay(MthXyz *outRay,Fixed32 dYaw,Fixed32 dPitch,
@@ -262,7 +262,7 @@ static void getAutoAimRay(MthXyz *outRay,Fixed32 dYaw,Fixed32 dPitch,
     {getRay(normalizeAngle(playerAngle.yaw+dYaw),
 	    normalizeAngle(playerAngle.pitch+dPitch),
 	    outRay);
-     return;	
+     return;
     }
 
 #if 0
@@ -295,7 +295,7 @@ static void getAutoAimRay(MthXyz *outRay,Fixed32 dYaw,Fixed32 dPitch,
  outRay->x=CLAMP(outRay->x,F(-1),F(1));
  outRay->y=outRay->y/dist;
  outRay->y=CLAMP(outRay->y,F(-1),F(1));
- outRay->z=outRay->z/dist;	      
+ outRay->z=outRay->z/dist;
  outRay->z=CLAMP(outRay->z,F(-1),F(1));
 }
 
@@ -311,20 +311,20 @@ static void weaponFire(void)
 
 	 /*ringDepletion+=8;*/
 	 if (ringDepletion>140)
-	    {ringCharging=1; 
+	    {ringCharging=1;
 	     if (weaponSequenceQEmpty())
 		queueWeaponSequence(weaponMap[WP_RING]+1,
 				    weaponCenter[WP_RING].x,
 				    weaponCenter[WP_RING].y);
 	     return;
 	    }
-	    
+
 	 fire^=1;
 	 if (!fire)
 	    return;
 	 hand^=1;
 
-	 if (currentState.weaponAmmo[WP_RING] && 
+	 if (currentState.weaponAmmo[WP_RING] &&
 	     !(lastInputSample & IMASK(ACTION_FIRE)))
 	    currentState.weaponAmmo[WP_RING]--;
 	 else
@@ -341,13 +341,13 @@ static void weaponFire(void)
 	 orfice.x=camera->pos.x+(ray.x<<5)+(ray.x<<4);
 	 orfice.y=camera->pos.y+(ray.y<<5)+(ray.y<<4);
 	 orfice.z=camera->pos.z+(ray.z<<5)+(ray.z<<4);
-	 
+
 	 getRay(normalizeAngle(playerAngle.yaw+angleOffset[pattern++]),
 		playerAngle.pitch,&ray);
 	 if (pattern>=6)
 	    pattern=0;
 	 ray.x<<=3; ray.z<<=3;
-	 ray.y=F(12);	 
+	 ray.y=F(12);
 	 constructRingo(camera->s,
 			&orfice,&ray,(SpriteObject *)player);
 	 if (hand)
@@ -374,7 +374,7 @@ static void weaponFire(void)
 			     weaponCenter[WP_RAVOLT].x,
 			     weaponCenter[WP_RAVOLT].y);
 
-	 
+
 	 getRay(playerAngle.yaw-F(45),playerAngle.pitch,&ray);
 	 orfice=camera->pos;
 	 orfice.x+=(ray.x<<5)+(ray.x<<4);
@@ -407,7 +407,7 @@ static void weaponFire(void)
 	     if (angle>F(60))
 		continue;
 	     rating=(dist>>2)+angle;
-		
+
 	     if (rating>F(700))
 		continue;
 	     if (!canSee(camera,m->sprite))
@@ -417,7 +417,7 @@ static void weaponFire(void)
 	     targetList[nmTargets]=o;
 	     targetRating[nmTargets]=rating;
 	     nmTargets++;
-	    } 
+	    }
 	 /* sort targets in order of rating */
 	 for (i=1;i<nmTargets;i++)
 	    {int saveRating=targetRating[i];
@@ -456,7 +456,7 @@ static void weaponFire(void)
 	 orfice.x+=(ray.x<<5)+(ray.x<<4);
 	 orfice.y+=(ray.y<<5)+(ray.y<<4);
 	 orfice.z+=(ray.z<<5)+(ray.z<<4);
-	 
+
 	 constructCobra(findSectorContaining(&orfice,camera->s),
 			orfice.x,orfice.y,orfice.z,
 			normalizeAngle(playerAngle.yaw+F(90)),ray.y<<4,
@@ -486,13 +486,13 @@ static void weaponFire(void)
 	     playStaticSound(ST_FLAMER,1);
 	     dPrint("SND!\n");
 	    }
-	 
+
 	 pitch=normalizeAngle(playerAngle.pitch-F(20));
 	 yaw=playerAngle.yaw-(weaponPos[0]>>2);
 	 getRay(yaw,pitch,&orfice);
 	 p=camera->pos;
-	 p.x+=(orfice.x<<5)+(orfice.x<<4); 
-	 p.y+=(orfice.y<<5)+(orfice.y<<4); 
+	 p.x+=(orfice.x<<5)+(orfice.x<<4);
+	 p.y+=(orfice.y<<5)+(orfice.y<<4);
 	 p.z+=(orfice.z<<5)+(orfice.z<<4);
 
 	 heading=normalizeAngle(playerAngle.yaw+F(90));
@@ -523,9 +523,9 @@ static void weaponFire(void)
 	 getRay(playerAngle.yaw,normalizeAngle(playerAngle.pitch-F(10)),
 		&orfice);
 	 p=camera->pos;
-	 p.x+=(orfice.x<<5)+(orfice.x<<4); 
-	 p.y+=(orfice.y<<5)+(orfice.y<<4); 
-	 p.z+=(orfice.z<<5)+(orfice.z<<4); 
+	 p.x+=(orfice.x<<5)+(orfice.x<<4);
+	 p.y+=(orfice.y<<5)+(orfice.y<<4);
+	 p.z+=(orfice.z<<5)+(orfice.z<<4);
 	 heading=normalizeAngle(playerAngle.yaw+F(90));
 	 vel=(grenadeHoldTime<<14)+F(20);
 	 if (vel>F(50)) vel=F(50);
@@ -580,7 +580,7 @@ static void weaponFire(void)
 	  if (hscan & COLLIDE_SPRITE)
 	     range+=sprites[hscan&0xffff].radius;
 	  recoverInProgress=1;
-	  if (!hscan || 
+	  if (!hscan ||
 	      approxDist(camera->pos.x-hitPos.x,
 			 camera->pos.y-hitPos.y,
 			 camera->pos.z-hitPos.z)>range)
@@ -689,7 +689,7 @@ static void weaponIn(void)
 	if (currentState.weaponAmmo[WP_M60]>1)
 	   queueWeaponSequence(weaponMap[WP_M60]+11,
 			       weaponCenter[WP_M60].x,
-			       weaponCenter[WP_M60].y);	   
+			       weaponCenter[WP_M60].y);
 	if (currentState.weaponAmmo[WP_M60]==1)
 	   queueWeaponSequence(weaponMap[WP_M60]+12,
 			       weaponCenter[WP_M60].x,
@@ -781,7 +781,7 @@ void runWeapon(int nmFrames,int invisible,int boost)
  if (nmFrames==0)
     return;
  assert(nmFrames>0 && nmFrames<100);
- 
+
  if (boost && (currentWeapon!=WP_FLAMER && currentWeapon!=WP_RING))
     nmFrames*=2;
  for (frame=0;frame<nmFrames;frame++)
@@ -792,7 +792,7 @@ void runWeapon(int nmFrames,int invisible,int boost)
 
      flags=advanceWeaponSequence(f(weaponPos[0]+(1<<15)),
 				 f(weaponPos[1]+(1<<15))+yoffs,
-				 invisible && currentWeapon==WP_M60);     
+				 invisible && currentWeapon==WP_M60);
 
      if (weaponSequenceQEmpty() &&
 	 (currentState.desiredWeapon!=currentWeapon || !weaponOK()))
@@ -817,17 +817,17 @@ void runWeapon(int nmFrames,int invisible,int boost)
 	}
 
 #if 0
-     if (currentWeapon==WP_RING && 
+     if (currentWeapon==WP_RING &&
 	 getCurrentWeaponSequence()==weaponMap[WP_RING]+1 &&
 	 getWeaponSequenceQSize()==0)
 	{if (ringCharging)
 	    setWeaponFrame(0);
 	 else
-	    setWeaponFrame(2); 
+	    setWeaponFrame(2);
 	}
 #endif
 
-     if (currentWeapon==WP_SWORD && 
+     if (currentWeapon==WP_SWORD &&
 	 getCurrentWeaponSequence()==-1)
 	{if (!(lastInputSample & IMASK(ACTION_FIRE)))
 	    {swordForeSwing=!swordForeSwing;
@@ -843,9 +843,9 @@ void runWeapon(int nmFrames,int invisible,int boost)
 				weaponCenter[WP_SWORD].y);
 	    swordForeSwing=3;
 	    recoverInProgress=0;
-	   }     
+	   }
 	}
-     
+
      if (currentWeapon==WP_RAVOLT &&
 	 getCurrentWeaponSequence()==weaponMap[WP_RAVOLT]+3 &&
 	 getWeaponSequenceQSize()==0)
@@ -863,21 +863,21 @@ void runWeapon(int nmFrames,int invisible,int boost)
 	       grenadeHoldTime=(5<<6)+10;
 	    snd=256+(grenadeHoldTime<<4);
 	    grunch=(snd&0x3ff)|((snd&0x3c00)<<1);
-	    ssr.reg[8]=grunch; 
+	    ssr.reg[8]=grunch;
 	    if ((grenadeHoldTime&0x3f)==0)
 	       {int step=grenadeHoldTime>>6;
 		if (step<1/*5*/)
 		   {stopAllSound(1234);
 		    ssr.reg[4]=(ssr.reg[4]&(~0x1f))|0x8; /* lower attack */
 		    afterTouch=playSoundMegaE(1234,&ssr);
-		   }		
+		   }
 	       }
 	    else
 	       afterTouch->reg[8]=grunch;
-	    grenadeHoldTime++;	    
+	    grenadeHoldTime++;
 	   }
-     
-     
+
+
      if (currentWeapon==WP_GRENADE &&
 	 getCurrentWeaponSequence()==-1)
 	if (lastInputSample & IMASK(ACTION_FIRE))
@@ -897,7 +897,7 @@ void runWeapon(int nmFrames,int invisible,int boost)
 	   }
 	else
 	   grenadeHoldTime++;
-          
+
      if (flags)
 	weaponFire();
     }
@@ -937,7 +937,7 @@ void runWeapon(int nmFrames,int invisible,int boost)
 		   0,mapPic(c->tile),pos,NULL);
        }
 }
- 
+
 int getCurrentWeapon(void)
 {return currentWeapon;
 }
@@ -950,13 +950,13 @@ void setCurrentWeapon(int i)
  assert(i<WP_NMWEAPONS);
  currentState.desiredWeapon=i;
 }
- 
+
 void weaponUp(int weaponMask)
 {int newD;
  if (level_sector[camera->s].flags & SECFLAG_WATER)
     weaponMask&=UNDERWATERWEAPONS;
  newD=bitScanForward(weaponMask,currentState.desiredWeapon);
- if (newD!=-1)	 
+ if (newD!=-1)
    {currentState.desiredWeapon=newD;
     weaponSwitchTimer=0;
    }
@@ -976,7 +976,7 @@ void weaponDown(int weaponMask)
 void weaponChangeAmmo(int weapon,int deltaAmmo)
 {int flag;
  flag=0;
- if (weapon==WP_M60 && currentWeapon==WP_M60 && 
+ if (weapon==WP_M60 && currentWeapon==WP_M60 &&
      currentState.weaponAmmo[WP_M60]<2)
     {weaponOut();
      flag=1;

@@ -86,7 +86,7 @@ static void bup_createKeyFile(char *filename)
  writetb.datasize=64;
  writetb.blocksize=1;
  resetDisable();
- BUP_Write(device,&writetb,(Uint8 *)saveGames,OFF); 
+ BUP_Write(device,&writetb,(Uint8 *)saveGames,OFF);
  resetEnable();
  unloadBup();
 }
@@ -95,4 +95,3 @@ void main(void)
 {mem_init();
  bup_createKeyFile("POWERCHEAT!");
 }
-

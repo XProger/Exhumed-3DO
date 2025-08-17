@@ -39,12 +39,12 @@ struct __sprite;
 #define SPRITEFLAG_THINLINE        0x40000
 #define SPRITEFLAG_COLORED         0x80000
 
-typedef 
+typedef
 struct __sprite
 {MthXyz pos;
  MthXyz vel;
  Fixed32 radius,radius2;
- int angle,scale,frame; 
+ int angle,scale,frame;
      /* for lines, these are position of other point of line */
  struct __sprite *next;
  Fixed32 friction,gravity;
@@ -103,5 +103,3 @@ void spriteRandomizeFrame(Sprite *o);
 void suckSpriteParams(Sprite *s);
 
 #endif
-
-

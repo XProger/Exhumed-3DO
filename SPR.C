@@ -20,7 +20,7 @@ static BYTE *ccommand,*cgouraud;
 #define CMDBUFFERSIZE 256
 #define GOURBUFFERSIZE 256
 
-typedef struct 
+typedef struct
 {unsigned short addr; /* (address-VRAM START)/8 */
  short xysize; /* (xs/8)<<8 + ysize */
 } CharData;
@@ -46,7 +46,7 @@ void EZ_setErase(int eraseWriteEndLine,unsigned short eraseWriteColor)
     }
  else
     SPR_SetEraseData(eraseWriteColor,0,0,1,1);
- 
+
  memset(first,0,32);
  first->link=32>>3;
  if (eraseWriteEndLine>=ERASEWRITESTARTLINE)
@@ -59,7 +59,7 @@ void EZ_setErase(int eraseWriteEndLine,unsigned short eraseWriteColor)
      first->dx=-160; first->dy=eraseWriteEndLine-120;
     }
  else
-    first->control=SKIP_ASSIGN; 
+    first->control=SKIP_ASSIGN;
 }
 
 void EZ_initSprSystem(int nmCommands,int nmCluts,int nmGour,
@@ -157,9 +157,9 @@ static void flushGourBuffer(void)
 }
 
 static inline struct cmdTable *getCmdTable(void)
-{if (cmdBufferUsed==CMDBUFFERSIZE) 
-    flushCmdBuffer(); 
- return cmdBuffer+(cmdBufferUsed++); 
+{if (cmdBufferUsed==CMDBUFFERSIZE)
+    flushCmdBuffer();
+ return cmdBuffer+(cmdBufferUsed++);
 }
 
 static inline void setGourPara(struct cmdTable *cmd,struct gourTable *gTable)
@@ -197,13 +197,13 @@ static inline void setCharPara(struct cmdTable *cmd,short charNm)
 {validPtr(cmd);
  cmd->charAddr=chars[charNm].addr;
  cmd->charSize=chars[charNm].xysize;
-}  
+}
 
 static inline void setDrawPara(struct cmdTable *cmd,short drawMode,
 			       short color)
 {validPtr(cmd);
  cmd->drawMode=drawMode;
- if ((drawMode&DRAW_COLOR)==COLOR_1) 
+ if ((drawMode&DRAW_COLOR)==COLOR_1)
     cmd->color=(((int)clutStart)+(color<<5))>>3;
  else
     cmd->color=color;
@@ -220,7 +220,7 @@ void EZ_normSpr(short dir,short drawMode,
  setDrawPara(cmd,drawMode,color);
  cmd->ax=pos->x;
  cmd->ay=pos->y;
- setGourPara(cmd,gTable); 
+ setGourPara(cmd,gTable);
 }
 
 #if 1
@@ -239,9 +239,9 @@ void EZ_specialDistSpr(struct slaveDrawResult *sdr,int charNm)
   int *from=(int *)sdr->poly,
         *to=(int *)&cmd->ax;
   for (i=4;i;i--)
-     *(to++)=*(from++); 
- } 
- setGourPara(cmd,&sdr->gtable); 
+     *(to++)=*(from++);
+ }
+ setGourPara(cmd,&sdr->gtable);
 }
 void EZ_specialDistSpr2(short charNm,XyInt *xy,struct gourTable *gTable)
 {struct cmdTable *cmd;
@@ -255,8 +255,8 @@ void EZ_specialDistSpr2(short charNm,XyInt *xy,struct gourTable *gTable)
         *to=(short *)&cmd->ax;
   for (i=8;i;i--)
      *(to++)=*(from++);
- } 
- setGourPara(cmd,gTable); 
+ }
+ setGourPara(cmd,gTable);
 }
 #endif
 
@@ -274,8 +274,8 @@ void EZ_distSpr(short dir,short drawMode,
         *to=(short *)&cmd->ax;
   for (i=8;i;i--)
      *(to++)=*(from++);
- } 
- setGourPara(cmd,gTable); 
+ }
+ setGourPara(cmd,gTable);
 }
 
 void EZ_cmd(struct cmdTable *inCmd)
@@ -308,7 +308,7 @@ void EZ_scaleSpr(short dir,short drawMode,
      cmd->cy=pos[1].y;
     }
 
- setGourPara(cmd,gTable); 
+ setGourPara(cmd,gTable);
 }
 
 void EZ_localCoord(short x,short y)
@@ -316,7 +316,7 @@ void EZ_localCoord(short x,short y)
  cmd=getCmdTable();
  cmd->control=FUNC_LCOORD;
  cmd->ax=x;
- cmd->ay=y; 
+ cmd->ay=y;
 }
 
 void EZ_userClip(XyInt *xy)
@@ -327,7 +327,7 @@ void EZ_userClip(XyInt *xy)
  cmd->ax=xy[0].x;
  cmd->ay=xy[0].y;
  cmd->cx=xy[1].x;
- cmd->cy=xy[1].y; 
+ cmd->cy=xy[1].y;
 }
 
 void EZ_sysClip(void)
@@ -335,7 +335,7 @@ void EZ_sysClip(void)
  cmd=getCmdTable();
  cmd->control=FUNC_SCLIP;
  cmd->cx=319;
- cmd->cy=239; 
+ cmd->cy=239;
 }
 
 void EZ_polygon(short drawMode,short color,XyInt *xy,
@@ -377,12 +377,12 @@ void EZ_line(short drawMode,short color,XyInt *xy,
  cmd=getCmdTable();
  cmd->control=ZOOM_NOPOINT | DIR_NOREV | FUNC_LINE;
  setDrawPara(cmd,drawMode,color);
- 
+
  cmd->ax=xy[0].x;
  cmd->ay=xy[0].y;
  cmd->bx=xy[1].x;
  cmd->by=xy[1].y;
- 
+
  setGourPara(cmd,gTable);
 }
 

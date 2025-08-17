@@ -56,4 +56,3 @@ void setMasterVolume(int vol);
 void restoreSoundState(void);
 void saveSoundState(void);
 #endif
-

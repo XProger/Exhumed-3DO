@@ -92,7 +92,7 @@ void main(int argc,char **argv)
  hscale=64/picWidth;
  if (hscale*picWidth!=64)
     {printf("Pic width not good.\n");
-     exit(-1); 
+     exit(-1);
     }
  {int x,y;
   int xt,yt;

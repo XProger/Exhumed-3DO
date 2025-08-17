@@ -54,7 +54,7 @@ void UsrVblankEnd(void)
  if (Pad)
     {lastInputSample=Pad[0];
      /* add input sample to Q if it is not already full */
-     if (((inputQHead+1)&0xf)!=inputQTail) 
+     if (((inputQHead+1)&0xf)!=inputQTail)
 	{inputQ[(int)inputQHead]=Pad[0];
 	 inputQHead=(inputQHead+1)&0xf;
 	}
@@ -66,6 +66,3 @@ void UsrVblankEnd(void)
      PadData2E |= Pad[1].push ^ 0xffff;
     }*/
 }
-
-
-

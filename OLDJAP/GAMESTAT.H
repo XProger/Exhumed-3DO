@@ -43,7 +43,7 @@ enum Weapon {WP_SWORD,WP_PISTOL,WP_M60,WP_GRENADE,WP_FLAMER,
 #define GAMEFLAG_KILLEDSET     0x0080
 #define GAMEFLAG_KILLEDSELKIS  0x0100
 
-#define GAMEFLAG_JUSTTELEPORTED 0x0200 
+#define GAMEFLAG_JUSTTELEPORTED 0x0200
     /* set by pyramid, cleared by ramses trigger */
 #define GAMEFLAG_TALKEDTORAMSES 0x0400
     /* cleared by pyramid, set by camel */

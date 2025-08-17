@@ -26,7 +26,7 @@ static int kilmaatPuzzleNumber=0;
 
 /********************************\
  *          PLAYER STUFF        *
-\********************************/                            
+\********************************/
 
 void player_func(Object *o,int message,int param1,int param2)
 {switch (message)
@@ -47,7 +47,7 @@ PlayerObject *constructPlayer(int sector,int suckParams)
 			-1,SPRITEFLAG_BSHORT,
 			(Object *)this);
  if (suckParams)
-    {suckSpriteParams(this->sprite); 
+    {suckSpriteParams(this->sprite);
      this->sprite->angle=normalizeAngle(this->sprite->angle-F(90));
      playerAngle.yaw=this->sprite->angle;
     }
@@ -60,7 +60,7 @@ PlayerObject *constructPlayer(int sector,int suckParams)
 
 /********************************\
  *          GENPROJ STUFF       *
-\********************************/                            
+\********************************/
 void genproj_func(Object *_this,int msg,int param1,int param2)
 {GenericProjectileObject *this=(GenericProjectileObject *)_this;
  int collide,fflags;
@@ -86,7 +86,7 @@ void genproj_func(Object *_this,int msg,int param1,int param2)
 	  }*/
 	if (!collide)
 	   break;
-	if ((collide & COLLIDE_SPRITE) && 
+	if ((collide & COLLIDE_SPRITE) &&
 	    sprites[collide&0xffff].owner!=this->owner)
 	   {assert(sprites[collide&0xffff].owner->class!=CLASS_DEAD);
 	    signalObject(sprites[collide&0xffff].owner,
@@ -159,7 +159,7 @@ Object *constructGenproj(int sector,MthXyz *pos,MthXyz *vel,
 
 /********************************\
  *           BIT STUFF          *
-\********************************/                            
+\********************************/
 static int nmBits=0;
 void bit_func(Object *_this,int msg,int param1,int param2)
 {BitObject *this=(BitObject *)_this;
@@ -183,7 +183,7 @@ void bit_func(Object *_this,int msg,int param1,int param2)
 	    this->sprite->vel.z=0;
 	    this->sprite->flags|=SPRITEFLAG_IMMOBILE;
 	   }
-	    
+
 	this->age++;
 	if (this->age>90)
 	   this->sprite->scale=32000-((this->age-90)<<11);
@@ -236,7 +236,7 @@ void makeExplosion(MonsterObject *this,int bitSeqStart,int nmBits)
 
 /********************************\
  *        BOUNCYBIT STUFF       *
-\********************************/                            
+\********************************/
 static int nmBouncyBits=0;
 
 void bouncyBit_func(Object *_this,int msg,int param1,int param2)
@@ -312,7 +312,7 @@ Object *constructBouncyBit(int sector,MthXyz *pos,int sequence,int frame,
 
 /********************************\
  *        HARDBIT STUFF         *
-\********************************/                            
+\********************************/
 
 void hardBit_func(Object *_this,int msg,int param1,int param2)
 {HardBitObject *this=(HardBitObject *)_this;
@@ -365,7 +365,7 @@ Object *constructHardBit(int sector,MthXyz *pos,int sequence,int onFloor,
     this->sprite->vel.y=F(8)+(MTH_GetRand()&0x3ffff);
  else
     this->sprite->vel.y=(MTH_GetRand()&0x0fffff);
- 
+
  this->sequence=sequence;
  this->sequenceMap=&this->sequence;
  this->stuck=0;
@@ -376,7 +376,7 @@ Object *constructHardBit(int sector,MthXyz *pos,int sequence,int onFloor,
 
 /********************************\
  *           ZORCH STUFF        *
-\********************************/                            
+\********************************/
 
 void zorch_func(Object *_this,int msg,int param1,int param2)
 {ZorchObject *this=(ZorchObject *)_this;
@@ -396,7 +396,7 @@ void zorch_func(Object *_this,int msg,int param1,int param2)
 	   break;
 	if (this->age==30)
 	   this->sprite->flags&=~SPRITEFLAG_INVISIBLE;
-	
+
 	fflags=spriteAdvanceFrame(this->sprite);
 	if (fflags & FRAMEFLAG_ENDOFSEQUENCE)
 	   {if (this->type==OT_BLUEZORCH)
@@ -451,12 +451,12 @@ Object *constructZorch(int sector,int x,int y,int z,int zorchType)
 
 /********************************\
  *          SPIDER STUFF        *
-\********************************/                            
+\********************************/
 
 enum {AI_SPIDER_IDLE,AI_SPIDER_WALK,AI_SPIDER_BITE,AI_SPIDER_JUMPUP,
 	 AI_SPIDER_JUMPDOWN,AI_SPIDER_HIT,AI_SPIDER_NMSEQ};
 
-unsigned short spiderSeqMap[]={HB|0, HB|0, HB|0, HB|8, 
+unsigned short spiderSeqMap[]={HB|0, HB|0, HB|0, HB|8,
 				  HB|0, 16};
 
 void spider_func(Object *_this,int message,int param1,int param2)
@@ -499,12 +499,12 @@ void spider_func(Object *_this,int message,int param1,int param2)
 	       if ((this->aiSlot&0x0f)==(aicount&0x0f))
 		  {if (!this->enemy)
 		      this->enemy=findPlayer(this->sprite,F(900));
-		   if (this->enemy) 
+		   if (this->enemy)
 		      {setState((SpriteObject *)this,AI_SPIDER_WALK);
 		       break;
 		      }
 		  }
-	       break;	       
+	       break;
 	    case AI_SPIDER_JUMPUP:
 	       if (this->sprite->vel.y<=0)
 		  setState((SpriteObject *)this,AI_SPIDER_JUMPDOWN);
@@ -586,11 +586,11 @@ Object *constructSpider(int sector,int suckParams,MthXyz *pos,MthXyz *vel)
  this->enemy=NULL;
  setState((SpriteObject *)this,AI_SPIDER_IDLE);
  if (vel)
-    this->sprite->vel=*vel;     
+    this->sprite->vel=*vel;
  if (!suckParams)
     {setState((SpriteObject *)this,AI_SPIDER_JUMPUP);
      this->enemy=player;
-    } 
+    }
  this->health=20;
  this->aiSlot=nextAiSlot++;
  return (Object *)this;
@@ -599,7 +599,7 @@ Object *constructSpider(int sector,int suckParams,MthXyz *pos,MthXyz *vel)
 
 /********************************\
  *           FISH STUFF         *
-\********************************/                            
+\********************************/
 
 enum {AI_FISH_IDLE,AI_FISH_WALK,AI_FISH_BITE,AI_FISH_SEEK};
 
@@ -636,7 +636,7 @@ void fish_func(Object *_this,int message,int param1,int param2)
 	    if (!this->enemy)
 	       setState((SpriteObject *)this,AI_FISH_IDLE);
 	   }
-	if (this->state==AI_FISH_WALK && this->routePos==-1 && 
+	if (this->state==AI_FISH_WALK && this->routePos==-1 &&
 	    (this->aiSlot&0x07)==(aicount&0x07))
 	   if (this->enemy)
 	      {if (this->sprite->pos.y<this->enemy->sprite->pos.y-F(10))
@@ -656,7 +656,7 @@ void fish_func(Object *_this,int message,int param1,int param2)
 		   this->sprite->vel.y=0;
 		   if (!this->enemy)
 		      this->enemy=findPlayer(this->sprite,F(900));
-		   if (this->enemy) 
+		   if (this->enemy)
 		      {spriteObject_makeSound((SpriteObject *)this,0);
 		       setState((SpriteObject *)this,AI_FISH_WALK);
 		       break;
@@ -751,7 +751,7 @@ Object *constructFish(int sector)
 
 /********************************\
  *          COBRA  STUFF        *
-\********************************/                            		
+\********************************/
 
 enum {AI_COBRA_SEEK,AI_COBRA_HOME};
 
@@ -762,10 +762,10 @@ void cobra_func(Object *_this,int message,int param1,int param2)
  int collide,fflags,i;
  static int lightP[]={F(5),F(25),-F(1),0,
 		      F(0),F(25),0,0,
-		      F(5),F(25),-F(1),0};			 
+		      F(5),F(25),-F(1),0};
  static int mlightP[]={F(0),F(25),0,0,
 		       F(5),F(25),-F(1),0,
-		       F(5),F(25),-F(1),0};			 
+		       F(5),F(25),-F(1),0};
  int c,s,wave;
  switch (message)
     {case SIGNAL_HURT:
@@ -806,7 +806,7 @@ void cobra_func(Object *_this,int message,int param1,int param2)
 	s=MTH_Sin(this->sprite->angle);
 	this->sprite->vel.x=c<<4;
 	this->sprite->vel.z=s<<4;
-	
+
 	wave=MTH_Cos(this->wave);
 	this->wave+=F(20);
 	if (this->wave>F(180))
@@ -816,7 +816,7 @@ void cobra_func(Object *_this,int message,int param1,int param2)
 
 	switch (this->state)
 	   {case AI_COBRA_HOME:
-	       if (!this->enemy || 
+	       if (!this->enemy ||
 		   (this->enemy->sprite->flags & SPRITEFLAG_INVISIBLE))
 		  {setState((SpriteObject *)this,AI_COBRA_SEEK);
 		   break;
@@ -833,7 +833,7 @@ void cobra_func(Object *_this,int message,int param1,int param2)
 	       break;
 	    case AI_COBRA_SEEK:
 	       {if (this->age<10)
-		   break; 
+		   break;
 		if ((this->aiSlot&0x3)!=(aicount&0x3))
 		   break;
 		/* look for enemy */
@@ -871,7 +871,7 @@ void cobra_func(Object *_this,int message,int param1,int param2)
 		     if (angle>F(90))
 			continue;
 		     rating=(dist>>2)+angle;
-			
+
 		     if (m->type>=OT_CONTAIN1 && m->type<=OT_CONTAIN17)
 			continue; /* rating+=F(800); */
 		     if (m->type==OT_BOOMPOT1 || m->type==OT_BOOMPOT2)
@@ -886,7 +886,7 @@ void cobra_func(Object *_this,int message,int param1,int param2)
 		 if (best)
 		    {this->enemy=best;
 		     setState((SpriteObject *)this,AI_COBRA_HOME);
-		    } 
+		    }
 		 break;
 		}
 	       }
@@ -960,7 +960,7 @@ Object *constructCobra(int sector,int x,int y,int z,int heading,Fixed32 yvel,
 	}
      this->balls[i]->pos.x=x;
      this->balls[i]->pos.y=y;
-     this->balls[i]->pos.z=z;     
+     this->balls[i]->pos.z=z;
      this->balls[i]->scale=40000-i*5000;
     }
  this->balls[0]->flags&=~SPRITEFLAG_INVISIBLE;
@@ -978,7 +978,7 @@ Object *constructCobra(int sector,int x,int y,int z,int heading,Fixed32 yvel,
 #if 0
 /********************************\
  *        BADCOBRA  STUFF       *
-\********************************/                            		
+\********************************/
 
 enum {AI_BADCOBRA_HOME};
 
@@ -989,7 +989,7 @@ void badCobra_func(Object *_this,int message,int param1,int param2)
  int collide,fflags,i;
  static int lightP[]={F(5),F(25),-F(1),0,
 		      F(0),F(25),0,0,
-		      F(5),F(25),-F(1),0};			 
+		      F(5),F(25),-F(1),0};
  int c,s,wave;
  switch (message)
     {case SIGNAL_HURT:
@@ -1028,7 +1028,7 @@ void badCobra_func(Object *_this,int message,int param1,int param2)
 	s=MTH_Sin(this->sprite->angle);
 	this->sprite->vel.x=c<<4;
 	this->sprite->vel.z=s<<4;
-	
+
 	wave=MTH_Cos(this->wave);
 	this->wave+=F(20);
 	if (this->wave>F(180))
@@ -1104,7 +1104,7 @@ Object *constructBadCobra(int sector,int x,int y,int z,int heading,
  this->sprite->angle=heading;
  this->sprite->vel.y=yvel;
  setState((SpriteObject *)this,AI_BADCOBRA_HOME);
- 
+
  for (i=0;i<NMBADCOBRABALLS;i++)
     {this->balls[i]=newSprite(sector,F(16),F(1),0,
 			      level_sequenceMap[type]+8,
@@ -1120,7 +1120,7 @@ Object *constructBadCobra(int sector,int x,int y,int z,int heading,
 	}
      this->balls[i]->pos.x=x;
      this->balls[i]->pos.y=y;
-     this->balls[i]->pos.z=z;     
+     this->balls[i]->pos.z=z;
      this->balls[i]->scale=40000-i*5000;
     }
  this->balls[0]->flags&=~SPRITEFLAG_INVISIBLE;
@@ -1136,7 +1136,7 @@ Object *constructBadCobra(int sector,int x,int y,int z,int heading,
 #if 0
 /********************************\
  *        GLOWWORM  STUFF       *
-\********************************/                            		
+\********************************/
 
 enum {AI_GLOWWORM_SLEEP,AI_GLOWWORM_SEEK,AI_GLOWWORM_RETREAT};
 
@@ -1147,7 +1147,7 @@ void glowWorm_func(Object *_this,int message,int param1,int param2)
  int collide,fflags,i;
  static int lightP[]={F(5),F(25),-F(1),0,
 		      F(0),F(25),0,0,
-		      F(5),F(25),-F(1),0};			 
+		      F(5),F(25),-F(1),0};
  int c,s,wave;
  switch (message)
     {case SIGNAL_HURT:
@@ -1186,7 +1186,7 @@ void glowWorm_func(Object *_this,int message,int param1,int param2)
 	s=MTH_Sin(this->sprite->angle);
 	this->sprite->vel.x=c<<4;
 	this->sprite->vel.z=s<<4;
-	
+
 	wave=MTH_Cos(this->wave);
 	this->wave+=F(20);
 	if (this->wave>F(180))
@@ -1215,7 +1215,7 @@ void glowWorm_func(Object *_this,int message,int param1,int param2)
 	       }
 	    case AI_GLOWWORM_SEEK:
 	       {if (this->age<10)
-		   break; 
+		   break;
 		if ((this->aiSlot&0x3)!=(aicount&0x3))
 		   break;
 		/* look for enemy */
@@ -1259,7 +1259,7 @@ void glowWorm_func(Object *_this,int message,int param1,int param2)
 		 if (best)
 		    {this->enemy=best;
 		     setState((SpriteObject *)this,AI_GLOWWORM_HOME);
-		    } 
+		    }
 		 break;
 		}
 	       }
@@ -1331,7 +1331,7 @@ Object *constructGlowWorm(int sector)
 	}
      this->balls[i]->pos.x=x;
      this->balls[i]->pos.y=y;
-     this->balls[i]->pos.z=z;     
+     this->balls[i]->pos.z=z;
      this->balls[i]->scale=40000-i*5000;
     }
  this->balls[0]->flags&=~SPRITEFLAG_INVISIBLE;
@@ -1347,7 +1347,7 @@ Object *constructGlowWorm(int sector)
 
 /********************************\
  *           ZAP  STUFF         *
-\********************************/                            		
+\********************************/
 
 void zap_func(Object *_this,int message,int param1,int param2)
 {ZapObject *this=(ZapObject *)_this;
@@ -1368,13 +1368,13 @@ void zap_func(Object *_this,int message,int param1,int param2)
 	if (!this->enemy || this->age++>120)
 	   {delayKill((Object *)this);
 	    break;
-	   }	   
+	   }
 	assert(this->enemy->class==CLASS_MONSTER);
 	for (loop=0;loop<2;loop++)
 	   {for (i=0;i<NMZAPBALLS;i++)
 	       {this->balls[i]->angle=this->balls[i]->pos.x;
 		this->balls[i]->scale=this->balls[i]->pos.y;
-		this->balls[i]->frame=this->balls[i]->pos.z;	    
+		this->balls[i]->frame=this->balls[i]->pos.z;
 	       }
 	    this->sprite->angle=this->sprite->pos.x;
 	    this->sprite->scale=this->sprite->pos.y;
@@ -1385,7 +1385,7 @@ void zap_func(Object *_this,int message,int param1,int param2)
 			     &this->balls[i-1]->pos);
 		this->balls[i]->flags=
 		   this->balls[i-1]->flags;
-	       } 
+	       }
 	    moveSpriteTo(this->balls[0],
 			 this->sprite->s,
 			 &this->sprite->pos);
@@ -1403,7 +1403,7 @@ void zap_func(Object *_this,int message,int param1,int param2)
 	     this->sprite->vel=del;
 	    }
 	    collide=moveSprite(this->sprite);
-	    if ((collide & COLLIDE_SPRITE) && 
+	    if ((collide & COLLIDE_SPRITE) &&
 		sprites[collide&0xffff].owner!=this->owner)
 	       {if (this->red)
 		   {int i;
@@ -1419,7 +1419,7 @@ void zap_func(Object *_this,int message,int param1,int param2)
 		assert(sprites[collide&0xffff].owner->class!=CLASS_DEAD);
 		signalObject(sprites[collide&0xffff].owner,
 			     SIGNAL_HURT,100,
-			     (int)this);		
+			     (int)this);
 		delayKill((Object *)this);
 		return;
 	       }
@@ -1448,7 +1448,7 @@ Object *constructZap(int sector,MthXyz *pos,SpriteObject *owner,
  this->sprite->pos=*pos;
  this->sprite->angle=pos->x;
  this->sprite->scale=pos->y;
- this->sprite->frame=pos->z;     
+ this->sprite->frame=pos->z;
  this->sprite->color=RGB(31,31,31);
  for (i=0;i<NMZAPBALLS;i++)
     {this->balls[i]=newSprite(sector,F(16),F(1),0,
@@ -1461,10 +1461,10 @@ Object *constructZap(int sector,MthXyz *pos,SpriteObject *owner,
      this->balls[i]->pos=*pos;
      this->balls[i]->angle=pos->x;
      this->balls[i]->scale=pos->y;
-     this->balls[i]->frame=pos->z; 
+     this->balls[i]->frame=pos->z;
      this->balls[i]->color=
 	red?RGB(31-(i<<2),16-i,16-i):
-	   RGB(31-(i<<2),31-(i<<2),31-(i<<2));    
+	   RGB(31-(i<<2),31-(i<<2),31-(i<<2));
     }
  this->balls[0]->flags&=~SPRITEFLAG_INVISIBLE;
  this->owner=(Object *)owner;
@@ -1525,7 +1525,7 @@ void hawk_func(Object *_this,int message,int param1,int param2)
 	    (this->state==AI_HAWK_GLIDE))
 	   {if (!this->enemy)
 	       this->enemy=findPlayer(this->sprite,F(1800));
-	    if (this->enemy) 
+	    if (this->enemy)
 	       {if ((level_sector[this->enemy->sprite->s].flags&SECFLAG_WATER)
 		    || (this->enemy==player && invisibleCounter))
 		   {this->enemy=NULL;
@@ -1539,16 +1539,16 @@ void hawk_func(Object *_this,int message,int param1,int param2)
 		this->sprite->vel.x=MTH_Cos(this->sprite->angle)<<2;
 		this->sprite->vel.z=MTH_Sin(this->sprite->angle)<<2;
 		break;
-	       }	    
+	       }
 	   }
 	switch (this->state)
 	   {case AI_HAWK_DIVE:
 	       if (this->diveTimer++>90)
 		  setState((SpriteObject *)this,AI_HAWK_CHASE);
-			   
+
 	    case AI_HAWK_CHASE:
 	       if ((aicount&0x07)==(this->aiSlot&0x07))
-		  {if (level_sector[this->enemy->sprite->s].flags & 
+		  {if (level_sector[this->enemy->sprite->s].flags &
 		       SECFLAG_WATER)
 		      setState((SpriteObject *)this,AI_HAWK_SLEEP);
 		   this->jinkTimer+=F(2);
@@ -1621,7 +1621,7 @@ Object *constructHawk(int sector)
 
 /********************************\
  *          WASP STUFF          *
-\********************************/                            
+\********************************/
 
 enum {AI_WASP_IDLE,AI_WASP_HOVER,AI_WASP_DART,AI_WASP_BITE,AI_WASP_SEEK,
 	 AI_WASP_NMSTATES};
@@ -1677,7 +1677,7 @@ void wasp_func(Object *_this,int message,int param1,int param2)
 		      }
 		  }
 	       break;
-	    case AI_WASP_HOVER:	       
+	    case AI_WASP_HOVER:
 	       this->hoverCounter--;
 	       if (this->hoverCounter>0)
 		  break;
@@ -1786,7 +1786,7 @@ Object *constructWasp(int sector)
 
 /********************************\
  *          ANUBALL STUFF       *
-\********************************/                            
+\********************************/
 void anuball_func(Object *_this,int msg,int param1,int param2)
 {ProjectileObject *this=(ProjectileObject *)_this;
  int collide,fflags;
@@ -1806,7 +1806,7 @@ void anuball_func(Object *_this,int msg,int param1,int param2)
 	fflags=spriteAdvanceFrame(this->sprite);
 	if (!this->state)
 	   {collide=moveSprite(this->sprite);
-	    if (collide & COLLIDE_SPRITE && 
+	    if (collide & COLLIDE_SPRITE &&
 		sprites[collide&0xffff].owner!=this->owner)
 	       {assert(sprites[collide&0xffff].owner->class!=CLASS_DEAD);
 		signalObject(sprites[collide&0xffff].owner,
@@ -1863,7 +1863,7 @@ Object *constructAnuball(int sector,MthXyz *pos,MthXyz *vel,
 
 /********************************\
  *           RINGO STUFF        *
-\********************************/                            
+\********************************/
 void ringo_func(Object *_this,int msg,int param1,int param2)
 {ProjectileObject *this=(ProjectileObject *)_this;
  int collide,fflags;
@@ -1885,7 +1885,7 @@ void ringo_func(Object *_this,int msg,int param1,int param2)
 	   if (this->age>6)
 	   delayKill(_this);
 	   } */
-	if (collide & COLLIDE_SPRITE && 
+	if (collide & COLLIDE_SPRITE &&
 	    sprites[collide&0xffff].owner!=this->owner)
 	   {int hurtAmount;
 	    assert(sprites[collide&0xffff].owner->class!=CLASS_DEAD);
@@ -1953,11 +1953,11 @@ Object *constructRingo(int sector,MthXyz *pos,MthXyz *vel,
 
 /********************************\
  *        FLAMEBALL STUFF       *
-\********************************/                            
+\********************************/
 #define MAXFLAMEBALLAGE 50
 static ProjectileObject *flameList[MAXFLAMEBALLAGE];
 static int flameHead;
-void initFlames(void) 
+void initFlames(void)
 {int i;
  for (i=0;i<MAXFLAMEBALLAGE;i++)
     flameList[i]=NULL;
@@ -2060,8 +2060,8 @@ void flameball_func(Object *_this,int msg,int param1,int param2)
 	    this->sprite->frame=aicount&1;
 	   }
 	collide=moveSprite(this->sprite);
-	
-	if ((collide & COLLIDE_SPRITE) && 
+
+	if ((collide & COLLIDE_SPRITE) &&
 	    sprites[collide&0xffff].owner!=this->owner)
 	   {assert((collide&0xffff)<500);
 	    assert(sprites[collide&0xffff].owner);
@@ -2148,7 +2148,7 @@ Object *constructFlameball(int sector,MthXyz *pos,MthXyz *vel,
 
 /********************************\
  *         GRENADE STUFF        *
-\********************************/                            
+\********************************/
 
 void spriteObject_makeGrenadeExplosion(SpriteObject *this)
 {if (this->sprite->flags & SPRITEFLAG_UNDERWATER)
@@ -2159,12 +2159,12 @@ void spriteObject_makeGrenadeExplosion(SpriteObject *this)
 		      OT_GRENBUBB,F(1),0,0);
      {int vol,pan,oct;
       struct soundSlotRegister ssr;
-      
+
       posGetSoundParams(&this->sprite->pos,&vol,&pan);
       initSoundRegs(level_objectSoundMap[OT_GRENBUBB],vol,pan,
 		    &ssr);
       oct=(ssr.reg[8]-0x0800)&0xf800;
-      ssr.reg[8]=(ssr.reg[8]&~(0xf800))|oct; 
+      ssr.reg[8]=(ssr.reg[8]&~(0xf800))|oct;
       ssr.reg[8]|=0x100;
       playSoundMegaE((int)this,&ssr);
      }
@@ -2184,7 +2184,7 @@ void grenade_func(Object *_this,int msg,int param1,int param2)
  int collide,fflags;
  static int lightP[]={0,F(25),0,0,
 		      F(5),F(25),0,0,
-		      F(25),F(25),0,0};			 
+		      F(25),F(25),0,0};
  switch (msg)
     {case SIGNAL_OBJECTDESTROYED:
 	{Object *killed=(Object *)param1;
@@ -2260,7 +2260,7 @@ Object *constructGrenade(int sector,MthXyz *pos,MthXyz *vel,
 
 /********************************\
  *       MAGMANTIS STUFF        *
-\********************************/                            
+\********************************/
 
 enum  {AI_MAGMANTIS_IDLE,AI_MAGMANTIS_LURK,AI_MAGMANTIS_TAIL,
 	  AI_MAGMANTIS_UP,AI_MAGMANTIS_FIRE,
@@ -2323,7 +2323,7 @@ void magmantis_func(Object *_this,int message,int param1,int param2)
 		   this->sprite->vel.z=0;
 		   if (!this->enemy)
 		      this->enemy=findPlayer(this->sprite,F(800));
-		   if (this->enemy) 
+		   if (this->enemy)
 		      {setState((SpriteObject *)this,AI_MAGMANTIS_LURK);
 		       PlotCourseToObject((SpriteObject *)this,
 					  (SpriteObject *)this->enemy);
@@ -2388,12 +2388,12 @@ void magmantis_func(Object *_this,int message,int param1,int param2)
 		   this->sprite->vel.x=MTH_Cos(this->sprite->angle)<<2;
 		   this->sprite->vel.z=MTH_Sin(this->sprite->angle)<<2;
 		  }
-	       break;		       
+	       break;
 	    case AI_MAGMANTIS_UP:
 	       this->sprite->vel.x=0;
 	       this->sprite->vel.y=0;
 	       this->sprite->vel.z=0;
-	       
+
 	       spriteHome((SpriteObject *)this,
 			  (SpriteObject *)this->enemy,
 			  F(10),F(2));
@@ -2443,7 +2443,7 @@ Object *constructMagmantis(int sector)
  assert(sizeof(*this)<sizeof(Object));
  assert(this);
  moveObject((Object *)this,objectRunList);
- 
+
  this->sprite=newSprite(sector,F(32),F(1),GRAVITY<<1,
 			0,SPRITEFLAG_BWATERBNDRY|SPRITEFLAG_IMATERIAL|
 			SPRITEFLAG_INVISIBLE|SPRITEFLAG_FOOTCLIP|
@@ -2465,7 +2465,7 @@ Object *constructMagmantis(int sector)
 
 /********************************\
  *          ANUBIS STUFF        *
-\********************************/                            
+\********************************/
 
 enum  {AI_ANUBIS_IDLE=STATE_IDLE,
 	  AI_ANUBIS_WALK=STATE_WALK,
@@ -2475,7 +2475,7 @@ enum  {AI_ANUBIS_IDLE=STATE_IDLE,
 	  AI_ANUBIS_SEEK=STATE_SEEK,
 	  AI_ANUBIS_NMSEQ};
 
-unsigned short anubisSeqMap[]={HB|0, HB|8, HB|16, HB|24, 
+unsigned short anubisSeqMap[]={HB|0, HB|8, HB|16, HB|24,
 				  HB|32, HB|8};
 
 void anubis_func(Object *_this,int message,int param1,int param2)
@@ -2534,7 +2534,7 @@ void anubis_func(Object *_this,int message,int param1,int param2)
 	    case AI_ANUBIS_CLAW:
 	       this->sprite->vel.x=0;
 	       this->sprite->vel.z=0;
-	       if (this->sprite->frame==5 || this->sprite->frame==18) 
+	       if (this->sprite->frame==5 || this->sprite->frame==18)
 		  {if (spriteDistApprox(this->sprite,
 					this->enemy->sprite)<F(150))
 		      {PlotCourseToObject((SpriteObject *)this,
@@ -2547,7 +2547,7 @@ void anubis_func(Object *_this,int message,int param1,int param2)
 		      {setState((SpriteObject *)this,AI_ANUBIS_WALK);
 		      }
 		  }
-	       break;	
+	       break;
 	    case AI_ANUBIS_THROW:
 	       if (fflags & FRAMEFLAG_ENDOFSEQUENCE)
 		  setState((SpriteObject *)this,AI_ANUBIS_WALK);
@@ -2572,7 +2572,7 @@ void anubis_func(Object *_this,int message,int param1,int param2)
 	       if ((this->aiSlot&0x0f)==(aicount&0x0f) &&
 		   monster_seekEnemy((MonsterObject *)this,0,2))
 		  setState((SpriteObject *)this,AI_ANUBIS_WALK);
-	       break;	       
+	       break;
 	      }
 	break;
        }
@@ -2601,19 +2601,19 @@ Object *constructAnubis(int sector)
 
 /********************************\
  *          SELKIS STUFF        *
-\********************************/                            
+\********************************/
 
 enum  {AI_SELKIS_IDLE=STATE_IDLE,AI_SELKIS_WALK=STATE_WALK,
 	  AI_SELKIS_CLAW=STATE_SRA,AI_SELKIS_THROW=STATE_LRA,
 	  AI_SELKIS_HIT=STATE_HIT,AI_SELKIS_SEEK=STATE_SEEK,
-	  
+
 	  AI_SELKIS_SPARK1,AI_SELKIS_SPARK2,
 	  AI_SELKIS_DIEING,AI_SELKIS_DEAD,
 	  AI_SELKIS_ICU,AI_SELKIS_CHARGE,
 	  AI_SELKIS_NMSEQ};
 
-unsigned short selkisSeqMap[]={HB|0, HB|8, 
-				  HB|25, HB|16, 
+unsigned short selkisSeqMap[]={HB|0, HB|8,
+				  HB|25, HB|16,
 				  HB|33, HB|8,
 
 				  42,43,
@@ -2699,7 +2699,7 @@ void selkis_func(Object *_this,int message,int param1,int param2)
 		      {setState((SpriteObject *)this,AI_SELKIS_WALK);
 		      }
 		  }
-	       break;	
+	       break;
 	    case AI_SELKIS_THROW:
 	       if (fflags & FRAMEFLAG_ENDOFSEQUENCE)
 		  setState((SpriteObject *)this,AI_SELKIS_WALK);
@@ -2732,7 +2732,7 @@ void selkis_func(Object *_this,int message,int param1,int param2)
 		       this->sprite->vel.x=0; this->sprite->vel.z=0;
 		       break;
 		      }
-		  }		      
+		  }
 	       normalMonster_walking((MonsterObject *)this,
 				     collide,fflags,3);
 	       if (this->state==AI_SELKIS_IDLE)
@@ -2808,7 +2808,7 @@ void selkis_func(Object *_this,int message,int param1,int param2)
 	       if ((this->aiSlot&0x0f)==(aicount&0x0f) &&
 		   monster_seekEnemy((MonsterObject *)this,0,3))
 		  setState((SpriteObject *)this,AI_SELKIS_WALK);
-	       break;	       
+	       break;
 	      }
 	break;
        }
@@ -2848,14 +2848,14 @@ Object *constructSelkis(int sector)
 
 /********************************\
  *           SET STUFF          *
-\********************************/                            
+\********************************/
 
 enum  {AI_SET_IDLE=STATE_IDLE,AI_SET_WALK=STATE_WALK,AI_SET_CLAW=STATE_SRA,
 	  AI_SET_THROW=STATE_LRA,AI_SET_HIT=STATE_HIT,AI_SET_SEEK=STATE_SEEK,
 	  AI_SET_DYING,AI_SET_DEAD,AI_SET_JUMP1,AI_SET_JUMP2,AI_SET_JUMP3,
 	  AI_SET_NMSEQ};
 
-unsigned short setSeqMap[]={HB|0, HB|0, HB|8, 
+unsigned short setSeqMap[]={HB|0, HB|0, HB|8,
 			    HB|40, HB|48, HB|0 ,
 			    56,57,HB|16,HB|24,HB|32};
 
@@ -2883,7 +2883,7 @@ void set_func(Object *_this,int message,int param1,int param2)
 	       this->stunCounter=60;
 	       this->sprite->vel.x=0;
 	       this->sprite->vel.z=0;
-	      }	
+	      }
 	break;
      case SIGNAL_OBJECTDESTROYED:
 	monsterObject_signalDestroyed((MonsterObject *)this,param1);
@@ -2924,7 +2924,7 @@ void set_func(Object *_this,int message,int param1,int param2)
 		      {setState((SpriteObject *)this,AI_SET_WALK);
 		      }
 		  }
-	       break;	
+	       break;
 	    case AI_SET_THROW:
 	       if (fflags & FRAMEFLAG_ENDOFSEQUENCE)
 		  setState((SpriteObject *)this,AI_SET_WALK);
@@ -2985,7 +2985,7 @@ void set_func(Object *_this,int message,int param1,int param2)
 	       if ((this->aiSlot&0x0f)==(aicount&0x0f) &&
 		   monster_seekEnemy((MonsterObject *)this,0,2))
 		  setState((SpriteObject *)this,AI_SET_WALK);
-	       break;	       
+	       break;
 	    case AI_SET_DYING:
 	       if (fflags & FRAMEFLAG_ENDOFSEQUENCE)
 		  {setState((SpriteObject *)this,AI_SET_DEAD);
@@ -3016,7 +3016,7 @@ Object *constructSet(int sector)
  assert(sizeof(*this)<sizeof(Object));
  assert(this);
  moveObject((Object *)this,objectRunList);
- 
+
  this->sprite=newSprite(sector,F(64),F(1),GRAVITY<<2,
 			0,SPRITEFLAG_BWATERBNDRY,
 			(Object *)this);
@@ -3099,7 +3099,7 @@ Object *constructSball(int sector,MthXyz *pos,MthXyz *vel,
 
 /********************************\
  *          SENTRY STUFF        *
-\********************************/                            
+\********************************/
 
 enum  {AI_SENTRY_IDLE=STATE_IDLE,
 	  AI_SENTRY_WALK=STATE_WALK,
@@ -3111,7 +3111,7 @@ enum  {AI_SENTRY_IDLE=STATE_IDLE,
 	  AI_SENTRY_SPRINT,
 	  AI_SENTRY_NMSEQ};
 
-unsigned short sentrySeqMap[]={HB|0, HB|0, HB|0, HB|0, 
+unsigned short sentrySeqMap[]={HB|0, HB|0, HB|0, HB|0,
 				  HB|8, HB|0,HB|16,HB|0};
 
 void sentry_func(Object *_this,int message,int param1,int param2)
@@ -3205,7 +3205,7 @@ void sentry_func(Object *_this,int message,int param1,int param2)
 		  }
 	       break;
 	    case AI_SENTRY_SPRINT:
-	       if (this->sprintCounter--<=0 || 
+	       if (this->sprintCounter--<=0 ||
 		   (collide & (COLLIDE_WALL|COLLIDE_SPRITE)))
 		  {setState((SpriteObject *)this,AI_SENTRY_WALK);
 		   this->decideNow=1;
@@ -3224,7 +3224,7 @@ void sentry_func(Object *_this,int message,int param1,int param2)
 				 MTH_Cos(this->sprite->angle)<<2;
 			      this->sprite->vel.z=
 				 MTH_Sin(this->sprite->angle)<<2;
-			     }    
+			     }
 			  break;
 		       case DO_FOLLOWROUTE:
 			  this->sprite->vel.x=0;
@@ -3248,7 +3248,7 @@ void sentry_func(Object *_this,int message,int param1,int param2)
 	       if ((this->aiSlot&0x0f)==(aicount&0x0f) &&
 		   monster_seekEnemy((MonsterObject *)this,0,2))
 		  setState((SpriteObject *)this,AI_SENTRY_WALK);
-	       break;	       
+	       break;
 	      }
 	break;
        }
@@ -3280,7 +3280,7 @@ Object *constructSentry(int sector)
 
 /********************************\
  *          MUMMY STUFF        *
-\********************************/                            
+\********************************/
 enum  {AI_MUMMY_IDLE=STATE_IDLE,
 	  AI_MUMMY_WALK=STATE_WALK,
 	  AI_MUMMY_CLAW=STATE_SRA,
@@ -3289,7 +3289,7 @@ enum  {AI_MUMMY_IDLE=STATE_IDLE,
 	  AI_MUMMY_SEEK=STATE_SEEK,
 	  AI_MUMMY_NMSEQ};
 
-unsigned short mummySeqMap[]={HB|8, HB|0, HB|20, HB|28, 
+unsigned short mummySeqMap[]={HB|8, HB|0, HB|20, HB|28,
 				 HB|8,HB|0};
 
 void mummy_func(Object *_this,int message,int param1,int param2)
@@ -3342,7 +3342,7 @@ void mummy_func(Object *_this,int message,int param1,int param2)
 		  this->stunCounter--;
 	       else
 		  setState((SpriteObject *)this,AI_MUMMY_WALK);
-	       break;	       
+	       break;
 	    case AI_MUMMY_CLAW:
 	       this->sprite->vel.x=0;
 	       this->sprite->vel.z=0;
@@ -3358,7 +3358,7 @@ void mummy_func(Object *_this,int message,int param1,int param2)
 		   else
 		      setState((SpriteObject *)this,AI_MUMMY_WALK);
 		  }
-	       break;	
+	       break;
 	    case AI_MUMMY_THROW:
 	       if (fflags & FRAMEFLAG_ENDOFSEQUENCE)
 		  setState((SpriteObject *)this,AI_MUMMY_IDLE);
@@ -3372,7 +3372,7 @@ void mummy_func(Object *_this,int message,int param1,int param2)
 		       constructCobra(this->sprite->s,ballPos.x,ballPos.y,
 				      ballPos.z,getAngle(ballVel.x,ballVel.z),
 				      0,(SpriteObject *)this,OT_MUMBALL,0);
-		      }		   
+		      }
 		  }
 	       break;
 	    case AI_MUMMY_WALK:
@@ -3383,7 +3383,7 @@ void mummy_func(Object *_this,int message,int param1,int param2)
 	       if ((this->aiSlot&0x0f)==(aicount&0x0f) &&
 		   monster_seekEnemy((MonsterObject *)this,0,2))
 		  setState((SpriteObject *)this,AI_MUMMY_WALK);
-	       break;	       
+	       break;
 	      }
 	break;
        }
@@ -3413,7 +3413,7 @@ Object *constructMummy(int sector)
 
 /********************************\
  *          BASTET STUFF        *
-\********************************/                            
+\********************************/
 enum  {AI_BASTET_IDLE,AI_BASTET_WALK,AI_BASTET_CLAW,
 	  AI_BASTET_STUNNED,AI_BASTET_SEEK,
 	  AI_BASTET_PORTDOWN,AI_BASTET_PORTING,AI_BASTET_PORTUP,
@@ -3483,7 +3483,7 @@ void bastet_func(Object *_this,int message,int param1,int param2)
 		  this->stunCounter--;
 	       else
 		  setState((SpriteObject *)this,AI_BASTET_WALK);
-	       break;	       
+	       break;
 	    case AI_BASTET_CLAW:
 	       this->sprite->vel.x=0;
 	       this->sprite->vel.z=0;
@@ -3499,7 +3499,7 @@ void bastet_func(Object *_this,int message,int param1,int param2)
 		   else
 		      setState((SpriteObject *)this,AI_BASTET_WALK);
 		  }
-	       break;	
+	       break;
 	    case AI_BASTET_PORTDOWN:
 	       if (this->sprite->frame==23)
 		  {if (!this->hasLight)
@@ -3564,8 +3564,8 @@ void bastet_func(Object *_this,int message,int param1,int param2)
 	       /* shouldn't really need this */
 	       this->sprite->flags&=~(SPRITEFLAG_FOOTCLIP|
 				      SPRITEFLAG_IMATERIAL);
-	       
-	       
+
+
 
 	       if ((collide & COLLIDE_SPRITE) &&
 		   sprites[collide&0xffff].owner==(Object *)this->enemy)
@@ -3629,7 +3629,7 @@ void bastet_func(Object *_this,int message,int param1,int param2)
 	       if ((this->aiSlot&0x0f)==(aicount&0x0f) &&
 		   monster_seekEnemy((MonsterObject *)this,0,2))
 		  setState((SpriteObject *)this,AI_BASTET_WALK);
-	       break;	       
+	       break;
 	      }
 	break;
        }
@@ -3661,7 +3661,7 @@ Object *constructBastet(int sector)
 
 /********************************\
  *          KAPOW   STUFF       *
-\********************************/                            
+\********************************/
 
 unsigned short kapowSequenceMap[]={0};
 
@@ -3709,7 +3709,7 @@ Object *constructKapow(int sector,int x,int y,int z)
 
 /********************************\
  *          THING STUFF         *
-\********************************/                            
+\********************************/
 
 #define BEATLEN 12
 static int beatScale[]=
@@ -3776,7 +3776,7 @@ void thing_func(Object *_this,int msg,int param1,int param2)
 	    this->light--;
 	    if (this->light<0)
 	       this->light=0;
-	    
+
 	    if (d<F(712) && beep)
 	       {if (!this->light)
 		   addLight(this->sprite,31,31,31);
@@ -3884,19 +3884,19 @@ Object *constructThing(int sector,int x,int y,int z,int thingType)
        }
 #if 0
  if (thingType==OT_PYRAMID)
-    if (currentState.levFlags[(int)currentState.currentLevel] & 
+    if (currentState.levFlags[(int)currentState.currentLevel] &
 	LEVFLAG_GOTPYRAMID)
        return NULL;
 #endif
 
  if (thingType==OT_BLOODBOWL)
-    if (currentState.levFlags[(int)currentState.currentLevel] & 
+    if (currentState.levFlags[(int)currentState.currentLevel] &
 	LEVFLAG_GOTVESSEL)
        return NULL;
  if (thingType>=OT_COMM_BATTERY && thingType<=OT_COMM_TOP)
     if (currentState.inventory & (0x10000<<(thingType-OT_COMM_BATTERY)))
        return NULL;
- 
+
  this=(ThingObject *)
     getFreeObject(thing_func,thingType,CLASS_SPRITE);
  assert(sizeof(*this)<sizeof(Object));
@@ -3938,14 +3938,14 @@ Object *constructThing(int sector,int x,int y,int z,int thingType)
  setState((SpriteObject *)this,0);
 
  this->flags=THINGFLAG_WAVE;
- if (thingType==OT_AMMOORB || 
+ if (thingType==OT_AMMOORB ||
      thingType==OT_HEALTHSPHERE || thingType==OT_AMMOSPHERE)
     {this->flags|=THINGFLAG_PULSE;
      this->sprite->flags|=SPRITEFLAG_COLORED;
     }
  if ((this->type>=OT_BUGKEY && this->type<=OT_PLANTKEY) ||
      this->type==OT_AMMOSPHERE || this->type==OT_HEALTHSPHERE ||
-     this->type==OT_BLOODBOWL || this->type==OT_CHOPPER || 
+     this->type==OT_BLOODBOWL || this->type==OT_CHOPPER ||
      this->type==OT_PYRAMID)
     this->flags|=THINGFLAG_ANIMATE;
  if (this->type==OT_HEALTHORB)
@@ -3966,7 +3966,7 @@ Object *constructThing(int sector,int x,int y,int z,int thingType)
 
 /********************************\
  *          TORCH STUFF         *
-\********************************/                            
+\********************************/
 
 unsigned short torchSequenceMap[]={0,0};
 
@@ -3989,7 +3989,7 @@ void torch_func(Object *_this,int msg,int param1,int param2)
      case SIGNAL_MOVE:
 	spriteAdvanceFrame(this->sprite);
 	if (this->seeCounter--<=0)
-	   {delay_moveObject(_this,objectIdleList);	
+	   {delay_moveObject(_this,objectIdleList);
 	    this->state=0;
 	   }
 	break;
@@ -4016,7 +4016,7 @@ Object *constructTorch(int sector,int torchType)
 
 /********************************\
  *           BLOB STUFF         *
-\********************************/                            
+\********************************/
 
 enum  {AI_BLOB_IDLE,AI_BLOB_RILED,AI_BLOB_EXPLODE};
 unsigned short blobSequenceMap[]={0,1,2};
@@ -4094,7 +4094,7 @@ Object *constructBlob(int sector)
 
 /********************************\
  *           LIGHT STUFF        *
-\********************************/                            
+\********************************/
 unsigned short lightSequenceMap[]={0};
 
 void light_func(Object *_this,int msg,int param1,int param2)
@@ -4167,7 +4167,7 @@ Object *constructLight(int sector,int x,int y,int z,
 
 /********************************\
  *          ONESHOT STUFF       *
-\********************************/                            
+\********************************/
 
 unsigned short oneShotSequenceMap[]={0};
 
@@ -4230,7 +4230,7 @@ Object *constructOneShot(int sector,int x,int y,int z,int oneShotType,
 
 /********************************\
  *          RACLOUD STUFF       *
-\********************************/                            
+\********************************/
 
 unsigned short cloudSequenceMap[]={1};
 
@@ -4278,7 +4278,7 @@ Object *constructCloud(MonsterObject *target,int damage)
  this->sprite->pos.x=target->sprite->pos.x;
  this->sprite->pos.y=target->sprite->pos.y+F(64);
  this->sprite->pos.z=target->sprite->pos.z;
- 
+
  this->sequenceMap=cloudSequenceMap;
  this->target=target;
  this->owner=(Object *)player;
@@ -4290,7 +4290,7 @@ Object *constructCloud(MonsterObject *target,int damage)
 
 /********************************\
  *          DOOR STUFF          *
-\********************************/                            
+\********************************/
 static void setDoorBlockBits(PushBlockObject *this)
 {int i,w;
  for (i=level_pushBlock[this->pbNum].startWall;
@@ -4299,7 +4299,7 @@ static void setDoorBlockBits(PushBlockObject *this)
     {w=level_PBWall[i];
      assert(level_wall[w].object==this);
      if (!(level_wall[w].flags & WALLFLAG_DOORWALL))
-	continue; 
+	continue;
      if (level_vertex[level_wall[w].v[1]].y-
 	 level_vertex[level_wall[w].v[2]].y<80)
 	level_wall[w].flags|=WALLFLAG_SHORTOPENING;
@@ -4321,7 +4321,7 @@ void door_func(Object *_this,int msg,int param1,int param2)
 	if (msg==SIGNAL_PRESS &&
 	    (this->type<OT_BUGDOOR || this->type>OT_PLANTDOOR))
 	   if (this->channel!=-1)
-	      break;   
+	      break;
 	if (msg==SIGNAL_SWITCH)
 	   if (param1!=this->channel)
 	      break;
@@ -4331,7 +4331,7 @@ void door_func(Object *_this,int msg,int param1,int param2)
 	      {changeMessage(getText(LB_ITEMMESSAGE,16+this->type-OT_BUGDOOR));
 	       break;
 	      }
-	
+
 	this->state=AI_DOOR_UP;
 	pushBlockMakeSound((PushBlockObject *)this,
 			   level_staticSoundMap[ST_PUSHBLOCK]);
@@ -4400,7 +4400,7 @@ Object *constructDoor(int type,int pb)
 
 /********************************\
  *        DOWNDOOR STUFF        *
-\********************************/                            
+\********************************/
 
 enum  {AI_DOWNDOOR_IDLE,AI_DOWNDOOR_DOWN,AI_DOWNDOOR_STUCK};
 
@@ -4452,12 +4452,12 @@ Object *constructDownDoor(int pb)
 
 /********************************\
  *         BOBBLOCK STUFF       *
-\********************************/                            
+\********************************/
 
 void bobBlock_func(Object *_this,int msg,int param1,int param2)
 {BobBlockObject *this=(BobBlockObject *)_this;
  switch (msg)
-    {case SIGNAL_MOVE:	
+    {case SIGNAL_MOVE:
 	this->counter=normalizeAngle(this->counter+F(3));
 	pbObject_move((PushBlockObject *)this,
 		      MTH_Sin(this->counter)<<(2-this->speedDiv));
@@ -4489,7 +4489,7 @@ Object *constructBobBlock(int pb)
 
 /********************************\
  *        SINKBLOCK STUFF       *
-\********************************/                            
+\********************************/
 
 enum {AI_SINKBLOCK_SLEEP,AI_SINKBLOCK_FALL,AI_SINKBLOCK_RESET};
 
@@ -4510,7 +4510,7 @@ void sinkBlock_func(Object *_this,int msg,int param1,int param2)
 	this->state=AI_SINKBLOCK_RESET;
 	delay_moveObject((Object *)this,objectRunList);
 	break;
-     case SIGNAL_MOVE:	
+     case SIGNAL_MOVE:
 	switch (this->state)
 	   {case AI_SINKBLOCK_FALL:
 	       this->counter++;
@@ -4532,7 +4532,7 @@ void sinkBlock_func(Object *_this,int msg,int param1,int param2)
 		       delay_moveObject((Object *)this,objectIdleList);
 		       if (this->switchChannel!=0)
 			  signalAllObjects(SIGNAL_SWITCH,
-					   this->switchChannel,0); 
+					   this->switchChannel,0);
 		      }
 		  }
 	       break;
@@ -4581,12 +4581,12 @@ Object *constructSinkBlock(int pb)
 
 /********************************\
  *        ELEVATOR STUFF        *
-\********************************/                            
+\********************************/
 
 enum  {AI_ELEVATOR_SLEEP,
 	  AI_ELEVATOR_WAIT,
 	  AI_ELEVATOR_GO};
-	  
+
 void elevator_func(Object *_this,int msg,int param1,int param2)
 {ElevatorObject *this=(ElevatorObject *)_this;
  switch (msg)
@@ -4594,7 +4594,7 @@ void elevator_func(Object *_this,int msg,int param1,int param2)
      case SIGNAL_SWITCH:
 	if (msg==SIGNAL_PRESS)
 	   if (this->channel!=-1)
-	      break;   
+	      break;
 	if (msg==SIGNAL_SWITCH)
 	   if (param1!=this->channel)
 	      break;
@@ -4631,7 +4631,7 @@ void elevator_func(Object *_this,int msg,int param1,int param2)
 		   this->stepEnable++;
 		this->counter++;
 		if (this->counter>30*5)
-		   {if ((this->direction==1) ^ 
+		   {if ((this->direction==1) ^
 			(this->type==OT_STARTSDOWNELEVATOR))
 		       gogogo=1;
 		    else
@@ -4675,7 +4675,7 @@ void elevator_func(Object *_this,int msg,int param1,int param2)
 		    this->counter=0;
 		    this->stepEnable=-5;
 		    this->direction=-1*this->direction;
-		   }	   
+		   }
 		break;
 	       }
 	      }
@@ -4709,11 +4709,11 @@ Object *constructElevator(int pb,int type,short lowerLevel,short upperLevel)
 
 /********************************\
  *     UPDOWNELEVATOR STUFF     *
-\********************************/                            
+\********************************/
 
 enum  {AI_UPDOWNELEVATOR_SLEEP,
 	  AI_UPDOWNELEVATOR_GO};
-	  
+
 void upDownElevator_func(Object *_this,int msg,int param1,int param2)
 {UpDownElevatorObject *this=(UpDownElevatorObject *)_this;
  switch (msg)
@@ -4735,7 +4735,7 @@ void upDownElevator_func(Object *_this,int msg,int param1,int param2)
 				   level_staticSoundMap[ST_PUSHBLOCK]+2);
 		delay_moveObject((Object *)this,objectRunList);
 	       }
-	   }	
+	   }
 	break;
      case SIGNAL_MOVE:
 	switch (this->state)
@@ -4758,7 +4758,7 @@ void upDownElevator_func(Object *_this,int msg,int param1,int param2)
 				       level_staticSoundMap[ST_PUSHBLOCK]+1);
 		    this->counter=0;
 		    delay_moveObject((Object *)this,objectIdleList);
-		   }	   
+		   }
 		break;
 	       }
 	      }
@@ -4789,13 +4789,13 @@ Object *constructUpDownElevator(int pb,int type,
 
 /********************************\
  *      FLOORSWITCH STUFF       *
-\********************************/                            
+\********************************/
 
 enum  {AI_FLOORSWITCH_SLEEP,
 	  AI_FLOORSWITCH_GODOWN,
 	  AI_FLOORSWITCH_DOWN,
 	  AI_FLOORSWITCH_GOUP};
-	  
+
 void floorSwitch_func(Object *_this,int msg,int param1,int param2)
 {FloorSwitchObject *this=(FloorSwitchObject *)_this;
  switch (msg)
@@ -4863,7 +4863,7 @@ Object *constructFloorSwitch(int pb)
 
 /********************************\
  *       FORCEFIELD STUFF       *
-\********************************/                            
+\********************************/
 enum  {AI_FFIELD_ON,AI_FFIELD_OFF};
 
 void ffield_func(Object *_this,int msg,int param1,int param2)
@@ -4933,7 +4933,7 @@ Object *constructForceField(int wallNm)
     }
  center.x>>=2; center.y>>=2; center.z>>=2;
  this->center=center;
-     
+
  return (Object *)this;
 }
 
@@ -4961,7 +4961,7 @@ void bubble_func(Object *_this,int msg,int param1,int param2)
 	this->sprite->pos.y+=F(2);
 	this->distLeft-=F(2);
 	if (this->distLeft<=0)
-	   delayKill(_this); 
+	   delayKill(_this);
 	break;
        }
 }
@@ -4972,7 +4972,7 @@ Object *constructBubble(int sector,MthXyz *pos,int distToCiel)
     getFreeObject(bubble_func,OT_BUBBLES,CLASS_SPRITE);
 
  level_sequenceMap[OT_BUBBLES]=level_sequenceMap[OT_1BUBBLE];
- 
+
  assert(sizeof(*this)<sizeof(Object));
  assert(this);
  if (!this)
@@ -4988,7 +4988,7 @@ Object *constructBubble(int sector,MthXyz *pos,int distToCiel)
  this->sprite->pos=*pos;
  this->sequenceMap=bubbleSequenceMap;
 
-#if 0 
+#if 0
  setState((SpriteObject *)this,type++);
  if (type>2)
     type=0;
@@ -5019,7 +5019,7 @@ void oneBubble_func(Object *_this,int msg,int param1,int param2)
      case SIGNAL_MOVE:
 	this->sprite->pos.x+=this->sprite->vel.x;
 	this->sprite->pos.y+=this->sprite->vel.y;
-	this->sprite->pos.z+=this->sprite->vel.z;	
+	this->sprite->pos.z+=this->sprite->vel.z;
 	this->sprite->vel.y+=GRAVITY<<1;
 	this->sprite->scale-=600;
 	if (this->sprite->scale<0)
@@ -5046,7 +5046,7 @@ Object *constructOneBubble(int sector,MthXyz *pos,MthXyz *vel)
  this->sprite->vel=*vel;
  this->sprite->scale=64000;
  this->sequenceMap=oneBubbleSequenceMap;
- 
+
  setState((SpriteObject *)this,0);
  return (Object *)this;
 }
@@ -5083,7 +5083,7 @@ void camel_func(Object *_this,int msg,int param1,int param2)
 	if (collide & COLLIDE_SPRITE)
 	   {if (&(sprites[collide&0xffff])==camera)
 	       {/* player picked us up */
-		playSound((int)this,level_objectSoundMap[OT_CAMEL]); 
+		playSound((int)this,level_objectSoundMap[OT_CAMEL]);
 		currentState.gameFlags&=~GAMEFLAG_FIRSTLEVEL;
 		kilmaatPuzzleNumber=0;
 		playerGetCamel(this->toLevel);
@@ -5136,7 +5136,7 @@ Object *constructCamel(int sector)
 
 /********************************\
  *           QEGG STUFF         *
-\********************************/                            
+\********************************/
 static int nmQeggs=0;
 
 enum {AI_QEGG_INCUBATE,AI_QEGG_HATCH,AI_QEGG_ATTACK,AI_QEGG_BITE};
@@ -5260,7 +5260,7 @@ Object *constructQEgg(int sector,MthXyz *pos,MthXyz *vel)
 
 /********************************\
  *          QUEEN STUFF        *
-\********************************/                            
+\********************************/
 
 enum  {AI_QUEEN_IDLE,
 	  AI_QUEEN_WALK,
@@ -5268,7 +5268,7 @@ enum  {AI_QUEEN_IDLE,
 	  AI_QUEEN_LOSETAIL,
 	  AI_QUEEN_WALKNOTAIL,
 
-	  AI_QUEEN_SHOOTMOUTH,	  
+	  AI_QUEEN_SHOOTMOUTH,
 	  AI_QUEEN_SRA,
 	  AI_QUEEN_HURTBLOOD,
 	  AI_QUEEN_DEAD,
@@ -5280,10 +5280,10 @@ enum  {AI_QUEEN_IDLE,
 unsigned short queenSeqMap[]=
 {
  HB|0,
- HB|0, 
- HB|18, 
+ HB|0,
+ HB|18,
  HB|45,
- HB|9, 
+ HB|9,
 
  HB|27,
  HB|36,
@@ -5390,7 +5390,7 @@ void queen_func(Object *_this,int message,int param1,int param2)
 	       break;
 	    case AI_QUEEN_SHOOTTAIL:
 	       if (fflags & FRAMEFLAG_ENDOFSEQUENCE)
-		  {if (this->fireCount--<=0)		      
+		  {if (this->fireCount--<=0)
 		      setState((SpriteObject *)this,AI_QUEEN_WALK);
 		  }
 	       if (fflags & FRAMEFLAG_ENDOFSEQUENCE)
@@ -5416,7 +5416,7 @@ void queen_func(Object *_this,int message,int param1,int param2)
 		   pos=this->sprite->pos;
 		   pos.x+=vel.x<<5;
 		   pos.y+=-F(16);
-		   pos.z+=vel.z<<5;		   
+		   pos.z+=vel.z<<5;
 		   constructQEgg(this->sprite->s,&pos,&vel);
 		  }
 	       if (fflags & FRAMEFLAG_ENDOFSEQUENCE)
@@ -5430,7 +5430,7 @@ void queen_func(Object *_this,int message,int param1,int param2)
 		   this->enemy->sprite->vel.x+=MTH_Cos(this->sprite->angle)<<4;
 		   this->enemy->sprite->vel.z+=MTH_Sin(this->sprite->angle)<<4;
 		   this->sprite->vel.x=0;
-		   this->sprite->vel.y=0;		   
+		   this->sprite->vel.y=0;
 		   playSound((int)this,level_objectSoundMap[OT_QUEEN]+2);
 		   setState((SpriteObject *)this,AI_QUEEN_WALK);
 		   break;
@@ -5471,14 +5471,14 @@ void queen_func(Object *_this,int message,int param1,int param2)
 		      }
 		   switch (this->state)
 		      {case AI_QUEEN_WALK:
-			  /* shoot player */		       
+			  /* shoot player */
 			  setState((SpriteObject *)this,AI_QUEEN_SHOOTTAIL);
 			  this->fireCount=4;
 			  this->sprite->vel.x=0;
 			  this->sprite->vel.z=0;
 			  break;
 		       case AI_QUEEN_WALKNOTAIL:
-			  /* shoot player */		       
+			  /* shoot player */
 			  if (nmQeggs>10)
 			     break;
 			  setState((SpriteObject *)this,AI_QUEEN_SHOOTMOUTH);
@@ -5522,7 +5522,7 @@ Object *constructQueen(int sector)
 
 /********************************\
  *          QHEAD  STUFF        *
-\********************************/                            		
+\********************************/
 
 enum {AI_QHEAD_WAIT,AI_QHEAD_RUN,AI_QHEAD_ATTACK};
 
@@ -5574,7 +5574,7 @@ void qhead_func(Object *_this,int message,int param1,int param2)
 	    if (moveSprite(this->sprite)&COLLIDE_FLOOR)
 	       {this->sprite->vel.x=0;
 		this->sprite->vel.z=0;
-	       }		
+	       }
 	    if (this->waitTime>170)
 	       {setState((SpriteObject *)this,AI_QHEAD_ATTACK);
 		this->sprite->gravity=0;
@@ -5599,7 +5599,7 @@ void qhead_func(Object *_this,int message,int param1,int param2)
 				 OT_GRENPOW,F(2),0,0);
 		freeSprite(this->balls[i]);
 		this->balls[i]=NULL;
-	       } 
+	       }
 	   }
 	for (i=this->nmBalls-1;i>0;i--)
 	   {moveSpriteTo(this->balls[i],
@@ -5620,7 +5620,7 @@ void qhead_func(Object *_this,int message,int param1,int param2)
 	s=MTH_Sin(this->sprite->angle);
 	this->sprite->vel.x=c<<4;
 	this->sprite->vel.z=s<<4;
-	
+
 	wave=MTH_Cos(this->wave);
 	this->wave+=F(20);
 	if (this->wave>F(180))
@@ -5673,7 +5673,7 @@ Object *constructQhead(int sector,MthXyz *pos)
  assert(this);
  if (!this)
     return NULL;
- 
+
  this->sprite=newSprite(sector,F(16),F(1),GRAVITY<<1,
 			0,SPRITEFLAG_BCLIFF,(Object *)this);
  if (!this->sprite)
@@ -5711,7 +5711,7 @@ Object *constructQhead(int sector,MthXyz *pos)
 
 /********************************\
  *        TELEPORT STUFF        *
-\********************************/                            
+\********************************/
 enum  {AI_TELEPORT_WAIT,AI_TELEPORT_TURNON,AI_TELEPORT_TURNOFF,
 	  AI_TELEPORT_ON};
 
@@ -5798,7 +5798,7 @@ Object *constructTeleporter(void)
 #if 0
 /********************************\
  *     TELEPORTRETURN STUFF     *
-\********************************/                            
+\********************************/
 enum  {AI_TELEPORTRETURN_WAIT,AI_TELEPORTRETURN_TAKEOBJECT,
 	 AI_TELEPORTRETURN_SPRINGDOOR};
 
@@ -5815,7 +5815,7 @@ void teleportReturn_func(Object *_this,int msg,int param1,int param2)
 		   this->artifact->sprite->flags&=~SPRITEFLAG_INVISIBLE;
 		  }
 	       if (this->age<0)
-		  break;	
+		  break;
 	       {int a=this->age;
 		changeLightColor(this->artifact->sprite,a,a,a);
 		a=31-(a>>1);
@@ -5873,7 +5873,7 @@ Object *constructTeleportReturn(void)
 			    pos.z-F(level_sector[artifactPlace].center[2]));
      camera->angle=normalizeAngle(camera->angle+F(90));
      playerAngle.yaw=camera->angle;
-     if (kilmaatPuzzleNumber==fromLevel && 
+     if (kilmaatPuzzleNumber==fromLevel &&
 	 (currentState.inventory & (INV_SANDALS<<artifact)))
 	{currentState.inventory&=~(INV_SANDALS<<artifact);
 	 switchPlayerMotion(0);
@@ -5912,7 +5912,7 @@ Object *constructTeleportReturn(void)
 
 /********************************\
  *     TELEPORTRETURN STUFF     *
-\********************************/                            
+\********************************/
 enum  {AI_TELEPORTRETURN_WAIT,AI_TELEPORTRETURN_TAKEOBJECT,
 	 AI_TELEPORTRETURN_SPRINGDOOR,AI_TELEPORTRETURN_ALIGNPLAYER};
 
@@ -5946,7 +5946,7 @@ void teleportReturn_func(Object *_this,int msg,int param1,int param2)
 	       camera->vel.z+=(F(level_sector[this->playerSec].center[2])-
 			       camera->pos.z)>>5;
 	       camera->vel.x-=camera->vel.x>>3;
-	       camera->vel.z-=camera->vel.z>>3;	       
+	       camera->vel.z-=camera->vel.z>>3;
 	       playerAngle.yaw=
 		  normalizeAngle(playerAngle.yaw+
 				 ((this->playerAngle-playerAngle.yaw)>>3));
@@ -5976,7 +5976,7 @@ void teleportReturn_func(Object *_this,int msg,int param1,int param2)
 		   this->artifact->sprite->flags&=~SPRITEFLAG_INVISIBLE;
 		  }
 	       if (this->age<0)
-		  break;	
+		  break;
 	       {int a=this->age;
 		changeLightColor(this->artifact->sprite,a,a,a);
 		a=31-(a>>1);
@@ -6050,7 +6050,7 @@ Object *constructTeleportReturn(void)
 
 /********************************\
  *         SHOOTER STUFF        *
-\********************************/                            
+\********************************/
 enum {AI_SHOOTER_ON,AI_SHOOTER_OFF};
 
 static void laserSetVisib(ShooterObject *this)
@@ -6092,11 +6092,11 @@ void shooter_func(Object *_this,int msg,int param1,int param2)
 		   signalAllObjects(SIGNAL_SWITCHRESET,this->channel+1,0);
 		  }
 	       break;
-	      }	
+	      }
 	if (this->type==OT_SHOOTER3)
 	   laserSetVisib(this);
 	break;
-     case SIGNAL_MOVE:	
+     case SIGNAL_MOVE:
 	if (this->counter)
 	   {this->counter--;
 	    if (!this->counter)
@@ -6109,7 +6109,7 @@ void shooter_func(Object *_this,int msg,int param1,int param2)
 		       this->state=AI_SHOOTER_OFF;
 		       signalAllObjects(SIGNAL_SWITCHRESET,this->channel,0);
 		       break;
-		      }		
+		      }
 		if (this->type==OT_SHOOTER3)
 		   laserSetVisib(this);
 	       }
@@ -6127,12 +6127,12 @@ void shooter_func(Object *_this,int msg,int param1,int param2)
 			  pos.x+=this->normal.x<<4;
 			  pos.y+=this->normal.y<<4;
 			  pos.z+=this->normal.z<<4;
-			  
+
 			  if (this->type==OT_SHOOTER1)
 			     {pos.y+=F(8);
 			      vel.x=this->normal.x<<4;
 			      vel.y=this->normal.y<<4;
-			      vel.z=this->normal.z<<4;	    
+			      vel.z=this->normal.z<<4;
 			      constructGenproj(this->sectorNm,&pos,
 					       &vel,NULL,getAngle(vel.x,vel.z),
 					       1,OT_MAGBALL,100,
@@ -6147,7 +6147,7 @@ void shooter_func(Object *_this,int msg,int param1,int param2)
 			  else
 			     {vel.x=this->normal.x<<3;
 			      vel.y=(this->normal.y<<3)+F(8);
-			      vel.z=this->normal.z<<3;	    
+			      vel.z=this->normal.z<<3;
 
 			      constructBoingRock(this->sectorNm,
 						 &this->orficePos,
@@ -6190,7 +6190,7 @@ Object *constructShooter(int type)
  assert(this);
  moveObject((Object *)this,objectRunList);
  this->sectorNm=suckShort();
- this->wallNm=suckShort(); 
+ this->wallNm=suckShort();
  this->switchType=suckShort();
  this->channel=suckShort();
  this->orficePos.x=F(suckShort()); /* mirror <<<<<<<< */
@@ -6244,7 +6244,7 @@ Object *constructShooter(int type)
 	 if (collide!=2)
 	    break;
 	}
-     this->nmLines=nmLines;     
+     this->nmLines=nmLines;
     }
  laserSetVisib(this);
  return (Object *)this;
@@ -6252,7 +6252,7 @@ Object *constructShooter(int type)
 
 /********************************\
  *        BOINGROCK STUFF       *
-\********************************/                            
+\********************************/
 unsigned short rockSeqList[]={0};
 
 void boingRock_func(Object *_this,int msg,int param1,int param2)
@@ -6298,7 +6298,7 @@ void boingRock_func(Object *_this,int msg,int param1,int param2)
 	       constructBouncyBit(this->sprite->s,&this->sprite->pos,
 				  this->sprite->sequence+1,0,0);
 	    delayKill(_this);
-	   }	
+	   }
 	break;
        }
 }

@@ -55,7 +55,7 @@ void main(void)
        count++;
 
  writeInt(count);
- 
+
  for (y=0;y<512;y+=64)
     for (x=0;x<640;x+=64)
        {writeShort(0);
@@ -69,7 +69,3 @@ void main(void)
 	      }
        }
 }
-
-
-
-

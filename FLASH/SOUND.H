@@ -53,4 +53,3 @@ void sound_nextFrame(void);
 void setMasterVolume(int vol);
 
 #endif
-

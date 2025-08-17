@@ -74,7 +74,7 @@ void assertFail(char *file,int line);
 
 #else
 
-#define assert(x) 
+#define assert(x)
 #define validPtr(x)
 
 #endif
@@ -89,8 +89,8 @@ extern inline Fixed32 fixMul(Fixed32 a,Fixed32 b)
 		   "sts mach,r11\n"
 		   "sts macl,%0\n"
 		   "xtrct r11,%0"
-                   : "=r" ((Fixed32)c)                                       
-		   : "r" ((Fixed32)a), "r" ((Fixed32)b)                      
+                   : "=r" ((Fixed32)c)
+		   : "r" ((Fixed32)a), "r" ((Fixed32)b)
                    : "mach","macl","r11");
  return c;
 }
@@ -117,7 +117,7 @@ extern inline Fixed32 fixProduct(Fixed32 *a,Fixed32 *b)
 		   "sts macl,%0\n"
 		   "xtrct r11,%0"
                    : "=r" ((Fixed32)c), "=r" (a), "=r" (b)
-		   : "1" (a), "2" (b)                      
+		   : "1" (a), "2" (b)
                    : "mach","macl","r11");
  return c;
 }
@@ -139,8 +139,8 @@ void debugPrint(char *message);
     sprintf(buff,format, ## args); \
     debugPrint(buff);}
 #else
-#define debugPrint(x) 
-#define dPrint(x,args...) 
+#define debugPrint(x)
+#define dPrint(x,args...)
 #endif
 
 #ifndef NDEBUG
@@ -233,8 +233,3 @@ int findSectorHeight(int s);
 void delay(int frames);
 
 #endif
-
-
-
-
-

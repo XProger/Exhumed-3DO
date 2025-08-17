@@ -230,7 +230,7 @@ int addFrame(char *bmpName,double fps)
 	  size++)
 	{picdata[y][x][0]=lastFrame[y][x][0];
 	 picdata[y][x][1]=lastFrame[y][x][1];
-	 picdata[y][x][2]=lastFrame[y][x][2];	     
+	 picdata[y][x][2]=lastFrame[y][x][2];
 	 if (++x>=320)
 	    {x=0;
 	     y++;
@@ -249,7 +249,7 @@ int addFrame(char *bmpName,double fps)
 	{if (same(x,y))
 	    {if (delay>=8)
 		break;
-	     delay++; 
+	     delay++;
 	    }
 	 else
 	    delay=0;
@@ -282,7 +282,7 @@ int addFrame(char *bmpName,double fps)
  printf(" %d runs  %d pixels\n",runCount,pixelCount);
  return runCount;
 }
- 
+
 
 int main(int argc,char **argv)
 {char buff[160];
@@ -379,8 +379,8 @@ int main(int argc,char **argv)
 	    {frNm++;
 	     if (frNm%3)
 		lose=5;
-	     else 
-		lose=1; 
+	     else
+		lose=1;
 	     lose=1;
 	     sprintf(buff,argv[frame],i);
 	     totalRuns+=addFrame(buff,fps);
@@ -391,8 +391,8 @@ int main(int argc,char **argv)
 	{frNm++;
 	 if (frNm%3)
 	    lose=5;
-	 else 
-	    lose=1; 
+	 else
+	    lose=1;
 	 lose=1;
 	 totalRuns+=addFrame(argv[frame],fps);
 	}
@@ -401,8 +401,3 @@ int main(int argc,char **argv)
  fclose(ofile);
  exit(0);
 }
-
-
-
-
-

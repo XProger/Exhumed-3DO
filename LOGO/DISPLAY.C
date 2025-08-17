@@ -71,7 +71,7 @@ typedef struct
  short pad;
 } Face;
 
-typedef struct 
+typedef struct
 {short p[3];
  short pad;
 } Point;
@@ -167,7 +167,7 @@ void main(void)
      coord[0].y = 240 / 2;
      SPR_2LocalCoord(1,coord);
 
-	 
+
      /* draw faces */
      odd=0;
      for (i=0;i<nmFaces;i++)
@@ -179,7 +179,7 @@ void main(void)
 	     midz+=points[faces[i].p[j]].p[2];
 	    }
 	 midz>>=2;
-	 
+
 	 {int color;
 	  if (!odd)
 	     {color=deltas[dpos]&0x0f;
@@ -206,13 +206,9 @@ void main(void)
 	}
      if (odd)
 	dpos++;
-     
+
      frame++;
      SPR_2CloseCommand();
      SCL_DisplayFrame();
     }
 }
-
-
-
-

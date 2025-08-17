@@ -44,7 +44,7 @@ int findFloorDistance(int s,MthXyz *p)
 	continue;
      break;
     }
- 
+
  if (w>level_sector[s].lastWall)
     return 0;
  assert(w<=level_sector[s].lastWall);
@@ -159,7 +159,7 @@ Fixed32 dist(Fixed32 dx,Fixed32 dy,Fixed32 dz)
  d=f(dx)*f(dx)+
     f(dy)*f(dy)+
        f(dz)*f(dz);
- return fixSqrt(d,0);    
+ return fixSqrt(d,0);
 }
 
 int approxDist(int dx,int dy,int dz)
@@ -172,7 +172,7 @@ int approxDist(int dx,int dy,int dz)
  else
     min=dy;
  if (dz<min)
-    min=dz; 
+    min=dz;
  return dx+dy+dz-(min>>1);
 }
 
@@ -307,8 +307,8 @@ int fixSqrt(int n,int frac)
 Fixed32 fixMul(Fixed32 a,Fixed32 b)
 {Fixed32 c;
  __asm__ volatile ("dmuls.l %1,%2\n sts mach,r11\n sts macl,%0\n xtrct r11,%0"
-                   : "=r" ((Fixed32)c)                                       
-		   : "r" ((Fixed32)a), "r" ((Fixed32)b)                      
+                   : "=r" ((Fixed32)c)
+		   : "r" ((Fixed32)a), "r" ((Fixed32)b)
                    : "mach","macl","r11");
  return c;
 }
@@ -316,7 +316,7 @@ Fixed32 fixMul(Fixed32 a,Fixed32 b)
 Fixed32 evalHermite(Fixed32 t,Fixed32 p1,Fixed32 p2,Fixed32 d1,Fixed32 d2)
 {Fixed32 t2=MTH_Mul(t,t);
  Fixed32 t3=MTH_Mul(t2,t);
- 
+
  return (MTH_Mul(2*t3-3*t2+F(1),p1)+
 	 MTH_Mul(-2*t3+3*t2,p2)+
 	 MTH_Mul(t3-2*t2+t,d1)+
@@ -325,7 +325,7 @@ Fixed32 evalHermite(Fixed32 t,Fixed32 p1,Fixed32 p2,Fixed32 d1,Fixed32 d2)
 
 Fixed32 evalHermiteD(Fixed32 t,Fixed32 p1,Fixed32 p2,Fixed32 d1,Fixed32 d2)
 {Fixed32 t2=MTH_Mul(t,t);
- 
+
  return (MTH_Mul(6*t2-6*t,p1)+
 	 MTH_Mul(-6*t2+6*t,p2)+
 	 MTH_Mul(3*t2-4*t+F(1),d1)+
@@ -346,7 +346,7 @@ static int mem2Start=(int)&end;
 
 void mem_init(void)
 {memStack[0][0]=mem1Start;
- memStack[1][0]=mem2Start; 
+ memStack[1][0]=mem2Start;
  stackPos[0]=0; stackPos[1]=0; stackPos[2]=0;
  areaEnd[0]=0x0300000;
  areaEnd[1]=0x6100000;
@@ -513,9 +513,9 @@ void displayEnable(int state)
 {if (state)
     Scl_s_reg.tvmode|=0x8000;
  else
-    Scl_s_reg.tvmode&=0x7fff; 
+    Scl_s_reg.tvmode&=0x7fff;
  POKE_W(SCL_VDP2_VRAM+0x180000,Scl_s_reg.tvmode);
- if (SclProcess==0) 
+ if (SclProcess==0)
     SclProcess=1;
 }
 

@@ -45,11 +45,11 @@ void initProjectile(MthXyz *from,MthXyz *to,
 void normalMonster_walking(MonsterObject *this,int collide,int fflags,
 			   int speed);
 
-enum {DO_RANDOMWANDER,DO_CHARGE,DO_FOLLOWROUTE,DO_GOIDLE}; 
+enum {DO_RANDOMWANDER,DO_CHARGE,DO_FOLLOWROUTE,DO_GOIDLE};
 int decideWhatToDo(MonsterObject *this,int route,int floater);
 
 enum {STATE_IDLE,STATE_WALK,STATE_SRA,STATE_LRA,
-	 STATE_HIT,STATE_SEEK,STATE_NMBASICSTATES}; 
+	 STATE_HIT,STATE_SEEK,STATE_NMBASICSTATES};
 
 void normalMonster_idle(MonsterObject *this,int speed,int icuSound);
 int monster_seekEnemy(MonsterObject *this,int floater,int speed2);

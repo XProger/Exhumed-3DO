@@ -47,7 +47,7 @@ void setCamera(double pitch,double eyeX,double eyeY,double eyeZ)
 Point &transformPoint(Point p)
 {static Point tfrm;
  p.x-=eyePos.x; p.y-=eyePos.y; p.z-=eyePos.z;
- 
+
  tfrm.x=basis[0].x*p.x+basis[0].y*p.y+basis[0].z*p.z;
  tfrm.y=basis[1].x*p.x+basis[1].y*p.y+basis[1].z*p.z;
  tfrm.z=basis[2].x*p.x+basis[2].y*p.y+basis[2].z*p.z;
@@ -655,9 +655,3 @@ void main(void)
  /* clean up */
  fclose(ofile);
 }
-
-
-
-
-
-

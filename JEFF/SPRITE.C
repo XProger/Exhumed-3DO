@@ -194,7 +194,7 @@ void moveSlotToEnd(short i)
 {
 	nextcacheslot[prevcacheslot[i]]=nextcacheslot[i];
 	prevcacheslot[nextcacheslot[i]]=prevcacheslot[i];
-	nextcacheslot[i]=LASTCACHESLOT;									 
+	nextcacheslot[i]=LASTCACHESLOT;
 	prevcacheslot[i]=prevcacheslot[LASTCACHESLOT];
 	nextcacheslot[prevcacheslot[i]]=i;
 	prevcacheslot[LASTCACHESLOT]=i;
@@ -255,14 +255,14 @@ void countBlanks()
 			j=0;
 			for (k=0;k<len;k++)
 				if (tilebuffer[k]!=255) j=1;
-			if (!j) blankcount++;		
+			if (!j) blankcount++;
 		}
 		else
 		{
 			j=0;
 			for (k=0;k<len;k++)
 				if (seqtiles[animtileaddr[i]+k]!=255) j=1;
-			if (!j) blankcount++;		
+			if (!j) blankcount++;
 		}
 	}
 
@@ -351,7 +351,7 @@ void addMonsterpoints(long x, long y, long z, short s, short r, short height, sh
 			if ( (mr>abs((sprite[i].x>>16)-x)) && (mr>abs((sprite[i].y>>16)-y)) )
 			{
 				monsterpoint[monsterpoints]=i;
-				monsterpoints++;	
+				monsterpoints++;
 			}
 		}
 		i=sprite[i].nextsprite;
@@ -434,13 +434,13 @@ int hitScan2(spritetype *m, int skipsprite)
 			{
 				x1=(sprite[i].x>>16)-x;
 				y1=(sprite[i].y>>16)-y;
-		
+
 				rx=rotatex(x1,y1,yaw2);
-			
+
 				if ((rx>=0)&&(rx<=distxy)&&(rx<minxy))
 				{
 					ry=rotatey(x1,y1,yaw2);
-		
+
 					if (((ry+sprite[i].radius)>=0)
 						&&((ry-sprite[i].radius)<=0))
 					{
@@ -452,23 +452,23 @@ int hitScan2(spritetype *m, int skipsprite)
 							minxy=rx;
 							minz=rz;
 							minsprite=i;
-						}	
+						}
 					}
 				}
 			}
 			i=sprite[i].nextsprite;
 		}
-			
+
 		// since sectors are assumed convex, return if sprite hit
-	
+
 		if (minxy<=distxy)
 		{
-			m->x=(x+rotatexy0(minxy,0,yaw))<<16;	
-			m->y=(y+rotateyy0(minxy,0,yaw))<<16;	
-			m->z=minz<<16;	
+			m->x=(x+rotatexy0(minxy,0,yaw))<<16;
+			m->y=(y+rotateyy0(minxy,0,yaw))<<16;
+			m->z=minz<<16;
 			return((HIT_SPRITE<<16)+minsprite);
 		}
-	
+
 		// do all vertical walls
 
 		firstwall=sector[s].firstwall;
@@ -477,17 +477,17 @@ int hitScan2(spritetype *m, int skipsprite)
 		for (i=firstwall;i<lastwall;i++)
 		{
 			v1=wall[i].v0;
-			v2=v1+1;	
-	
+			v2=v1+1;
+
 			x1=vertex[v1].x-x;
 			y1=vertex[v1].y-y;
 			x2=vertex[v2].x-x;
 			y2=vertex[v2].y-y;
-	
+
 			ry1=rotatey(x1,y1,yaw2);
 			ry2=rotatey(x2,y2,yaw2);
-	
-			if ((ry1>=0)&&(ry2<=0)&&(ry1!=ry2)) 
+
+			if ((ry1>=0)&&(ry2<=0)&&(ry1!=ry2))
 			{
 				rx1=rotatex(x1,y1,yaw2);
 				rx2=rotatex(x2,y2,yaw2);
@@ -502,19 +502,19 @@ int hitScan2(spritetype *m, int skipsprite)
 					rx=rx2+((rx1-rx2)*(-ry2))/(ry1-ry2);
 
 				if (rx<=distxy)
-				{	
+				{
 					if (rx<0) rx=0;
 
 					rz=z+((rx*dz)/distxy);
 
 					v3=v1+2;
 					v4=v1+3;
-		
+
 					z1=vertex[v1].z;
 					z2=vertex[v2].z;
 					z3=vertex[v3].z;
 					z4=vertex[v4].z;
-		
+
 					if (!(((z1<rz)&&(z2<rz))||((z3>rz)&&(z4>rz))))
 					{
 						if((z1>=rz)&&(z2>=rz)&&(z3<=rz)&&(z4<=rz))
@@ -553,33 +553,33 @@ int hitScan2(spritetype *m, int skipsprite)
 							}
 							else
 							{
-								m->x=(x+rotatexy0(rx,0,yaw))<<16;	
-								m->y=(y+rotateyy0(rx,0,yaw))<<16;	
-								m->z=rz<<16;	
+								m->x=(x+rotatexy0(rx,0,yaw))<<16;
+								m->y=(y+rotateyy0(rx,0,yaw))<<16;
+								m->z=rz<<16;
 								return((HIT_WALL<<16)+i);
 							}
 						}
 					}
 				}
-			}		
+			}
 		}
-	
+
 		//hit no walls or sprites, so might have hit floor or ceiling
-	
+
 		x2=x+dx;
 		y2=y+dy;
 
 		i=sector[s].lastwall+FLOOR;
 		z1=getFloor(x,y,z,s,distxy)-z;
 		z2=getFloor(x2,y2,z+dz,s,distxy)-z;
-		
+
 		ry1=rotatey(distxy,z2,pitch2);
 		ry2=rotateyx0(0,z1,pitch2);
 		if ((ry1>=0)&&(ry2<=0))
 		{
 			rx1=rotatex(distxy,z2,pitch2);
 			rx2=rotatexx0(0,z1,pitch2);
-	
+
 			if (ry1==ry2)
 			{
 				if (rx1<rx2)
@@ -592,7 +592,7 @@ int hitScan2(spritetype *m, int skipsprite)
 
 			rx=rotatexy0(rx,0,pitch);
 			if (rx<=distxy)
-			{	
+			{
 				rz=(rx*dz)/distxy;
 				rz+=z;
 				if ((wall[i].nextsector>=0)&&(!wall[i].isblocked))
@@ -602,9 +602,9 @@ int hitScan2(spritetype *m, int skipsprite)
 				}
 				else
 				{
-					m->x=(x+rotatexy0(rx,0,yaw))<<16;	
-					m->y=(y+rotateyy0(rx,0,yaw))<<16;	
-					m->z=rz<<16;	
+					m->x=(x+rotatexy0(rx,0,yaw))<<16;
+					m->y=(y+rotateyy0(rx,0,yaw))<<16;
+					m->z=rz<<16;
 					return((HIT_FLOOR<<16)+i);
 				}
 			}
@@ -613,14 +613,14 @@ int hitScan2(spritetype *m, int skipsprite)
 		i=sector[s].lastwall+CEILING;
 		z1=getCeiling(x,y,z,s,distxy)-z;
 		z2=getCeiling(x2,y2,z+dz,s,distxy)-z;
-		
+
 		ry1=rotateyx0(0,z1,pitch2);
 		ry2=rotatey(distxy,z2,pitch2);
 		if ((ry1>=0)&&(ry2<=0))
 		{
 			rx1=rotatexx0(0,z1,pitch2);
 			rx2=rotatex(distxy,z2,pitch2);
-	
+
 			if (ry1==ry2)
 			{
 				if (rx1<rx2)
@@ -633,7 +633,7 @@ int hitScan2(spritetype *m, int skipsprite)
 
 			rx=rotatexy0(rx,0,pitch);
 			if (rx<=distxy)
-			{	
+			{
 				rz=(rx*dz)/distxy;
 				rz+=z;
 				if ((wall[i].nextsector>=0)&&(!wall[i].isblocked))
@@ -643,9 +643,9 @@ int hitScan2(spritetype *m, int skipsprite)
 				}
 				else
 				{
-					m->x=(x+rotatexy0(rx,0,yaw))<<16;	
-					m->y=(y+rotateyy0(rx,0,yaw))<<16;	
-					m->z=rz<<16;	
+					m->x=(x+rotatexy0(rx,0,yaw))<<16;
+					m->y=(y+rotateyy0(rx,0,yaw))<<16;
+					m->z=rz<<16;
 					return((HIT_CEILING<<16)+i);
 				}
 			}
@@ -666,7 +666,7 @@ int hitScan2(spritetype *m, int skipsprite)
 				}
 				else
 				{
-					m->z=z1<<16;	
+					m->z=z1<<16;
 					return((HIT_FLOOR<<16)+sector[s].lastwall+FLOOR);
 				}
 			}
@@ -684,7 +684,7 @@ int hitScan2(spritetype *m, int skipsprite)
 				}
 				else
 				{
-					m->z=z1<<16;	
+					m->z=z1<<16;
 					return((HIT_CEILING<<16)+sector[s].lastwall+CEILING);
 				}
 			}
@@ -711,7 +711,7 @@ void sInR(int x0,int y0,int z0,short s,short r,short m0)
 	if (sector[s].clipcount!=clipcount)
 	{
 		sector[s].clipcount=clipcount;
-	
+
 		m=sector[s].firstsprite;
 
 		while (m>=0)
@@ -720,20 +720,20 @@ void sInR(int x0,int y0,int z0,short s,short r,short m0)
 			{
 				if ((x=abs(sprite[m].x-x0)>>16)<r)
 				{
-					if ((y=abs(sprite[m].y-y0)>>16)<r)			
+					if ((y=abs(sprite[m].y-y0)>>16)<r)
 					{
 						if ((z=abs(sprite[m].z+(sprite[m].height>>1)-z0)>>16)<r)
 						{
 							if ((d=x*x+y*y+z*z)<(r*r))
 							{
-								monsterpoint[monsterpoints]=m;							
-								intbuffer[monsterpoints]=d; 
+								monsterpoint[monsterpoints]=m;
+								intbuffer[monsterpoints]=d;
 								monsterpoints++;
 							}
 						}
 					}
 				}
-			}		
+			}
 			m=sprite[m].nextsprite;
 		}
 
@@ -749,7 +749,7 @@ void sInR(int x0,int y0,int z0,short s,short r,short m0)
 						+(long)(y-vertex[wall[i].v0].y)*wall[i].ny
 						+(long)(z-vertex[wall[i].v0].z)*wall[i].nz)>>14;
 				if (dist<r) sInR(x0,y0,z0,wall[i].nextsector,r,m0);
-			} 
+			}
 		}
 	}
 }
@@ -791,7 +791,7 @@ int moveSprite(int m,int m2, long gravity)
 	}
 
 	rotateTranswalls(sprite[m].x>>16,sprite[m].y>>16);
-	
+
 	sect=sprite[m].s;
 	newsect=sprite[m].s;
 
@@ -799,7 +799,7 @@ int moveSprite(int m,int m2, long gravity)
 	for (i=0;i<transwalls;i++)
 	{
 		if (transsect[i]==sect)
-		{	
+		{
 			x=transx[i];
 			y=transy1[i];
 			y2=transy2[i];
@@ -843,7 +843,7 @@ int moveSprite(int m,int m2, long gravity)
 	if (dz==0) dz=-1;
 	else if (dz<MAXFALL) dz=MAXFALL;
 
-	if ((z<=z1)&&(dz<=0)) 
+	if ((z<=z1)&&(dz<=0))
 	{
 		z=z1;
 		dz=0;
@@ -908,20 +908,20 @@ void plotChunks(short spr,short fbase,short xang, short yang, short r,short g,sh
 		t=chunkpict[frame];		//tile number
 
 //////////////////////////////
-// CACHE should happen when it is decided tile is on screen	
+// CACHE should happen when it is decided tile is on screen
 //////////////////////////////
 
-		if (tilecacheslot[t]>=0) 
+		if (tilecacheslot[t]>=0)
 			moveSlotToEnd(tilecacheslot[t]);
 		else
 			getCacheSlot(t);
 		t=tilecacheslot[t];
-	
+
 		w=monstertile[t].w;
 		h=monstertile[t].h;
 		xoff=(chunkx[frame]*ws+128)>>8;
 		yoff=(chunky[frame]*hs+128)>>8;
-		
+
 //		if (yang)
 //		{
 //			width=(ws*w+128)>>8;
@@ -953,7 +953,7 @@ void plotChunks(short spr,short fbase,short xang, short yang, short r,short g,sh
 			y4=y3;
 		}
 
-		if (sprite[spr].islit)			
+		if (sprite[spr].islit)
 		{
 			briter=255;
 			briteg=255;
@@ -965,11 +965,11 @@ void plotChunks(short spr,short fbase,short xang, short yang, short r,short g,sh
 			briteg=g-(z>>briteshift);
 			briteb=b-(z>>briteshift);
 		}
- 
+
 		if (briter<0) briter=0;
 		if (briteg<0) briteg=0;
 		if (briteb<0) briteb=0;
-		
+
 		u1=monstertile[t].u0;
 		u2=monstertile[t].u0+w-1;
 		u3=u1;
@@ -1005,7 +1005,7 @@ void plotChunks(short spr,short fbase,short xang, short yang, short r,short g,sh
 		faceindex[polycount]=-(spr+1);
 		polycount++;
 		if (polycount>=MAXPOLYS) sendScreen();
-	}	
+	}
 }
 
 void addTarget(short spr)
@@ -1072,8 +1072,8 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 
 	while (m>=0)
 	{
-		rotMonster(m,x0,y0,z0);	
-						
+		rotMonster(m,x0,y0,z0);
+
 		if (lmonster[m].vz>4) //16
 		{
 			light=sector[s].light;
@@ -1091,7 +1091,7 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 				frame=-1;
 				sbase=seq[sloc].base;
 				switch(type)
-				{	
+				{
 					default:
 						break;
 					case TORCH_TYPE:
@@ -1116,28 +1116,28 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 						switch (((parttype *)&creatureList[index])->type)
 						{
 							case SPIDER_TYPE:
-								frame=sbase+sprite[m].sequence+SEQ_SPIDER_PART;				
+								frame=sbase+sprite[m].sequence+SEQ_SPIDER_PART;
 								break;
 							case BASTET_TYPE:
-								frame=sbase+sprite[m].sequence+SEQ_BASTET_PART;				
+								frame=sbase+sprite[m].sequence+SEQ_BASTET_PART;
 								break;
 							case MUMMY_TYPE:
-								frame=sbase+sprite[m].sequence+SEQ_MUMMY_PART;				
+								frame=sbase+sprite[m].sequence+SEQ_MUMMY_PART;
 								break;
 							case ANUBIS_TYPE:
-								frame=sbase+sprite[m].sequence+SEQ_ANUBIS_PART;				
+								frame=sbase+sprite[m].sequence+SEQ_ANUBIS_PART;
 								break;
 							case PIRHANA_TYPE:
-								frame=sbase+sprite[m].sequence+SEQ_PIRHANA_PART;				
+								frame=sbase+sprite[m].sequence+SEQ_PIRHANA_PART;
 								break;
 							case OMENWASP_TYPE:
-								frame=sbase+sprite[m].sequence+SEQ_OMENWASP_PART;				
+								frame=sbase+sprite[m].sequence+SEQ_OMENWASP_PART;
 								break;
 							case HAWK_TYPE:
-								frame=sbase+sprite[m].sequence+SEQ_HAWK_PART;				
+								frame=sbase+sprite[m].sequence+SEQ_HAWK_PART;
 								break;
 							case SENTRY_TYPE:
-								frame=sbase+sprite[m].sequence+SEQ_SENTRY_PART;				
+								frame=sbase+sprite[m].sequence+SEQ_SENTRY_PART;
 								break;
 							case CONTAIN1_TYPE:
 							case CONTAIN2_TYPE:
@@ -1165,7 +1165,7 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 					case SPIDER_TYPE:
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
-						
+
 						if (SpiderSeq[((creaturetype *)&creatureList[index])->state].bOneFrame)
 							facing=0;
 						else
@@ -1173,12 +1173,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+SpiderSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+SpiderSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(-1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
 						addTarget(m);
@@ -1186,7 +1186,7 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 					case ANUBIS_TYPE:
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
-						
+
 						if (AnubisSeq[((creaturetype *)&creatureList[index])->state].bOneFrame)
 							facing=0;
 						else
@@ -1194,12 +1194,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+AnubisSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+AnubisSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(-1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
 						addTarget(m);
@@ -1207,7 +1207,7 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 					case SENTRY_TYPE:
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
-						
+
 						if (SentrySeq[((creaturetype *)&creatureList[index])->state].bOneFrame)
 							facing=0;
 						else
@@ -1215,12 +1215,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+SentrySeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+SentrySeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(-1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
 						addTarget(m);
@@ -1233,12 +1233,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+SentryballSeq[((sentryballtype*)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+SentryballSeq[((sentryballtype*)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						break;
 					case CLOUD_TYPE:
 						if (CloudSeq[((cloudtype*)&creatureList[index])->state].bOneFrame)
@@ -1248,17 +1248,17 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+CloudSeq[((cloudtype*)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+CloudSeq[((cloudtype*)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						break;
 					case MUMMY_TYPE:
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
-						
+
 						if (MummySeq[((creaturetype *)&creatureList[index])->state].bOneFrame)
 							facing=0;
 						else
@@ -1266,12 +1266,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+MummySeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+MummySeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(-1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
 						addTarget(m);
@@ -1287,12 +1287,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+SetSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+SetSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(-1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
 						addTarget(m);
@@ -1307,12 +1307,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 								angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 								facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 							}
-							frame=sbase+facing+MantisSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;				
-					
+							frame=sbase+facing+MantisSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;
+
 							frame=seqindex[frame]+sprite[m].frame;
-					
+
 							plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 							if((((creaturetype *)&creatureList[index])->state==AI_MANTIS_RISE)
 							|| (((creaturetype *)&creatureList[index])->state==AI_MANTIS_SHOOT)
 							|| (((creaturetype *)&creatureList[index])->state==AI_MANTIS_SINK)
@@ -1331,12 +1331,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+SelkisSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+SelkisSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(-1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
 						addTarget(m);
@@ -1352,12 +1352,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+QueenSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+QueenSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(-1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
 						addTarget(m);
@@ -1373,12 +1373,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+BastetSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+BastetSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(-1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
 						addTarget(m);
@@ -1394,12 +1394,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+OmenwaspSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+OmenwaspSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(-1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
 						addTarget(m);
@@ -1415,12 +1415,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+PirhanaSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+PirhanaSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(-1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
 						addTarget(m);
@@ -1436,12 +1436,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+HawkSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+HawkSeq[((creaturetype *)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						if (((creaturetype*)&creatureList[index])->burntime>=0)
 							doBurn(-1,m,x0,y0,z0,xang,yang,(creaturetype*)&creatureList[index]);
 						addTarget(m);
@@ -1454,12 +1454,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+FireballSeq[((fireballtype *)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+FireballSeq[((fireballtype *)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,128,128,128);
-			
+
 						break;
 					case ORB_TYPE:
 						if (OrbSeq[((orbtype*)&creatureList[index])->state].bOneFrame)
@@ -1469,12 +1469,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+OrbSeq[((orbtype*)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+OrbSeq[((orbtype*)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						break;
 					case METEOR_TYPE:
 						if (MeteorSeq[((meteortype*)&creatureList[index])->state].bOneFrame)
@@ -1484,12 +1484,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+MeteorSeq[((meteortype*)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+MeteorSeq[((meteortype*)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						break;
 					case SOUL_TYPE:
 						if (SoulSeq[((soultype*)&creatureList[index])->state].bOneFrame)
@@ -1499,12 +1499,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+SoulSeq[((soultype*)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+SoulSeq[((soultype*)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,light,light,light);
-			
+
 						break;
 					case RABALL_TYPE:
 						if (RaballSeq[((raballtype*)&creatureList[index])->state].bOneFrame)
@@ -1514,12 +1514,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+RaballSeq[((raballtype*)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+RaballSeq[((raballtype*)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						plotChunks(m,frame,xang,yang,128,128,128);
-			
+
 						break;
 					case FLAMEBALL_TYPE:
 						if (FlameballSeq[((flameballtype*)&creatureList[index])->state].bOneFrame)
@@ -1529,10 +1529,10 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							angle=getAngle((sprite[m].x>>16)-x0,(sprite[m].y>>16)-y0);
 							facing=((angle-(sprite[m].angle>>1)+128+1024)&2047)>>8;
 						}
-						frame=sbase+facing+FlameballSeq[((flameballtype*)&creatureList[index])->state].nBaseSeq;				
-					
+						frame=sbase+facing+FlameballSeq[((flameballtype*)&creatureList[index])->state].nBaseSeq;
+
 						frame=seqindex[frame]+sprite[m].frame;
-					
+
 						i=((flameballtype*)&creatureList[index])->time;
 						if (i<5)
 						{
@@ -1548,7 +1548,7 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 						}
 
 						plotChunks(m,frame,xang,yang,r,g,b);
-			
+
 						break;
 					case COBRABALL_TYPE:
 					case REDCOBRA_TYPE:
@@ -1563,12 +1563,12 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 							}
 
 							frame=seqindex[sbase+facing];
-					
+
 							plotChunks(m,frame,xang,yang,light,light,light);
 						}
 						break;
 					case PLAYER_TYPE:
-						break; 
+						break;
 				}
 			}
 		}
@@ -1576,7 +1576,7 @@ void plotSprites(int s, int x0, int y0, int z0, short xang, short yang)
 		m=sprite[m].nextsprite;
 	}
 }
-	
+
 void changeSpriteSector(int m, int dest)
 {
 	int i;
@@ -1642,7 +1642,7 @@ int insertSprite(int s)
 		sprite[m].s=s;
 	}
 
-	return m;	
+	return m;
 }
 
 void deleteSprite(int m)
@@ -1661,12 +1661,12 @@ int spriteSeesPoint(int x2,int y2,int z2,int m1,int w)
 	int y1=sprite[m1].y;
 	int z1=sprite[m1].z+(sprite[m1].height<<15);
 
-	int dx=x2-(x1>>16);	
-	int dy=y2-(y1>>16);	
-	int dz=z2-(z1>>16); 
+	int dx=x2-(x1>>16);
+	int dy=y2-(y1>>16);
+	int dz=z2-(z1>>16);
 
 	short yaw=getAngle(dx,dy)<<1;
-	int dxy=lsquareroot(abs(dx)*abs(dx)+abs(dy)*abs(dy));	
+	int dxy=lsquareroot(abs(dx)*abs(dx)+abs(dy)*abs(dy));
 	short pitch=getAngle(dxy,dz)<<1;
 
 	int i;
@@ -1692,9 +1692,9 @@ int spriteSeesPoint(int x2,int y2,int z2,int m1,int w)
 				dx=abs(dx);
 				dy=abs(dy);
 				dz=abs(dz);
-				x1=abs((x1-sprite[m1].x)>>16);	
-				y1=abs((y1-sprite[m1].y)>>16);	
-				z1=abs((z1-sprite[m1].z)>>16);	
+				x1=abs((x1-sprite[m1].x)>>16);
+				y1=abs((y1-sprite[m1].y)>>16);
+				z1=abs((z1-sprite[m1].z)>>16);
 
 				if ((x1>=(dx-64))&&(y1>=(dy-64))&&(z1>=(dz-64)))
 					return 1;
@@ -1702,7 +1702,7 @@ int spriteSeesPoint(int x2,int y2,int z2,int m1,int w)
 		}
 	}
 
-	return 0;	
+	return 0;
 }
 
 int pointSeesSprite(int x1,int y1,int z1,short s1,int m2)
@@ -1711,25 +1711,25 @@ int pointSeesSprite(int x1,int y1,int z1,short s1,int m2)
 	int y2=sprite[m2].y>>16;
 	int z2=(sprite[m2].z>>16)+(sprite[m2].height>>1);
 
-	int dx=x2-(x1>>16);	
-	int dy=y2-(y1>>16);	
-	int dz=z2-(z1>>16); 
+	int dx=x2-(x1>>16);
+	int dy=y2-(y1>>16);
+	int dz=z2-(z1>>16);
 
 	short yaw=getAngle(dx,dy)<<1;
-	int dxy=lsquareroot(abs(dx)*abs(dx)+abs(dy)*abs(dy));	
+	int dxy=lsquareroot(abs(dx)*abs(dx)+abs(dy)*abs(dy));
 	short pitch=getAngle(dxy,dz)<<1;
 
 	int i;
-	
+
 	int d=lsquareroot(dx*dx+dy*dy+dz*dz);
 
 	i=hitscan(&x1,&y1,&z1,&s1,d,yaw,pitch,-1);
-	if ((((i>>16)==HIT_SPRITE)&&((i&0xffff)==m2))||((i>>16)==HIT_NOTHING)) 
+	if ((((i>>16)==HIT_SPRITE)&&((i&0xffff)==m2))||((i>>16)==HIT_NOTHING))
 	{
 		return 1; //(((dx<<14)/d*wall[w].nx)+((dy<<14)/d*wall[w].ny)+((dz<<14)/d*wall[w].nz))>>12;
 	}
 
-	return 0;	
+	return 0;
 }
 
 int canSee(int m1, int dz1, int m2, int dz2, short checkarc)
@@ -1758,7 +1758,7 @@ int canSee(int m1, int dz1, int m2, int dz2, short checkarc)
 	dy=(y2-y1)>>16;
 	dz=(z2-z1)>>16;
 
-	dxy=lsquareroot(dx*dx+dy*dy);	
+	dxy=lsquareroot(dx*dx+dy*dy);
 	yaw=getAngle(dx,dy)<<1;
 	pitch=getAngle(dxy,dz)<<1;
 
@@ -1782,7 +1782,7 @@ int canSee(int m1, int dz1, int m2, int dz2, short checkarc)
 			return 1;
 	}
 
-	return 0;	
+	return 0;
 }
 
 void centerMonster(short m)
@@ -1960,7 +1960,7 @@ void initSprites()
 		freesprite=i;
 	}
 
-	initCreatures();	
+	initCreatures();
 
 	for (i=0;i<monstercount;i++)
 	{
@@ -1979,7 +1979,7 @@ void initSprites()
 			}
 #endif
 		}
-	}		
+	}
 }
 
 void initSeqs()
@@ -1987,7 +1987,7 @@ void initSeqs()
 	int i;
 
 	monstercount2=0;
-	
+
 	clearSeq();
 
 	addSeq(WALLHIT_TYPE,"kapoww.pss");
@@ -2012,14 +2012,14 @@ void initSeqs()
 			monstertypes[monstercount2]=monster[i].type;
 			monstercount2++;
 		}
-		
+
 		switch (monster[i].type)
 		{
 			case PLAYER_TYPE:
 				break;
 			case SENTRY_TYPE:
 				addSeq(SENTRY_TYPE,"roachh.pss");
-				seqloc[SENTRYBALL_TYPE]=seqloc[SENTRY_TYPE]; //sentry ball is last sequence of sentry		
+				seqloc[SENTRYBALL_TYPE]=seqloc[SENTRY_TYPE]; //sentry ball is last sequence of sentry
 				break;
 			case SPIDER_TYPE:
 				addSeq(SPIDER_TYPE,"spiderr.pss");
@@ -2344,10 +2344,10 @@ void initSeqs()
 	}
 
 	for (i=0;i<MAXWEAPONS;i++)
-		weaponseq[i]=readSeq(weaponfile[i]);		
+		weaponseq[i]=readSeq(weaponfile[i]);
 }
 
-				
+
 void initMenuSeqs()
 {
 	int i;

@@ -2,7 +2,7 @@
 
 typedef struct pic16
 {int vramAddress;
- short xsize,ysize; 
+ short xsize,ysize;
 } Pic16;
 
 Pic16 overPics[MAXNMPICS];
@@ -22,7 +22,7 @@ int loadPic(unsigned char *picData,unsigned short *pallete)
  overPics[nmPics].vramAddress=vramUsed;
  overPics[nmPics].xsize=(xsize+7)&(~7);
  overPics[nmPics].ysize=ysize;
- 
+
  picData+=4;
  for (y=0;y<ysize;y++)
     {for (x=0;x<xsize;x++)
@@ -34,7 +34,7 @@ int loadPic(unsigned char *picData,unsigned short *pallete)
 	{POKE_W(VRAMSTART+vramUsed,0);
 	 vramUsed+=2;
 	}
-    } 
+    }
  assert(vramUsed<512*1024);
  return nmPics++;
 }
@@ -48,7 +48,7 @@ int loadPic(unsigned char *picData,unsigned short *pallete)
  overPics[nmPics].vramAddress=vramUsed;
  overPics[nmPics].xsize=(xsize+7)&(~7);
  overPics[nmPics].ysize=ysize;
- 
+
  picData+=4;
  for (y=0;y<ysize;y++)
     {for (x=0;x<xsize;x++)
@@ -60,7 +60,7 @@ int loadPic(unsigned char *picData,unsigned short *pallete)
 	{POKE_W(VRAMSTART+vramUsed,0);
 	 vramUsed+=2;
 	}
-    } 
+    }
  assert(vramUsed<512*1024);
  return nmPics++;
 }

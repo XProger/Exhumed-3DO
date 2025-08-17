@@ -11,5 +11,3 @@ void loadLocalText(int fd);
 int getLanguageNumber(void);
 
 #endif
-
-

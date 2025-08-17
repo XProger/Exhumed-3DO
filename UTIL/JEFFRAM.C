@@ -71,8 +71,8 @@ int stereo=0;
 short getSample(int sNm)
 {if (!stereo)
     {return (waveBuff[sNm*2+1]<<8)|((unsigned char)waveBuff[sNm*2]);
-    } 
- return 
+    }
+ return
     (((waveBuff[sNm*4+1]<<8)|((unsigned char)waveBuff[sNm*4]))+
      ((waveBuff[sNm*4+3]<<8)|((unsigned char)waveBuff[sNm*4+2])))/2;
 }
@@ -103,9 +103,9 @@ void main(int argc,char **argv)
  printf("Wave BPS:%d RATE:%d SIZE:%d\n",waveBPS,waveSampleRate,waveSize);
  ofile=fopen(argv[2],"wb");
  if (stereo)
-    steps=(waveSize/4)/SAMPLESPERSTEP; 
+    steps=(waveSize/4)/SAMPLESPERSTEP;
  else
-    steps=(waveSize/2)/SAMPLESPERSTEP; 
+    steps=(waveSize/2)/SAMPLESPERSTEP;
  /*steps= # of 30th second chunks in wave file*/
  printf("%d steps.\n",steps);
  nmFrames=0;
@@ -120,7 +120,7 @@ void main(int argc,char **argv)
 	 tot+=abs(s);
 	}
      if (tot>loudestSample)
-	loudestSample=tot;     
+	loudestSample=tot;
     }
  THRESH1=((double)loudestSample)*0.2;
  THRESH2=((double)loudestSample)*0.25;
@@ -139,7 +139,7 @@ void main(int argc,char **argv)
 	{int s=getSample(j);
 	 tot+=abs(s);
 	}
-     
+
      if (tot>lastVol+delta)
 	mouth=1;
      if (mouth==1)
@@ -153,7 +153,7 @@ void main(int argc,char **argv)
 	 peakVol=0;
 	}
      lastVol=tot;
-     
+
      if (tot<THRESH2)
 	if (mouth==2)
 	   mouth=1;
@@ -208,5 +208,3 @@ void main(int argc,char **argv)
     writeChar(lipPos[i]);
  fclose(ofile);
 }
-
-

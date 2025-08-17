@@ -133,7 +133,7 @@ int main(int argc,char **argv)
 	   continue;
 	fprintf(ofile,"Object foo%d mesh {\n",w);
 	fprintf(ofile,"  OWMatrix foo {1 0 0 0 1 0 0 0 1 0 0 0}");
-	if (s==1 /*wall[w].nz==-16384*/) /* make ceilings luminous */ 
+	if (s==1 /*wall[w].nz==-16384*/) /* make ceilings luminous */
 	   {fprintf(ofile,"  Prop foo {E{30.0 30.0 30.0} p{0.3 0.3 0.3} "
 		    "Kd{1.0} Ks{0.0}}\n");
 	    lightPatches+=(wall[w].lastface-wall[w].firstface+1);
@@ -155,7 +155,7 @@ int main(int argc,char **argv)
 	    printVert(face[f].v1);
 	    printVert(face[f].v2);
 	    printVert(face[f].v3);
-	    fprintf(ofile,"}\n");	    
+	    fprintf(ofile,"}\n");
 	   }
 	fprintf(ofile,"  }}\n");
        }

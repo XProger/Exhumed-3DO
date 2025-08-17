@@ -18,11 +18,11 @@ struct cmdTable
  Uint16  dummy;                      /* dummy area                       */
 };
 
-struct gourTable 
+struct gourTable
 {Uint16  entry[4];
 };
 
-struct sprLookupTbl 
+struct sprLookupTbl
 {Uint16  entry[16];
 };
 

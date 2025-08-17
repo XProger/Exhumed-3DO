@@ -34,7 +34,7 @@ typedef struct object{
   PDATA  *myself;
   FIXED  pos[XYZ] ;
   ANGLE  ang[XYZ] ;
-  FIXED  sca[XYZ] ;  
+  FIXED  sca[XYZ] ;
   struct object *child;
   struct object *sibling;
 } OBJECT;

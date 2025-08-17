@@ -62,12 +62,12 @@ int loadLevel(int fd,int tileBase)
  LOADPART(level_texture,unsigned char,head->nmTextureIndexes);
  LOADPART(level_vertexLight,char,head->nmLightValues);
  LOADPART(((char *)level_cutPlane),char,(head->nmCutSectors*MAXCUTSECTORS));
- 
+
  for (i=1;i<head->nmTextureIndexes;i+=2)
     level_texture[i]+=tileBase;
  for (i=0;i<head->nmFaces;i++)
     level_face[i].tile+=tileBase;
- 
+
  /* paranoia checks */
  assert(!(((int)level_sector) & 3));
  assert(!(((int)level_wall) & 3));
@@ -77,7 +77,3 @@ int loadLevel(int fd,int tileBase)
 
  return 1;
 }
-
-
-
-
