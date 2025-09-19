@@ -304,6 +304,7 @@ int fixSqrt(int n,int frac)
  return result;
 }
 
+#ifdef TODO
 Fixed32 fixMul(Fixed32 a,Fixed32 b)
 {Fixed32 c;
  __asm__ volatile ("dmuls.l %1,%2\n sts mach,r11\n sts macl,%0\n xtrct r11,%0"
@@ -312,6 +313,9 @@ Fixed32 fixMul(Fixed32 a,Fixed32 b)
                    : "mach","macl","r11");
  return c;
 }
+#else
+#define fixMul(a,b) (((a) * (b)) >> 16)
+#endif
 
 Fixed32 evalHermite(Fixed32 t,Fixed32 p1,Fixed32 p2,Fixed32 d1,Fixed32 d2)
 {Fixed32 t2=MTH_Mul(t,t);

@@ -202,7 +202,7 @@ static void colRamfil(void)
 	cramptr = blkmfil_w(cramptr, 0, BLKMSK_COL_RAM);
 }
 
-
+#ifdef TODO
 static void sndRamfil(Sint32 initstep)
 {
 	register Sint32	*memptr;
@@ -227,7 +227,9 @@ static void sndRamfil(Sint32 initstep)
 					/* 備考： １イントの間がある   */
 	}                               /* ため、ＳＭＰＣステータスの  */
 }                                       /* セット／チェックを省略      */
+#endif
 
+#ifdef TODO
 static void msh2PeriInit(void)
 {
 	register Sint32 i, ofs, dummy;
@@ -248,6 +250,7 @@ static void msh2PeriInit(void)
                                         /* ＤＩＶＵ割込みを不許可      */
 	MSH2_DIVU_CONT =  0x00000000;
 }
+#endif
 
 static void scuDspInit(void)
 {

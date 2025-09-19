@@ -14,10 +14,15 @@ void drawStringBulge(int x,int y,int font,int buldgeCenter,
 		     unsigned char *text);
 void drawStringN(int x,int y,int font,unsigned char *text,int n);
 
+#ifdef TODO
 #define drawStringf(x,y,font,format,args...) \
    {char buff[160]; \
     sprintf(buff,format, ## args); \
     drawString(x,y,font,buff);}
+#else
+#define drawStringf(x,y,font,format,...)
+#endif
+
 #ifdef JAPAN
 void loadJapanFontPics(void);
 void loadJapanFontData(int fd);

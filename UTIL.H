@@ -83,6 +83,7 @@ void assertFail(char *file,int line);
 #define F(a)  ((a) << 16)
 #define f(a)  ((a) >> 16)
 
+#ifdef TODO
 #define MTH_Mul(a,b) fixMul(a,b)
 extern inline Fixed32 fixMul(Fixed32 a,Fixed32 b)
 {Fixed32 c;
@@ -95,6 +96,9 @@ extern inline Fixed32 fixMul(Fixed32 a,Fixed32 b)
                    : "mach","macl","r11");
  return c;
 }
+#else
+#define MTH_Mul(a,b) (((a) * (b)) >> 16)
+#endif
 
 extern Fixed32 getStackPointer(void);
 
@@ -141,7 +145,7 @@ void debugPrint(char *message);
     debugPrint(buff);}
 #else
 #define debugPrint(x)
-#define dPrint(x,args...)
+#define dPrint(x,...)
 #endif
 
 #ifndef NDEBUG
