@@ -533,6 +533,6 @@ int findSectorHeight(int s)
 }
 
 void delay(int frames)
-{int v=vtimer+frames+1;
+{Uint32 v=vtimer+frames+1;
  while (vtimer<v);
 }

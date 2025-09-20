@@ -59,7 +59,7 @@ int initFonts(int spriteNm,int fontMask)
      fontMask=fontMask>>1;
      if (!i)
 	continue;
-     heights[f]=*(short *)fontList[f];
+     heights[f]=(char)*(short *)fontList[f];
      fontHeight=heights[f];
      EZ_setLookupTbl(f,(struct sprLookupTbl *)(fontList[f]+2));
      for (i=0;i<256;i++)

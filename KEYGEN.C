@@ -1,3 +1,5 @@
+#if 0
+
 #include <machine.h>
 
 #include <libsn.h>
@@ -63,7 +65,7 @@ static void unloadBup(void)
 void *camera;
 
 static void bup_createKeyFile(char *filename)
-{int ret;
+{//int ret;
  int device=0;
  BupStat sttb;
  BupDir writetb;
@@ -95,3 +97,5 @@ void main(void)
 {mem_init();
  bup_createKeyFile("POWERCHEAT!");
 }
+
+#endif

@@ -1,6 +1,8 @@
 #ifndef __INCLUDEDmenuh
 #define __INCLUDEDmenuh
 
+#include <sega_mth.h>
+
 #ifdef SEGA_MTH_H
 typedef struct
 {int type;

@@ -34,7 +34,6 @@
     <ClCompile Include="..\SPR.C" />
     <ClCompile Include="..\SPRITE.C" />
     <ClCompile Include="..\SRUINS.C" />
-    <ClCompile Include="..\STATBAR.C" />
     <ClCompile Include="..\UTIL.C" />
     <ClCompile Include="..\V_BLANK.C" />
     <ClCompile Include="..\WALLS.C" />
@@ -84,5 +83,58 @@
     <ClInclude Include="..\WALLASM.H" />
     <ClInclude Include="..\WALLS.H" />
     <ClInclude Include="..\WEAPON.H" />
+    <ClInclude Include="..\sega\libsn.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\machine.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\sega_bup.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\sega_cdc.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\sega_dbg.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\sega_dma.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\sega_gfs.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\sega_int.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\sega_mem.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\sega_mth.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\sega_per.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\sega_scl.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\sega_snd.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\sega_spr.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\sega_sys.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sega\sega_xpt.h">
+      <Filter>sega</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="sega">
+      <UniqueIdentifier>{afc971e9-98d1-4181-814e-ae8c38090feb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

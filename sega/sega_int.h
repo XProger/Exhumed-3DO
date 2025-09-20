@@ -1,14 +1,23 @@
 #ifndef SEGA_INT_H
 #define SEGA_INT_H
 
-typedef signed char     Sint8;
-typedef signed short    Sint16;
-typedef signed int      Sint32;
+#include <sega_xpt.h>
 
-typedef unsigned char   Uint8;
-typedef unsigned short  Uint16;
-typedef unsigned int    Uint32;
+#define INT_ChgMsk(a,b)
 
-typedef signed int      Fixed32;
+#define INT_MSK_ALL     0
+#define INT_MSK_NULL    0
+#define INT_MSK_DMA0    0
+#define INT_MSK_SPR     0
+
+#define INT_SCU_VBLK_IN     0x40
+#define INT_SCU_VBLK_OUT    0x41
+#define INT_SCU_HBLK_IN     0x42
+
+#define INT_SetMsk(msk_bit)
+#define INT_SetScuFunc(num, hdr)
+
+#define set_imask(i)
+#define get_imask() 0
 
 #endif

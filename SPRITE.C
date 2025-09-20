@@ -120,7 +120,7 @@ static sWallType *behindWall;
 int bumpWall(sWallType *wall,Sprite *o,int sector)
 {/* find signed distance from player to wall */
  Fixed32 planeDist,crossDist,yDist;
- Fixed32 pushDistance,velPush;
+ Fixed32 pushDistance,velPush = 0;
  MthXyz wallP;
  MthXyz collidePoint;
 

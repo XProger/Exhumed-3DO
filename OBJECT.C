@@ -214,7 +214,10 @@ void placeObjects(void)
 	{case OT_SECTORSWITCH:
 	    constructSectorSwitch();
 	    break;
-         case OT_SW1 ... OT_SW4:
+     case OT_SW1:
+     case OT_SW2:
+     case OT_SW3:
+     case OT_SW4:
 	    constructSwitch(level_object[o].type);
 	    break;
          case OT_SHOOTER1:
@@ -267,7 +270,10 @@ void placeObjects(void)
 	    constructUpDownElevator(p1,level_object[o].type,p2,p3);
 	    break;
          case OT_NORMALDOOR:
-	 case OT_BUGDOOR ... OT_PLANTDOOR:
+	 case OT_BUGDOOR:
+     case OT_TIMEDOOR:
+     case OT_XDOOR:
+     case OT_PLANTDOOR:
 	 case OT_STUCKUPDOOR:
 	    constructDoor(level_object[o].type,suckShort());
 	    break;
@@ -319,10 +325,63 @@ void placeObjects(void)
 	 case OT_SELKIS:
 	    constructSelkis(suckShort());
 	    break;
-	 case OT_TORCH1 ... OT_TORCH38:
+     case OT_TORCH1:
+     case OT_TORCH2:
+     case OT_TORCH3:
+     case OT_TORCH4:
+     case OT_TORCH5:
+     case OT_TORCH6:
+     case OT_TORCH7:
+     case OT_TORCH8:
+     case OT_TORCH9:
+     case OT_TORCH10:
+     case OT_TORCH11:
+     case OT_TORCH12:
+     case OT_TORCH13:
+     case OT_TORCH14:
+     case OT_TORCH15:
+     case OT_TORCH16:
+     case OT_TORCH17:
+     case OT_TORCH18:
+     case OT_TORCH19:
+     case OT_TORCH20:
+     case OT_TORCH21:
+     case OT_TORCH22:
+     case OT_TORCH23:
+     case OT_TORCH24:
+     case OT_TORCH25:
+     case OT_TORCH26:
+     case OT_TORCH27:
+     case OT_TORCH28:
+     case OT_TORCH29:
+     case OT_TORCH30:
+     case OT_TORCH31:
+     case OT_TORCH32:
+     case OT_TORCH33:
+     case OT_TORCH34:
+     case OT_TORCH35:
+     case OT_TORCH36:
+     case OT_TORCH37:
+     case OT_TORCH38:
 	    constructTorch(suckShort(),level_object[o].type);
 	    break;
-	 case OT_CONTAIN1 ... OT_CONTAIN17:
+     case OT_CONTAIN1:
+     case OT_CONTAIN2:
+     case OT_CONTAIN3:
+     case OT_CONTAIN4:
+     case OT_CONTAIN5:
+     case OT_CONTAIN6:
+     case OT_CONTAIN7:
+     case OT_CONTAIN8:
+     case OT_CONTAIN9:
+     case OT_CONTAIN10:
+     case OT_CONTAIN11:
+     case OT_CONTAIN12:
+     case OT_CONTAIN13:
+     case OT_CONTAIN14:
+     case OT_CONTAIN15:
+     case OT_CONTAIN16:
+     case OT_CONTAIN17:
 	 case OT_BOOMPOT1:
 	 case OT_BOOMPOT2:
 	    constructBlowPot(suckShort(),level_object[o].type);
@@ -362,8 +421,37 @@ void placeObjects(void)
 	 case OT_TRANSMITTER:
 	 case OT_CHOPPER:
 	 case OT_RAMMUMMY:
-	 case OT_COMM_BATTERY ... OT_COMM_TOP:
-	 case OT_DOLL1 ... OT_DOLL23:
+     case OT_COMM_BATTERY:
+     case OT_COMM_BOTTOM:
+     case OT_COMM_DISH:
+     case OT_COMM_HEAD:
+     case OT_COMM_KEYBOARD:
+     case OT_COMM_MOUSE:
+     case OT_COMM_SCREEN:
+     case OT_COMM_TOP:
+     case OT_DOLL1:
+     case OT_DOLL2:
+     case OT_DOLL3:
+     case OT_DOLL4:
+     case OT_DOLL5:
+     case OT_DOLL6:
+     case OT_DOLL7:
+     case OT_DOLL8:
+     case OT_DOLL9:
+     case OT_DOLL10:
+     case OT_DOLL11:
+     case OT_DOLL12:
+     case OT_DOLL13:
+     case OT_DOLL14:
+     case OT_DOLL15:
+     case OT_DOLL16:
+     case OT_DOLL17:
+     case OT_DOLL18:
+     case OT_DOLL19:
+     case OT_DOLL20:
+     case OT_DOLL21:
+     case OT_DOLL22:
+     case OT_DOLL23:
 	    p1=suckShort();
 	    p2=suckShort();
 	    p3=suckShort();

@@ -1,3 +1,5 @@
+#if 0
+
 #include <machine.h>
 
 #include <libsn.h>
@@ -236,7 +238,7 @@ void playIntro(void)
  fadeDown();
  displayEnable(0);
  playMovie("OPEN.MOV",1);
- skipIntro:
+ skipIntro:;
 }
 
 static void fadeSegaLogo(void)
@@ -607,3 +609,5 @@ void main(void)
  POKE(0x02ffffc,0);
  link("+MAIN.BIN");
 }
+
+#endif

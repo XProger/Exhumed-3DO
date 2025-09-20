@@ -178,7 +178,7 @@ void resetDisable(void);
 ** The divider requires 37 clocks to calculate a result,
 ** so you want to execute some other code before retrieving the result.
 */
-
+#if 0
 #define Set_Hardware_Divide(x,y) \
         ({ \
                 int *div_unit = (int *)0xffffff00; \
@@ -215,6 +215,15 @@ void resetDisable(void);
                         : "r" (div_unit));              \
                 __result;                               \
         });
+#else
+static Fixed32 div_ret;
+
+#define Set_Hardware_Divide(x,y) div_ret = DIV_FIXED(x,y)
+#define Get_Hardware_Divide() div_ret
+#define Set_Hardware_DivideFixed Set_Hardware_Divide
+
+#endif
+
 
 extern unsigned short buttonMasks[];
 enum {ACTION_FIRE,ACTION_JUMP,ACTION_PUSH,ACTION_FREELOC,ACTION_WEPDN,

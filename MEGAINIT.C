@@ -157,7 +157,7 @@ static void vbIrtn(void)
 
 static void vbOrtn(void)
 {
-	register Sint16	*vdp1r;
+	Sint16	*vdp1r;
                         /* イレースライトでフレームバッファをクリア */
 	vdp1r = VD1_REG;
 	*vdp1r++ = 0x0;	/* １／６０秒自動描画モード */
@@ -202,9 +202,10 @@ static void colRamfil(void)
 	cramptr = blkmfil_w(cramptr, 0, BLKMSK_COL_RAM);
 }
 
-#ifdef TODO
+
 static void sndRamfil(Sint32 initstep)
 {
+#ifdef TODO
 	register Sint32	*memptr;
 
 	switch (initstep) {
@@ -226,12 +227,13 @@ static void sndRamfil(Sint32 initstep)
 		break;
 					/* 備考： １イントの間がある   */
 	}                               /* ため、ＳＭＰＣステータスの  */
-}                                       /* セット／チェックを省略      */
 #endif
+}                                       /* セット／チェックを省略      */
 
-#ifdef TODO
+
 static void msh2PeriInit(void)
 {
+#ifdef TODO
 	register Sint32 i, ofs, dummy;
 
         ofs = 0;
@@ -249,8 +251,9 @@ static void msh2PeriInit(void)
 	MSH2_DMAC_DMAOR = 0x00000000;
                                         /* ＤＩＶＵ割込みを不許可      */
 	MSH2_DIVU_CONT =  0x00000000;
-}
 #endif
+}
+
 
 static void scuDspInit(void)
 {

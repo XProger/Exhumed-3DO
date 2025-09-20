@@ -10,9 +10,9 @@
 #include "util.h"
 
 #define INPUTQSIZE 16 /* dont change this */
-unsigned short inputQ[INPUTQSIZE];
-unsigned short lastInputSample;
-unsigned short inputAccum;
+unsigned volatile short inputQ[INPUTQSIZE];
+unsigned volatile short lastInputSample;
+unsigned volatile short inputAccum;
 volatile char controlerPresent;
 volatile char analogControlerPresent;
 volatile short analogX;
@@ -23,7 +23,7 @@ volatile short analogTL;
 volatile char inputQHead,inputQTail;
 
 volatile int fadeDir,fadePos,fadeEnd;
-int abcResetEnable=0,abcResetDisable=0;
+volatile int abcResetEnable=0,abcResetDisable=0;
 
 /*
 volatile Uint16	PadData1  = 0x0000;

@@ -65,7 +65,7 @@
 #include "intro.h"
 #include "mov.h"
 #include "plax.h"
-#include "airbub.c"
+#include "art.h"
 #include "initmain.h"
 #include "aicommon.h"
 
@@ -73,7 +73,7 @@
 #undef STATUSTEXT
 #endif
 
-extern int end;
+int end;
 
 SaveState currentState;
 
@@ -120,6 +120,27 @@ void redrawBowlDots(void);
 static int colorOffset[3]={0,0,0};
 static int colorCenter[3]={0,0,0};
 static int colorStepRate=3;
+
+////////////////////
+// dummy GFS
+#ifdef TODO
+#endif
+#include <sega_gfs.h>
+#include <sega_cdc.h>
+
+void GFS_GetFileSize(GfsHn gfs, Sint32 *sctsz, Sint32 *nsct, Sint32 *lstsz)
+{
+    if (sctsz) *sctsz = 0;
+    if (nsct) *nsct = 0;
+    if (lstsz) *lstsz = 0;
+}
+
+Sint32 CDC_GetPeriStat(CdcStat *stat)
+{
+    memset(stat, 0, sizeof(*stat));
+    return 0;
+}
+////////////////////
 
 int getKeyMask(void)
 {return keyMask;
@@ -225,7 +246,7 @@ static void stepPlayerHeight(void)
  playerHeightOffset+=playerHeightVel;
  playerHeightVel-=playerHeightOffset>>3;
  weaponForce(0,playerHeightOffset>>4);
- playerHeightVel=MTH_Mul(playerHeightVel,65536*0.6);
+ playerHeightVel=MTH_Mul(playerHeightVel,F(6)/10);
  if (abs(playerHeightVel)<1<<13 &&
      abs(playerHeightOffset)<1<<13)
     {playerHeightVel=0;
@@ -1582,7 +1603,30 @@ static int delayed_fadeSel=0;
 
 int playerGetObject(int objectType)
 {switch (objectType)
-    {case OT_DOLL1 ... OT_DOLL23:
+    {
+     case OT_DOLL1:
+     case OT_DOLL2:
+     case OT_DOLL3:
+     case OT_DOLL4:
+     case OT_DOLL5:
+     case OT_DOLL6:
+     case OT_DOLL7:
+     case OT_DOLL8:
+     case OT_DOLL9:
+     case OT_DOLL10:
+     case OT_DOLL11:
+     case OT_DOLL12:
+     case OT_DOLL13:
+     case OT_DOLL14:
+     case OT_DOLL15:
+     case OT_DOLL16:
+     case OT_DOLL17:
+     case OT_DOLL18:
+     case OT_DOLL19:
+     case OT_DOLL20:
+     case OT_DOLL21:
+     case OT_DOLL22:
+     case OT_DOLL23:
 	currentState.dolls|=1<<(objectType-OT_DOLL1);
 	delayed_fade=1; delayed_fadeButton=2;
 	delayed_fadeSel=6;
@@ -1602,7 +1646,14 @@ int playerGetObject(int objectType)
 	changeMessage(getText(LB_ITEMMESSAGE,22));
 	playStaticSound(ST_ITEM,3);
 	break;
-     case OT_COMM_BATTERY ... OT_COMM_TOP:
+     case OT_COMM_BATTERY:
+     case OT_COMM_BOTTOM:
+     case OT_COMM_DISH:
+     case OT_COMM_HEAD:
+     case OT_COMM_KEYBOARD:
+     case OT_COMM_MOUSE:
+     case OT_COMM_SCREEN:
+     case OT_COMM_TOP:
 	currentState.inventory|=0x10000<<(objectType-OT_COMM_BATTERY);
 	delayed_fade=1;	delayed_fadeButton=3;
 	delayed_fadeSel=objectType-OT_COMM_BATTERY;
@@ -2480,8 +2531,8 @@ void main(void)
      EZ_clearScreen();
      SCL_SetColOffset(SCL_OFFSET_A,SCL_SP0|SCL_NBG0|SCL_RBG0,0,0,0);
 
-     switch (action)
-	{case 100 ... 199: /* camel */
+     if (action >= 100 && action <= 199)
+     {
 	    currentState.gameFlags|=GAMEFLAG_TALKEDTORAMSES;
 	    currentState.levFlags[hitCamel-100]|=LEVFLAG_CANENTER;
 	    if (currentState.health<200)
@@ -2490,8 +2541,9 @@ void main(void)
 	    mem_init();
 	    bup_saveGame();
 	    level=runMap(currentState.currentLevel);
-	    break;
-	 case 200 ... 399: /* teleporter */
+     }
+     else if (action >= 200 && action <= 399)
+     {
 	    mem_init();
 	    teleportEffect();
 	    level=action-200;
@@ -2499,7 +2551,10 @@ void main(void)
 	       currentState.inventory|=
 		  INV_SANDALS|INV_MASK|INV_SHAWL|INV_ANKLET|
 		     INV_SCEPTER|INV_FEATHER;
-	    break;
+     }
+     else
+     switch (action)
+	{
 	 case 1: /* restart level */
 	    currentState=levStart;
 	    break;

@@ -546,7 +546,7 @@ void switch_func(Object *_this,int msg,int param1,int param2)
 	frame=level_sequence[this->sequence]+this->frame;
 	/* dPrint("fr:%d\n",level_chunk[level_frame[frame].chunkIndex].tile);
 	assert(level_chunk[level_frame[frame].chunkIndex].tile<127); */
-	*this->tilePos=level_chunk[level_frame[frame].chunkIndex].tile;
+	*this->tilePos=(char)level_chunk[level_frame[frame].chunkIndex].tile;
 	if (level_frame[frame].sound!=-1)
 	   posMakeSound((int)this,&this->orficePos,level_frame[frame].sound);
 	this->frame++;

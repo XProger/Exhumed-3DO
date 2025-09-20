@@ -23,8 +23,8 @@
 
 #include <sega_scl.h>
 #include <sega_dma.h>
-#include	<sgl_work.h>
-#include	<sgl.h>
+//#include	<sgl_work.h>
+//#include	<sgl.h>
 
 #define	DMAOFF
 
@@ -57,12 +57,7 @@ static	Uint16	*regaddr;
 	SclSblSgl	Scl_flag;
 
 /* このファイルが参照する大域変数の宣言 */
-extern	SclPriBuffDirtyFlags	SclPriBuffDirty;
-extern	void	SCL_AutoExec(void);
-extern	Uint32	SCL_GetColRamMode(void);
-extern	void	SCL_VblInit(void);
-
-extern	void	SCL_PriorityInit(void);	/*  add: C.yoshida  */
+SclPriBuffDirtyFlags	SclPriBuffDirty;
 
 /*******************************************************
  *  回転マトリックスパラメータテーブルバッファ         *
@@ -105,9 +100,6 @@ SclRotreg	*SclRotregBuff = _SclRotregBuff;
 	void	SCL_Memcpyw(void *dest,void *src,Uint32 tcnt);
 	void	SCL_SglOn(void);		/*	use SGL	*/
 	void	SCL_SglOff(void);		/*	use SGL	*/
-
-extern	void   SCL_Rotate(Fixed32 xy,Fixed32 z,Fixed32 disp);
-
 
 /*------------------------------------------------------------------------
  *
@@ -681,7 +673,7 @@ void  SCL_SetColRamMode(Uint32 ComRamMode)
 void  SCL_PriIntProc(void)
 {
 /*    Uint8 i;		del:no used by C.yoshida */
-
+#if 0
     SCL_AutoExec();
 
     if(SclPriBuffDirty.SclOtherPri){
@@ -738,7 +730,7 @@ void  SCL_PriIntProc(void)
 #endif	/* DMAOFF */
 	SclPriBuffDirty.SclColOffset = 0;
     }
-
+#endif
     return;
 }
 
@@ -804,8 +796,10 @@ void SCL_Vdp2_SGLInit(Uint16 tvmod)
 
 }
 
+SclRotreg RotScrParA;
+
 void SCL_SglOn(void){
-	SclRotregBuff = ( SclRotreg * )RotScrParA;
+	SclRotregBuff = ( SclRotreg * )&RotScrParA;
 	Scl_flag.sgl_flag=0x0001;
 }
 

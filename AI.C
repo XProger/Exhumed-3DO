@@ -43,7 +43,7 @@ PlayerObject *constructPlayer(int sector,int suckParams)
  assert(sizeof(*this)<sizeof(Object));
  moveObject((Object *)this,objectIdleList);
  dPrint("player in sector %d\n",sector);
- this->sprite=newSprite(sector,F(47),0.90*65536.0,GRAVITY,
+ this->sprite=newSprite(sector,F(47),F(9) / 10,GRAVITY,
 			-1,SPRITEFLAG_BSHORT,
 			(Object *)this);
  if (suckParams)
@@ -1602,7 +1602,7 @@ Object *constructHawk(int sector)
  assert(this);
  moveObject((Object *)this,objectRunList);
 
- this->sprite=newSprite(sector,F(24),65536*0.95,0,
+ this->sprite=newSprite(sector,F(24),F(95)/100,0,
 			0,SPRITEFLAG_BWATER,
 			(Object *)this);
  suckSpriteParams(this->sprite);
@@ -1768,7 +1768,7 @@ Object *constructWasp(int sector)
  assert(this);
  moveObject((Object *)this,objectRunList);
 
- this->sprite=newSprite(sector,F(24),65536*0.95,0,
+ this->sprite=newSprite(sector,F(24),F(95)/100,0,
 			0,SPRITEFLAG_BWATER,
 			(Object *)this);
  suckSpriteParams(this->sprite);
@@ -2834,7 +2834,7 @@ Object *constructSelkis(int sector)
 			0,SPRITEFLAG_BWATERBNDRY,
 			(Object *)this);
  suckSpriteParams(this->sprite);
- this->sprite->scale=65536*1.2;
+ this->sprite->scale=F(12)/10;
  this->sequenceMap=selkisSeqMap;
  setState((SpriteObject *)this,AI_SELKIS_IDLE);
  this->health=2000;
@@ -3826,7 +3826,12 @@ void thing_func(Object *_this,int msg,int param1,int param2)
 			   currentState.gameFlags|=GAMEFLAG_JUSTTELEPORTED;
 			   currentState.gameFlags&=~GAMEFLAG_TALKEDTORAMSES;
 			   break;
-			case OT_SANDALS ... OT_FEATHER:
+            case OT_SANDALS:
+            case OT_MASK:
+            case OT_CAPE:
+            case OT_ANKLETS:
+            case OT_SCEPTER:
+            case OT_FEATHER:
 			   signalAllObjects(SIGNAL_SWITCH,
 					    this->type-OT_SANDALS+1000,0);
 			   break;
@@ -5505,7 +5510,7 @@ Object *constructQueen(int sector)
 			0,SPRITEFLAG_BWATERBNDRY|SPRITEFLAG_BCLIFF,
 			(Object *)this);
  suckSpriteParams(this->sprite);
- this->sprite->scale=65536*1.3;
+ this->sprite->scale=F(13)/10;
  this->sequenceMap=queenSeqMap;
  setState((SpriteObject *)this,AI_QUEEN_IDLE);
 #ifndef JAPAN
@@ -5680,7 +5685,7 @@ Object *constructQhead(int sector,MthXyz *pos)
     return NULL;
  moveObject((Object *)this,objectRunList);
  this->sprite->pos=*pos;
- this->sprite->scale=65536*1.1;
+ this->sprite->scale=F(11)/10;
  this->sprite->vel.y=F(10);
  this->sprite->vel.x=F(6);
  this->sprite->vel.z=F(2);

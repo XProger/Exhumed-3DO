@@ -114,7 +114,7 @@ static unsigned short colors[4]=
 #define ARROWR 5
 
 void drawMap(int cx,int cy,int cz,int yaw,int currentSector)
-{int w,i,s,color,transp;
+{int w,s,color,transp;
  short currentHeight;
  XyInt mapLine[2];
  MthXyz north,east;

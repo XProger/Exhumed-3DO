@@ -117,7 +117,7 @@ static void deQCopy(void *dest,int size)
 #else
      qmemcpy(dest,buffer[qTail]+qPos,s);
 #endif
-     dest+=s;
+     (Uint8*)dest+=s;
      size-=s;
      assert(qTail<nmBuffers);
      qTail++;

@@ -5,4 +5,6 @@
 
 #define SYS_EXECDMP() (0)
 
+#define qmemcpy memcpy
+
 #endif

@@ -266,7 +266,7 @@ int hitScan(Sprite *dontHit,MthXyz *ray,MthXyz *pos,int sector,
 	       }
 	}
      return 0;
-  Break:
+  Break:;
     }
 }
 
@@ -336,7 +336,7 @@ static int wallHitScan(MthXyz *ray,MthXyz *pos,int sector,
 	       }
 	   }
      return 0;
-     Break:
+     Break:;
     }
 }
 

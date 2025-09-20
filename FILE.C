@@ -94,7 +94,7 @@ static int cdWork[(GFS_WORK_SIZE(OPENMAX)+3)/4];
 static GfsDirName dir[DIRMAX];
 static GfsDirTbl dirtbl;
 
-static char sectorBuff[2048] __attribute__ ((aligned (4)));
+static char sectorBuff[2048];
 static char *sectorBuffPos;
 static GfsHn openCDFile; /* only one cd file may be open at a time */
 #define CDHANDLE 8000
@@ -348,7 +348,11 @@ void fs_closeProgress(void)
 {progressOn=0;
 }
 
-void executeLink(void *data,int size);
+void executeLink(void *data,int size)
+{
+#ifdef TODO
+#endif
+}
 
 void link(char *filename)
 {char *data;

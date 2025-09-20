@@ -90,7 +90,6 @@ static int bestAutoAimRating;
 
 void project_point(MthXyz *v,XyInt *p);
 
-#if 0
 void project_point(MthXyz *v,XyInt *p)
 {unsigned int newZ;
  if (v->z<=F(1))
@@ -110,13 +109,12 @@ void project_point(MthXyz *v,XyInt *p)
 /* p->y = -PROJECT(v->y,newZ); */
 #endif
 }
-#endif
 
 #define XMIN        -160
 #define YMIN        -110
 #define XMAX        160
 #define YMAX        90
-Bool clip_visible( XyInt *poly,SectorDrawRecord *s);
+Sint32 clip_visible( XyInt *poly,SectorDrawRecord *s);
 
 #if 0
 __asm__
@@ -161,7 +159,7 @@ __asm__
 #endif
 
 #if 1
-Bool clip_visible( XyInt *poly,SectorDrawRecord *s)
+Sint32 clip_visible( XyInt *poly,SectorDrawRecord *s)
 {
 #if 0
  int p,accum;
@@ -403,7 +401,26 @@ void clipZSub(int clipAxis,Fixed32 clipLine,int greater,
 }
 
 
+void rectTransform(Fixed32 wx,Fixed32 wy,Fixed32 wz,
+		   int light,int h,int w,
+		   Fixed32 px,Fixed32 py,Fixed32 pz,
+		   Fixed32 hx,Fixed32 hy,Fixed32 hz,
+		   void *output,
+		   unsigned short (*lightFunc)(char vLightIndex,
+					       MthXyz *pos))
+{
+#ifdef TODO
+#endif
+}
 
+void normTransform(sVertexType *firstVertex,MthMatrix *viewMatrix,
+		   int nmVert,void *output,
+		   unsigned short (*lightFunc)(char vLightIndex,
+					       MthXyz *pos))
+{
+#ifdef TODO
+#endif
+}
 
 #define WATERCOLOR (RGB(4,4,8))
 #define GETWATERBRIGHT(x,z)  ((int)(waterBright[(((unsigned int)(x))>>22)&0xf][(((unsigned int)(z))>>22)&0xf]))
@@ -1265,8 +1282,8 @@ void slave_drawRectWall(sWallType *theWall,MthXyz *coords,
  int w,h,v,clip;
  int light;
  int tex,row1,row2;
- const int width=theWall->tileLength;
- const int height=theWall->tileHeight;
+ int width=theWall->tileLength;
+ int height=theWall->tileHeight;
  struct gourTable gtable;
  char *ppattern;
  struct slaveDrawResult *cacheThruResult=
