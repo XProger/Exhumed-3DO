@@ -5,7 +5,7 @@
 
 void initProfiler(void);
 void popProfile(void);
-void pushProfile(char *id);
+void pushProfile(char* id);
 void dumpProfileData(void);
 
 #else

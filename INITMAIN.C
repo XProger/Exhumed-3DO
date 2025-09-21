@@ -40,7 +40,6 @@ Sprite *camera;
 int level_frame,level_sequenceMap,level_sequence,level_chunk;
 #endif
 
-
 #define MAXNMPICS 20
 static unsigned short *picPals[MAXNMPICS];
 static unsigned int *picDatas[MAXNMPICS];
@@ -288,8 +287,8 @@ static void setVDP2(void)
 }
 
 #define MOSAIC 2
-#define XD (320/MOSAIC)
-#define YD (240/MOSAIC)
+#define XD (320 / MOSAIC)
+#define YD (240 / MOSAIC)
 #define MAXNMSTRINGS 120
 
 

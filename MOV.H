@@ -1,1 +1,1 @@
-void playMovie(char *fileName,int canSkip);
+void playMovie(char* fileName, int canSkip);

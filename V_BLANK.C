@@ -20,10 +20,10 @@ volatile short analogY;
 volatile char analogIndexButtonsPresent;
 volatile short analogTR;
 volatile short analogTL;
-volatile char inputQHead,inputQTail;
+volatile char inputQHead, inputQTail;
 
-volatile int fadeDir,fadePos,fadeEnd;
-volatile int abcResetEnable=0,abcResetDisable=0;
+volatile int fadeDir, fadePos, fadeEnd;
+volatile int abcResetEnable = 0, abcResetDisable = 0;
 
 /*
 volatile Uint16	PadData1  = 0x0000;
@@ -31,133 +31,145 @@ volatile Uint16	PadData1E = 0x0000;
 volatile Uint16	PadData2  = 0x0000;
 volatile Uint16	PadData2E = 0x0000;
 */
-Uint8 *Pad;
-PerMulInfo *Mul;
+Uint8* Pad;
+PerMulInfo* Mul;
 volatile Uint32 vtimer = 0, htimer = 0, secs = 0;
 
-Uint8  PadWorkArea[4*(PER_SIZE_NCON_15*6+69)];
+Uint8 PadWorkArea[4 * (PER_SIZE_NCON_15 * 6 + 69)];
 
 void UsrHblankIn(void)
-{htimer++;
+{
+    htimer++;
 }
 
 void processInput(void)
-{unsigned short accum;
- int i,pos,size,id;
- accum=0xffff;
- PER_LGetPer((void **)&Pad,&Mul);
+{
+    unsigned short accum;
+    int i, pos, size, id;
+    accum = 0xffff;
+    PER_LGetPer((void**)&Pad, &Mul);
 
- if (!Pad)
-    return;
+    if (!Pad)
+        return;
 
- pos=0;
- controlerPresent=0;
- analogControlerPresent=0;
- analogIndexButtonsPresent=0;
- for (i=0;i<Mul[0].con;i++)
-    {id=Pad[pos++];
-     size=Pad[pos++];
-     if (id==PER_ID_DGT ||
-	 (id==PER_ID_ANL && size!=3 /* ignore steering wheel */))
-	{accum&=(Pad[pos]<<8)|(Pad[pos+1]);
-	 controlerPresent=1;
-	 if (id==PER_ID_ANL)
-	    {analogControlerPresent=1;
-	     analogX=Pad[pos+2]-128;
-	     analogY=Pad[pos+3]-128;
-	     if (size==6)
-		{analogIndexButtonsPresent=1;
-		 analogTR=Pad[pos+4];
-		 analogTL=Pad[pos+5];
-		}
-	    }
-	 break;
-	}
-     pos+=15;
+    pos = 0;
+    controlerPresent = 0;
+    analogControlerPresent = 0;
+    analogIndexButtonsPresent = 0;
+    for (i = 0; i < Mul[0].con; i++)
+    {
+        id = Pad[pos++];
+        size = Pad[pos++];
+        if (id == PER_ID_DGT || (id == PER_ID_ANL && size != 3 /* ignore steering wheel */))
+        {
+            accum &= (Pad[pos] << 8) | (Pad[pos + 1]);
+            controlerPresent = 1;
+            if (id == PER_ID_ANL)
+            {
+                analogControlerPresent = 1;
+                analogX = Pad[pos + 2] - 128;
+                analogY = Pad[pos + 3] - 128;
+                if (size == 6)
+                {
+                    analogIndexButtonsPresent = 1;
+                    analogTR = Pad[pos + 4];
+                    analogTL = Pad[pos + 5];
+                }
+            }
+            break;
+        }
+        pos += 15;
     }
- if (!(accum & (PER_DGT_A|PER_DGT_B|PER_DGT_C|PER_DGT_S)))
-    {if (abcResetEnable && !abcResetDisable)
-	SYS_EXECDMP();
-     abcResetDisable=1;
+    if (!(accum & (PER_DGT_A | PER_DGT_B | PER_DGT_C | PER_DGT_S)))
+    {
+        if (abcResetEnable && !abcResetDisable)
+            SYS_EXECDMP();
+        abcResetDisable = 1;
     }
- else
-    abcResetDisable=0;
- lastInputSample=accum;
- inputAccum&=accum;
- /* add input sample */
- inputQ[(int)inputQHead]=accum;
- inputQHead=(inputQHead+1)&0xf;
+    else
+        abcResetDisable = 0;
+    lastInputSample = accum;
+    inputAccum &= accum;
+    /* add input sample */
+    inputQ[(int)inputQHead] = accum;
+    inputQHead = (inputQHead + 1) & 0xf;
 }
 
-volatile char enableDoorReset=1;
+volatile char enableDoorReset = 1;
 
 void UsrVblankStart(void)
-{SCL_VblankStart();
- if (enableDoorReset && (CDC_GetHirqReq() & CDC_HIRQ_DCHG))
-    SYS_EXECDMP();
- if (fadeDir)
-    {fadePos+=fadeDir;
-     if (fadeDir>0 && fadePos>fadeEnd)
-	{fadePos=fadeEnd;
-	 fadeDir=0;
-	}
-     if (fadeDir<0 && fadePos<fadeEnd)
-	{fadePos=fadeEnd;
-	 fadeDir=0;
-	}
+{
+    SCL_VblankStart();
+    if (enableDoorReset && (CDC_GetHirqReq() & CDC_HIRQ_DCHG))
+        SYS_EXECDMP();
+    if (fadeDir)
+    {
+        fadePos += fadeDir;
+        if (fadeDir > 0 && fadePos > fadeEnd)
+        {
+            fadePos = fadeEnd;
+            fadeDir = 0;
+        }
+        if (fadeDir < 0 && fadePos < fadeEnd)
+        {
+            fadePos = fadeEnd;
+            fadeDir = 0;
+        }
 #if 0
      POKE_W(SCL_VDP2_VRAM+0x180110,0x7f);/*enable color offset for all planes*/
      POKE_W(SCL_VDP2_VRAM+0x180112,0x00);/*use offset reg 0 for all planes*/
 #endif
 
-     POKE_W(SCL_VDP2_VRAM+0x180114,fadePos & 0x1ff);
-     POKE_W(SCL_VDP2_VRAM+0x180116,fadePos & 0x1ff);
-     POKE_W(SCL_VDP2_VRAM+0x180118,fadePos & 0x1ff);
+        POKE_W(SCL_VDP2_VRAM + 0x180114, fadePos & 0x1ff);
+        POKE_W(SCL_VDP2_VRAM + 0x180116, fadePos & 0x1ff);
+        POKE_W(SCL_VDP2_VRAM + 0x180118, fadePos & 0x1ff);
     }
 }
 
 void initInput(void)
-{int o=get_imask();
- set_imask(0xff);
- inputQHead=0;
- inputAccum=0xffff;
- lastInputSample=0xffff;
- set_imask(o);
+{
+    int o = get_imask();
+    set_imask(0xff);
+    inputQHead = 0;
+    inputAccum = 0xffff;
+    lastInputSample = 0xffff;
+    set_imask(o);
 }
 
 void UsrVblankEnd(void)
-{SCL_VblankEnd();
- vtimer++;
- processInput();
+{
+    SCL_VblankEnd();
+    vtimer++;
+    processInput();
 }
 
-
-volatile Sint32	perFlag;
+volatile Sint32 perFlag;
 
 void CheckVblankEnd(void)
-{perFlag = 0;
+{
+    perFlag = 0;
 }
 
 #ifndef NDEBUG
 
-int errorQ[16]={0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-int prQ[16]={0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-int errorQSize=0;
+int errorQ[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+int prQ[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+int errorQSize = 0;
 
 #pragma interrupt
 void userBreakBlam(void)
-{int dummy[1];
- __asm__ volatile ("sts.l pr,%0\n"
-		   : "=r" ((int)dummy[0]));
- errorQ[errorQSize]=dummy[4];
- prQ[errorQSize]=dummy[0];
- errorQSize=(errorQSize+1)&0xf;
+{
+    int dummy[1];
+    __asm__ volatile("sts.l pr,%0\n" : "=r"((int)dummy[0]));
+    errorQ[errorQSize] = dummy[4];
+    prQ[errorQSize] = dummy[0];
+    errorQSize = (errorQSize + 1) & 0xf;
 
- fadePos=255;
- fadeDir=-10;
- fadeEnd=0;
+    fadePos = 255;
+    fadeDir = -10;
+    fadeEnd = 0;
 
- return;
+    return;
 #if 0
  int i,x,y;
  for (y=0;y<256;y++)
@@ -192,44 +204,45 @@ void userBreakBlam(void)
 #endif
 
 void SetVblank(void)
-{/* V_Blank Out */
- fadeDir=0;
- fadePos=0;
- fadeEnd=0;
+{ /* V_Blank Out */
+    fadeDir = 0;
+    fadePos = 0;
+    fadeEnd = 0;
 
- INT_ChgMsk(INT_MSK_NULL,INT_MSK_VBLK_IN | INT_MSK_VBLK_OUT);
- INT_SetScuFunc(INT_SCU_VBLK_OUT,CheckVblankEnd);
- INT_ChgMsk(INT_MSK_VBLK_OUT,INT_MSK_NULL);
+    INT_ChgMsk(INT_MSK_NULL, INT_MSK_VBLK_IN | INT_MSK_VBLK_OUT);
+    INT_SetScuFunc(INT_SCU_VBLK_OUT, CheckVblankEnd);
+    INT_ChgMsk(INT_MSK_VBLK_OUT, INT_MSK_NULL);
 
- perFlag = 1;
- while(perFlag);
+    perFlag = 1;
+    while (perFlag)
+        ;
 
- PER_LInit(PER_KD_PERTIM,6,PER_SIZE_NCON_15,PadWorkArea,0);
+    PER_LInit(PER_KD_PERTIM, 6, PER_SIZE_NCON_15, PadWorkArea, 0);
 
- /* V-Blank */
- INT_ChgMsk(INT_MSK_NULL,INT_MSK_VBLK_IN|INT_MSK_VBLK_OUT|INT_MSK_HBLK_IN);
+    /* V-Blank */
+    INT_ChgMsk(INT_MSK_NULL, INT_MSK_VBLK_IN | INT_MSK_VBLK_OUT | INT_MSK_HBLK_IN);
 #ifdef STATUSTEXT
- INT_SetScuFunc( INT_SCU_HBLK_IN, UsrHblankIn );
+    INT_SetScuFunc(INT_SCU_HBLK_IN, UsrHblankIn);
 #endif
- INT_SetScuFunc( INT_SCU_VBLK_IN, UsrVblankStart );
- INT_SetScuFunc( INT_SCU_VBLK_OUT, UsrVblankEnd );
+    INT_SetScuFunc(INT_SCU_VBLK_IN, UsrVblankStart);
+    INT_SetScuFunc(INT_SCU_VBLK_OUT, UsrVblankEnd);
 #ifdef STATUSTEXT
- INT_ChgMsk(INT_MSK_VBLK_IN|INT_MSK_VBLK_OUT|INT_MSK_HBLK_IN,INT_MSK_NULL);
+    INT_ChgMsk(INT_MSK_VBLK_IN | INT_MSK_VBLK_OUT | INT_MSK_HBLK_IN, INT_MSK_NULL);
 #else
- INT_ChgMsk(INT_MSK_VBLK_IN|INT_MSK_VBLK_OUT,INT_MSK_NULL);
+    INT_ChgMsk(INT_MSK_VBLK_IN | INT_MSK_VBLK_OUT, INT_MSK_NULL);
 #endif
 
 #if 1
 #ifndef NDEBUG
- /* set user break interrupt */
-/* asm("trapa #34");*/
- POKE_W(0xffffff48,0); /* break bus cycle register */
-/* INT_SetScuFunc(12,userBreakBlam); */
- POKE(0x06000000+0x30,userBreakBlam);
+    /* set user break interrupt */
+    /* asm("trapa #34");*/
+    POKE_W(0xffffff48, 0); /* break bus cycle register */
+    /* INT_SetScuFunc(12,userBreakBlam); */
+    POKE(0x06000000 + 0x30, userBreakBlam);
 #if 1
- POKE(0xffffff40,0x00000000); /* break address */
- POKE(0xffffff44,0x00000fff); /* break address mask */
- POKE_W(0xffffff48,0x06c); /* break bus cycle register */
+    POKE(0xffffff40, 0x00000000); /* break address */
+    POKE(0xffffff44, 0x00000fff); /* break address mask */
+    POKE_W(0xffffff48, 0x06c); /* break bus cycle register */
 #endif
 #endif
 #endif

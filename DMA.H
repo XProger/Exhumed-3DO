@@ -3,8 +3,8 @@
 
 int dmaActive(void);
 void startNextDma(void);
-void qDMA(void *from,void *to,int size);
+void qDMA(void* from, void* to, int size);
 void initDMA(void);
-void dmaMemCpy(void *from,void *to,int size);
+void dmaMemCpy(void* from, void* to, int size);
 
 #endif

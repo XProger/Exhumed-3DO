@@ -4,10 +4,10 @@
 #include "sprite.h"
 
 #ifdef __INCLUDEDaih
-extern PlayerObject *player;
+extern PlayerObject* player;
 #endif
 
-extern Sprite *camera;
+extern Sprite* camera;
 extern int quitRequest;
 extern int invisibleCounter;
 extern int weaponPowerUpCounter;
@@ -22,11 +22,11 @@ void playerHitTeleport(int toLevel);
 void switchPlayerMotion(int state);
 void setEarthQuake(int richter);
 void stunPlayer(int ticks);
-void changeColorOffset(int r,int g,int b,int rate);
-void addColorOffset(int r,int g,int b);
+void changeColorOffset(int r, int g, int b, int rate);
+void addColorOffset(int r, int g, int b);
 void redrawBowlDots(void);
 int getKeyMask(void);
-void changeMessage(char *message);
+void changeMessage(char* message);
 void playerGotEntombedWithRamses(void);
 int getEarthQuake(void);
 
