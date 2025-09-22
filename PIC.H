@@ -16,6 +16,12 @@ enum Class
     NMCLASSES
 };
 
+//#define DUMP_PICS
+
+#ifdef DUMP_PICS
+void save_tga(Sint32 id, Uint8 *data, Uint16 *pal16, Sint32 pic_class);
+#endif
+
 int initPicSystem(int _picNmBase, int* classSizes);
 
 int addPic(enum Class bpp, void* data, void* pal, int lock);

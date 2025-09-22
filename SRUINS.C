@@ -1230,6 +1230,7 @@ void movePlayer(int inputEnd, int nmFrames)
 
 void setVDP2(void)
 {
+#if TODO // VDP2
     static Uint16 cycle[] = { 0xeeee, 0xeeee, 0xeeee, 0xeeee, 0x44ee, 0xeeee, 0x44ee, 0xeeee };
 
     SclVramConfig vcfg;
@@ -1250,6 +1251,7 @@ void setVDP2(void)
 
     SCL_SetSpriteMode(SCL_TYPE1, SCL_MIX, SCL_SP_WINDOW);
     SCL_SetCycleTable(cycle);
+#endif
 }
 
 void loadVDP2Sprites(int fd)
@@ -1274,16 +1276,21 @@ void loadVDP2Sprites(int fd)
 void loadLoadingScreen(int fd)
 {
     unsigned char* data;
-    int xsize, ysize, y, x;
+    int xsize, ysize;// , y, x;
     unsigned short colorRam[256];
     fs_read(fd, (char*)&colorRam, 512);
     fs_read(fd, (char*)&xsize, 4);
     fs_read(fd, (char*)&ysize, 4);
+
+    xsize = FS_INT(&xsize);
+    ysize = FS_INT(&ysize);
+
     assert(xsize == 320);
     assert(ysize == 240);
     data = mem_malloc(1, 320 * 240);
     fs_read(fd, (char*)data, 320 * 240);
     EZ_setErase(0, 0x0000);
+#if TODO // render loading screen
     for (y = 0; y < 240; y++)
         for (x = 0; x < 320; x++)
             POKE_W(FBUF_ADDR + y * 1024 + x * 2, colorRam[data[y * 320 + x]]);
@@ -1292,6 +1299,7 @@ void loadLoadingScreen(int fd)
         for (x = 0; x < 320; x++)
             POKE_W(FBUF_ADDR + y * 1024 + x * 2, colorRam[data[y * 320 + x]]);
     SCL_DisplayFrame();
+#endif
     mem_free(data);
 }
 
@@ -2243,8 +2251,10 @@ int runLevel(char* filename, int levelNm)
  }
 #endif
 
+#ifdef TODO // slave process
     startSlave(wallRenderSlaveMain);
     delay(1);
+#endif
 
     /* air meter stuff */
     airBase = addPic(TILE16BPP, meter_bubble + 8, NULL, 0);
@@ -2349,6 +2359,11 @@ int runLevel(char* filename, int levelNm)
 
     while (1)
     {
+    #ifndef TODO // vblank handler (UsrVblankEnd)
+        extern void processInput(void);
+        vtimer++;
+        processInput();
+    #endif
         htimer = 0;
         /* ok */
         if (framesElapsed > 8)
@@ -2539,8 +2554,10 @@ int runLevel(char* filename, int levelNm)
         else
             vspeedSwitchCount = 0;
         ENABLE;
+#ifdef TODO // timer
         while (vtimer < smoothVTime)
             ;
+#endif
 
         /* sometimes a vtimer switch can occur in here */
         SCL_DisplayFrame();
@@ -2623,6 +2640,9 @@ static void fadeSegaLogo(void)
 }
 #endif
 
+Uint8 VRAM[VRAM_SIZE];
+Uint32 VRAM_ADDR = (Uint32)VRAM;
+
 void main(void)
 {
     char* levelFile;
@@ -2631,14 +2651,18 @@ void main(void)
     enable_music = 1;
     abcResetEnable = 1;
 
+#ifdef TODO // VDP2
     POKE_W(SCL_VDP2_VRAM + 0x180112, 0x00);
     POKE_W(SCL_VDP2_VRAM + 0x180114, (-255) & 0x1ff);
     POKE_W(SCL_VDP2_VRAM + 0x180116, (-255) & 0x1ff);
     POKE_W(SCL_VDP2_VRAM + 0x180118, (-255) & 0x1ff);
+#endif
 
     megaInit();
     dPrint("Start...\n");
     fs_init();
+
+#ifdef TODO // VDP2
     set_imask(0);
 
     dPrint("Acquiring system info...");
@@ -2659,6 +2683,7 @@ void main(void)
     displayEnable(0);
     setVDP2();
     SetVblank();
+#endif
 
     mem_init();
     dPrint("loading initial...");
@@ -2702,9 +2727,11 @@ void main(void)
 #endif
 
     EZ_clearScreen();
+#ifdef TODO // VDP2
     POKE_W(SCL_VDP2_VRAM + 0x180114, 0); /* reset color offsets */
     POKE_W(SCL_VDP2_VRAM + 0x180116, 0);
     POKE_W(SCL_VDP2_VRAM + 0x180118, 0);
+#endif
 
     dPrint("Initialized\n");
     displayEnable(1);
@@ -2738,7 +2765,9 @@ void main(void)
 intro:
 #ifndef TESTCODE
     abcResetEnable = 1;
+#ifdef TODO // intro
     playIntro();
+#endif
 #else
     bup_initCurrentGame();
     currentState.inventory = 0x00ffff;

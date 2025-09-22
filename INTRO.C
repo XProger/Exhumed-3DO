@@ -430,6 +430,8 @@ void playIntro(void)
 #ifdef JAPAN
     loadJapanFontPics();
 #endif
+
+#ifdef TODO // render intro VRAM clear?
     SCL_Open(SCL_NBG0);
     SCL_MoveTo(0, 0, 0);
     SCL_Close();
@@ -444,6 +446,7 @@ void playIntro(void)
 
     for (i = 0; i < 512 * 1024; i += 4)
         POKE(SCL_VDP2_VRAM + i, 0);
+#endif
 
 #ifndef PAL
     loadVDPPic(0, 1);

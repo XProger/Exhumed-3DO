@@ -1811,8 +1811,10 @@ void slaveDraw(void)
 {
     int i;
     /* flush cache */
+#ifdef TODO // cache
     *CACHECNTRL = 0x10;
     *CACHECNTRL = 0x01;
+#endif
     nmSlavePolys = 0;
     for (i = slaveDrawStart; i >= 0; i--)
     {
@@ -1830,9 +1832,11 @@ void drawSlaveWalls(void)
     int i;
     int s;
     XyInt parms[2];
+#ifdef TODO // cache
     /* flush cache */
     *CACHECNTRL = 0x10;
     *CACHECNTRL = 0x01;
+#endif
     s = slaveDrawStart;
     assert(nmSlavePolys < MAXNMSLAVEPOLYS);
     assert(nmSlavePolys >= 0);
@@ -2265,7 +2269,11 @@ void drawWalls(MthMatrix* view)
         slaveSize = updateListSize - 1;
     slaveDrawStart = slaveSize;
     /* start slave */
+#ifdef TODO // slave
     *(Uint16 volatile*)0x21000000 = 0xffff;
+#else
+    slaveDraw(); // we don't have 2nd SH-2, so we call it directly on the main CPU
+#endif
     for (i = updateListSize - 1; i > slaveDrawStart; i--)
     {
         parms[0].x = updateList[i]->xmin + 160;
@@ -2299,6 +2307,7 @@ void drawWalls(MthMatrix* view)
 void drawWallsFinish(void)
 {
     int i;
+#ifdef TODO // slave
     /* wait for slave to finish */
     i = 0;
     while (!(*FTCSR & 0x80))
@@ -2309,6 +2318,7 @@ void drawWallsFinish(void)
         slaveSize--;
     if (i < 100 && slaveSize < 50)
         slaveSize++;
+#endif
     drawSlaveWalls();
 #ifndef NDEBUG
     drawDebugLines();

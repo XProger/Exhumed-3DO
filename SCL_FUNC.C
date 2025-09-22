@@ -117,6 +117,7 @@ void SCL_SglOff(void); /*	use SGL	*/
  */
 void SCL_Vdp2Init(void)
 {
+#if TODO // VDP2
     /*    Uint32 i;		del:no used C.yoshida */
 
     SCL_VblInit();
@@ -148,6 +149,7 @@ void SCL_Vdp2Init(void)
 
     SCL_PriorityInit();
     SCL_ParametersInit();
+#endif
 }
 
 /*------------------------------------------------------------------------

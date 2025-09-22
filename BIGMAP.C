@@ -146,10 +146,16 @@ int loadMapTiles(int fd)
     short flags;
     firstMapTile = -1;
     fs_read(fd, (char*)&nmTiles, 4);
+
+    nmTiles = FS_INT(&nmTiles);
+
     assert(nmTiles < 100 && nmTiles >= 0);
     for (i = 0; i < nmTiles; i++)
     {
         fs_read(fd, (char*)&flags, 2);
+
+        flags = FS_SHORT(&flags);
+
         b = (unsigned char*)mem_malloc(1, 64 * 64 * 2);
         fs_read(fd, b, 64 * 64 * 2);
         j = addPic(TILE16BPP, b, NULL, 0);
@@ -201,10 +207,10 @@ int runMap(int currentLevel)
     initSound();
     {
         int fd = fs_open("+MAP.DAT"); /* start read ahead of file */
-
+#ifdef TODO
         while (fadeDir)
             ;
-
+#endif
         dontDisplayVDP2Pic();
         displayEnable(0);
 
@@ -422,8 +428,10 @@ int runMap(int currentLevel)
         changeInput = lastInput ^ input;
         haveNewPos = 0;
 
+#ifdef TODO // input game reset?
         if (!(input & (PER_DGT_A | PER_DGT_B | PER_DGT_C | PER_DGT_S)))
             return -1;
+#endif
 
         if (fadeCount)
         {

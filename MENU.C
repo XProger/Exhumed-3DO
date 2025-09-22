@@ -129,8 +129,12 @@ int decompressOverPic(int picNm, unsigned short* outData)
 
 void loadOverPic(int picNm)
 {
+    Sint32 *pic = (Sint32*)(VRAMSTART + vramUsed);
+    pic[0] = FS_INT(pic + 0);
+    pic[1] = FS_INT(pic + 1);
+
     picVram[picNm] = vramUsed;
-    vramUsed += decompressOverPic(picNm, (unsigned short*)(VRAMSTART + vramUsed));
+    vramUsed += decompressOverPic(picNm, (unsigned short*)pic);
     assert(vramUsed < 512 * 1024);
 }
 

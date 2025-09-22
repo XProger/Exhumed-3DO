@@ -153,8 +153,9 @@ void debugPrint(char* message);
         debugPrint(buff);              \
     }
 #else
-#define debugPrint(x)
-#define dPrint(x, ...)
+#include <stdio.h>
+#define debugPrint(x)   printf(x)
+#define dPrint(...)     printf(__VA_ARGS__)
 #endif
 
 #ifndef NDEBUG

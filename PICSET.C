@@ -14,6 +14,7 @@
 #include "file.h"
 #include "picset.h"
 
+#ifdef TODO // unused
 unsigned char* loadPic(int fd, int* width, int* height)
 {
     short w, h;
@@ -29,6 +30,7 @@ unsigned char* loadPic(int fd, int* width, int* height)
     fs_read(fd, data, *width * *height);
     return data;
 }
+#endif
 
 void skipPicSet(int fd)
 {
@@ -49,6 +51,9 @@ int loadPicSet(int fd, unsigned short** palletes, unsigned int** datas, int maxN
     int size;
     int pic, w, h;
     fs_read(fd, (char*)&size, 4);
+
+    size = FS_INT(&size);
+
     data = mem_malloc(0, size);
     fs_read(fd, data, size);
     pic = 0;
@@ -58,11 +63,11 @@ int loadPicSet(int fd, unsigned short** palletes, unsigned int** datas, int maxN
     {
         assert(!(((int)d) & 3));
         datas[pic] = ((unsigned int*)d) + 1;
-        chunkSize = *(int*)d;
-        w = *(((int*)d) + 1);
-        h = *(((int*)d) + 2);
+        chunkSize = FS_INT((int*)d);
+        w = ((int*)d)[1] = FS_INT(((int*)d) + 1);
+        h = ((int*)d)[2] = FS_INT(((int*)d) + 2);
         d += chunkSize + 12;
-        if ((*(int*)d) & 1)
+        if (FS_INT((int*)d) & 1)
         {
             d += 4;
             palletes[pic] = (unsigned short*)d;

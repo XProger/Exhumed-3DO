@@ -83,6 +83,7 @@ static volatile Sint16* cramptr = COL_RAM;
 
 void megaInit(void)
 {
+#ifdef TODO // mega
     yBottom = (VD2_REG[2] & 1) ? SCLIP_UY_P : SCLIP_UY_N;
     ewBotRight = ((XRES / 8) << 9) + (yBottom);
     SYS_SETUINT(VBI_NUM, vbIrtn);
@@ -105,6 +106,7 @@ void megaInit(void)
     SYS_CHGSCUIM(-1, VB_MASK);
     SYS_SETUINT(VBI_NUM, (void (*)())0);
     SYS_SETUINT(VBO_NUM, (void (*)())0);
+#endif
 }
 
 static void memset_w(Sint16* buf, Sint16 pattern, Sint32 size)

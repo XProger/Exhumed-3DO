@@ -92,6 +92,7 @@ static void checkForCheatKey(void)
 
 static int loadGameFile(void)
 {
+#ifdef TODO // savegame
     int device, i, j;
     device = -1;
     for (i = 0; i < 2; i++)
@@ -111,6 +112,8 @@ static int loadGameFile(void)
         }
     }
     return device;
+#endif
+    return -1;
 }
 
 static int saveGameFile(int device, int savingGame)
@@ -248,6 +251,7 @@ int bup_newGame(int slot)
 
 void bup_initialProc(void)
 {
+#ifdef TODO // save game
     BupStat sttb;
     int i;
     int device; /* = backup device of save file or -1 if not found */
@@ -326,4 +330,5 @@ void bup_initialProc(void)
         }
     }
     unloadBup();
+#endif
 }

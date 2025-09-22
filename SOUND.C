@@ -86,12 +86,16 @@ void stopAllLoopedSounds(void)
     for (i = 0; i < 32; i++)
         if (sounds[slotSound[i]].loopStart != -1)
         {
+#ifdef TODO // sound
             POKE_W(0x20 * i + SNDBASE + 0x100000, PEEK_W(0x20 * i + SNDBASE + 0x100000) & 0x7ff);
+#endif
             /* set key off on all voices without disturbing other settings */
             slotOwner[i] = -1;
         }
+#ifdef TODO // sound
     /* konex */
     POKE_W(SNDBASE + 0x100000 + 0, PEEK_W(0x20 * i + SNDBASE + 0x100000) | 0x1000);
+#endif
 }
 
 void stopAllSound(int source)
@@ -152,6 +156,7 @@ static void initSlot(int i)
 
 void initSound(void)
 {
+#ifdef TODO // sound
     int i;
 
     volatile Uint8* SMPC_SF = (Uint8*)0x20100063;
@@ -198,6 +203,7 @@ void initSound(void)
     silenceVoice();
     silenceVoice();
     silenceVoice();
+#endif
 }
 
 void sound_nextFrame(void)
@@ -221,6 +227,12 @@ void loadSound(int fd)
     fs_read(fd, (char*)&rate, 4);
     fs_read(fd, (char*)&bps, 4);
     fs_read(fd, (char*)&loopStart, 4);
+
+    size = FS_INT(&size);
+    rate = FS_INT(&rate);
+    bps = FS_INT(&bps);
+    loopStart = FS_INT(&loopStart);
+
     buffer = (unsigned short*)mem_malloc(0, size);
     assert(buffer);
     fs_read(fd, (char*)buffer, size);
@@ -236,7 +248,9 @@ void loadSound(int fd)
     assert(!(soundTop & 1));
     for (i = 0; i < size / 2; i++)
     {
+#ifdef TODO // sound
         POKE_W(SNDBASE + soundTop, buffer[i]);
+#endif
         soundTop += 2;
     }
     mem_free(buffer);
@@ -249,10 +263,19 @@ int loadSoundSet(int fd, short* out_map, int mapSize)
 {
     int nmSounds, i;
     fs_read(fd, (char*)&nmSounds, 4);
+    nmSounds = FS_INT(&nmSounds);
     assert(nmSounds == mapSize);
     fs_read(fd, (char*)out_map, 2 * mapSize);
 
+    for (i = 0; i < mapSize; i++)
+    {
+        out_map[i] = FS_SHORT(out_map + i);
+    }
+
     fs_read(fd, (char*)&nmSounds, 4);
+
+    nmSounds = FS_INT(&nmSounds);
+
     assert(nmSounds >= 0 && nmSounds < MAXNMSOUNDS);
     for (i = 0; i < nmSounds; i++)
         loadSound(fd);
@@ -333,6 +356,7 @@ struct soundSlotRegister* playSoundMegaE(int source, struct soundSlotRegister* s
 
 void playSoundE(int source, int sNm, int vol, int pan)
 {
+#ifdef TODO // sound
     int slot, i;
     unsigned short zeroReg;
     int base;
@@ -389,6 +413,7 @@ void playSoundE(int source, int sNm, int vol, int pan)
     if (sounds[sNm].bps == 8)
         zeroReg |= 0x10;
     POKE_W(base, zeroReg); /* kon & ex */
+#endif
 }
 
 void playSound(int source, int sNm)

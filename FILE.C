@@ -8,6 +8,7 @@
 #include <sega_sys.h>
 #include <sega_int.h>
 
+#include <stdio.h>
 #include <string.h>
 #include "util.h"
 #include "spr.h"
@@ -104,7 +105,7 @@ static GfsDirTbl dirtbl;
 
 static char sectorBuff[2048];
 static char* sectorBuffPos;
-static GfsHn openCDFile; /* only one cd file may be open at a time */
+static FILE* openCDFile; /* only one cd file may be open at a time */
 #define CDHANDLE 8000
 
 #ifdef FLASH
@@ -122,6 +123,7 @@ static void changeDir(char* dirNm)
 
 void fs_init(void)
 {
+#ifdef TODO // file system
     int tryCount, ret;
     progressOn = 0;
 #ifdef PSYQ
@@ -153,71 +155,61 @@ void fs_init(void)
 #ifdef FLASH
     changeDir("1999");
 #endif
+#endif
 }
 
 int fs_open(char* filename)
 {
-    int id;
-#ifdef PSYQ
-    if (filename[0] == '+')
-        return psyq_open(filename + 1);
-#else
     if (filename[0] == '+')
         filename++;
-#endif
+
     assert(!openCDFile);
+    openCDFile = fopen(filename, "rb");
+    assert(openCDFile); /* do retry processing here */
+
+#ifdef TODO // file system
     id = GFS_NameToId(filename);
     assert(id >= 0);
     sectorBuffPos = sectorBuff + 2048;
     openCDFile = GFS_Open(id);
-    assert(openCDFile); /* do retry processing here */
     GFS_SetTransPara(openCDFile, 10);
     GFS_SetTmode(openCDFile, GFS_TMODE_CPU);
     GFS_NwCdRead(openCDFile, 500 * 2048); /* start prefetch */
+#endif
+
     return CDHANDLE;
 }
 
 void fs_close(int handle)
 {
-#ifdef PSYQ
-    if (handle != CDHANDLE)
-    {
-        psyq_close(handle);
-        return;
-    }
-#endif
     assert(handle == CDHANDLE);
     assert(openCDFile);
-    GFS_NwStop(openCDFile); /* stop prefetch */
-    GFS_Close(openCDFile);
+    fclose(openCDFile);
     openCDFile = NULL;
 }
 
 int fs_getFileSize(int fd)
 {
-    Sint32 sctsize, nsct, lastsize;
-#ifdef PSYQ
-    if (fd != CDHANDLE)
-        return psyq_getFileSize(fd);
-#endif
+    Sint32 pos, size;
     assert(fd == CDHANDLE);
     assert(openCDFile);
+    pos = ftell(openCDFile);
+    fseek(openCDFile, 0, SEEK_END);
+    size = ftell(openCDFile);
+    fseek(openCDFile, pos, SEEK_SET);
+    return size;
+#ifdef TODO // file system
     GFS_GetFileSize(openCDFile, &sctsize, &nsct, &lastsize);
     return sctsize * (nsct - 1) + lastsize;
+#endif
 }
 
 void fs_read(int fd, char* buf, int n)
 {
-    int s, bufferLeft;
-#ifdef PSYQ
-    if (fd != CDHANDLE)
-    {
-        psyq_read(fd, buf, n);
-        return;
-    }
-#endif
     assert(fd == CDHANDLE);
     assert(openCDFile);
+    fread(buf, 1, n, openCDFile);
+#ifdef TODO // file system
     while (n)
     {
         assert(n > 0);
@@ -284,6 +276,7 @@ void fs_read(int fd, char* buf, int n)
         n -= s;
     }
     assert(n == 0);
+#endif
 }
 
 void playWholeCD(void)
@@ -343,13 +336,11 @@ void stopCD(void)
     CDC_CdSeek(&pos);
 }
 
-void fs_getStatus(int* stat, int* ndata)
-{
-    GFS_NwGetStat(openCDFile, (Sint32*)stat, (Sint32*)ndata);
-}
-
 void fs_execOne(void)
 {
+#ifdef TODO // WTF?
+#endif
+    assert(0);
     GFS_NwExecOne(openCDFile);
 }
 

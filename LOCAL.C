@@ -38,6 +38,9 @@ void loadLocalText(int fd)
     for (; skip >= 0; skip--)
     {
         fs_read(fd, (char*)&size, 4);
+
+        size = FS_INT(&size);
+
         assert(size < 7 * 1024);
         fs_read(fd, (char*)textData, size);
     }
@@ -45,7 +48,11 @@ void loadLocalText(int fd)
 
 char* getText(int block, int string)
 {
-    int addr;
-    addr = ((int)textData) + textData[(textData[block] >> 2) + string];
-    return (char*)addr;
+    char* addr;
+
+    block = FS_INT(textData + block);
+    block = FS_INT(textData + ((block >> 2) + string));
+
+    addr = ((char*)textData) + block;
+    return addr;
 }

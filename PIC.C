@@ -376,6 +376,7 @@ static void map(Pic* p)
 #endif
 
     {
+#ifdef TODO // VRAM copy
         unsigned char* pos = (unsigned char*)((EZ_charNoToVram(p->charNm) << 3) + 0x25c00000);
 
         /* DMA_ScuMemCopy(pos,srcData,classType[(int)p->class].dataSize); */
@@ -383,6 +384,7 @@ static void map(Pic* p)
         dmaMemCpy(srcData, pos, classType[(int)p->class].dataSize);
 
         /*  qmemcpy(pos,srcData,classType[(int)p->class].dataSize); */
+#endif
     }
 }
 
@@ -519,6 +521,9 @@ static void load16BPPTile(int fd, int lock)
     b = (unsigned char*)mem_malloc(1, width * height);
     assert(b);
     fs_read(fd, (char*)&palNm, 2);
+
+    palNm = FS_SHORT(&palNm);
+
     assert(palletes);
     pal = palletes + 256 * palNm + 1;
     fs_read(fd, b, width * height);
@@ -555,6 +560,9 @@ static void loadSmall16BPPTile(int fd, int lock)
     b = (unsigned char*)mem_malloc(1, width * height);
     assert(b);
     fs_read(fd, (char*)&palNm, 2);
+
+    palNm = FS_SHORT(&palNm);
+
     assert(palletes);
     pal = palletes + 256 * palNm + 1;
     fs_read(fd, b, width * height);
@@ -580,6 +588,10 @@ static void load8BPPRLETile(int fd, int lock)
     short size, palNm;
     fs_read(fd, (char*)&palNm, 2);
     fs_read(fd, (char*)&size, 2);
+
+    palNm = FS_SHORT(&palNm);
+    size = FS_SHORT(&size);
+
     assert(size);
     buffer = (char*)mem_malloc(0, size);
     assert(buffer);
@@ -595,6 +607,10 @@ static void loadSmall8BPPRLETile(int fd, int lock)
     short size, palNm;
     fs_read(fd, (char*)&palNm, 2);
     fs_read(fd, (char*)&size, 2);
+
+    palNm = FS_SHORT(&palNm);
+    size = FS_SHORT(&size);
+
     assert(size);
     buffer = (char*)mem_malloc(0, size);
     assert(buffer);
@@ -611,6 +627,10 @@ static void load16BPPRLETile(fd, lock)
     short* pal;
     fs_read(fd, (char*)&palNm, 2);
     fs_read(fd, (char*)&size, 2);
+
+    palNm = FS_SHORT(&palNm);
+    size = FS_SHORT(&size);
+
     assert(size);
     buffer = (char*)mem_malloc(0, size);
     fs_read(fd, buffer, size);
@@ -625,6 +645,9 @@ void loadPalletes(int fd)
     int size, i, j;
     unsigned short* colorRam = (unsigned short*)SCL_COLRAM_ADDR;
     fs_read(fd, (char*)&size, 4);
+
+    size = FS_INT(&size);
+
     assert(size > 0 && size < 1024 * 1024);
     palletes = (unsigned short*)mem_malloc(
 #if COMPRESS16BPP
@@ -689,20 +712,36 @@ int loadTileSet(int fd, int lock)
     short flags;
 
     fs_read(fd, (char*)&nmTiles, 4);
+
+    nmTiles = FS_INT(&nmTiles);
+
     for (i = 0; i < nmTiles; i++)
     {
         fs_read(fd, (char*)&flags, 2);
+
+        flags = FS_SHORT(&flags);
+
         switch (flags)
         {
             case (TILEFLAG_64x64 | TILEFLAG_16BPP | TILEFLAG_PALLETE):
                 load16BPPTile(fd, lock);
                 break;
             case (TILEFLAG_VDP2):
+            {
+                struct _vdp2PicData *pic = vdp2PicData + nmVDP2Pics;
+
                 assert(nmVDP2Pics < MAXNMVDP2PICS);
-                fs_read(fd, (char*)(vdp2PicData + nmVDP2Pics), 8);
+                fs_read(fd, (char*)pic, 8);
+
+                pic->x = FS_SHORT(&pic->x);
+                pic->y = FS_SHORT(&pic->y);
+                pic->w = FS_SHORT(&pic->w);
+                pic->h = FS_SHORT(&pic->h);
+
                 addPic(TILEVDP, vdp2PicData + nmVDP2Pics, NULL, 0);
                 nmVDP2Pics++;
                 break;
+            }
             case (TILEFLAG_64x64 | TILEFLAG_8BPP | TILEFLAG_RLE | TILEFLAG_PALLETE):
                 load8BPPRLETile(fd, lock);
                 break;
@@ -735,15 +774,11 @@ void loadTiles(int fd)
     loadTileSet(fd, 0);
 }
 
-#define PICWIDTH(d) (*((int*)(d)))
-#define PICHEIGHT(d) (*(((int*)(d)) + 1))
-#define PICDATA(d) (((unsigned char*)d) + 8)
-
 int loadPicSetAsPics(int fd, int class)
 {
     unsigned int* datas[50];
     unsigned short* palletes[50];
-    int nmSetPics, i, x, y, c, picBase;
+    int nmSetPics, i, x, y, picBase;
     picBase = nmPics;
     nmSetPics = loadPicSet(fd, palletes, datas, 50);
 
@@ -754,22 +789,116 @@ int loadPicSetAsPics(int fd, int class)
             case TILESMALL16BPP:
             {
                 unsigned short buffer[32 * 32];
+                Sint32 width = datas[i][0];
+                Sint32 height = datas[i][1];
+                Uint8 *src = (Uint8*)(datas[i] + 2);
+
                 memset(buffer, 0, 32 * 32 * 2);
-                c = 0;
                 assert(!(((int)datas[i]) & 0x3));
                 assert(!(((int)palletes[i]) & 0x1));
-                for (y = 0; y < PICHEIGHT(datas[i]); y++)
-                    for (x = 0; x < PICWIDTH(datas[i]); x++)
-                        buffer[y * 32 + x] = palletes[i][PICDATA(datas[i])[c++]];
+                for (y = 0; y < height; y++)
+                    for (x = 0; x < width; x++)
+                        buffer[y * 32 + x] = palletes[i][*src++];
                 addPic(TILESMALL16BPP, buffer, NULL, PICFLAG_LOCKED);
                 break;
             }
             case TILE16BPP:
                 /* this does something totaly different from the SMALL16BPP case.
                    sorry. */
-                addPic(TILE16BPP, PICDATA(datas[i]), palletes[i], 0);
+                addPic(TILE16BPP, datas[i] + 2, palletes[i], 0);
                 break;
         }
+
+    #ifdef DUMP_PICS
+        save_tga(i, (Uint8*)datas[i], palletes[i], class);
+    #endif
     }
     return picBase;
 }
+
+#ifdef DUMP_PICS
+#include <stdio.h>
+
+typedef struct {
+    Uint8 id_length;
+    Uint8 color_map_type;
+    Uint8 image_type;
+    Uint8 data2[9];
+    Uint16 width;
+    Uint16 height;
+    Uint8 bpp;
+    Uint8 desc;
+} TGA_HEADER;
+
+void save_tga(Sint32 id, Uint8 *data, Uint16 *pal16, Sint32 pic_class)
+{
+    TGA_HEADER header;
+    Uint32 zero = 0;
+    FILE *f;
+    Sint32 x, y, size;
+    char name[16];
+    Uint32 pal[256];
+    Sint32 width;
+    Sint32 height;
+
+    sprintf(name, "dump\\%d.TGA", id);
+
+    for (x = 0; x < 256; x++)
+    {
+        Uint16 c = FS_SHORT(pal16 + x);
+        Uint8 r = c & 31;
+        Uint8 g = (c >> 5) & 31;
+        Uint8 b = (c >> 10) & 31;
+
+        r <<= 3;
+        g <<= 3;
+        b <<= 3;
+
+        pal[x] = b | (g << 8) | (r << 16) | 0xFF000000;
+    }
+
+    width = ((Sint32*)(data))[0];
+    height = ((Sint32*)(data))[1];
+    data += 8;
+
+    memset(&header, 0, sizeof(header));
+    header.image_type = 2;
+    header.width = width;
+    header.height = height;
+    header.bpp = 32;
+    header.desc = 1 << 5; // flip vertical
+
+    f = fopen(name, "wb");
+    assert(f);
+    fwrite(&header, sizeof(header), 1, f);
+
+    size = width * height;
+    if (pic_class == NMCLASSES)
+    {
+        while (size)
+        {
+            y = *data++;
+            while (y--)
+            {
+                fwrite(&zero, 1, 4, f);
+                size--;
+            }
+            y = *data++;
+            while (y--)
+            {
+                fwrite(pal + *data++, 1, 4, f);
+                size--;
+            }
+        }
+    }
+    else
+    {
+        while (size--)
+        {
+            fwrite(pal + *data++, 1, 4, f);
+        }
+    }
+
+    fclose(f);
+}
+#endif

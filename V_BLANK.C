@@ -49,13 +49,18 @@ void processInput(void)
     accum = 0xffff;
     PER_LGetPer((void**)&Pad, &Mul);
 
+#ifdef TODO // input controlerPresent
+    controlerPresent = 0;
+#else
+    controlerPresent = 1;
+#endif
+    analogControlerPresent = 0;
+    analogIndexButtonsPresent = 0;
+
     if (!Pad)
         return;
 
     pos = 0;
-    controlerPresent = 0;
-    analogControlerPresent = 0;
-    analogIndexButtonsPresent = 0;
     for (i = 0; i < Mul[0].con; i++)
     {
         id = Pad[pos++];
@@ -205,6 +210,7 @@ void userBreakBlam(void)
 
 void SetVblank(void)
 { /* V_Blank Out */
+#ifdef TODO // render vblank set
     fadeDir = 0;
     fadePos = 0;
     fadeEnd = 0;
@@ -243,6 +249,7 @@ void SetVblank(void)
     POKE(0xffffff40, 0x00000000); /* break address */
     POKE(0xffffff44, 0x00000fff); /* break address mask */
     POKE_W(0xffffff48, 0x06c); /* break bus cycle register */
+#endif
 #endif
 #endif
 #endif

@@ -86,16 +86,23 @@ void plaxOff(void)
 void initPlax(int fd)
 {
     SclConfig scfg;
-    int x, i;
+    int x;//, i;
     fs_read(fd, (char*)(plaxPal), 256 * 2);
-
+#ifdef TODO // PLAX pal
     for (i = 0; i < 256; i++)
         POKE_W(SCL_COLRAM_ADDR + ((256 * 7 + i) << 1), plaxPal[i]);
+#endif
     /* SCL_SetColRam(0,256*7,256,plaxPal); */
 
     fs_read(fd, (char*)&x, 4);
+
+    x = FS_INT(&x);
+
     assert(x == 512);
     fs_read(fd, (char*)&x, 4);
+
+    x = FS_INT(&x);
+
     assert(x == 256);
     fs_read(fd, (char*)SCL_VDP2_VRAM_A1, 512 * 256);
 

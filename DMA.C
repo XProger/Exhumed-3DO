@@ -9,7 +9,7 @@
 #include <sega_cdc.h>
 #include <sega_sys.h>
 
-#define DISABLEDMA 0
+#define DISABLEDMA 1
 
 #include "util.h"
 #include "dma.h"

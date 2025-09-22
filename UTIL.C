@@ -315,16 +315,16 @@ Fixed32 evalHermiteD(Fixed32 t, Fixed32 p1, Fixed32 p2, Fixed32 d1, Fixed32 d2)
     return (MTH_Mul(6 * t2 - 6 * t, p1) + MTH_Mul(-6 * t2 + 6 * t, p2) + MTH_Mul(3 * t2 - 4 * t + F(1), d1) + MTH_Mul(3 * t2 - 2 * t, d2));
 }
 
-/*static int low;*/
-extern int end;
-
 #define NMAREAS 2
 #define STACKSIZE 8 /* must be power of 2 */
-static int memStack[NMAREAS][STACKSIZE];
-static int stackPos[NMAREAS], areaEnd[NMAREAS];
+static Uint8 *memStack[NMAREAS][STACKSIZE];
+static int stackPos[NMAREAS];
+static Uint8 *areaEnd[NMAREAS];
 
-static int mem1Start = 0x200000;
-static int mem2Start = (int)&end;
+static Uint8 DRAM[2][1024 * 1024];
+
+static Uint8 *mem1Start = DRAM[0];
+static Uint8 *mem2Start = DRAM[1];
 
 void mem_init(void)
 {
@@ -332,9 +332,8 @@ void mem_init(void)
     memStack[1][0] = mem2Start;
     stackPos[0] = 0;
     stackPos[1] = 0;
-    stackPos[2] = 0;
-    areaEnd[0] = 0x0300000;
-    areaEnd[1] = 0x6100000;
+    areaEnd[0] = mem1Start + 1024 * 1024;
+    areaEnd[1] = mem2Start + 1024 * 1024;
 }
 
 void mem_lock(void)
@@ -351,7 +350,7 @@ int mem_coreleft(int a1)
 void* mem_nocheck_malloc(int area, int size)
 {
     int a1 = area;
-    int retAddr;
+    Uint8 *retAddr;
     assert(area >= 0);
     assert(area < NMAREAS);
     size = (size + 3) & (~3);
@@ -363,7 +362,6 @@ void* mem_nocheck_malloc(int area, int size)
             retAddr = memStack[a1][stackPos[a1]];
             stackPos[a1] = (stackPos[a1] + 1) & (STACKSIZE - 1);
             memStack[a1][stackPos[a1]] = retAddr + size;
-            assert(!(retAddr & 3));
             return (void*)retAddr;
         }
         a1++;
@@ -386,7 +384,7 @@ void mem_free(void* p)
     for (a = 0; a < NMAREAS; a++)
     {
         s = (stackPos[a] - 1) & (STACKSIZE - 1);
-        if (memStack[a][s] != (int)p)
+        if (memStack[a][s] != (Uint8*)p)
             continue;
         stackPos[a] = s;
         return;
@@ -403,6 +401,7 @@ void debugPrint(char* message)
 
 void resetDisable(void)
 {
+#ifdef TODO // slave
     volatile Uint8* SMPC_SF = (Uint8*)0x20100063;
     volatile Uint8* SMPC_COM = (Uint8*)0x2010001f;
     const Uint8 SMPC_RESDIS = 0x1a;
@@ -412,10 +411,12 @@ void resetDisable(void)
     *SMPC_COM = SMPC_RESDIS;
     while ((*SMPC_SF & 0x01) == 0x01)
         ;
+#endif
 }
 
 void resetEnable(void)
 {
+#ifdef TODO // slave
     volatile Uint8* SMPC_SF = (Uint8*)0x20100063;
     volatile Uint8* SMPC_COM = (Uint8*)0x2010001f;
     const Uint8 SMPC_RESENA = 0x19;
@@ -425,6 +426,7 @@ void resetEnable(void)
     *SMPC_COM = SMPC_RESENA;
     while ((*SMPC_SF & 0x01) == 0x01)
         ;
+#endif
 }
 
 int normalizeAngle(int angle)
@@ -508,6 +510,7 @@ int findWallsSector(int wallNm)
 
 void displayEnable(int state)
 {
+#ifdef TODO // display
     if (state)
         Scl_s_reg.tvmode |= 0x8000;
     else
@@ -515,6 +518,7 @@ void displayEnable(int state)
     POKE_W(SCL_VDP2_VRAM + 0x180000, Scl_s_reg.tvmode);
     if (SclProcess == 0)
         SclProcess = 1;
+#endif
 }
 
 int findSectorHeight(int s)

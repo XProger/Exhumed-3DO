@@ -4,10 +4,13 @@
 #include <sega_xpt.h>
 
 #ifdef TODO
-// WTF is SCL?
 #endif
 
-#define VRAM_ADDR 0
+#define VRAM_SIZE   (1024 * 1024 * 1)
+
+extern Uint8 VRAM[VRAM_SIZE];
+extern Uint32 VRAM_ADDR;
+
 #define FBUF_ADDR 0
 
 #define SCL_SetFrameInterval(unk)
@@ -200,14 +203,14 @@ extern	Uint16		SclProcess;
 #define SCL_LNCL	0x00040000
 #define SCL_BACK	0x00080000
 
-#define SCL_VDP2_VRAM		0x25e00000
-#define SCL_VDP2_VRAM_A		0x25e00000
-#define SCL_VDP2_VRAM_A0	0x25e00000
-#define SCL_VDP2_VRAM_A1	0x25e20000
-#define SCL_VDP2_VRAM_B		0x25e40000
-#define SCL_VDP2_VRAM_B0	0x25e40000
-#define SCL_VDP2_VRAM_B1	0x25e60000
-#define	SCL_COLRAM_ADDR		0x25F00000
+#define SCL_VDP2_VRAM		(VRAM + (0x25e00000 - 0x25e00000))
+#define SCL_VDP2_VRAM_A		(VRAM + (0x25e00000 - 0x25e00000))
+#define SCL_VDP2_VRAM_A0	(VRAM + (0x25e00000 - 0x25e00000))
+#define SCL_VDP2_VRAM_A1	(VRAM + (0x25e20000 - 0x25e00000))
+#define SCL_VDP2_VRAM_B		(VRAM + (0x25e40000 - 0x25e00000))
+#define SCL_VDP2_VRAM_B0	(VRAM + (0x25e40000 - 0x25e00000))
+#define SCL_VDP2_VRAM_B1	(VRAM + (0x25e60000 - 0x25e00000))
+#define	SCL_COLRAM_ADDR		(VRAM + (0x25F00000 - 0x25e00000))
 
 #define SCL_TYPE0       0
 #define SCL_TYPE1       1

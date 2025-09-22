@@ -27,12 +27,20 @@ int loadSequences(int fd, int tileBase, int soundBase)
     struct seqHeader* head;
     assert(fd >= 0);
     fs_read(fd, (char*)&size, 4);
+
+    size = FS_INT(&size);
+
     assert(size > 0 && size < 1024 * 1024);
     buffer = (char*)mem_malloc(0, size);
     assert(buffer);
     fs_read(fd, buffer, size);
 
     head = (struct seqHeader*)buffer;
+
+    head->nmSequences = FS_INT(&head->nmSequences);
+    head->nmFrames = FS_INT(&head->nmFrames);
+    head->nmChunks = FS_INT(&head->nmChunks);
+
     level_nmSequences = head->nmSequences;
     level_nmFrames = head->nmFrames;
     level_nmChunks = head->nmChunks;
@@ -44,6 +52,15 @@ int loadSequences(int fd, int tileBase, int soundBase)
     assert(((unsigned int)size) == sizeof(struct seqHeader) + level_nmSequences * sizeof(short) + level_nmFrames * sizeof(sFrameType) + level_nmChunks * sizeof(sChunkType) + OT_NMTYPES * sizeof(short));
 
     level_frame = (sFrameType*)(buffer + sizeof(struct seqHeader));
+
+    for (i = 0; i < level_nmFrames; i++)
+    {
+        sFrameType *v = level_frame + i;
+        v->chunkIndex = FS_SHORT(&v->chunkIndex);
+        v->flags = FS_SHORT(&v->flags);
+        v->sound = FS_SHORT(&v->sound);
+    }
+
 #ifndef NDEBUG
     {
         int i;
@@ -57,6 +74,15 @@ int loadSequences(int fd, int tileBase, int soundBase)
 
     level_chunk = (sChunkType*)(level_frame + level_nmFrames);
 
+    for (i = 0; i < level_nmChunks; i++)
+    {
+        sChunkType *v = level_chunk + i;
+
+        v->chunkx = FS_SHORT(&v->chunkx);
+        v->chunky = FS_SHORT(&v->chunky);
+        v->tile = FS_SHORT(&v->tile);
+    }
+
 #ifndef NDEBUG
     {
         int i;
@@ -69,7 +95,17 @@ int loadSequences(int fd, int tileBase, int soundBase)
 
     level_sequence = (short*)(level_chunk + level_nmChunks);
 
+    for (i = 0; i < level_nmSequences; i++)
+    {
+        level_sequence[i] = FS_SHORT(&level_sequence[i]);
+    }
+
     level_sequenceMap = level_sequence + level_nmSequences;
+
+    for (i = 0; i < OT_NMTYPES; i++)
+    {
+        level_sequenceMap[i] = FS_SHORT(&level_sequenceMap[i]);
+    }
 
     for (i = 0; i < level_nmChunks; i++)
         level_chunk[i].tile += tileBase;
@@ -91,12 +127,15 @@ sChunkType* level_wChunk;
 
 int loadWeaponSequences(int fd)
 {
-    int size;
+    int size, i;
     int level_nmSequences, level_nmFrames, level_nmChunks;
     char* buffer;
     struct seqHeader* head;
     assert(fd >= 0);
     fs_read(fd, (char*)&size, 4);
+
+    size = FS_INT(&size);
+
     assert(size > 0 && size < 1024 * 1024);
     buffer = (char*)mem_malloc(0, size);
     assert(buffer);
@@ -104,14 +143,28 @@ int loadWeaponSequences(int fd)
 
     head = (struct seqHeader*)buffer;
 
+    head->nmSequences = FS_INT(&head->nmSequences);
+    head->nmFrames = FS_INT(&head->nmFrames);
+    head->nmChunks = FS_INT(&head->nmChunks);
+
     level_nmSequences = head->nmSequences;
     level_nmFrames = head->nmFrames;
     level_nmChunks = head->nmChunks;
+
     assert(level_nmSequences >= 0);
     assert(level_nmFrames >= 0);
     assert(level_nmChunks >= 0);
 
     level_wFrame = (sFrameType*)(buffer + sizeof(struct seqHeader));
+
+    for (i = 0; i < level_nmFrames; i++)
+    {
+        sFrameType *v = level_wFrame + i;
+        v->chunkIndex = FS_SHORT(&v->chunkIndex);
+        v->flags = FS_SHORT(&v->flags);
+        v->sound = FS_SHORT(&v->sound);
+    }
+
 #ifndef NDEBUG
     {
         int i;
@@ -124,7 +177,22 @@ int loadWeaponSequences(int fd)
 #endif
 
     level_wChunk = (sChunkType*)(level_wFrame + level_nmFrames);
+
+    for (i = 0; i < level_nmChunks; i++)
+    {
+        sChunkType *v = level_wChunk + i;
+
+        v->chunkx = FS_SHORT(&v->chunkx);
+        v->chunky = FS_SHORT(&v->chunky);
+        v->tile = FS_SHORT(&v->tile);
+    }
+
     level_wSequence = (short*)(level_wChunk + level_nmChunks);
+
+    for (i = 0; i < level_nmSequences; i++)
+    {
+        level_wSequence[i] = FS_SHORT(&level_wSequence[i]);
+    }
 
     assert(level_wSequence[0] == 0);
     /* paranoia checks */
