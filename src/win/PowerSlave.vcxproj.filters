@@ -1,88 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\AI.C" />
-    <ClCompile Include="..\AI2.C" />
-    <ClCompile Include="..\AICOMMON.C" />
-    <ClCompile Include="..\AIRBUB.C" />
-    <ClCompile Include="..\ART.C" />
-    <ClCompile Include="..\BIGMAP.C" />
-    <ClCompile Include="..\BUP.C" />
-    <ClCompile Include="..\DIAL.C" />
-    <ClCompile Include="..\DMA.C" />
-    <ClCompile Include="..\FILE.C" />
-    <ClCompile Include="..\HITSCAN.C" />
-    <ClCompile Include="..\INITMAIN.C" />
-    <ClCompile Include="..\INTRO.C" />
-    <ClCompile Include="..\KEYGEN.C" />
-    <ClCompile Include="..\LEVEL.C" />
-    <ClCompile Include="..\LOCAL.C" />
-    <ClCompile Include="..\MAP.C" />
-    <ClCompile Include="..\MEGAINIT.C" />
-    <ClCompile Include="..\MENU.C" />
-    <ClCompile Include="..\MOV.C" />
-    <ClCompile Include="..\OBJECT.C" />
-    <ClCompile Include="..\PIC.C" />
-    <ClCompile Include="..\PICSET.C" />
-    <ClCompile Include="..\PLAX.C" />
-    <ClCompile Include="..\PRINT.C" />
-    <ClCompile Include="..\PROFILE.C" />
-    <ClCompile Include="..\ROUTE.C" />
-    <ClCompile Include="..\SCL_FUNC.C" />
-    <ClCompile Include="..\SEQUENCE.C" />
-    <ClCompile Include="..\SOUND.C" />
-    <ClCompile Include="..\SPR.C" />
-    <ClCompile Include="..\SPRITE.C" />
-    <ClCompile Include="..\SRUINS.C" />
-    <ClCompile Include="..\UTIL.C" />
-    <ClCompile Include="..\V_BLANK.C" />
-    <ClCompile Include="..\WALLS.C" />
-    <ClCompile Include="..\WEAPON.C" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\AI.H" />
-    <ClInclude Include="..\AICOMMON.H" />
-    <ClInclude Include="..\ART.H" />
-    <ClInclude Include="..\BIGMAP.H" />
-    <ClInclude Include="..\BUP.H" />
-    <ClInclude Include="..\DMA.H" />
-    <ClInclude Include="..\FILE.H" />
-    <ClInclude Include="..\FONT0.H" />
-    <ClInclude Include="..\FONT1.H" />
-    <ClInclude Include="..\FONT2.H" />
-    <ClInclude Include="..\GAMESTAT.H" />
-    <ClInclude Include="..\GRENPAL.H" />
-    <ClInclude Include="..\HITSCAN.H" />
-    <ClInclude Include="..\INITMAIN.H" />
-    <ClInclude Include="..\INTRO.H" />
-    <ClInclude Include="..\JASONPAL.H" />
-    <ClInclude Include="..\LEVEL.H" />
-    <ClInclude Include="..\LOCAL.H" />
-    <ClInclude Include="..\MANPAL.H" />
-    <ClInclude Include="..\MAP.H" />
-    <ClInclude Include="..\MEGAINIT.H" />
-    <ClInclude Include="..\MENU.H" />
-    <ClInclude Include="..\MOV.H" />
-    <ClInclude Include="..\OBJECT.H" />
-    <ClInclude Include="..\PIC.H" />
-    <ClInclude Include="..\PICSET.H" />
-    <ClInclude Include="..\PLAX.H" />
-    <ClInclude Include="..\PRINT.H" />
-    <ClInclude Include="..\PROFILE.H" />
-    <ClInclude Include="..\RNDTAB.H" />
-    <ClInclude Include="..\ROUTE.H" />
-    <ClInclude Include="..\SEQUENCE.H" />
-    <ClInclude Include="..\SLEVEL.H" />
-    <ClInclude Include="..\SOUND.H" />
-    <ClInclude Include="..\SPR.H" />
-    <ClInclude Include="..\SPRITE.H" />
-    <ClInclude Include="..\SQRTTAB.H" />
-    <ClInclude Include="..\SRUINS.H" />
-    <ClInclude Include="..\UTIL.H" />
-    <ClInclude Include="..\V_BLANK.H" />
-    <ClInclude Include="..\WALLASM.H" />
-    <ClInclude Include="..\WALLS.H" />
-    <ClInclude Include="..\WEAPON.H" />
     <ClInclude Include="..\sega\libsn.h">
       <Filter>sega</Filter>
     </ClInclude>
@@ -131,10 +49,95 @@
     <ClInclude Include="..\sega\sega_xpt.h">
       <Filter>sega</Filter>
     </ClInclude>
+    <ClInclude Include="..\ai.h" />
+    <ClInclude Include="..\aicommon.h" />
+    <ClInclude Include="..\art.h" />
+    <ClInclude Include="..\bigmap.h" />
+    <ClInclude Include="..\bup.h" />
+    <ClInclude Include="..\dma.h" />
+    <ClInclude Include="..\file.h" />
+    <ClInclude Include="..\font0.h" />
+    <ClInclude Include="..\font1.h" />
+    <ClInclude Include="..\font2.h" />
+    <ClInclude Include="..\gamestat.h" />
+    <ClInclude Include="..\grenpal.h" />
+    <ClInclude Include="..\hitscan.h" />
+    <ClInclude Include="..\initmain.h" />
+    <ClInclude Include="..\intro.h" />
+    <ClInclude Include="..\jasonpal.h" />
+    <ClInclude Include="..\level.h" />
+    <ClInclude Include="..\local.h" />
+    <ClInclude Include="..\manpal.h" />
+    <ClInclude Include="..\map.h" />
+    <ClInclude Include="..\megainit.h" />
+    <ClInclude Include="..\menu.h" />
+    <ClInclude Include="..\mov.h" />
+    <ClInclude Include="..\object.h" />
+    <ClInclude Include="..\pic.h" />
+    <ClInclude Include="..\picset.h" />
+    <ClInclude Include="..\plax.h" />
+    <ClInclude Include="..\print.h" />
+    <ClInclude Include="..\profile.h" />
+    <ClInclude Include="..\rndtab.h" />
+    <ClInclude Include="..\route.h" />
+    <ClInclude Include="..\sequence.h" />
+    <ClInclude Include="..\slevel.h" />
+    <ClInclude Include="..\sound.h" />
+    <ClInclude Include="..\spr.h" />
+    <ClInclude Include="..\sprite.h" />
+    <ClInclude Include="..\sqrttab.h" />
+    <ClInclude Include="..\sruins.h" />
+    <ClInclude Include="..\util.h" />
+    <ClInclude Include="..\v_blank.h" />
+    <ClInclude Include="..\wallasm.h" />
+    <ClInclude Include="..\walls.h" />
+    <ClInclude Include="..\weapon.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sega">
       <UniqueIdentifier>{afc971e9-98d1-4181-814e-ae8c38090feb}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\ai.c" />
+    <ClCompile Include="..\ai2.c" />
+    <ClCompile Include="..\aicommon.c" />
+    <ClCompile Include="..\airbub.c" />
+    <ClCompile Include="..\art.c" />
+    <ClCompile Include="..\bigmap.c" />
+    <ClCompile Include="..\bup.c" />
+    <ClCompile Include="..\dial.c" />
+    <ClCompile Include="..\dma.c" />
+    <ClCompile Include="..\file.c" />
+    <ClCompile Include="..\hitscan.c" />
+    <ClCompile Include="..\initmain.c" />
+    <ClCompile Include="..\intro.c" />
+    <ClCompile Include="..\keygen.c" />
+    <ClCompile Include="..\level.c" />
+    <ClCompile Include="..\local.c" />
+    <ClCompile Include="..\map.c" />
+    <ClCompile Include="..\megainit.c" />
+    <ClCompile Include="..\menu.c" />
+    <ClCompile Include="..\mov.c" />
+    <ClCompile Include="..\object.c" />
+    <ClCompile Include="..\pic.c" />
+    <ClCompile Include="..\picset.c" />
+    <ClCompile Include="..\plax.c" />
+    <ClCompile Include="..\print.c" />
+    <ClCompile Include="..\profile.c" />
+    <ClCompile Include="..\route.c" />
+    <ClCompile Include="..\scl_func.c" />
+    <ClCompile Include="..\sequence.c" />
+    <ClCompile Include="..\sound.c" />
+    <ClCompile Include="..\spr.c" />
+    <ClCompile Include="..\sprite.c" />
+    <ClCompile Include="..\sruins.c" />
+    <ClCompile Include="..\util.c" />
+    <ClCompile Include="..\v_blank.c" />
+    <ClCompile Include="..\walls.c" />
+    <ClCompile Include="..\weapon.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\rename.sh" />
   </ItemGroup>
 </Project>
