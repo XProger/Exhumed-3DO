@@ -4,7 +4,7 @@
 static void vd1Comfil(void); /* ＶＤＰ１ クリッピング初期化    */
 static void vd2Ramfil(void); /* ＶＤＰ２ ＶＲＡＭクリア        */
 static void colRamfil(void); /* カラーＲＡＭクリア             */
-static void sndRamfil(Sint32); /* サウンドＲＡＭクリア           */
+static void sndRamfil(sint32); /* サウンドＲＡＭクリア           */
 static void scuDspInit(void); /* ＳＣＵ ＤＳＰ 初期化           */
 static void msh2PeriInit(void); /* マスタＳＨ周辺モジュール初期化 */
 static void sndDspInit(void); /* サウンドＤＳＰクリア           */
@@ -12,13 +12,13 @@ static void sndDspInit(void); /* サウンドＤＳＰクリア           */
 static void vbIrtn(void); /* ＶＢ-Ｉｎ 割込み処理           */
 static void vbOrtn(void); /* ＶＢ-Ｏｕｔ 割込み処理         */
 static void syncVbI(void); /* ＶＢ-Ｉｎ 同期処理用           */
-static void memset_w(Sint16*, Sint16, Sint32);
+static void memset_w(sint16*, sint16, sint32);
 /* ワード ｍｅｍｓｅｔ            */
-static void memcpy_w(Sint16*, Sint16*, Sint32);
+static void memcpy_w(sint16*, sint16*, sint32);
 /* ワード ｍｅｍｃｐｙ            */
-static Sint16* blkmfil_w(Sint16*, Sint16, Sint32);
+static sint16* blkmfil_w(sint16*, sint16, sint32);
 /* ワード・ブロックｆｉｌｌ       */
-static Sint32* blkmfil_l(Sint32*, Sint32, Sint32);
+static sint32* blkmfil_l(sint32*, sint32, sint32);
 /* ロングワード・ブロックｆｉｌｌ */
 
 /* 現時点の(ライセンス画面表示中)画面サイズに関する情報 */
@@ -28,42 +28,42 @@ static Sint32* blkmfil_l(Sint32*, Sint32, Sint32);
 #define SCLIP_UY_P (256 - 1) /*   〃   (ＰＡＬの場合)          */
 
 /* 処理対象デバイスのベースアドレス */
-#define SND_RAM ((volatile Sint32*)0x25a00000)
-#define VD1_VRAM ((volatile Sint16*)0x25c00000)
-#define VD1_REG ((volatile Sint16*)0x25d00000)
+#define SND_RAM ((sint32*)0x25a00000)
+#define VD1_VRAM ((sint16*)0x25c00000)
+#define VD1_REG ((sint16*)0x25d00000)
 /* VD2_VRAM は、ライセンス表示で使用中のＶＲＡＭ領域を除く    */
-#define VD2_VRAM ((volatile Sint32*)0x25e08004)
+#define VD2_VRAM ((sint32*)0x25e08004)
 /* COL_RAM は、ライセンス表示で使用中のカラーＲＡＭ領域を除く */
-#define COL_RAM ((volatile Sint16*)0x25f00020)
-#define VD2_REG ((volatile Sint16*)0x25f80000)
-#define SCSP_DSP_RAM ((volatile Sint16*)0x25b00800)
+#define COL_RAM ((sint16*)0x25f00020)
+#define VD2_REG ((sint16*)0x25f80000)
+#define SCSP_DSP_RAM ((sint16*)0x25b00800)
 
 /* ＳＭＰＣレジスタ */
-#define SMPC_REG(ofs) (*(volatile Uint8*)(0x20100000 + ofs))
+#define SMPC_REG(ofs) (*(uint8*)(0x20100000 + ofs))
 
 /* ＳＣＵレジスタ */
-#define DSP_PGM_CTRL_PORT (*(volatile Sint32*)0x25fe0080)
-#define DSP_PGM_RAM_PORT (*(volatile Sint32*)0x25fe0084)
-#define DSP_DATA_RAM_ADRS_PORT (*(volatile Sint32*)0x25fe0088)
-#define DSP_DATA_RAM_DATA_PORT (*(volatile Sint32*)0x25fe008c)
+#define DSP_PGM_CTRL_PORT (*(sint32*)0x25fe0080)
+#define DSP_PGM_RAM_PORT (*(sint32*)0x25fe0084)
+#define DSP_DATA_RAM_ADRS_PORT (*(sint32*)0x25fe0088)
+#define DSP_DATA_RAM_DATA_PORT (*(sint32*)0x25fe008c)
 
 /* ＳＣＳＰ サウンドＲＡＭサイズレジスタ */
-#define SCSP_SNDRAMSZ (*(volatile Sint8*)0x25b00400)
+#define SCSP_SNDRAMSZ (*(sint8*)0x25b00400)
 
 /* ＳＨ２周辺モジュールレジスタ */
-#define MSH2_DMAC_SAR(ofs) (*(volatile Sint32*)(0xffffff80 + ofs))
-#define MSH2_DMAC_DAR(ofs) (*(volatile Sint32*)(0xffffff84 + ofs))
-#define MSH2_DMAC_TCR(ofs) (*(volatile Sint32*)(0xffffff88 + ofs))
-#define MSH2_DMAC_CHCR(ofs) (*(volatile Sint32*)(0xffffff8c + ofs))
-#define MSH2_DMAC_DRCR(sel) (*(volatile Sint8*)(0xfffffe71 + sel))
-#define MSH2_DMAC_DMAOR (*(volatile Sint32*)(0xffffffb0))
-#define MSH2_DIVU_CONT (*(volatile Sint32*)(0xffffffb8))
+#define MSH2_DMAC_SAR(ofs) (*(sint32*)(0xffffff80 + ofs))
+#define MSH2_DMAC_DAR(ofs) (*(sint32*)(0xffffff84 + ofs))
+#define MSH2_DMAC_TCR(ofs) (*(sint32*)(0xffffff88 + ofs))
+#define MSH2_DMAC_CHCR(ofs) (*(sint32*)(0xffffff8c + ofs))
+#define MSH2_DMAC_DRCR(sel) (*(sint8*)(0xfffffe71 + sel))
+#define MSH2_DMAC_DMAOR (*(sint32*)(0xffffffb0))
+#define MSH2_DIVU_CONT (*(sint32*)(0xffffffb8))
 
 #define MSETDIV (4)
 #define BLKMSK_VD2_VRAM (0x1fffc)
 #define BLKMSK_COL_RAM (0x001fe)
 
-#define M68000_VECTBLSZ (0x00400 / sizeof(Sint32))
+#define M68000_VECTBLSZ (0x00400 / sizeof(sint32))
 #define BLKMSK_SND_RAM (0x003fc)
 
 #define SCSP_DSP_RAMSZ (0x00400)
@@ -72,14 +72,14 @@ static Sint32* blkmfil_l(Sint32*, Sint32, Sint32);
 #define VBO_NUM (0x41)
 #define VB_MASK (0x0003)
 
-static Sint16 yBottom, ewBotRight;
-static Sint16 vdp1cmds[48];
-static volatile Sint16 vbIcnt = 0;
-static Sint16 sequence = 0;
-static volatile Sint32* vramptr = VD2_VRAM;
-static volatile Sint16* cramptr = COL_RAM;
+static sint16 yBottom, ewBotRight;
+static sint16 vdp1cmds[48];
+static sint16 vbIcnt = 0;
+static sint16 sequence = 0;
+static sint32* vramptr = VD2_VRAM;
+static sint16* cramptr = COL_RAM;
 
-#define POKE_W(adr, data) (*((volatile Uint16*)(adr + 0x05e00000)) = ((Uint16)(data)))
+#define POKE_W(adr, data) (*((uint16*)(adr + 0x05e00000)) = ((uint16)(data)))
 
 void megaInit(void)
 {
@@ -109,43 +109,43 @@ void megaInit(void)
 #endif
 }
 
-static void memset_w(Sint16* buf, Sint16 pattern, Sint32 size)
+static void memset_w(sint16* buf, sint16 pattern, sint32 size)
 {
-    register Sint32 i;
+    register sint32 i;
 
-    for (i = 0; i < size; i += sizeof(Sint16))
+    for (i = 0; i < size; i += sizeof(sint16))
     {
         *buf++ = pattern;
     }
 }
 
-static void memcpy_w(Sint16* dst, Sint16* src, Sint32 size)
+static void memcpy_w(sint16* dst, sint16* src, sint32 size)
 {
-    register Sint32 i;
+    register sint32 i;
 
-    for (i = 0; i < size; i += sizeof(Sint16))
+    for (i = 0; i < size; i += sizeof(sint16))
     {
         *dst++ = *src++;
     }
 }
 
-static Sint16* blkmfil_w(Sint16* buf, Sint16 pattern, Sint32 brkmsk)
+static sint16* blkmfil_w(sint16* buf, sint16 pattern, sint32 brkmsk)
 {
-    register Sint32 i;
+    register sint32 i;
 
-    i = (Sint32)buf & brkmsk;
-    for (; i <= brkmsk; i += sizeof(Sint16))
+    i = (sint32)buf & brkmsk;
+    for (; i <= brkmsk; i += sizeof(sint16))
     {
         *buf++ = pattern;
     }
     return (buf);
 }
-static Sint32* blkmfil_l(Sint32* buf, Sint32 pattern, Sint32 brkmsk)
+static sint32* blkmfil_l(sint32* buf, sint32 pattern, sint32 brkmsk)
 {
-    register Sint32 i;
+    register sint32 i;
 
-    i = (Sint32)buf & brkmsk;
-    for (; i <= brkmsk; i += sizeof(Sint32))
+    i = (sint32)buf & brkmsk;
+    for (; i <= brkmsk; i += sizeof(sint32))
     {
         *buf++ = pattern;
     }
@@ -159,7 +159,7 @@ static void vbIrtn(void)
 
 static void vbOrtn(void)
 {
-    Sint16* vdp1r;
+    sint16* vdp1r;
     /* イレースライトでフレームバッファをクリア */
     vdp1r = VD1_REG;
     *vdp1r++ = 0x0; /* １／６０秒自動描画モード */
@@ -172,7 +172,7 @@ static void vbOrtn(void)
 
 static void syncVbI(void)
 {
-    register Sint32 cur_cnt_value;
+    register sint32 cur_cnt_value;
 
     cur_cnt_value = vbIcnt;
     while (cur_cnt_value == vbIcnt)
@@ -182,7 +182,7 @@ static void syncVbI(void)
 /* ＶＤＰ１に、システムクリッピングとローカル座標を読ませる */
 static void vd1Comfil(void)
 {
-    register Sint16* cmdbuf;
+    register sint16* cmdbuf;
 
     memset_w((cmdbuf = vdp1cmds), 0, sizeof(vdp1cmds));
     cmdbuf[0] = 0x0009;
@@ -203,10 +203,10 @@ static void colRamfil(void)
     cramptr = blkmfil_w(cramptr, 0, BLKMSK_COL_RAM);
 }
 
-static void sndRamfil(Sint32 initstep)
+static void sndRamfil(sint32 initstep)
 {
 #ifdef TODO
-    register Sint32* memptr;
+    register sint32* memptr;
 
     switch (initstep)
     {
@@ -234,7 +234,7 @@ static void sndRamfil(Sint32 initstep)
 static void msh2PeriInit(void)
 {
 #ifdef TODO
-    register Sint32 i, ofs, dummy;
+    register sint32 i, ofs, dummy;
 
     ofs = 0;
     for (i = 0; i < 2; i++)
@@ -256,7 +256,7 @@ static void msh2PeriInit(void)
 
 static void scuDspInit(void)
 {
-    register Sint32 i;
+    register sint32 i;
 
     DSP_PGM_CTRL_PORT = 0x0; /* ＤＳＰ停止           */
 

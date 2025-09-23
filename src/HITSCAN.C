@@ -15,15 +15,15 @@
 #include "hitscan.h"
 
 #ifndef NDEBUG
-int lastHitWall;
+sint32 lastHitWall;
 #endif
 
 /* ray must be normalized */
-int hitSpriteP(Fixed32 ray[3], Fixed32 pos[3], Sprite* sprite, Fixed32* out_pos, Fixed32* out_distance)
+sint32 hitSpriteP(fix32 ray[3], fix32 pos[3], Sprite* sprite, fix32* out_pos, fix32* out_distance)
 {
-    Fixed32 v;
-    Fixed32 EO[3];
-    Fixed32 disc, d;
+    fix32 v;
+    fix32 EO[3];
+    fix32 disc, d;
 
     assert(ray[0] >= -F(1) && ray[0] <= F(1));
     assert(ray[1] >= -F(1) && ray[1] <= F(1));
@@ -69,22 +69,22 @@ int hitSpriteP(Fixed32 ray[3], Fixed32 pos[3], Sprite* sprite, Fixed32* out_pos,
     return 1;
 }
 
-int hitWallP(Fixed32 ray[3], Fixed32 pos[3], sWallType* wall, Fixed32* out_pos)
+sint32 hitWallP(fix32 ray[3], fix32 pos[3], sWallType* wall, fix32* out_pos)
 {
-    Fixed32 t;
-    Fixed32 f;
-    Fixed32 P[3]; /* intersection point */
-    int p[3];
-    int inside;
-    int axis[3], i, biggest, p1, p2, x;
-    Fixed32 V[4][2];
-    f = MTH_Product((Fixed32*)wall->normal, ray);
+    fix32 t;
+    fix32 f;
+    fix32 P[3]; /* intersection point */
+    sint32 p[3];
+    sint32 inside;
+    sint32 axis[3], i, biggest, p1, p2, x;
+    fix32 V[4][2];
+    f = MTH_Product((fix32*)wall->normal, ray);
     if (f > -100)
         /* reject walls which are back facing w/respect to the ray.
            we reject slightly more to avoid infinitly repeating between
            two sectors */
         return 0;
-    t = -MTH_Div(wall->d + MTH_Product((Fixed32*)wall->normal, pos), f);
+    t = -MTH_Div(wall->d + MTH_Product((fix32*)wall->normal, pos), f);
     if (t <= F(-3))
         /* reject walls where the collision point is behind the origin of the
            ray.  We can be loose here because we have convex sectors
@@ -194,15 +194,15 @@ int hitWallP(Fixed32 ray[3], Fixed32 pos[3], sWallType* wall, Fixed32* out_pos)
     return 0;
 }
 
-int hitScan(Sprite* dontHit, MthXyz* ray, MthXyz* pos, int sector, MthXyz* outPos, int* outSector)
+sint32 hitScan(Sprite* dontHit, MthXyz* ray, MthXyz* pos, sint32 sector, MthXyz* outPos, sint32* outSector)
 {
     Sprite *collideSprite, *spr;
-    int w;
-    Fixed32 tempDist, collideSpriteDist;
+    sint32 w;
+    fix32 tempDist, collideSpriteDist;
     MthXyz tempPos;
     sSectorType* s;
 #ifndef NDEBUG
-    int count = 0;
+    sint32 count = 0;
 #endif
     while (1)
     {
@@ -212,7 +212,7 @@ int hitScan(Sprite* dontHit, MthXyz* ray, MthXyz* pos, int sector, MthXyz* outPo
         collideSpriteDist = F(30000);
         for (spr = sectorSpriteList[sector]; spr; spr = spr->next)
         {
-            if (spr != dontHit && hitSpriteP((Fixed32*)ray, (Fixed32*)pos, spr, (Fixed32*)&tempPos, &tempDist))
+            if (spr != dontHit && hitSpriteP((fix32*)ray, (fix32*)pos, spr, (fix32*)&tempPos, &tempDist))
             {
                 assert(tempDist >= 0);
                 if (tempDist >= collideSpriteDist)
@@ -233,7 +233,7 @@ int hitScan(Sprite* dontHit, MthXyz* ray, MthXyz* pos, int sector, MthXyz* outPo
         {
             if (level_wall[w].normal[1] != 0)
                 continue;
-            if (hitWallP((Fixed32*)ray, (Fixed32*)pos, level_wall + w, (Fixed32*)&tempPos))
+            if (hitWallP((fix32*)ray, (fix32*)pos, level_wall + w, (fix32*)&tempPos))
                 if (level_wall[w].nextSector != -1 && !(level_wall[w].flags & WALLFLAG_BLOCKED))
                 { /* we've gone into a new sector */
                     sector = level_wall[w].nextSector;
@@ -253,7 +253,7 @@ int hitScan(Sprite* dontHit, MthXyz* ray, MthXyz* pos, int sector, MthXyz* outPo
         {
             if (level_wall[w].normal[1] == 0)
                 continue;
-            if (hitWallP((Fixed32*)ray, (Fixed32*)pos, level_wall + w, (Fixed32*)&tempPos))
+            if (hitWallP((fix32*)ray, (fix32*)pos, level_wall + w, (fix32*)&tempPos))
                 if (level_wall[w].nextSector != -1 && !(level_wall[w].flags & WALLFLAG_BLOCKED))
                 { /* we've gone into a new sector */
                     sector = level_wall[w].nextSector;
@@ -273,9 +273,9 @@ int hitScan(Sprite* dontHit, MthXyz* ray, MthXyz* pos, int sector, MthXyz* outPo
     }
 }
 
-int singleSectorWallHitScan(MthXyz* ray, MthXyz* pos, int sector, MthXyz* outPos, int* outSector)
+sint32 singleSectorWallHitScan(MthXyz* ray, MthXyz* pos, sint32 sector, MthXyz* outPos, sint32* outSector)
 {
-    int w, loop;
+    sint32 w, loop;
     sSectorType* s;
     MthXyz tempPos;
 
@@ -287,7 +287,7 @@ int singleSectorWallHitScan(MthXyz* ray, MthXyz* pos, int sector, MthXyz* outPos
                 continue;
             if (loop == 1 && level_wall[w].normal[1] == 0)
                 continue;
-            if (hitWallP((Fixed32*)ray, (Fixed32*)pos, level_wall + w, (Fixed32*)&tempPos))
+            if (hitWallP((fix32*)ray, (fix32*)pos, level_wall + w, (fix32*)&tempPos))
                 if (level_wall[w].nextSector != -1 && !(level_wall[w].flags & WALLFLAG_BLOCKSSIGHT))
                 { /* we've gone into a new sector */
                     *outSector = level_wall[w].nextSector;
@@ -304,9 +304,9 @@ int singleSectorWallHitScan(MthXyz* ray, MthXyz* pos, int sector, MthXyz* outPos
     return 0;
 }
 
-static int wallHitScan(MthXyz* ray, MthXyz* pos, int sector, MthXyz* outPos, int* outSector)
+static sint32 wallHitScan(MthXyz* ray, MthXyz* pos, sint32 sector, MthXyz* outPos, sint32* outSector)
 {
-    int w, count, loop;
+    sint32 w, count, loop;
     sSectorType* s;
     MthXyz tempPos;
 
@@ -323,7 +323,7 @@ static int wallHitScan(MthXyz* ray, MthXyz* pos, int sector, MthXyz* outPos, int
                     continue;
                 if (loop == 1 && level_wall[w].normal[1] == 0)
                     continue;
-                if (hitWallP((Fixed32*)ray, (Fixed32*)pos, level_wall + w, (Fixed32*)&tempPos))
+                if (hitWallP((fix32*)ray, (fix32*)pos, level_wall + w, (fix32*)&tempPos))
                     if (level_wall[w].nextSector != -1 && !(level_wall[w].flags & WALLFLAG_BLOCKSSIGHT))
                     { /* we've gone into a new sector */
                         sector = level_wall[w].nextSector;
@@ -341,11 +341,11 @@ static int wallHitScan(MthXyz* ray, MthXyz* pos, int sector, MthXyz* outPos, int
     }
 }
 
-int canSee(Sprite* s1, Sprite* s2)
+sint32 canSee(Sprite* s1, Sprite* s2)
 {
     MthXyz v, pos, outPos;
-    int sector, outSector;
-    int d2s, d2w;
+    sint32 sector, outSector;
+    sint32 d2s, d2w;
     v.x = s2->pos.x - s1->pos.x;
     v.y = s2->pos.y - s1->pos.y;
     v.z = s2->pos.z - s1->pos.z;

@@ -23,9 +23,9 @@
 
 #define AISLOT(x) ((this->aiSlot & (x)) == (aicount & (x)))
 
-int aicount = 0, nextAiSlot = 0;
+sint32 aicount = 0, nextAiSlot = 0;
 
-void movePlayerToSector(int playerSec)
+void movePlayerToSector(sint32 playerSec)
 {
     MthXyz pos;
     assert(camera);
@@ -37,9 +37,9 @@ void movePlayerToSector(int playerSec)
     moveSpriteTo(camera, playerSec, &pos);
 }
 
-void markSectorFloor(int sec, Object* this)
+void markSectorFloor(sint32 sec, Object* this)
 {
-    int i;
+    sint32 i;
     for (i = level_sector[sec].firstWall; i <= level_sector[sec].lastWall; i++)
     {
         if (level_wall[i].normal[1] > 0)
@@ -49,14 +49,14 @@ void markSectorFloor(int sec, Object* this)
     }
 }
 
-void setSectorBrightness(int s, int level)
+void setSectorBrightness(sint32 s, sint32 level)
 {
-    int w, i;
+    sint32 w, i;
     for (w = level_sector[s].firstWall; w <= level_sector[s].lastWall; w++)
     {
         if (level_wall[w].flags & WALLFLAG_PARALLELOGRAM)
         {
-            int nm;
+            sint32 nm;
             nm = (level_wall[w].tileHeight + 1) * (level_wall[w].tileLength + 1);
             for (i = level_wall[w].firstLight; i < level_wall[w].firstLight + nm; i++)
                 level_vertexLight[i] = level;
@@ -69,9 +69,9 @@ void setSectorBrightness(int s, int level)
     }
 }
 
-int getFacingAngle(Sprite* from, Sprite* to)
+sint32 getFacingAngle(Sprite* from, Sprite* to)
 {
-    int angle;
+    sint32 angle;
     angle = getAngle(from->pos.x - to->pos.x, from->pos.z - to->pos.z);
     angle -= from->angle + F(180);
     if (angle > F(180))
@@ -102,9 +102,9 @@ int getFacingAngle(Sprite* from, Sprite* to)
     return 4;
 }
 
-int PlotCourseToObject(SpriteObject* from, SpriteObject* to)
+sint32 PlotCourseToObject(SpriteObject* from, SpriteObject* to)
 {
-    int xdiff, zdiff;
+    sint32 xdiff, zdiff;
     assert(from);
     assert(to);
     assert(from != to);
@@ -117,21 +117,21 @@ int PlotCourseToObject(SpriteObject* from, SpriteObject* to)
     return 0;
 }
 
-Fixed32 spriteDist2(Sprite* s1, Sprite* s2)
+fix32 spriteDist2(Sprite* s1, Sprite* s2)
 {
-    Fixed32 dx, dy, dz;
+    fix32 dx, dy, dz;
     dx = s1->pos.x - s2->pos.x;
     dy = s1->pos.y - s2->pos.y;
     dz = s1->pos.z - s2->pos.z;
     return f(dx) * dx + f(dy) * dy + f(dz) * dz;
 }
 
-Fixed32 spriteDistApprox(Sprite* s1, Sprite* s2)
+fix32 spriteDistApprox(Sprite* s1, Sprite* s2)
 {
     return approxDist(s1->pos.x - s2->pos.x, s1->pos.y - s2->pos.y, s1->pos.z - s2->pos.z);
 }
 
-MonsterObject* findPlayer(Sprite* sprite, int dist)
+MonsterObject* findPlayer(Sprite* sprite, sint32 dist)
 {
     assert(sprite);
     assert(player->sprite);
@@ -142,14 +142,14 @@ MonsterObject* findPlayer(Sprite* sprite, int dist)
     return NULL;
 }
 
-int randomAngle(int spreadlog2)
+sint32 randomAngle(sint32 spreadlog2)
 {
-    return ((int)(getNextRand() << 16)) >> (16 - spreadlog2);
+    return ((sint32)(getNextRand() << 16)) >> (16 - spreadlog2);
 }
 
 void setSequence(SpriteObject* this)
 {
-    unsigned short seqBase = this->sequenceMap[this->state];
+    uint16 seqBase = this->sequenceMap[this->state];
     assert(this->type >= 0);
     assert(this->type < OT_NMTYPES);
     assert(level_sequenceMap[this->type] >= 0);
@@ -165,7 +165,7 @@ void spriteObject_makeZorch(SpriteObject* this)
         constructZorch(this->sprite->s, this->sprite->pos.x, this->sprite->pos.y + F(32), this->sprite->pos.z, (getNextRand() & 0x40) ? OT_REDZORCH : OT_BLUEZORCH);
 }
 
-int monsterObject_signalHurt(MonsterObject* this, int param1, int param2)
+sint32 monsterObject_signalHurt(MonsterObject* this, sint32 param1, sint32 param2)
 {
     Object* hurter = (Object*)param2;
     assert(this->class == CLASS_MONSTER);
@@ -186,7 +186,7 @@ int monsterObject_signalHurt(MonsterObject* this, int param1, int param2)
     return 0;
 }
 
-void monsterObject_signalDestroyed(MonsterObject* this, int param1)
+void monsterObject_signalDestroyed(MonsterObject* this, sint32 param1)
 {
     Object* killed = (Object*)param1;
     if (killed == (Object*)this)
@@ -197,8 +197,8 @@ void monsterObject_signalDestroyed(MonsterObject* this, int param1)
 
 MthXyz followRoute(MonsterObject* this)
 {
-    int v, w;
-    Fixed32 planeDist;
+    sint32 v, w;
+    fix32 planeDist;
     sWallType* targetWall;
     MthXyz doorPos, wallP;
 
@@ -247,16 +247,16 @@ MthXyz followRoute(MonsterObject* this)
     return doorPos;
 }
 
-void spriteObject_makeSound(SpriteObject* this, int sndNm)
+void spriteObject_makeSound(SpriteObject* this, sint32 sndNm)
 {
     assert(this->type < OT_NMTYPES);
     assert(sndNm >= 0);
     spriteMakeSound(this->sprite, level_objectSoundMap[this->type] + sndNm);
 }
 
-void spriteHome(SpriteObject* this, SpriteObject* enemy, int fudge, int step)
+void spriteHome(SpriteObject* this, SpriteObject* enemy, sint32 fudge, sint32 step)
 {
-    int angle = getAngle(enemy->sprite->pos.x - this->sprite->pos.x, enemy->sprite->pos.z - this->sprite->pos.z);
+    sint32 angle = getAngle(enemy->sprite->pos.x - this->sprite->pos.x, enemy->sprite->pos.z - this->sprite->pos.z);
     angle = normalizeAngle(angle - this->sprite->angle);
 
     if (angle < -fudge)
@@ -265,7 +265,7 @@ void spriteHome(SpriteObject* this, SpriteObject* enemy, int fudge, int step)
         this->sprite->angle = normalizeAngle(this->sprite->angle + step);
 }
 
-void setState(SpriteObject* this, int state)
+void setState(SpriteObject* this, sint32 state)
 {
     assert(level_sequenceMap[this->type] != -2);
     this->state = state;
@@ -274,7 +274,7 @@ void setState(SpriteObject* this, int state)
 }
 
 /* returns 1 if found enemy, 0 if seeking */
-int monster_seekEnemy(MonsterObject* this, int floater, int speed2)
+sint32 monster_seekEnemy(MonsterObject* this, sint32 floater, sint32 speed2)
 {
     assert(this->class == CLASS_MONSTER);
     if (!this->enemy)
@@ -323,7 +323,7 @@ enum
     STATE_NMBASICSTATES
 };
 
-void normalMonster_idle(MonsterObject* this, int speed, int icuSound)
+void normalMonster_idle(MonsterObject* this, sint32 speed, sint32 icuSound)
 {
     if ((this->aiSlot & 0x1f) == (aicount & 0x1f))
     {
@@ -355,9 +355,9 @@ enum
     DO_FOLLOWROUTE,
     DO_GOIDLE
 };
-int decideWhatToDo(MonsterObject* this, int route, int floater)
+sint32 decideWhatToDo(MonsterObject* this, sint32 route, sint32 floater)
 {
-    int distance;
+    sint32 distance;
 #if 0
  if ((this->sprite->flags ^ this->enemy->sprite->flags) &
      SPRITEFLAG_UNDERWATER)
@@ -389,7 +389,7 @@ int decideWhatToDo(MonsterObject* this, int route, int floater)
     return DO_RANDOMWANDER;
 }
 
-void normalMonster_walking(MonsterObject* this, int collide, int fflags, int speed)
+void normalMonster_walking(MonsterObject* this, sint32 collide, sint32 fflags, sint32 speed)
 {
     assert(this->enemy);
     if ((collide & COLLIDE_SPRITE) && sprites[collide & 0xffff].owner == (Object*)this->enemy)
@@ -407,7 +407,7 @@ void normalMonster_walking(MonsterObject* this, int collide, int fflags, int spe
     }
     if (AISLOT(0xf))
     {
-        int action = decideWhatToDo(this, 1, 0);
+        sint32 action = decideWhatToDo(this, 1, 0);
         switch (action)
         {
             case DO_GOIDLE:
@@ -417,7 +417,7 @@ void normalMonster_walking(MonsterObject* this, int collide, int fflags, int spe
             case DO_RANDOMWANDER:
                 if (AISLOT(0x1f))
                 {
-                    this->sprite->angle = ((short)getNextRand()) * 360;
+                    this->sprite->angle = ((sint16)getNextRand()) * 360;
                     this->sprite->vel.x = MTH_Cos(this->sprite->angle) << speed;
                     this->sprite->vel.z = MTH_Sin(this->sprite->angle) << speed;
                 }
@@ -447,9 +447,9 @@ void normalMonster_walking(MonsterObject* this, int collide, int fflags, int spe
     }
 }
 
-void initProjectile(MthXyz* from, MthXyz* to, MthXyz* outPos, MthXyz* outVel, int height, int speed2)
+void initProjectile(MthXyz* from, MthXyz* to, MthXyz* outPos, MthXyz* outVel, sint32 height, sint32 speed2)
 {
-    Fixed32 d;
+    fix32 d;
     d = approxDist(from->x - to->x, from->y - to->y, from->z - to->z);
     d = d >> speed2;
     *outPos = *from;
@@ -462,7 +462,7 @@ void initProjectile(MthXyz* from, MthXyz* to, MthXyz* outPos, MthXyz* outVel, in
     outPos->z += outVel->z << 3;
 }
 
-void doh_func(Object* o, int i, int j, int k)
+void doh_func(Object* o, sint32 i, sint32 j, sint32 k)
 {
     assert(0);
 }
@@ -473,34 +473,34 @@ void runObjects(void)
     aicount++;
 }
 
-void signalAllObjects(int signal, int param1, int param2)
+void signalAllObjects(sint32 signal, sint32 param1, sint32 param2)
 {
     signalList(objectRunList, signal, param1, param2);
     signalList(objectIdleList, signal, param1, param2);
 }
 
-void pbObject_move(PushBlockObject* pbo, Fixed32 dy)
+void pbObject_move(PushBlockObject* pbo, fix32 dy)
 {
-    int nowPos;
+    sint32 nowPos;
     nowPos = f(pbo->offset);
     pbo->offset += dy;
     movePushBlock(pbo->pbNum, 0, f(pbo->offset) - nowPos, 0);
 }
 
-void pbObject_moveTo(PushBlockObject* pbo, int y)
+void pbObject_moveTo(PushBlockObject* pbo, sint32 y)
 {
-    int nowPos;
+    sint32 nowPos;
     nowPos = f(pbo->offset);
     pbo->offset = F(y);
     movePushBlock(pbo->pbNum, 0, f(pbo->offset) - nowPos, 0);
 }
 
-void explodeMaskedWall(int wallNm)
+void explodeMaskedWall(sint32 wallNm)
 {
-    int size;
-    int i, sector;
+    sint32 size;
+    sint32 i, sector;
     MthXyz v1, v2, origin, p;
-    Fixed32 u, v;
+    fix32 u, v;
     sWallType* wall = level_wall + wallNm;
     assert(wall->flags & WALLFLAG_EXPLODABLE);
     sector = findWallsSector(wallNm);
@@ -532,8 +532,8 @@ void explodeMaskedWall(int wallNm)
     }
     /* explode other side of wall if appilcable */
     {
-        int w;
-        int s;
+        sint32 w;
+        sint32 s;
         s = wall->nextSector;
         assert(s != -1);
         for (w = level_sector[s].firstWall; w <= level_sector[s].lastWall; w++)
@@ -547,9 +547,9 @@ void explodeMaskedWall(int wallNm)
     }
 }
 
-void explodeAllMaskedWallsInSector(int s)
+void explodeAllMaskedWallsInSector(sint32 s)
 {
-    int w;
+    sint32 w;
     for (w = level_sector[s].firstWall; w <= level_sector[s].lastWall; w++)
         if (level_wall[w].flags & WALLFLAG_EXPLODABLE)
             explodeMaskedWall(w);

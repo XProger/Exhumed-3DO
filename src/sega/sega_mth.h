@@ -5,41 +5,41 @@
 #include <math.h>
 
 typedef struct {
-    Fixed32 x, y, z;
+    fix32 x, y, z;
 } MthXyz;
 
 typedef struct {
-    Fixed32 val[3][4];
+    fix32 val[3][4];
 } MthMatrix;
 
 typedef struct MthMatrixTbl {
-    Uint16 stackSize;
+    uint16 stackSize;
     MthMatrix* current;
     MthMatrix* stack;
 } MthMatrixTbl;
 
 typedef struct {
-    Sint32 x, y;
+    sint32 x, y;
 } XyInt;
 
 #ifndef TODO
 #endif
 
 #if 0
-Uint32  MTH_GetRand(void);
-Fixed32 MTH_Div(Fixed32 a, Fixed32 b);
-Fixed32 MTH_Product(Fixed32* a, Fixed32* b);
-Fixed32 MTH_Sin(Fixed32 degree);
-Fixed32 MTH_Cos(Fixed32 degree);
-Fixed32 MTH_Atan(Fixed32 y, Fixed32 x);
-void    MTH_InitialMatrix(MthMatrixTbl *matrixTbl, Uint16 stackSize, MthMatrix *matrix);
+uint32  MTH_GetRand(void);
+fix32 MTH_Div(fix32 a, fix32 b);
+fix32 MTH_Product(fix32* a, fix32* b);
+fix32 MTH_Sin(fix32 degree);
+fix32 MTH_Cos(fix32 degree);
+fix32 MTH_Atan(fix32 y, fix32 x);
+void    MTH_InitialMatrix(MthMatrixTbl *matrixTbl, uint16 stackSize, MthMatrix *matrix);
 void    MTH_ClearMatrix(MthMatrixTbl *matrixTbl);
 void    MTH_PushMatrix(MthMatrixTbl *matrixTbl);
 void    MTH_PopMatrix(MthMatrixTbl *matrixTbl);
-void    MTH_RotateMatrixX(MthMatrixTbl *matrixTbl, Fixed32 xDegree);
-void    MTH_RotateMatrixY(MthMatrixTbl *matrixTbl, Fixed32 yDegree);
-void    MTH_RotateMatrixZ(MthMatrixTbl *matrixTbl, Fixed32 zDegree);
-void    MTH_MoveMatrix(MthMatrixTbl *matrixTbl, Fixed32 x, Fixed32 y, Fixed32 z);
+void    MTH_RotateMatrixX(MthMatrixTbl *matrixTbl, fix32 xDegree);
+void    MTH_RotateMatrixY(MthMatrixTbl *matrixTbl, fix32 yDegree);
+void    MTH_RotateMatrixZ(MthMatrixTbl *matrixTbl, fix32 zDegree);
+void    MTH_MoveMatrix(MthMatrixTbl *matrixTbl, fix32 x, fix32 y, fix32 z);
 void    MTH_CoordTrans(MthMatrix *matrix, MthXyz *src, MthXyz *ans);
 #else
 #define MTH_GetRand()       4

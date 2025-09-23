@@ -15,14 +15,14 @@
 #include "picset.h"
 
 #ifdef TODO // unused
-unsigned char* loadPic(int fd, int* width, int* height)
+uint8* loadPic(sint32 fd, sint32* width, sint32* height)
 {
-    short w, h;
-    short flags;
-    unsigned char* data;
-    fs_read(fd, (char*)&w, 2);
-    fs_read(fd, (char*)&h, 2);
-    fs_read(fd, (char*)&flags, 2);
+    sint16 w, h;
+    sint16 flags;
+    uint8* data;
+    fs_read(fd, (sint8*)&w, 2);
+    fs_read(fd, (sint8*)&h, 2);
+    fs_read(fd, (sint8*)&flags, 2);
     *width = w;
     *height = h;
     data = mem_malloc(0, *width * *height);
@@ -32,25 +32,25 @@ unsigned char* loadPic(int fd, int* width, int* height)
 }
 #endif
 
-void skipPicSet(int fd)
+void skipPicSet(sint32 fd)
 {
-    int size;
-    char* data;
-    fs_read(fd, (char*)&size, 4);
+    sint32 size;
+    sint8* data;
+    fs_read(fd, (sint8*)&size, 4);
     data = mem_malloc(0, size);
     fs_read(fd, data, size);
     mem_free(data);
 }
 
-int loadPicSet(int fd, unsigned short** palletes, unsigned int** datas, int maxNmPics)
+sint32 loadPicSet(sint32 fd, uint16** palletes, uint32** datas, sint32 maxNmPics)
 {
-    char* data;
-    char* d;
-    char* lastPallete;
-    int chunkSize;
-    int size;
-    int pic, w, h;
-    fs_read(fd, (char*)&size, 4);
+    sint8* data;
+    sint8* d;
+    sint8* lastPallete;
+    sint32 chunkSize;
+    sint32 size;
+    sint32 pic, w, h;
+    fs_read(fd, (sint8*)&size, 4);
 
     size = FS_INT(&size);
 
@@ -61,16 +61,16 @@ int loadPicSet(int fd, unsigned short** palletes, unsigned int** datas, int maxN
     lastPallete = NULL;
     while (d < data + size)
     {
-        assert(!(((int)d) & 3));
-        datas[pic] = ((unsigned int*)d) + 1;
-        chunkSize = FS_INT((int*)d);
-        w = ((int*)d)[1] = FS_INT(((int*)d) + 1);
-        h = ((int*)d)[2] = FS_INT(((int*)d) + 2);
+        assert(!(((sint32)d) & 3));
+        datas[pic] = ((uint32*)d) + 1;
+        chunkSize = FS_INT((sint32*)d);
+        w = ((sint32*)d)[1] = FS_INT(((sint32*)d) + 1);
+        h = ((sint32*)d)[2] = FS_INT(((sint32*)d) + 2);
         d += chunkSize + 12;
-        if (FS_INT((int*)d) & 1)
+        if (FS_INT((sint32*)d) & 1)
         {
             d += 4;
-            palletes[pic] = (unsigned short*)d;
+            palletes[pic] = (uint16*)d;
             lastPallete = d;
             d += 256 * 2;
         }
@@ -78,7 +78,7 @@ int loadPicSet(int fd, unsigned short** palletes, unsigned int** datas, int maxN
         {
             d += 4;
             assert(lastPallete);
-            palletes[pic] = (unsigned short*)lastPallete;
+            palletes[pic] = (uint16*)lastPallete;
         }
         pic++;
         assert(pic < maxNmPics);

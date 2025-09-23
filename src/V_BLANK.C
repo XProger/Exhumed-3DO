@@ -9,33 +9,33 @@
 #include "v_blank.h"
 #include "util.h"
 
-#define INPUTQSIZE 16 /* dont change this */
-unsigned volatile short inputQ[INPUTQSIZE];
-unsigned volatile short lastInputSample;
-unsigned volatile short inputAccum;
-volatile char controlerPresent;
-volatile char analogControlerPresent;
-volatile short analogX;
-volatile short analogY;
-volatile char analogIndexButtonsPresent;
-volatile short analogTR;
-volatile short analogTL;
-volatile char inputQHead, inputQTail;
+sint32 fadeDir, fadePos, fadeEnd;
+sint32 abcResetEnable = 0, abcResetDisable = 0;
 
-volatile int fadeDir, fadePos, fadeEnd;
-volatile int abcResetEnable = 0, abcResetDisable = 0;
+#define INPUTQSIZE 16 /* dont change this */
+uint16 inputQ[INPUTQSIZE];
+uint16 lastInputSample;
+uint16 inputAccum;
+sint16 analogX;
+sint16 analogY;
+sint16 analogTR;
+sint16 analogTL;
+sint8 controlerPresent;
+sint8 analogControlerPresent;
+sint8 analogIndexButtonsPresent;
+sint8 inputQHead, inputQTail;
 
 /*
-volatile Uint16	PadData1  = 0x0000;
-volatile Uint16	PadData1E = 0x0000;
-volatile Uint16	PadData2  = 0x0000;
-volatile Uint16	PadData2E = 0x0000;
+uint16	PadData1  = 0x0000;
+uint16	PadData1E = 0x0000;
+uint16	PadData2  = 0x0000;
+uint16	PadData2E = 0x0000;
 */
-Uint8* Pad;
+uint8* Pad;
 PerMulInfo* Mul;
-volatile Uint32 vtimer = 0, htimer = 0, secs = 0;
+uint32 vtimer = 0, htimer = 0, secs = 0;
 
-Uint8 PadWorkArea[4 * (PER_SIZE_NCON_15 * 6 + 69)];
+uint8 PadWorkArea[4 * (PER_SIZE_NCON_15 * 6 + 69)];
 
 void UsrHblankIn(void)
 {
@@ -44,8 +44,8 @@ void UsrHblankIn(void)
 
 void processInput(void)
 {
-    unsigned short accum;
-    int i, pos, size, id;
+    uint16 accum;
+    sint32 i, pos, size, id;
     accum = 0xffff;
     PER_LGetPer((void**)&Pad, &Mul);
 
@@ -96,11 +96,11 @@ void processInput(void)
     lastInputSample = accum;
     inputAccum &= accum;
     /* add input sample */
-    inputQ[(int)inputQHead] = accum;
+    inputQ[(sint32)inputQHead] = accum;
     inputQHead = (inputQHead + 1) & 0xf;
 }
 
-volatile char enableDoorReset = 1;
+sint8 enableDoorReset = 1;
 
 void UsrVblankStart(void)
 {
@@ -133,7 +133,7 @@ void UsrVblankStart(void)
 
 void initInput(void)
 {
-    int o = get_imask();
+    sint32 o = get_imask();
     set_imask(0xff);
     inputQHead = 0;
     inputAccum = 0xffff;
@@ -148,7 +148,7 @@ void UsrVblankEnd(void)
     processInput();
 }
 
-volatile Sint32 perFlag;
+sint32 perFlag;
 
 void CheckVblankEnd(void)
 {
@@ -157,15 +157,15 @@ void CheckVblankEnd(void)
 
 #ifndef NDEBUG
 
-int errorQ[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-int prQ[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-int errorQSize = 0;
+sint32 errorQ[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+sint32 prQ[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+sint32 errorQSize = 0;
 
 #pragma interrupt
 void userBreakBlam(void)
 {
-    int dummy[1];
-    __asm__ volatile("sts.l pr,%0\n" : "=r"((int)dummy[0]));
+    sint32 dummy[1];
+    __asm__ volatile("sts.l pr,%0\n" : "=r"((sint32)dummy[0]));
     errorQ[errorQSize] = dummy[4];
     prQ[errorQSize] = dummy[0];
     errorQSize = (errorQSize + 1) & 0xf;
@@ -176,7 +176,7 @@ void userBreakBlam(void)
 
     return;
 #if 0
- int i,x,y;
+ sint32 i,x,y;
  for (y=0;y<256;y++)
     for (x=0;x<512;x++)
        {POKE_W(SCL_VDP2_VRAM+(y<<10)+(x<<1),RGB(x&0xf,x&0xf,x&0xf));

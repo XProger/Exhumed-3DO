@@ -19,7 +19,7 @@ static struct
 {
     Object *o, *toList;
 } objMove[MAXNMMOVES];
-static int nmMoves;
+static sint32 nmMoves;
 void delay_moveObject(Object* o, Object* toList)
 {
     assert(nmMoves < MAXNMMOVES);
@@ -50,7 +50,7 @@ void moveObject(Object* o, Object* toList)
 
 void processDelayedMoves(void)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < nmMoves; i++)
         moveObject(objMove[i].o, objMove[i].toList);
     nmMoves = 0;
@@ -58,7 +58,7 @@ void processDelayedMoves(void)
 
 void initObjects(void)
 {
-    int i;
+    sint32 i;
     resetLimitCounters();
     objectRunList = objects + 0;
     objectIdleList = objects + 1;
@@ -83,7 +83,7 @@ void initObjects(void)
     nmMoves = 0;
 }
 
-Object* getFreeObject(messHandler handler, int type, int class)
+Object* getFreeObject(messHandler handler, sint32 type, sint32 class)
 {
     if (!objectFreeList->next)
         return NULL;
@@ -95,7 +95,7 @@ Object* getFreeObject(messHandler handler, int type, int class)
     return objectFreeList->next;
 }
 
-void signalObject(Object* object, int message, int param1, int param2)
+void signalObject(Object* object, sint32 message, sint32 param1, sint32 param2)
 {
 #ifndef NDEBUG
     checkStack();
@@ -112,7 +112,7 @@ void signalObject(Object* object, int message, int param1, int param2)
     object->func(object, message, param1, param2);
 }
 
-void signalList(Object* head, int message, int param1, int param2)
+void signalList(Object* head, sint32 message, sint32 param1, sint32 param2)
 {
     Object* o;
     for (o = head->next; o; o = o->next)
@@ -122,19 +122,19 @@ void signalList(Object* head, int message, int param1, int param2)
     }
 }
 
-void null_func(Object* _this, int message, int param1, int param2)
+void null_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     return;
 }
 
 void delayKill(Object* o)
 {
-    int oldClass;
-    int oldType;
+    sint32 oldClass;
+    sint32 oldType;
     checkStack();
     assert(o->class != CLASS_DEAD);
     assert(o->type != OT_DEAD);
-    signalObject(o, SIGNAL_OBJECTDESTROYED, (int)o, 0);
+    signalObject(o, SIGNAL_OBJECTDESTROYED, (sint32)o, 0);
     oldType = o->type;
     o->type = OT_DEAD;
     o->func = null_func;
@@ -143,14 +143,14 @@ void delayKill(Object* o)
     delay_moveObject(o, objectFreeList);
     if (oldClass == CLASS_MONSTER || (oldType >= OT_SANDALS && oldType <= OT_FEATHER)) /* just an optimization */
     {
-        signalList(objectRunList, SIGNAL_OBJECTDESTROYED, (int)o, 0);
-        signalList(objectIdleList, SIGNAL_OBJECTDESTROYED, (int)o, 0);
+        signalList(objectRunList, SIGNAL_OBJECTDESTROYED, (sint32)o, 0);
+        signalList(objectIdleList, SIGNAL_OBJECTDESTROYED, (sint32)o, 0);
     }
 }
 
-void registerPBObject(int pbNm, Object* me)
+void registerPBObject(sint32 pbNm, Object* me)
 {
-    int w;
+    sint32 w;
     /* dPrint("registering pb object %d (ot=%d)\n",pbNm,me->type); */
     assert(pbNm >= 0);
     assert(pbNm < level_nmPushBlocks);
@@ -163,25 +163,19 @@ void registerPBObject(int pbNm, Object* me)
     }
 }
 
-static int objectPPos;
+static sint32 objectPPos;
 
-#if 0
-static char suckChar(void)
-{return level_objectParams[objectPPos++];
-}
-#endif
-
-short suckShort(void)
+sint16 suckShort(void)
 {
-    short ret;
+    sint16 ret;
     ret = (level_objectParams[objectPPos] << 8) | (level_objectParams[objectPPos + 1]);
     objectPPos += 2;
     return ret;
 }
 
-int suckInt(void)
+sint32 suckInt(void)
 {
-    int ret;
+    sint32 ret;
     ret = (level_objectParams[objectPPos] << 24) | (level_objectParams[objectPPos + 1] << 16) | (level_objectParams[objectPPos + 2] << 8) | (level_objectParams[objectPPos + 3] << 0);
     objectPPos += 4;
     return ret;
@@ -200,12 +194,12 @@ void suckSpriteParams(Sprite* s)
     s->pos.x = F(suckShort()); /* mirror <<<< */
     s->pos.y = F(suckShort());
     s->pos.z = F(suckShort());
-    s->angle = normalizeAngle(((int)suckShort()) * 5760);
+    s->angle = normalizeAngle(((sint32)suckShort()) * 5760);
 }
 
 void placeObjects(void)
 {
-    int o, p1, p2, p3, p4, i;
+    sint32 o, p1, p2, p3, p4, i;
 
     for (o = 0; o < level_nmObjects; o++)
     {
@@ -483,7 +477,7 @@ void placeObjects(void)
     shiftSprites();
 
 #if 0
- {int i;
+ (sint32 i;
   /* put objects on the ground */
   for (i=0;i<MAXOBJECTS;i++)
      {if (objects[i].type!=OT_DEAD)
@@ -491,7 +485,7 @@ void placeObjects(void)
 	      objects[i].class==CLASS_MONSTER) ||
 	     objects[i].type==OT_CAMEL)
 	    {Sprite *s=((SpriteObject *)&(objects[i]))->sprite;
-	     int d=findFloorDistance(s->s,&(s->pos));
+	     sint32 d=findFloorDistance(s->s,&(s->pos));
 	     s->pos.y+=s->radius-d;
 	    }
      }
@@ -500,8 +494,8 @@ void placeObjects(void)
 
     /* put the map in a random pot */
     {
-        int potCount = 0;
-        int c;
+        sint32 potCount = 0;
+        sint32 c;
         Object* o;
         for (o = objectIdleList; o; o = o->next)
         {
@@ -526,24 +520,24 @@ void placeObjects(void)
     }
 }
 
-void hurtSprite(Sprite* sprite, Object* hurter, int damage)
+void hurtSprite(Sprite* sprite, Object* hurter, sint32 damage)
 {
     assert(sprite->owner->class != CLASS_DEAD);
     assert(sprite->owner->type != OT_DEAD);
-    signalObject(sprite->owner, SIGNAL_HURT, damage, (int)hurter);
+    signalObject(sprite->owner, SIGNAL_HURT, damage, (sint32)hurter);
 }
 
 #define MAXPERSECTOR 20
-void radialDamage(Object* this, MthXyz* center, int sector, int damage, Fixed32 radius)
+void radialDamage(Object* this, MthXyz* center, sint32 sector, sint32 damage, fix32 radius)
 {
-    char processed[MAXNMSECTORS]; /* 0=not, 1=need to be, 2=has been */
-    Fixed32 dist;
+    sint8 processed[MAXNMSECTORS]; /* 0=not, 1=need to be, 2=has been */
+    fix32 dist;
     MthXyz normal;
     Sprite* sp;
     SpriteObject* list[MAXPERSECTOR];
-    int nmToHurt;
-    int w, i, s, dam, push;
-    int done;
+    sint32 nmToHurt;
+    sint32 w, i, s, dam, push;
+    sint32 done;
     for (i = 0; i < MAXNMSECTORS; i++)
         processed[i] = 0;
     processed[sector] = 1;
@@ -576,7 +570,7 @@ void radialDamage(Object* this, MthXyz* center, int sector, int damage, Fixed32 
                         continue;
                     dam = MTH_Mul(damage, F(1) - MTH_Div(dist, radius));
                     {
-                        int pdam = dam;
+                        sint32 pdam = dam;
                         if (pdam > 50)
                             pdam = 50;
                         push = MTH_Div((pdam << 14), dist);
@@ -587,7 +581,7 @@ void radialDamage(Object* this, MthXyz* center, int sector, int damage, Fixed32 
                         sp->vel.y += normal.y;
                         sp->vel.z += normal.z;
                     }
-                    signalObject((Object*)list[nmToHurt], SIGNAL_HURT, dam, (int)this);
+                    signalObject((Object*)list[nmToHurt], SIGNAL_HURT, dam, (sint32)this);
                 }
                 /* add close adjacent sectors */
                 for (w = level_sector[s].firstWall; w <= level_sector[s].lastWall; w++)
@@ -598,7 +592,7 @@ void radialDamage(Object* this, MthXyz* center, int sector, int damage, Fixed32 
                     normal.x = center->x - normal.x;
                     normal.y = center->y - normal.y;
                     normal.z = center->z - normal.z;
-                    dist = MTH_Product((Fixed32*)level_wall[w].normal, (Fixed32*)&normal);
+                    dist = MTH_Product((fix32*)level_wall[w].normal, (fix32*)&normal);
                     if (dist < radius)
                         if (processed[level_wall[w].nextSector] == 0)
                         {
@@ -612,8 +606,8 @@ void radialDamage(Object* this, MthXyz* center, int sector, int damage, Fixed32 
 }
 
 #if 0
-void radialDamage(Object *this,MthXyz *center,int damage,Fixed32 radius)
-{int nmList,dist,dam,push;
+void radialDamage(Object *this,MthXyz *center,sint32 damage,fix32 radius)
+(sint32 nmList,dist,dam,push;
  MthXyz normal;
  Object *o,*list[MAXOBJECTS];
  Sprite *s;
@@ -647,27 +641,27 @@ void radialDamage(Object *this,MthXyz *center,int damage,Fixed32 radius)
 	and kills something that is still in an earlier explosion's list */
      assert(s->owner->class!=CLASS_DEAD);
      assert(s->owner->type!=OT_DEAD);
-     signalObject(s->owner,SIGNAL_HURT,dam,(int)this);
+     signalObject(s->owner,SIGNAL_HURT,dam,(sint32)this);
     }
 }
 #endif
 
-void pushBlockMakeSound(PushBlockObject* source, int sndNm)
+void pushBlockMakeSound(PushBlockObject* source, sint32 sndNm)
 {
     MthXyz pos;
-    int s = source->pbNum;
+    sint32 s = source->pbNum;
     pos.x = F(level_sector[level_pushBlock[s].enclosingSector].center[0]);
     pos.y = F(level_sector[level_pushBlock[s].enclosingSector].center[1]);
     pos.z = F(level_sector[level_pushBlock[s].enclosingSector].center[2]);
-    posMakeSound((int)(source), &pos, (sndNm));
+    posMakeSound((sint32)(source), &pos, (sndNm));
 }
 
 void pushBlockAdjustSound(PushBlockObject* source)
 {
     MthXyz pos;
-    int s = source->pbNum;
+    sint32 s = source->pbNum;
     pos.x = F(level_sector[level_pushBlock[s].enclosingSector].center[0]);
     pos.y = F(level_sector[level_pushBlock[s].enclosingSector].center[1]);
     pos.z = F(level_sector[level_pushBlock[s].enclosingSector].center[2]);
-    posAdjustSound((int)(source), &pos);
+    posAdjustSound((sint32)(source), &pos);
 }

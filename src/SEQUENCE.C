@@ -11,27 +11,27 @@
 #include "grenpal.h"
 #include "manpal.h"
 
-int level_nmSequences;
-int level_nmFrames;
-int level_nmChunks;
+sint32 level_nmSequences;
+sint32 level_nmFrames;
+sint32 level_nmChunks;
 
-short* level_sequence;
+sint16* level_sequence;
 sFrameType* level_frame;
 sChunkType* level_chunk;
-short* level_sequenceMap;
+sint16* level_sequenceMap;
 
-int loadSequences(int fd, int tileBase, int soundBase)
+sint32 loadSequences(sint32 fd, sint32 tileBase, sint32 soundBase)
 {
-    int size, i;
-    char* buffer;
+    sint32 size, i;
+    sint8* buffer;
     struct seqHeader* head;
     assert(fd >= 0);
-    fs_read(fd, (char*)&size, 4);
+    fs_read(fd, (sint8*)&size, 4);
 
     size = FS_INT(&size);
 
     assert(size > 0 && size < 1024 * 1024);
-    buffer = (char*)mem_malloc(0, size);
+    buffer = (sint8*)mem_malloc(0, size);
     assert(buffer);
     fs_read(fd, buffer, size);
 
@@ -49,7 +49,7 @@ int loadSequences(int fd, int tileBase, int soundBase)
     assert(level_nmFrames >= 0);
     assert(level_nmChunks >= 0);
 
-    assert(((unsigned int)size) == sizeof(struct seqHeader) + level_nmSequences * sizeof(short) + level_nmFrames * sizeof(sFrameType) + level_nmChunks * sizeof(sChunkType) + OT_NMTYPES * sizeof(short));
+    assert(((uint32)size) == sizeof(struct seqHeader) + level_nmSequences * sizeof(sint16) + level_nmFrames * sizeof(sFrameType) + level_nmChunks * sizeof(sChunkType) + OT_NMTYPES * sizeof(sint16));
 
     level_frame = (sFrameType*)(buffer + sizeof(struct seqHeader));
 
@@ -63,7 +63,7 @@ int loadSequences(int fd, int tileBase, int soundBase)
 
 #ifndef NDEBUG
     {
-        int i;
+        sint32 i;
         for (i = 0; i < level_nmFrames; i++)
         {
             assert(level_frame[i].pad[0] == 0);
@@ -85,7 +85,7 @@ int loadSequences(int fd, int tileBase, int soundBase)
 
 #ifndef NDEBUG
     {
-        int i;
+        sint32 i;
         for (i = 0; i < level_nmChunks; i++)
         {
             assert(level_chunk[i].pad == 0);
@@ -93,7 +93,7 @@ int loadSequences(int fd, int tileBase, int soundBase)
     }
 #endif
 
-    level_sequence = (short*)(level_chunk + level_nmChunks);
+    level_sequence = (sint16*)(level_chunk + level_nmChunks);
 
     for (i = 0; i < level_nmSequences; i++)
     {
@@ -115,29 +115,29 @@ int loadSequences(int fd, int tileBase, int soundBase)
 
     assert(level_sequence[0] == 0);
     /* paranoia checks */
-    assert(!(((int)level_sequence) & 3));
-    assert(!(((int)level_frame) & 3));
-    assert(!(((int)level_chunk) & 3));
+    assert(!(((sint32)level_sequence) & 3));
+    assert(!(((sint32)level_frame) & 3));
+    assert(!(((sint32)level_chunk) & 3));
     return 1;
 }
 
-short* level_wSequence;
+sint16* level_wSequence;
 sFrameType* level_wFrame;
 sChunkType* level_wChunk;
 
-int loadWeaponSequences(int fd)
+sint32 loadWeaponSequences(sint32 fd)
 {
-    int size, i;
-    int level_nmSequences, level_nmFrames, level_nmChunks;
-    char* buffer;
+    sint32 size, i;
+    sint32 level_nmSequences, level_nmFrames, level_nmChunks;
+    sint8* buffer;
     struct seqHeader* head;
     assert(fd >= 0);
-    fs_read(fd, (char*)&size, 4);
+    fs_read(fd, (sint8*)&size, 4);
 
     size = FS_INT(&size);
 
     assert(size > 0 && size < 1024 * 1024);
-    buffer = (char*)mem_malloc(0, size);
+    buffer = (sint8*)mem_malloc(0, size);
     assert(buffer);
     fs_read(fd, buffer, size);
 
@@ -167,7 +167,7 @@ int loadWeaponSequences(int fd)
 
 #ifndef NDEBUG
     {
-        int i;
+        sint32 i;
         for (i = 0; i < level_nmFrames; i++)
         {
             assert(level_wFrame[i].pad[0] == 0);
@@ -187,7 +187,7 @@ int loadWeaponSequences(int fd)
         v->tile = FS_SHORT(&v->tile);
     }
 
-    level_wSequence = (short*)(level_wChunk + level_nmChunks);
+    level_wSequence = (sint16*)(level_wChunk + level_nmChunks);
 
     for (i = 0; i < level_nmSequences; i++)
     {
@@ -196,24 +196,24 @@ int loadWeaponSequences(int fd)
 
     assert(level_wSequence[0] == 0);
     /* paranoia checks */
-    assert(!(((int)level_wSequence) & 3));
-    assert(!(((int)level_wFrame) & 3));
-    assert(!(((int)level_wChunk) & 3));
+    assert(!(((sint32)level_wSequence) & 3));
+    assert(!(((sint32)level_wFrame) & 3));
+    assert(!(((sint32)level_wChunk) & 3));
     return 1;
 }
 
 #define QSIZE 8
 typedef struct
 {
-    int seq, seqWith;
-    int centerx, centery;
+    sint32 seq, seqWith;
+    sint32 centerx, centery;
 } QType;
 
 static QType sequenceQ[QSIZE];
-static int qHead, qTail;
-static int frame;
-static int clock;
-static int sequenceOver;
+static sint32 qHead, qTail;
+static sint32 frame;
+static sint32 clock;
+static sint32 sequenceOver;
 
 void initWeaponQ(void)
 {
@@ -225,7 +225,7 @@ void initWeaponQ(void)
     sequenceOver = 1;
 }
 
-void queueWeaponSequence(int seqNm, int cx, int cy)
+void queueWeaponSequence(sint32 seqNm, sint32 cx, sint32 cy)
 {
     qHead = (qHead + 1) & 0x7;
     assert(qHead != qTail);
@@ -236,48 +236,48 @@ void queueWeaponSequence(int seqNm, int cx, int cy)
     sequenceOver = 0;
 }
 
-void addWeaponSequence(int seqNm)
+void addWeaponSequence(sint32 seqNm)
 {
     sequenceQ[qHead].seqWith = seqNm;
 }
 
-int getWeaponSequenceQSize(void)
+sint32 getWeaponSequenceQSize(void)
 {
     return (qHead - qTail) & 0x7;
 }
 
-int getCurrentWeaponSequence(void)
+sint32 getCurrentWeaponSequence(void)
 {
     return sequenceQ[qTail].seq;
 }
 
-int weaponSequenceQEmpty(void)
+sint32 weaponSequenceQEmpty(void)
 {
     return sequenceOver;
 }
 
-int getWeaponFrame(void)
+sint32 getWeaponFrame(void)
 {
     return frame;
 }
 
-void setWeaponFrame(int f)
+void setWeaponFrame(sint32 f)
 {
     frame = f;
 }
 
 /* returns cumulative OR of the flags of the new frames passed and displayed */
-int advanceWeaponSequence(int xbase, int ybase, int hack)
+sint32 advanceWeaponSequence(sint32 xbase, sint32 ybase, sint32 hack)
 {
-    int j;
-    int gframe, chunk;
-    int sequence, flip;
-    int VDP2PicOn;
-    int retVal = 0;
-    int sound;
-    int overlay;
-    int xo, yo;
-    static int loadedPal = 0;
+    sint32 j;
+    sint32 gframe, chunk;
+    sint32 sequence, flip;
+    sint32 VDP2PicOn;
+    sint32 retVal = 0;
+    sint32 sound;
+    sint32 overlay;
+    sint32 xo, yo;
+    static sint32 loadedPal = 0;
 
     XyInt pos;
 
@@ -355,14 +355,14 @@ int advanceWeaponSequence(int xbase, int ybase, int hack)
             sChunkType* c = level_wChunk + chunk;
             if (getPicClass(c->tile) == TILEVDP)
             {
-                unsigned short* colorRam = (unsigned short*)SCL_COLRAM_ADDR;
+                uint16* colorRam = (uint16*)SCL_COLRAM_ADDR;
                 SCL_SET_N0CAOS(0);
                 if (sequence >= 30 && sequence < 35)
                 {
                     if (loadedPal != 1)
                     {
                         for (j = 0; j < 256; j++)
-                            colorRam[(NMOBJECTPALLETES + 1) * 256 + j] = ((unsigned short*)grenadePal)[j];
+                            colorRam[(NMOBJECTPALLETES + 1) * 256 + j] = ((uint16*)grenadePal)[j];
                         loadedPal = 1;
                     }
                     SCL_SET_N0CAOS(6);
@@ -372,7 +372,7 @@ int advanceWeaponSequence(int xbase, int ybase, int hack)
                     if (loadedPal != 2)
                     {
                         for (j = 0; j < 256; j++)
-                            colorRam[(NMOBJECTPALLETES + 1) * 256 + j] = ((unsigned short*)manaclePal)[j];
+                            colorRam[(NMOBJECTPALLETES + 1) * 256 + j] = ((uint16*)manaclePal)[j];
                         loadedPal = 2;
                     }
                     SCL_SET_N0CAOS(6);

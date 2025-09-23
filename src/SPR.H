@@ -1,31 +1,31 @@
 struct cmdTable
 { /* Sprite Command Table */
-    Uint16 control; /* control word                     */
-    Uint16 link; /* command link                     */
-    Uint16 drawMode; /* draw mode                        */
-    Uint16 color; /* color info.                      */
-    Uint16 charAddr; /* character address                */
-    Uint16 charSize; /* character size                   */
-    Sint16 ax; /* point A x                        */
-    Sint16 ay; /* point A y                        */
-    Sint16 bx; /* point B x                        */
-    Sint16 by; /* point B y                        */
-    Sint16 cx; /* point C x                        */
-    Sint16 cy; /* point C y                        */
-    Sint16 dx; /* point D x                        */
-    Sint16 dy; /* point D y                        */
-    Uint16 grshAddr; /* gouraud shading table address    */
-    Uint16 dummy; /* dummy area                       */
+    uint16 control; /* control word                     */
+    uint16 link; /* command link                     */
+    uint16 drawMode; /* draw mode                        */
+    uint16 color; /* color info.                      */
+    uint16 charAddr; /* character address                */
+    uint16 charSize; /* character size                   */
+    sint16 ax; /* point A x                        */
+    sint16 ay; /* point A y                        */
+    sint16 bx; /* point B x                        */
+    sint16 by; /* point B y                        */
+    sint16 cx; /* point C x                        */
+    sint16 cy; /* point C y                        */
+    sint16 dx; /* point D x                        */
+    sint16 dy; /* point D y                        */
+    uint16 grshAddr; /* gouraud shading table address    */
+    uint16 dummy; /* dummy area                       */
 };
 
 struct gourTable
 {
-    Uint16 entry[4];
+    uint16 entry[4];
 };
 
 struct sprLookupTbl
 {
-    Uint16 entry[16];
+    uint16 entry[16];
 };
 
 #define CTRL_END 0x8000 /* control word end bit mask        */
@@ -97,28 +97,28 @@ struct sprLookupTbl
 #define COLOR_4 0x0020 /* 8 bit/pixel & 256 color bank mode*/
 #define COLOR_5 0x0028 /* 16 bit/pixel & RGB mode          */
 
-void EZ_initSprSystem(int nmCommands, int nmCluts, int nmGour, int eraseWriteEndLine, unsigned short eraseWriteColor);
-void EZ_setErase(int eraseWriteEndLine, unsigned short eraseWriteColor);
-void EZ_setChar(int charNm, int colorMode, int width, int height, BYTE* data);
-void EZ_setLookupTbl(int tblNm, struct sprLookupTbl* tbl);
+void EZ_initSprSystem(sint32 nmCommands, sint32 nmCluts, sint32 nmGour, sint32 eraseWriteEndLine, uint16 eraseWriteColor);
+void EZ_setErase(sint32 eraseWriteEndLine, uint16 eraseWriteColor);
+void EZ_setChar(sint32 charNm, sint32 colorMode, sint32 width, sint32 height, uint8* data);
+void EZ_setLookupTbl(sint32 tblNm, struct sprLookupTbl* tbl);
 void EZ_openCommand(void);
-void EZ_normSpr(short dir, short drawMode, short color, short charNm, XyInt* pos, struct gourTable* gTable);
-void EZ_distSpr(short dir, short drawMode, short color, short charNm, XyInt* xy, struct gourTable* gTable);
+void EZ_normSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt* pos, struct gourTable* gTable);
+void EZ_distSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt* xy, struct gourTable* gTable);
 void EZ_cmd(struct cmdTable* inCmd);
-void EZ_scaleSpr(short dir, short drawMode, short color, short charNm, XyInt* pos, struct gourTable* gTable);
-void EZ_localCoord(short x, short y);
+void EZ_scaleSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt* pos, struct gourTable* gTable);
+void EZ_localCoord(sint16 x, sint16 y);
 void EZ_sysClip(void);
-void EZ_polygon(short drawMode, short color, XyInt* xy, struct gourTable* gTable);
-void EZ_polyLine(short drawMode, short color, XyInt* xy, struct gourTable* gTable);
-void EZ_line(short drawMode, short color, XyInt* xy, struct gourTable* gTable);
-int EZ_charNoToVram(int charNm);
+void EZ_polygon(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable);
+void EZ_polyLine(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable);
+void EZ_line(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable);
+sint32 EZ_charNoToVram(sint32 charNm);
 void EZ_userClip(XyInt* xy);
 
 void EZ_closeCommand(void);
 void EZ_executeCommand(void);
 void EZ_clearCommand(void);
 
-int EZ_getNextCmdNm(void);
-void EZ_linkCommand(int cmd, int mode, int to);
+sint32 EZ_getNextCmdNm(void);
+void EZ_linkCommand(sint32 cmd, sint32 mode, sint32 to);
 
 void EZ_clearScreen(void);

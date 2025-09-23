@@ -13,42 +13,42 @@ enum GfsDirType {
 };
 
 typedef struct {
-    Sint32      fid;
+    sint32      fid;
     CdcFile     finfo;
-    Sint32      sctsz;
-    Sint32      nsct;
-    Sint32      lstrm;
+    sint32      sctsz;
+    sint32      nsct;
+    sint32      lstrm;
 } GfsFinfo;
 
 typedef struct {
-    Sint32      bufno;
-    Sint32      sctsz;
-    Sint32      flt;
+    sint32      bufno;
+    sint32      sctsz;
+    sint32      flt;
     CdcSubh     subh;
-    Sint32      fmode;
-    Sint32      puid;
-    Sint32      filepos;
-    Sint32      sctpos;
-    Sint32      sfad;
-    Sint32      efad;
+    sint32      fmode;
+    sint32      puid;
+    sint32      filepos;
+    sint32      sctpos;
+    sint32      sfad;
+    sint32      efad;
 } GfsCdRsrc;
 
 typedef struct {
-    Sint32      fid;
-    Sint32      filepos;
-    Sint32      sctpos;
-    Sint32      sctnum;
+    sint32      fid;
+    sint32      filepos;
+    sint32      sctpos;
+    sint32      sctnum;
 } GfsScsiRsrc;
 
 typedef struct {
     void        *data;
-    Sint32      filepos;
-    Sint32      sctpos;
-    Sint32      sctnum;
+    sint32      filepos;
+    sint32      sctpos;
+    sint32      sctnum;
 } GfsMemRsrc;
 
 typedef struct {
-    Sint32      ftype;
+    sint32      ftype;
     union {
         GfsCdRsrc       cd;
         GfsScsiRsrc     scsi;
@@ -59,47 +59,47 @@ typedef struct {
 typedef struct {
     GfsFinfo    finfo;
     GfsDtsrc    dtsrc;
-    Sint32      gmode;
-    Sint32      stat;
-    Sint32      sct;
-    Sint32      sctcnt;
-    Sint32      sctmax;
+    sint32      gmode;
+    sint32      stat;
+    sint32      sct;
+    sint32      sctcnt;
+    sint32      sctmax;
 } GfsFlow;
 
-typedef Sint32 (*GfsTransFunc)(void *obj, Sint32 nsct);
+typedef sint32 (*GfsTransFunc)(void *obj, sint32 nsct);
 
 typedef struct {
     void        *data;
-    Sint32      adlt;
-    Sint32      len;
-    Sint32      nsct;
-    Bool        use;
+    sint32      adlt;
+    sint32      len;
+    sint32      nsct;
+    sint32        use;
 } GfsDataPack;
 
 typedef GfsDataPack *GfdpHn;
 
 typedef struct {
     void        *buf;
-    Sint32      size;
-    Sint32      wp;
+    sint32      size;
+    sint32      wp;
     GfdpHn      dps;
     GfdpHn      dpd;
-    Sint32      tsctmax;
-    Sint32      tsct;
-    Sint32      tsctcnt;
-    Sint32      tbytcnt;
+    sint32      tsctmax;
+    sint32      tsct;
+    sint32      tsctcnt;
+    sint32      tbytcnt;
     void        *obj;
     GfsTransFunc tfunc;
-    Sint32      unit;
-    Bool        active;
-    Sint32      stat;
-    Sint32      mode;
+    sint32      unit;
+    sint32        active;
+    sint32      stat;
+    sint32      mode;
 } GfsTrans;
 
 typedef struct {
-    Bool        used;
-    Sint32      amode;
-    Sint32      astat;
+    sint32        used;
+    sint32      amode;
+    sint32      astat;
     GfsFlow     flow;
     GfsTrans    trans;
 } GfsFile;
@@ -118,15 +118,15 @@ typedef GfsFile *GfsHn;
 
 
 typedef struct {
-    Sint32 (*flowin)(GfsFlow *);
-    void (*stopin)(GfsFlow *, Bool);
-    Sint32 (*seek)(GfsFlow *, Sint32);
-    Sint32 (*tell)(GfsFlow *);
+    sint32 (*flowin)(GfsFlow *);
+    void (*stopin)(GfsFlow *, sint32);
+    sint32 (*seek)(GfsFlow *, sint32);
+    sint32 (*tell)(GfsFlow *);
 } GfsFileFunc;
 
 typedef struct {
     GfsHn   access_file[GFS_OPEN_MAX];
-    Sint32  nfile;
+    sint32  nfile;
 } GfsSvr;
 
 typedef struct {
@@ -135,12 +135,12 @@ typedef struct {
 
 typedef struct {
     CdcFile     dirrec;
-    Sint8       fname[GFS_FNAME_LEN];
+    sint8       fname[GFS_FNAME_LEN];
 } GfsDirName;
 
 typedef struct {
-    Sint32      type;
-    Sint32      ndir;
+    sint32      type;
+    sint32      ndir;
     union {
         GfsDirId *dir_i;
         GfsDirName *dir_n;
@@ -149,108 +149,108 @@ typedef struct {
 
 typedef struct {
     GfsDirTbl   dirtbl;
-    Sint32      nfile;
+    sint32      nfile;
 } GfsDirMng;
 
 typedef struct {
-    Uint8 flt;
-    Uint8 fmode;
+    uint8 flt;
+    uint8 fmode;
     CdcSubh subh;
-    Sint32 fad;
-    Sint32 snum;
+    sint32 fad;
+    sint32 snum;
 } GfcdSelQu;
 
 typedef struct {
-    Sint32 flt;
-    Sint32 buf;
-    Sint32 flnout;
+    sint32 flt;
+    sint32 buf;
+    sint32 flnout;
 } GfcdFconQu;  
 
-typedef void (*GfsErrFunc)(void *obj, Sint32 ec);
+typedef void (*GfsErrFunc)(void *obj, sint32 ec);
 
 typedef struct {
     GfsErrFunc  func;
     void        *obj;
-    Sint32      code;
+    sint32      code;
 } GfsErrStat;
 
 typedef struct {
-    Sint8 use_buf[GFS_CDBBUF_NR];
-    Sint8 use_filt[GFS_CDBBUF_NR];
-    Bool use_pu;
-    Sint32 tr_bufno;
-    Sint32 puid;
-    Sint32 timer;
+    sint8 use_buf[GFS_CDBBUF_NR];
+    sint8 use_filt[GFS_CDBBUF_NR];
+    sint32 use_pu;
+    sint32 tr_bufno;
+    sint32 puid;
+    sint32 timer;
     CdcStat stat;
     void (*func)(void *);
     void *obj;
     struct {
-        Sint32 len;
-        Sint32 stat;
+        sint32 len;
+        sint32 stat;
         GfcdSelQu selq[GFS_SELQ_MAX];
     } tsk_setflt;
     struct {
-        Sint32 len;
-        Sint32 stat;
+        sint32 len;
+        sint32 stat;
         GfcdFconQu fconq[GFS_FCONQ_MAX];
     } tsk_fltcon;
     struct {
-        Sint32 stat;
-        Sint32 flt;
+        sint32 stat;
+        sint32 flt;
     } tsk_setcon;
     struct {
-        Sint32 stat;
-        Sint32 bufno;
-        Sint32 spos;
-        Sint32 usct;
-        Sint32 cnt;
-        Sint32 *nsct;
-        Sint32 *nbyte;
+        sint32 stat;
+        sint32 bufno;
+        sint32 spos;
+        sint32 usct;
+        sint32 cnt;
+        sint32 *nsct;
+        sint32 *nbyte;
     }tsk_getlen;
     struct {
-        Sint32 stat;
-        Sint32 bufno;
-        Sint32 sctpos;
-        Sint32 nsct;
+        sint32 stat;
+        sint32 bufno;
+        sint32 sctpos;
+        sint32 nsct;
     } tsk_reqdat;
     struct {
-        Sint32 stat;
-        Sint32 bufno;
-        Sint32 sctpos;
-        Sint32 nsct;
+        sint32 stat;
+        sint32 bufno;
+        sint32 sctpos;
+        sint32 nsct;
     } tsk_delsct;
     struct {
-        Sint32 stat;
-        Sint32 dst;
-        Sint32 src;
-        Sint32 spos;
-        Sint32 snum;
-        Sint32 fmode;
+        sint32 stat;
+        sint32 dst;
+        sint32 src;
+        sint32 spos;
+        sint32 snum;
+        sint32 fmode;
     } tsk_movsct;
     struct {
-        Sint32 stat;
-        Sint16 fid;
-        Sint16 work;
-        Sint32 *ndir;
+        sint32 stat;
+        sint16 fid;
+        sint16 work;
+        sint32 *ndir;
     } tsk_chgdir;
 } GfsCdbMng;
 
 typedef struct {
-    Sint32      openmax;
+    sint32      openmax;
     GfsFileFunc functbl[GFS_FTYPE_NR];
     GfsSvr      svr;
     GfsDirMng   curdir;
     GfsHn       pickup;
-    Sint32      sfad;
-    Sint32      efad;
+    sint32      sfad;
+    sint32      efad;
     GfsHn       trans;
     GfsErrStat  error;
-    Uint32      flags;
-    Sint32      timer;
+    uint32      flags;
+    sint32      timer;
     GfsCdbMng   cdb;
     GfsDataPack srcpk;
     GfsDataPack dstpk;
-    Uint8       sect_buf[GFS_SCTBUF_SIZ];
+    uint8       sect_buf[GFS_SCTBUF_SIZ];
     GfsFile     file[1];
 } GfsMng;
 
@@ -260,21 +260,21 @@ typedef struct {
 #define GFS_DIRTBL_NDIR(dirtbl)         ((dirtbl)->ndir)
 #define GFS_DIRTBL_DIRNAME(dirtbl)      ((dirtbl)->dir.dir_n)
 
-void GFS_GetFileSize(GfsHn gfs, Sint32 *sctsz, Sint32 *nsct, Sint32 *lstsz);
+void GFS_GetFileSize(GfsHn gfs, sint32 *sctsz, sint32 *nsct, sint32 *lstsz);
 
 #if 0
 void GFS_SetErrFunc(GfsErrFunc func, void *obj);
 void GFS_Close(GfsHn gfs);
-void GFS_NwGetStat(GfsHn gfs, Sint32 *amode, Sint32 *ndata);
-Sint32 GFS_Init(Sint32 open_max, void *work, GfsDirTbl *dirtbl);
-Sint32 GFS_NameToId(Sint8 *fname);
-GfsHn GFS_Open(Sint32 fid);
-Sint32 GFS_SetTransPara(GfsHn gfs, Sint32 tsize);
-Sint32 GFS_SetTmode(GfsHn gfs, Sint32 tmode);
-Sint32 GFS_NwCdRead(GfsHn gfs, Sint32 nsct);
-Sint32 GFS_NwStop(GfsHn gfs);
-Sint32 GFS_Fread(GfsHn gfs, Sint32 nsct, void *buf, Sint32 bsize);
-Sint32 GFS_NwExecOne(GfsHn gfs);
+void GFS_NwGetStat(GfsHn gfs, sint32 *amode, sint32 *ndata);
+sint32 GFS_Init(sint32 open_max, void *work, GfsDirTbl *dirtbl);
+sint32 GFS_NameToId(sint8 *fname);
+GfsHn GFS_Open(sint32 fid);
+sint32 GFS_SetTransPara(GfsHn gfs, sint32 tsize);
+sint32 GFS_SetTmode(GfsHn gfs, sint32 tmode);
+sint32 GFS_NwCdRead(GfsHn gfs, sint32 nsct);
+sint32 GFS_NwStop(GfsHn gfs);
+sint32 GFS_Fread(GfsHn gfs, sint32 nsct, void *buf, sint32 bsize);
+sint32 GFS_NwExecOne(GfsHn gfs);
 #else
 #define GFS_SetErrFunc(func,obj)
 #define GFS_Close(gfs)

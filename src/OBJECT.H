@@ -24,82 +24,82 @@
 
 struct __object;
 
-typedef void (*messHandler)(struct __object* this, int message, int param1, int param2);
+typedef void (*messHandler)(struct __object* this, sint32 message, sint32 param1, sint32 param2);
 
 typedef struct __object
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    char pad[128];
+    sint8 pad[128];
 } Object;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
 
-    short wallNm, state, aiSlot;
+    sint16 wallNm, state, aiSlot;
 } WallObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
 
-    short sectorNm, state, aiSlot;
+    sint16 sectorNm, state, aiSlot;
 } SectorObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
 
-    short pbNum, state;
-    int counter, waitCounter;
-    Fixed32 offset;
+    sint16 pbNum, state;
+    sint32 counter, waitCounter;
+    fix32 offset;
 } PushBlockObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
 
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
 } SpriteObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
 
     Object* owner;
-    int age;
+    sint32 age;
 } ProjectileObject;
 
 typedef struct __monster
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
 
-    short health, aiSlot;
+    sint16 health, aiSlot;
     struct __monster* enemy;
-    short route[ROUTESIZE + 1];
-    short routePos;
+    sint16 route[ROUTESIZE + 1];
+    sint16 routePos;
 } MonsterObject;
 
 extern Object* objectRunList; /* these lists have head nodes */
@@ -111,24 +111,24 @@ void initObjects(void);
 void delayKill(Object* o);
 void processKills(void);
 
-Object* getFreeObject(messHandler handler, int type, int class);
-void signalObject(Object* object, int message, int param1, int param2);
-void hurtSprite(struct __sprite* sprite, Object* hurter, int damage);
-void signalList(Object* head, int message, int param1, int param2);
+Object* getFreeObject(messHandler handler, sint32 type, sint32 class);
+void signalObject(Object* object, sint32 message, sint32 param1, sint32 param2);
+void hurtSprite(struct __sprite* sprite, Object* hurter, sint32 damage);
+void signalList(Object* head, sint32 message, sint32 param1, sint32 param2);
 void delayKill(Object* o);
 void processDelayedMoves(void);
 void delay_moveObject(Object* o, Object* toList);
 void moveObject(Object* o, Object* toList);
 void placeObjects(void);
 
-void radialDamage(Object* this, MthXyz* center, int sector, int damage, Fixed32 radius);
+void radialDamage(Object* this, MthXyz* center, sint32 sector, sint32 damage, fix32 radius);
 
-void registerPBObject(int pbNm, Object* me);
+void registerPBObject(sint32 pbNm, Object* me);
 
-void pushBlockMakeSound(PushBlockObject* source, int sndNm);
+void pushBlockMakeSound(PushBlockObject* source, sint32 sndNm);
 void pushBlockAdjustSound(PushBlockObject* source);
 
-short suckShort(void);
-int suckInt(void);
+sint16 suckShort(void);
+sint32 suckInt(void);
 
 #endif

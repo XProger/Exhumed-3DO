@@ -36,7 +36,7 @@ enum
 #define CHANNEL_RISE 839402849
 #define CHANNEL_DROP 290808021
 
-void ramsesLid_func(Object* _this, int msg, int param1, int param2)
+void ramsesLid_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     RamsesLidObject* this = (RamsesLidObject*)_this;
     switch (msg)
@@ -61,7 +61,7 @@ void ramsesLid_func(Object* _this, int msg, int param1, int param2)
             {
                 case AI_RLID_RISE:
                 {
-                    int d;
+                    sint32 d;
                     d = F(this->distanceToRise) >> 8;
                     if (d < F(3))
                         d = F(3);
@@ -89,9 +89,9 @@ void ramsesLid_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructRamsesLid(int pb)
+Object* constructRamsesLid(sint32 pb)
 {
-    int fs;
+    sint32 fs;
     MthXyz pos;
     RamsesLidObject* this = (RamsesLidObject*)getFreeObject(ramsesLid_func, OT_RAMSESLID, CLASS_PUSHBLOCK);
     assert(sizeof(*this) < sizeof(Object));
@@ -107,7 +107,7 @@ Object* constructRamsesLid(int pb)
     pos.y = 0;
     pos.z = 0;
     {
-        int a, b;
+        sint32 a, b;
         a = findCeilDistance(fs, &pos);
         b = findFloorDistance(fs, &pos);
         this->distanceToRise = f(b - a);
@@ -141,9 +141,9 @@ enum
 
 static void loadRamsesBlock(RamsesTriggerObject* this)
 {
-    int amount, s;
+    sint32 amount, s;
 #ifdef JAPAN
-    int saveHead = this->soundRingHead;
+    sint32 saveHead = this->soundRingHead;
 #endif
     amount = SAMPLESPERFRAME;
     while (amount)
@@ -151,11 +151,11 @@ static void loadRamsesBlock(RamsesTriggerObject* this)
         s = RINGSIZE - this->soundRingHead;
         if (s > amount)
         {
-            fs_read(this->fd, (char*)(SNDBASE + this->soundRingBase + (this->soundRingHead << 1)), (amount << 1));
+            fs_read(this->fd, (sint8*)(SNDBASE + this->soundRingBase + (this->soundRingHead << 1)), (amount << 1));
             this->soundRingHead += amount;
             break;
         }
-        fs_read(this->fd, (char*)(SNDBASE + this->soundRingBase + (this->soundRingHead << 1)), s << 1);
+        fs_read(this->fd, (sint8*)(SNDBASE + this->soundRingBase + (this->soundRingHead << 1)), s << 1);
         this->soundRingHead = 0;
         amount -= s;
     }
@@ -167,11 +167,11 @@ static void loadRamsesBlock(RamsesTriggerObject* this)
         s = RINGSIZE - this->soundRingHead;
         if (s > amount)
         {
-            fs_read(this->fd, (char*)(SNDBASE + this->soundRingBase2 + (this->soundRingHead << 1)), (amount << 1));
+            fs_read(this->fd, (sint8*)(SNDBASE + this->soundRingBase2 + (this->soundRingHead << 1)), (amount << 1));
             this->soundRingHead += amount;
             break;
         }
-        fs_read(this->fd, (char*)(SNDBASE + this->soundRingBase2 + (this->soundRingHead << 1)), s << 1);
+        fs_read(this->fd, (sint8*)(SNDBASE + this->soundRingBase2 + (this->soundRingHead << 1)), s << 1);
         this->soundRingHead = 0;
         amount -= s;
     }
@@ -182,7 +182,7 @@ static void chooseVoiceFile(char* nameBuff)
 {
     static char* lingoCode[] = { "ENG", "SPA", "FRE", "GER" };
     char* foo = NULL;
-    int number = 1, artifact;
+    sint32 number = 1, artifact;
     foo = lingoCode[getLanguageNumber()];
 #ifdef JAPAN
     foo = "JAP";
@@ -238,11 +238,11 @@ static void chooseVoiceFile(char* nameBuff)
     sprintf(nameBuff, "SP_%s%02d.LIP", foo, number);
 }
 
-static char droppedMummy = 0;
-void ramsesTrigger_func(Object* _this, int msg, int param1, int param2)
+static sint8 droppedMummy = 0;
+void ramsesTrigger_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     RamsesTriggerObject* this = (RamsesTriggerObject*)_this;
-    int fflag, i;
+    sint32 fflag, i;
     switch (msg)
     {
         case SIGNAL_FLOORCONTACT:
@@ -266,9 +266,9 @@ void ramsesTrigger_func(Object* _this, int msg, int param1, int param2)
             this->timer = 0;
             this->disabled = 5;
             {
-                unsigned short* colorRam = (unsigned short*)SCL_COLRAM_ADDR;
+                uint16* colorRam = (uint16*)SCL_COLRAM_ADDR;
                 for (i = 0; i < 256; i++)
-                    colorRam[NMOBJECTPALLETES * 256 + i] = ((unsigned short*)jasonPallete)[i];
+                    colorRam[NMOBJECTPALLETES * 256 + i] = ((uint16*)jasonPallete)[i];
             }
             break;
         case SIGNAL_VIEW:
@@ -280,7 +280,7 @@ void ramsesTrigger_func(Object* _this, int msg, int param1, int param2)
             {
                 this->state = AI_RTRIGGER_FADE;
                 this->ramses->sequence = level_sequenceMap[OT_RAMSESTRIGGER] + 2;
-                stopAllSound((int)this);
+                stopAllSound((sint32)this);
                 mem_free(this->frames);
                 fs_close(this->fd);
             }
@@ -329,8 +329,8 @@ void ramsesTrigger_func(Object* _this, int msg, int param1, int param2)
 #endif
                     this->soundRingHead = 0;
                     {
-                        short s;
-                        fs_read(this->fd, (char*)&s, 2);
+                        sint16 s;
+                        fs_read(this->fd, (sint8*)&s, 2);
                         this->nmFrames = s;
                     }
                     this->frames = mem_malloc(0, this->nmFrames);
@@ -359,15 +359,15 @@ void ramsesTrigger_func(Object* _this, int msg, int param1, int param2)
                         /* choose this one cause we know it's looped */
                         {
                             struct soundSlotRegister* f;
-                            f = playSoundMegaE((int)this, &ssr);
-                            this->sndSlot = (((int)f) - (SNDBASE + 0x100000)) >> 5;
+                            f = playSoundMegaE((sint32)this, &ssr);
+                            this->sndSlot = (((sint32)f) - (SNDBASE + 0x100000)) >> 5;
 #ifdef JAPAN
                             ssr.reg[0] = (1 << 5) | /* turn on loop */
                                 (0xf & (this->soundRingBase2 >> 16)) | /* high start */
                                 (0x1800); /* konex */
                             ssr.reg[1] = this->soundRingBase2 & 0xffff; /* low start */
                             ssr.reg[11] = (7 << 13) | (0xf << 8);
-                            playSoundMegaE((int)this, &ssr);
+                            playSoundMegaE((sint32)this, &ssr);
 #endif
                         }
                     }
@@ -388,7 +388,7 @@ void ramsesTrigger_func(Object* _this, int msg, int param1, int param2)
                 case AI_RTRIGGER_RISE:
                     loadRamsesBlock(this);
 #if 0
-	       {int soundPos;
+	       (sint32 soundPos;
 		if ((this->framePos&31)!=31)
 		   this->framePos++;
 		soundPos=(PEEK_W(SNDBASE+0x100408)>>7)&0xf;
@@ -417,7 +417,7 @@ void ramsesTrigger_func(Object* _this, int msg, int param1, int param2)
                     }
                     if (this->timer < 64)
                     {
-                        int color;
+                        sint32 color;
                         color = f(evalHermite(F(this->timer) >> 6, 0, F(25), F(0), F(0)));
                         changeLightColor(this->ramses, color, color, color);
                     }
@@ -426,7 +426,7 @@ void ramsesTrigger_func(Object* _this, int msg, int param1, int param2)
                 case AI_RTRIGGER_TALK:
                     if (this->framePos + 2 < this->nmFrames)
                     {
-                        int soundPos;
+                        sint32 soundPos;
                         loadRamsesBlock(this);
                         if ((this->framePos & 31) != 31)
                             this->framePos++;
@@ -441,7 +441,7 @@ void ramsesTrigger_func(Object* _this, int msg, int param1, int param2)
                     else
                     {
                         this->ramses->frame = 0;
-                        stopAllSound((int)this);
+                        stopAllSound((sint32)this);
                         fs_close(this->fd);
                         this->state = AI_RTRIGGER_FADE;
                         this->ramses->sequence = level_sequenceMap[OT_RAMSESTRIGGER] + 2;
@@ -494,7 +494,7 @@ void ramsesTrigger_func(Object* _this, int msg, int param1, int param2)
                     if (this->timer-- <= 0)
                     {
                         setEarthQuake(25);
-                        playSound((int)this, level_objectSoundMap[OT_RAMSESTRIGGER]);
+                        playSound((sint32)this, level_objectSoundMap[OT_RAMSESTRIGGER]);
                         this->timer = getNextRand() & 0x7f;
                     }
                     break;
@@ -502,7 +502,7 @@ void ramsesTrigger_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructRamsesTrigger(int triggerSec, int homeSector)
+Object* constructRamsesTrigger(sint32 triggerSec, sint32 homeSector)
 {
     RamsesTriggerObject* this = (RamsesTriggerObject*)getFreeObject(ramsesTrigger_func, OT_RAMSESTRIGGER, CLASS_SECTOR);
     assert(sizeof(*this) < sizeof(Object));
@@ -535,9 +535,9 @@ enum
     AI_SWITCH_OFFING
 };
 
-void switch_func(Object* _this, int msg, int param1, int param2)
+void switch_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
-    int frame, fflags;
+    sint32 frame, fflags;
     SwitchObject* this = (SwitchObject*)_this;
     switch (msg)
     {
@@ -567,9 +567,9 @@ void switch_func(Object* _this, int msg, int param1, int param2)
             frame = level_sequence[this->sequence] + this->frame;
             /* dPrint("fr:%d\n",level_chunk[level_frame[frame].chunkIndex].tile);
             assert(level_chunk[level_frame[frame].chunkIndex].tile<127); */
-            *this->tilePos = (char)level_chunk[level_frame[frame].chunkIndex].tile;
+            *this->tilePos = (sint8)level_chunk[level_frame[frame].chunkIndex].tile;
             if (level_frame[frame].sound != -1)
-                posMakeSound((int)this, &this->orficePos, level_frame[frame].sound);
+                posMakeSound((sint32)this, &this->orficePos, level_frame[frame].sound);
             this->frame++;
             fflags = 0;
             if (frame + 1 >= level_sequence[this->sequence + 1])
@@ -604,9 +604,9 @@ void switch_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructSwitch(int type)
+Object* constructSwitch(sint32 type)
 {
-    int t, ourTile, wall;
+    sint32 t, ourTile, wall;
     sWallType* w;
     SwitchObject* this = (SwitchObject*)getFreeObject(switch_func, type, CLASS_WALL);
     assert(sizeof(*this) < sizeof(Object));
@@ -671,7 +671,7 @@ enum
     AI_SSWITCH_ON
 };
 
-void sswitch_func(Object* _this, int msg, int param1, int param2)
+void sswitch_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     SectorSwitchObject* this = (SectorSwitchObject*)_this;
     switch (msg)
@@ -710,11 +710,11 @@ Object* constructSectorSwitch(void)
  *         BLOWPOT STUFF        *
 \********************************/
 
-unsigned short blowPotSequenceMap[] = { 0 };
+uint16 blowPotSequenceMap[] = { 0 };
 
-void blowPot_func(Object* _this, int msg, int param1, int param2)
+void blowPot_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
-    static int lightP[] = { 0, F(25), 0, 0, F(5), F(25), 0, 0, F(25), F(25), 0, 0 };
+    static sint32 lightP[] = { 0, F(25), 0, 0, F(5), F(25), 0, 0, F(25), F(25), 0, 0 };
     BlowPotObject* this = (BlowPotObject*)_this;
     switch (msg)
     {
@@ -735,7 +735,7 @@ void blowPot_func(Object* _this, int msg, int param1, int param2)
                 explodeAllMaskedWallsInSector(this->sprite->s);
                 radialDamage((Object*)this, &this->sprite->pos, this->sprite->s, 200, F(300));
                 {
-                    int seq, nm;
+                    sint32 seq, nm;
                     seq = this->sprite->sequence + 1;
                     nm = level_sequence[seq + 1] - level_sequence[seq];
 #if 0
@@ -752,8 +752,8 @@ void blowPot_func(Object* _this, int msg, int param1, int param2)
             {
                 if (this->type != OT_BOOMPOT1 && this->type != OT_BOOMPOT2)
                 { /* make random suprise */
-                    int goodie = getNextRand() % 100;
-                    int type;
+                    sint32 goodie = getNextRand() % 100;
+                    sint32 type;
                     MthXyz exitPoint;
                     enum
                     {
@@ -769,8 +769,8 @@ void blowPot_func(Object* _this, int msg, int param1, int param2)
                         E_MAP,
                         NMEVENTS
                     };
-                    static const char prob[] = { 20, 20, 10, 10, 3, 3, 5, 3, 3, 0 };
-                    static short item[] = { OT_HEALTHBALL, OT_AMMOBALL, OT_HEALTHORB, OT_AMMOORB, -1, -1, -1, OT_INVISIBLEBALL, OT_WEAPONPOWERBALL, OT_EYEBALL };
+                    static const sint8 prob[] = { 20, 20, 10, 10, 3, 3, 5, 3, 3, 0 };
+                    static sint16 item[] = { OT_HEALTHBALL, OT_AMMOBALL, OT_HEALTHORB, OT_AMMOORB, -1, -1, -1, OT_INVISIBLEBALL, OT_WEAPONPOWERBALL, OT_EYEBALL };
                     for (type = 0; type < NMEVENTS; type++)
                         if ((goodie -= prob[type]) <= 0)
                             break;
@@ -803,8 +803,8 @@ void blowPot_func(Object* _this, int msg, int param1, int param2)
                         case E_SNAKENEST:
 #define NMSNAKESPERNEST 5
                         {
-                            Fixed32 angle = 0;
-                            int i;
+                            fix32 angle = 0;
+                            sint32 i;
                             for (i = 0; i < NMSNAKESPERNEST; i++)
                             {
                                 constructCobra(this->sprite->s, exitPoint.x, exitPoint.y, exitPoint.z, angle, F(2), (SpriteObject*)player, OT_COBRA, 0);
@@ -820,7 +820,7 @@ void blowPot_func(Object* _this, int msg, int param1, int param2)
                     constructLight(this->sprite->s, this->sprite->pos.x, this->sprite->pos.y + F(30), this->sprite->pos.z, lightP, F(1) / 16);
                     constructOneShot(this->sprite->s, this->sprite->pos.x, this->sprite->pos.y + F(30), this->sprite->pos.z, OT_POOF, F(2), 0, 0);
                     {
-                        int seq, i, nm;
+                        sint32 seq, i, nm;
                         seq = this->sprite->sequence;
                         nm = level_sequence[seq + 1] - level_sequence[seq];
                         for (i = 1; i < nm; i++)
@@ -830,7 +830,7 @@ void blowPot_func(Object* _this, int msg, int param1, int param2)
                                 constructBouncyBit(this->sprite->s, &this->sprite->pos, this->sprite->sequence, i, 0);
                     }
                     if (this->type != OT_CONTAIN10)
-                        posMakeSound((int)this, &this->sprite->pos, level_staticSoundMap[ST_BLOWPOT] + 3);
+                        posMakeSound((sint32)this, &this->sprite->pos, level_staticSoundMap[ST_BLOWPOT] + 3);
                     delayKill(_this);
                 }
             }
@@ -838,7 +838,7 @@ void blowPot_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructBlowPot(int sector, int type)
+Object* constructBlowPot(sint32 sector, sint32 type)
 {
     BlowPotObject* this;
     this = (BlowPotObject*)getFreeObject(blowPot_func, type, CLASS_MONSTER);
@@ -877,7 +877,7 @@ enum
     AI_EARTHQUAKEBLOCK_MOVE
 };
 
-void earthQuakeBlock_func(Object* _this, int msg, int param1, int param2)
+void earthQuakeBlock_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     EarthQuakeBlockObject* this = (EarthQuakeBlockObject*)_this;
     switch (msg)
@@ -892,7 +892,7 @@ void earthQuakeBlock_func(Object* _this, int msg, int param1, int param2)
                     if (this->counter <= 0)
                     {
                         this->state = AI_EARTHQUAKEBLOCK_MOVE;
-                        this->vel = ((short)getNextRand()) << 2;
+                        this->vel = ((sint16)getNextRand()) << 2;
                         this->counter = getNextRand() & 0x1f;
                     }
                     break;
@@ -911,7 +911,7 @@ void earthQuakeBlock_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructEarthQuakeBlock(int pb)
+Object* constructEarthQuakeBlock(sint32 pb)
 {
     EarthQuakeBlockObject* this = (EarthQuakeBlockObject*)getFreeObject(earthQuakeBlock_func, OT_EARTHQUAKEBLOCK, CLASS_PUSHBLOCK);
     assert(sizeof(*this) < sizeof(Object));

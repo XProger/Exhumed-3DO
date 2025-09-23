@@ -30,12 +30,12 @@
 #include "mov.h"
 
 #define MAXNMPICS 20
-static unsigned short* picPals[MAXNMPICS];
-static unsigned int* picDatas[MAXNMPICS];
+static uint16* picPals[MAXNMPICS];
+static uint32* picDatas[MAXNMPICS];
 
 static void setupVDP2(void)
 {
-    static Uint16 cycle[] = { 0x44ee, 0xeeee, 0x44ee, 0xeeee, 0x55ee, 0xeeee, 0x55ee, 0xeeee };
+    static uint16 cycle[] = { 0x44ee, 0xeeee, 0x44ee, 0xeeee, 0x55ee, 0xeeee, 0x55ee, 0xeeee };
     SclConfig scfg;
     SclVramConfig vcfg;
     SCL_InitVramConfigTb(&vcfg);
@@ -65,9 +65,9 @@ static void setupVDP2(void)
     SCL_SET_N0CCEN(1);
 }
 
-static void loadVDPPic(int picNm, int bankNm)
+static void loadVDPPic(sint32 picNm, sint32 bankNm)
 {
-    int i, width, height, x, y, yoffs;
+    sint32 i, width, height, x, y, yoffs;
 
     for (i = 0; i < 256; i++)
         POKE_W(SCL_COLRAM_ADDR + (bankNm ? 512 : 0) + (i << 1), picPals[picNm][i]);
@@ -92,7 +92,7 @@ static void loadVDPPic(int picNm, int bankNm)
 
 static void fadeUp(void)
 {
-    int f;
+    sint32 f;
     for (f = -255; f <= 0; f += 8)
     {
         SCL_SetColOffset(SCL_OFFSET_A, SCL_NBG1 | SCL_NBG0, f, f, f);
@@ -109,10 +109,10 @@ static char* buttonNames[8] = { "A", "B", "C", "X", "Y", "Z", "TL", "TR" };
 static char* buttonNames[8] = { "\001", "\002", "\003", "\004", "\005", "\006", "\007\010", "\007\011" };
 #endif
 
-static void remapMenu(int hx, int hy, int lx, int ly)
+static void remapMenu(sint32 hx, sint32 hy, sint32 lx, sint32 ly)
 {
-    int menuSel;
-    int i, len, button, temp;
+    sint32 menuSel;
+    sint32 i, len, button, temp;
     char btext[8][40];
     dlg_clear();
 #ifndef JAPAN
@@ -128,7 +128,7 @@ static void remapMenu(int hx, int hy, int lx, int ly)
 #else
             "%s- %s",
 #endif
-            buttonNames[(int)controllerConfig[i]], getText(LB_ACTIONNAMES, (i < 6) ? i : i + 2));
+            buttonNames[(sint32)controllerConfig[i]], getText(LB_ACTIONNAMES, (i < 6) ? i : i + 2));
 #ifndef JAPAN
     for (i = 0; i < 8; i++)
         dlg_addBigWavyButton(i, (i & 1) ? 10 : -150, (i / 2) * 20, btext[i]);
@@ -155,7 +155,7 @@ static void remapMenu(int hx, int hy, int lx, int ly)
 #else
                 "%s- %s",
 #endif
-                buttonNames[(int)controllerConfig[i]], getText(LB_ACTIONNAMES, (i < 6) ? i : i + 2));
+                buttonNames[(sint32)controllerConfig[i]], getText(LB_ACTIONNAMES, (i < 6) ? i : i + 2));
         menuSel = dlg_run(0, 1, MENUMOVE_FREE);
         if (menuSel == 8)
             break;
@@ -179,9 +179,9 @@ static void remapMenu(int hx, int hy, int lx, int ly)
     dlg_runSlideIn();
 }
 
-static void optionMenu(int hx, int hy, int lx, int ly)
+static void optionMenu(sint32 hx, sint32 hy, sint32 lx, sint32 ly)
 {
-    int menuSel = -1;
+    sint32 menuSel = -1;
     enable_stereo = !(systemMemory & PER_MSK_STEREO);
 
 bigReset:
@@ -284,10 +284,10 @@ bigReset:
     PER_SMPC_SET_SM((systemMemory & ~PER_MSK_STEREO) | (enable_stereo ? 0 : PER_MSK_STEREO));
 }
 
-static int loadMenu(int hx, int hy, int lx, int ly)
+static sint32 loadMenu(sint32 hx, sint32 hy, sint32 lx, sint32 ly)
 {
-    int menuSel = -1;
-    int i;
+    sint32 menuSel = -1;
+    sint32 i;
     const char* emptyText = getText(LB_BUP, 2);
 #ifdef JAPAN
     emptyText = "EMPTY";
@@ -344,11 +344,11 @@ static int loadMenu(int hx, int hy, int lx, int ly)
     return 0;
 }
 
-static int newMenu(int hx, int hy, int lx, int ly)
+static sint32 newMenu(sint32 hx, sint32 hy, sint32 lx, sint32 ly)
 {
-    int menuSel = -1;
+    sint32 menuSel = -1;
     const char* emptyText = getText(LB_BUP, 2);
-    int i;
+    sint32 i;
 #ifdef JAPAN
     emptyText = "EMPTY";
 #endif
@@ -401,7 +401,7 @@ bigReset:
 
 void playIntro(void)
 {
-    int i;
+    sint32 i;
     displayEnable(0);
     mem_init();
     initSound();
@@ -409,17 +409,17 @@ void playIntro(void)
     EZ_initSprSystem(500, 8, 500, 240, 0x0000);
 #ifndef JAPAN
     i = initFonts(0, 7);
-    initPicSystem(i, ((int[]) { 50, 0, 0, 0, 0, -1 }));
+    initPicSystem(i, ((sint32[]) { 50, 0, 0, 0, 0, -1 }));
 #else
     i = initFonts(0, 4);
-    initPicSystem(i, ((int[]) { 40, 0, 0, 0, 0, 70, -1 }));
+    initPicSystem(i, ((sint32[]) { 40, 0, 0, 0, 0, 70, -1 }));
 #endif
     stopCD();
     {
 #ifndef JAPAN
-        int fd = fs_open("+INTRO.PCS");
+        sint32 fd = fs_open("+INTRO.PCS");
 #else
-        int fd = fs_open("+JINTRO.PCS");
+        sint32 fd = fs_open("+JINTRO.PCS");
 #endif
         loadPicSet(fd, picPals, picDatas, MAXNMPICS);
         loadPicSetAsPics(fd, TILE16BPP);
@@ -456,7 +456,7 @@ void playIntro(void)
     loadVDPPic(1, 0);
 #endif
     {
-        int y, m, d, h, min;
+        sint32 y, m, d, h, min;
         getDateTime(&y, &m, &d, &h, &min);
         if (m == 12 && d == 10 && y > 16)
         {
@@ -478,8 +478,8 @@ void playIntro(void)
     fadeUp();
 
     {
-        int menuSel = -1;
-        int canLoad;
+        sint32 menuSel = -1;
+        sint32 canLoad;
         canLoad = bup_canLoadGame();
         SCL_SetFrameInterval(0xfffe);
         while (1)
@@ -487,7 +487,7 @@ void playIntro(void)
             dlg_clear();
             for (i = 0; i < 3; i++)
             {
-                int len;
+                sint32 len;
                 if (i == 1 && !canLoad)
                 {
                     dlg_addText(10, 10, 10, "");
@@ -504,7 +504,7 @@ void playIntro(void)
 
             {
                 SaveState* s;
-                int i, power;
+                sint32 i, power;
                 power = 0;
                 for (i = 0; i < 6; i++)
                 {
@@ -514,7 +514,7 @@ void playIntro(void)
                 }
                 if (power || (controllerConfig[0] == 2 && controllerConfig[2] == 0 && controllerConfig[3] == 5 && controllerConfig[5] == 3 && controllerConfig[6] == 7 && controllerConfig[7] == 6))
                 {
-                    int len = getStringWidth(2, "DEATH TANK");
+                    sint32 len = getStringWidth(2, "DEATH TANK");
                     dlg_addBigWavyButton(69, -len >> 1, -10, "DEATH TANK");
                 }
             }
@@ -585,16 +585,16 @@ void playIntro(void)
 #define HISTORY 3
 void teleportEffect(void)
 {
-    int i, j;
-    int done;
+    sint32 i, j;
+    sint32 done;
     struct spermLocation
     {
-        int spermX[NMSPERM][HISTORY], spermY[NMSPERM][HISTORY];
-        char spermDead[NMSPERM];
+        sint32 spermX[NMSPERM][HISTORY], spermY[NMSPERM][HISTORY];
+        sint8 spermDead[NMSPERM];
     };
     extern struct spermLocation doorwayCache;
     struct spermLocation* s = (struct spermLocation*)&doorwayCache;
-    unsigned short lcolor[] = { RGB(31, 31, 31), RGB(15, 15, 15) };
+    uint16 lcolor[] = { RGB(31, 31, 31), RGB(15, 15, 15) };
     XyInt pos[2];
     fadePos = 255;
     fadeEnd = 0;
@@ -605,8 +605,8 @@ void teleportEffect(void)
         s->spermDead[i] = 0;
         do
         {
-            s->spermX[i][0] = ((short)getNextRand()) << 4;
-            s->spermY[i][0] = ((short)getNextRand()) << 4;
+            s->spermX[i][0] = ((sint16)getNextRand()) << 4;
+            s->spermY[i][0] = ((sint16)getNextRand()) << 4;
         } while (MTH_Mul(s->spermX[i][0], s->spermX[i][0]) + MTH_Mul(s->spermY[i][0], s->spermY[i][0]) > (1 << 22));
 
         for (j = 1; j < HISTORY; j++)
@@ -638,7 +638,7 @@ void teleportEffect(void)
 
         for (i = 0; i < NMSPERM; i++)
         {
-            int xo, yo;
+            sint32 xo, yo;
             for (j = HISTORY - 1; j > 0; j--)
             {
                 s->spermX[i][j] = s->spermX[i][j - 1];
@@ -651,8 +651,8 @@ void teleportEffect(void)
             if (abs(xo) > F(170) || abs(yo) > F(150))
             {
                 s->spermDead[i] = 1;
-                /*  s->spermX[i][0]=((short)getNextRand())<<4;
-                    s->spermY[i][0]=((short)getNextRand())<<4;
+                /*  s->spermX[i][0]=((sint16)getNextRand())<<4;
+                    s->spermY[i][0]=((sint16)getNextRand())<<4;
                     for (j=1;j<HISTORY;j++)
                     {s->spermX[i][j]=s->spermX[i][0];
                     s->spermY[i][j]=s->spermY[i][0];

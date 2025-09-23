@@ -32,20 +32,20 @@
 #define SBL 0x00
 
 /* ラインスクロール、セルスクロール関連 */
-Uint32 SclAddrLsTbl[2];
-Uint32 SclAddrCsTbl[2];
-Uint16 SclLengthLsTbl = 0;
-Uint16 SclLengthCsTbl = 0;
+uint32 SclAddrLsTbl[2];
+uint32 SclAddrCsTbl[2];
+uint16 SclLengthLsTbl = 0;
+uint16 SclLengthCsTbl = 0;
 
-/*	static	Uint16	paramode = 1;	del: no used by C.yoshida	*/
-/*	static	Uint16	blank_time;		del: no used by C.yoshida	*/
-static Uint16* regaddr;
-Uint32 SclCurSclNum = 0;
-Uint16 SclProcess = 0;
+/*	static	uint16	paramode = 1;	del: no used by C.yoshida	*/
+/*	static	uint16	blank_time;		del: no used by C.yoshida	*/
+static uint16* regaddr;
+uint32 SclCurSclNum = 0;
+uint16 SclProcess = 0;
 
 /* 画面サイズデフォルト */
-Uint16 SclDisplayX = 320;
-Uint16 SclDisplayY = 224;
+uint16 SclDisplayX = 320;
+uint16 SclDisplayY = 224;
 
 /* レジスタバッファ */
 SclSysreg Scl_s_reg;
@@ -68,34 +68,34 @@ SclRotreg* SclRotregBuff = _SclRotregBuff;
 /*******************************************************
  *  回転マトリックスパラメータ係数テーブルバッファ     *
  *******************************************************/
-Uint16 SclK_TableBuff[2][820];
-Uint32 SclK_TableNum[2];
-Uint16 SclK_TableFlag[2];
+uint16 SclK_TableBuff[2][820];
+uint32 SclK_TableNum[2];
+uint16 SclK_TableFlag[2];
 
-Uint32 SclRbgKtbAddr[2];
-Sint32 SclRbgKtbOffset[2];
-Uint16 SclRotXySw[2];
-Uint8 SclRa, SclRb;
-Uint32 SclRotateTableAddress;
+uint32 SclRbgKtbAddr[2];
+sint32 SclRbgKtbOffset[2];
+uint16 SclRotXySw[2];
+uint8 SclRa, SclRb;
+uint32 SclRotateTableAddress;
 /* 回転パラメータ用角度データ */
-Fixed32 SclRotateXy[2];
-Fixed32 SclRotateZ[2];
-Fixed32 SclRotateDisp[2];
-Fixed32 SclRotateMoveZ[2];
+fix32 SclRotateXy[2];
+fix32 SclRotateZ[2];
+fix32 SclRotateDisp[2];
+fix32 SclRotateMoveZ[2];
 
-Uint16 SclRPMD; /* 回転パラメータモード */
+uint16 SclRPMD; /* 回転パラメータモード */
 
 #if 0
-	Uint16	SclRotateTableMode=0xff;
+	uint16	SclRotateTableMode=0xff;
 #else
-Uint16 SclRotateTableMode = 2;
+uint16 SclRotateTableMode = 2;
 #endif
 
 /* このファイルで定義する関数 */
 void SCL_ParametersInit(void);
 void SCL_ScrollShow(void);
 void SCL_PriIntProc(void);
-void SCL_Memcpyw(void* dest, void* src, Uint32 tcnt);
+void SCL_Memcpyw(void* dest, void* src, uint32 tcnt);
 void SCL_SglOn(void); /*	use SGL	*/
 void SCL_SglOff(void); /*	use SGL	*/
 
@@ -118,7 +118,7 @@ void SCL_SglOff(void); /*	use SGL	*/
 void SCL_Vdp2Init(void)
 {
 #if TODO // VDP2
-    /*    Uint32 i;		del:no used C.yoshida */
+    /*    uint32 i;		del:no used C.yoshida */
 
     SCL_VblInit();
 
@@ -170,9 +170,9 @@ void SCL_Vdp2Init(void)
  */
 void SCL_ParametersInit(void)
 {
-    Uint16 i;
+    uint16 i;
 
-    regaddr = (Uint16*)REGADDR;
+    regaddr = (uint16*)REGADDR;
     /*
      *	System Registers Area Initialization
      */
@@ -266,7 +266,7 @@ void SCL_ParametersInit(void)
  * NAME : SCL_Open
  *
  * PARAMETERS
- *	param1 -	Uint32 sclnum   :
+ *	param1 -	uint32 sclnum   :
  *
  * DESCRIPTION
  *			Open the certain scroll to ready for
@@ -279,7 +279,7 @@ void SCL_ParametersInit(void)
  *
  *---------------------------------------------------------------------
  */
-void SCL_Open(Uint32 sclnum)
+void SCL_Open(uint32 sclnum)
 {
     if (SclProcess == 1)
         SclProcess = 0;
@@ -326,7 +326,7 @@ void SCL_Close(void)
  *
  *------------------------------------------------------------------------
  */
-void SCL_MoveTo(Fixed32 x, Fixed32 y, Fixed32 z)
+void SCL_MoveTo(fix32 x, fix32 y, fix32 z)
 {
     switch (SclCurSclNum)
     {
@@ -374,9 +374,9 @@ void SCL_MoveTo(Fixed32 x, Fixed32 y, Fixed32 z)
  * NAME : SCL_Move
  *
  * PARAMETERS
- *	param1 - 	Fixed32	Mx:	X Movement
- *	param1 - 	Fixed32	My:	Y Movement
- *	param1 - 	Fixed32	Mz:	Z Movement
+ *	param1 - 	fix32	Mx:	X Movement
+ *	param1 - 	fix32	My:	Y Movement
+ *	param1 - 	fix32	Mz:	Z Movement
  *
  * DESCRIPTION
  *
@@ -388,7 +388,7 @@ void SCL_MoveTo(Fixed32 x, Fixed32 y, Fixed32 z)
  *
  *------------------------------------------------------------------------
  */
-void SCL_Move(Fixed32 x, Fixed32 y, Fixed32 z)
+void SCL_Move(fix32 x, fix32 y, fix32 z)
 {
     switch (SclCurSclNum)
     {
@@ -436,8 +436,8 @@ void SCL_Move(Fixed32 x, Fixed32 y, Fixed32 z)
  * NAME : SCL_Scale
  *
  * PARAMETERS
- *	param1 - 	Fixed32	Sx:	X scale ratio
- *	param2 - 	Fixed32	Sy:	Y scale ratio
+ *	param1 - 	fix32	Sx:	X scale ratio
+ *	param2 - 	fix32	Sy:	Y scale ratio
  *
  * DESCRIPTION
  *
@@ -449,9 +449,9 @@ void SCL_Move(Fixed32 x, Fixed32 y, Fixed32 z)
  *
  *------------------------------------------------------------------------
  */
-void SCL_Scale(Fixed32 Sx, Fixed32 Sy)
+void SCL_Scale(fix32 Sx, fix32 Sy)
 {
-    Fixed32 wSx, wSy;
+    fix32 wSx, wSy;
 
     wSx = Sx;
     wSy = Sy;
@@ -532,7 +532,7 @@ void SCL_Scale(Fixed32 Sx, Fixed32 Sy)
  */
 void SCL_CopyReg()
 {
-    Uint16 i;
+    uint16 i;
 
     if (SclK_TableFlag[0] && SclRbgKtbAddr[0])
     {
@@ -564,8 +564,8 @@ void SCL_CopyReg()
 #if 1
     if (SclRotateTableAddress) /* if added by ezra */
     {
-        const Uint32 size = 0x60; /*	sizeof(struct SclRotreg);	*/
-        const Uint32 p = (Uint32)SclRotateTableAddress;
+        const uint32 size = 0x60; /*	sizeof(struct SclRotreg);	*/
+        const uint32 p = (uint32)SclRotateTableAddress;
         void* const pA = (void*)p;
         void* const pB = (void*)(p + 0x80);
 
@@ -639,27 +639,27 @@ void SCL_ScrollShow(void)
     SCL_PriIntProc();
 }
 
-void SCL_Memcpyw(void* dest, void* src, Uint32 tcnt)
+void SCL_Memcpyw(void* dest, void* src, uint32 tcnt)
 {
 
     if ((dest != NULL) && (src != NULL))
     {
 
-        Uint32 tcr, tsize;
+        uint32 tcr, tsize;
         tsize = tcnt;
         tsize = tsize / 2;
 
         for (tcr = 0; tcr < tsize; tcr++)
         {
-            *((Uint16*)dest) = *((Uint16*)src);
-            dest = (Uint8*)dest + 2;
-            src = (Uint8*)src + 2;
+            *((uint16*)dest) = *((uint16*)src);
+            dest = (uint8*)dest + 2;
+            src = (uint8*)src + 2;
         }
     }
 }
 
 /* カラー RAM のモードを設定する */
-void SCL_SetColRamMode(Uint32 ComRamMode)
+void SCL_SetColRamMode(uint32 ComRamMode)
 {
     switch (ComRamMode)
     {
@@ -689,7 +689,7 @@ void SCL_SetColRamMode(Uint32 ComRamMode)
  ***************************************************************/
 void SCL_PriIntProc(void)
 {
-/*    Uint8 i;		del:no used by C.yoshida */
+/*    uint8 i;		del:no used by C.yoshida */
 #if 0
     SCL_AutoExec();
 
@@ -755,7 +755,7 @@ void SCL_PriIntProc(void)
  * NAME : SCL_Vdp2_SGLInit
  * ＳＧＬモードのデフォルトにする
  *----------------------------------------------------------------------*/
-static Uint16 tvsize[16] = {
+static uint16 tvsize[16] = {
     0x0000, /* SPR_TV_320X224  */
     0x0010, /* SPR_TV_320X240  */
     0x0001, /* SPR_TV_352X224  */
@@ -774,7 +774,7 @@ static Uint16 tvsize[16] = {
     0x00d3 /* SPR_TV_704X480  */
 };
 
-void SCL_Vdp2_SGLInit(Uint16 tvmod)
+void SCL_Vdp2_SGLInit(uint16 tvmod)
 {
     /* slInitSystem のtvmode から Scl_s_reg.tvmode を再セット	*/
     tvmod &= 0x0f; /* TVmode = 0 ～ 15 */

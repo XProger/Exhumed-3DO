@@ -5,27 +5,27 @@
 #endif
 
 typedef struct {
-    int TODO;
+    sint32 TODO;
 } BupConfig;
 
 typedef struct {
-    int freeblock;
+    sint32 freeblock;
 } BupStat;
 
 typedef struct {
-    int year;
-    int month;
-    int day;
-    int time;
-    int min;
+    sint32 year;
+    sint32 month;
+    sint32 day;
+    sint32 time;
+    sint32 min;
 } BupDate;
 
 typedef struct {
     char filename[128];
     char comment[128];
-    int datasize;
-    int blocksize;
-    int language;
+    sint32 datasize;
+    sint32 blocksize;
+    sint32 language;
     BupDate *date;
 } BupDir;
 

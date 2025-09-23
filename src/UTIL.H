@@ -5,8 +5,6 @@
 #include <sega_spr.h>
 #include "slevel.h"
 
-typedef unsigned char BYTE;
-
 #ifdef PAL
 #define FRAMESPERSEC 50
 #else
@@ -14,7 +12,7 @@ typedef unsigned char BYTE;
 #endif
 
 #ifndef NDEBUG
-extern int extraStuff;
+extern sint32 extraStuff;
 #endif
 
 #define MAXNMSECTORS 600
@@ -25,51 +23,51 @@ extern int extraStuff;
 #define DISABLE INT_ChgMsk(INT_MSK_NULL, INT_MSK_DMA0 | INT_MSK_SPR)
 #define ENABLE INT_ChgMsk(INT_MSK_DMA0 | INT_MSK_SPR, INT_MSK_NULL)
 
-void* qmemcpy(void* dst, const void* src, unsigned int len);
+void* qmemcpy(void* dst, const void* src, uint32 len);
 #ifndef NDEBUG
 #define qmemcpy(d, s, l)            \
     {                               \
-        assert(((int)d) > 0x10000); \
-        assert(((int)s) > 0x10000); \
+        assert(((sint32)d) > 0x10000); \
+        assert(((sint32)s) > 0x10000); \
         qmemcpy(d, s, l);           \
     }
 #endif
 
-extern void _builtin_set_imask(int);
-extern int _builtin_get_imask(void);
-extern int sprintf(char*, const char*, ...);
+extern void _builtin_set_imask(sint32);
+extern sint32 _builtin_get_imask(void);
+extern sint32 sprintf(char*, const char*, ...);
 
-extern unsigned int systemMemory;
+extern uint32 systemMemory;
 
-extern char cheatsEnabled;
-extern char enable_stereo;
-extern char enable_music;
+extern sint8 cheatsEnabled;
+extern sint8 enable_stereo;
+extern sint8 enable_music;
 
-int bitScanBackwards(unsigned int i, int start);
-int bitScanForward(unsigned int i, int start);
+sint32 bitScanBackwards(uint32 i, sint32 start);
+sint32 bitScanForward(uint32 i, sint32 start);
 
-Fixed32 evalHermite(Fixed32 t, Fixed32 p1, Fixed32 p2, Fixed32 d1, Fixed32 d2);
-Fixed32 evalHermiteD(Fixed32 t, Fixed32 p1, Fixed32 p2, Fixed32 d1, Fixed32 d2);
+fix32 evalHermite(fix32 t, fix32 p1, fix32 p2, fix32 d1, fix32 d2);
+fix32 evalHermiteD(fix32 t, fix32 p1, fix32 p2, fix32 d1, fix32 d2);
 
-int approxDist(int dx, int dy, int dz);
-Fixed32 dist(Fixed32 dx, Fixed32 dy, Fixed32 dz);
-int getAngle(int dx, int dy);
-int normalizeAngle(int angle);
-int fixSqrt(int n, int frac);
+sint32 approxDist(sint32 dx, sint32 dy, sint32 dz);
+fix32 dist(fix32 dx, fix32 dy, fix32 dz);
+sint32 getAngle(sint32 dx, sint32 dy);
+sint32 normalizeAngle(sint32 angle);
+sint32 fixSqrt(sint32 n, sint32 frac);
 
-MthXyz* getVertex(int vindex, MthXyz* out);
-void setGreyTableBalance(int r, int g, int b); /* 0-31 */
-extern unsigned short greyTable[];
+MthXyz* getVertex(sint32 vindex, MthXyz* out);
+void setGreyTableBalance(sint32 r, sint32 g, sint32 b); /* 0-31 */
+extern uint16 greyTable[];
 
-int findCeilDistance(int s, MthXyz* p);
-int findFloorDistance(int s, MthXyz* p);
+sint32 findCeilDistance(sint32 s, MthXyz* p);
+sint32 findFloorDistance(sint32 s, MthXyz* p);
 
-char* catFixed(char* buffer, int fixed, int frac);
+char* catFixed(char* buffer, sint32 fixed, sint32 frac);
 void message(char* message);
 
 #ifndef NDEBUG
 
-void assertFail(char* file, int line);
+void assertFail(char* file, sint32 line);
 
 #define assert(x)                           \
     do                                      \
@@ -78,7 +76,7 @@ void assertFail(char* file, int line);
     while (0)
 #define validPtr(x)                                                                                                \
     do                                                                                                             \
-        if (!((((int)x >= 0x200000 && ((int)x) <= 0x2fffff)) || (((int)x) >= 0x6004000 && ((int)x) <= 0x60fffff))) \
+        if (!((((sint32)x >= 0x200000 && ((sint32)x) <= 0x2fffff)) || (((sint32)x) >= 0x6004000 && ((sint32)x) <= 0x60fffff))) \
             assertFail(__FILE__, __LINE__);                                                                        \
     while (0)
 
@@ -94,15 +92,15 @@ void assertFail(char* file, int line);
 
 #ifdef TODO
 #define MTH_Mul(a, b) fixMul(a, b)
-extern inline Fixed32 fixMul(Fixed32 a, Fixed32 b)
+extern inline fix32 fixMul(fix32 a, fix32 b)
 {
-    Fixed32 c;
+    fix32 c;
     __asm__ volatile("dmuls.l %1,%2\n"
                      "sts mach,r11\n"
                      "sts macl,%0\n"
                      "xtrct r11,%0"
-                     : "=r"((Fixed32)c)
-                     : "r"((Fixed32)a), "r"((Fixed32)b)
+                     : "=r"((fix32)c)
+                     : "r"((fix32)a), "r"((fix32)b)
                      : "mach", "macl", "r11");
     return c;
 }
@@ -110,10 +108,10 @@ extern inline Fixed32 fixMul(Fixed32 a, Fixed32 b)
 #define MTH_Mul(a, b) (((a) * (b)) >> 16)
 #endif
 
-extern Fixed32 getStackPointer(void);
+extern fix32 getStackPointer(void);
 
 #ifndef NDEBUG
-extern void _checkStack(char* file, int line);
+extern void _checkStack(char* file, sint32 line);
 #define checkStack() _checkStack(__FILE__, __LINE__)
 #else
 #define checkStack()
@@ -121,16 +119,16 @@ extern void _checkStack(char* file, int line);
 
 #if 0
 #define MTH_Product(a, b) fixProduct(a, b)
-extern inline Fixed32 fixProduct(Fixed32 *a,Fixed32 *b)
-{Fixed32 c;
- __asm__ volatile ("clrmac\n"
+extern inline fix32 fixProduct(fix32 *a,fix32 *b)
+{fix32 c;
+ __asm__ ("clrmac\n"
 		   "mac.l @%1+,@%2+\n"
 		   "mac.l @%1+,@%2+\n"
 		   "mac.l @%1+,@%2+\n"
 		   "sts mach,r11\n"
 		   "sts macl,%0\n"
 		   "xtrct r11,%0"
-                   : "=r" ((Fixed32)c), "=r" (a), "=r" (b)
+                   : "=r" ((fix32)c), "=r" (a), "=r" (b)
 		   : "1" (a), "2" (b)
                    : "mach","macl","r11");
  return c;
@@ -138,10 +136,10 @@ extern inline Fixed32 fixProduct(Fixed32 *a,Fixed32 *b)
 #endif
 
 void mem_init(void);
-void* mem_nocheck_malloc(int area, int size);
-void* mem_malloc(int area, int size);
+void* mem_nocheck_malloc(sint32 area, sint32 size);
+void* mem_malloc(sint32 area, sint32 size);
 void mem_free(void*);
-int mem_coreleft(int area);
+sint32 mem_coreleft(sint32 area);
 void mem_lock(void);
 
 #ifdef PSYQ
@@ -159,8 +157,8 @@ void debugPrint(char* message);
 #endif
 
 #ifndef NDEBUG
-extern int debugFlag;
-extern int extraStuff;
+extern sint32 debugFlag;
+extern sint32 extraStuff;
 #endif
 
 #define RGB(r, g, b) (0x8000 | ((b) << 10) | ((g) << 5) | (r))
@@ -169,17 +167,17 @@ extern int extraStuff;
 void resetEnable(void);
 void resetDisable(void);
 
-#define POKE_B(adr, data) (*((volatile Uint8*)(adr)) = ((Uint8)(data)))
-#define POKE_W(adr, data) (*((volatile Uint16*)(adr)) = ((Uint16)(data)))
-#define POKE(adr, data) (*((volatile Uint32*)(adr)) = ((Uint32)(data)))
-#define PEEK(adr) (*((volatile Uint32*)(adr)))
-#define PEEK_W(adr) (*((volatile Uint16*)(adr)))
-#define PEEK_B(adr) (*((volatile Uint8*)(adr)))
+#define POKE_B(adr, data) (*((uint8*)(adr)) = ((uint8)(data)))
+#define POKE_W(adr, data) (*((uint16*)(adr)) = ((uint16)(data)))
+#define POKE(adr, data) (*((uint32*)(adr)) = ((uint32)(data)))
+#define PEEK(adr) (*((uint32*)(adr)))
+#define PEEK_W(adr) (*((uint16*)(adr)))
+#define PEEK_B(adr) (*((uint8*)(adr)))
 
 /* from the GCC FAQ */
 
 /*
-** void Set_Hardware_Divide(int, int);
+** void Set_Hardware_Divide(sint32, sint32);
 **
 ** Set the dividend and divisor of the hardware divide unit.
 ** The divider requires 37 clocks to calculate a result,
@@ -188,8 +186,8 @@ void resetDisable(void);
 #if 0
 #define Set_Hardware_Divide(x, y)                                       \
     ({                                                                  \
-        int* div_unit = (int*)0xffffff00;                               \
-        int dividend = x, divisor = y;                                  \
+        sint32* div_unit = (sint32*)0xffffff00;                               \
+        sint32 dividend = x, divisor = y;                                  \
         __asm__ volatile("mov.l %1,@%2; mov.l %0,@(4,%2);"              \
                          : /* no output */                              \
                          : "r"(dividend), "r"(divisor), "r"(div_unit)); \
@@ -197,8 +195,8 @@ void resetDisable(void);
 
 #define Set_Hardware_DivideFixed(x, y)                                                          \
     ({                                                                                          \
-        int* div_unit = (int*)0xffffff00;                                                       \
-        int dividend = x, divisor = y;                                                          \
+        sint32* div_unit = (sint32*)0xffffff00;                                                       \
+        sint32 dividend = x, divisor = y;                                                          \
         __asm__ volatile("mov.l %1,@%2; mov.l %0,@(0x10,%2); mov.l #0,r1; mov.l r1,@(0x14,%2);" \
                          : /* no output */                                                      \
                          : "r"(dividend), "r"(divisor), "r"(div_unit)                           \
@@ -206,7 +204,7 @@ void resetDisable(void);
     });
 
 /*
-** int Get_Hardware_Divide(void)
+** sint32 Get_Hardware_Divide(void)
 **
 ** Retrieves division result from the hardware divide unit.
 ** If less than 37 clocks have elapsed the CPU will be halted
@@ -215,13 +213,13 @@ void resetDisable(void);
 
 #define Get_Hardware_Divide()                                                     \
     ({                                                                            \
-        int* div_unit = (int*)0xffffff00;                                         \
-        int __result;                                                             \
+        sint32* div_unit = (sint32*)0xffffff00;                                         \
+        sint32 __result;                                                             \
         __asm__ volatile("mov.l @(0x1c,%1),%0" : "=r"(__result) : "r"(div_unit)); \
         __result;                                                                 \
     });
 #else
-static Fixed32 div_ret;
+static fix32 div_ret;
 
 #define Set_Hardware_Divide(x, y) div_ret = DIV_FIXED(x, y)
 #define Get_Hardware_Divide() div_ret
@@ -229,7 +227,7 @@ static Fixed32 div_ret;
 
 #endif
 
-extern unsigned short buttonMasks[];
+extern uint16 buttonMasks[];
 enum
 {
     ACTION_FIRE,
@@ -241,21 +239,21 @@ enum
     ACTION_STRAFE,
     ACTION_RUN
 };
-extern char controllerConfig[];
-#define IMASK(action) (buttonMasks[(int)controllerConfig[(int)(action)]])
+extern sint8 controllerConfig[];
+#define IMASK(action) (buttonMasks[(sint32)controllerConfig[(sint32)(action)]])
 
-unsigned short getNextRand(void);
+uint16 getNextRand(void);
 
 #define BREAK asm("trapa #34")
 
-void getDateTime(int* year, int* month, int* day, int* hour, int* min);
+void getDateTime(sint32* year, sint32* month, sint32* day, sint32* hour, sint32* min);
 
-int findWallsSector(int wallNm);
+sint32 findWallsSector(sint32 wallNm);
 
-void displayEnable(int state);
+void displayEnable(sint32 state);
 
-int findSectorHeight(int s);
+sint32 findSectorHeight(sint32 s);
 
-void delay(int frames);
+void delay(sint32 frames);
 
 #endif

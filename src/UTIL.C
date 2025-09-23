@@ -15,20 +15,20 @@
 #include "v_blank.h"
 
 #ifndef NDEBUG
-int extraStuff;
+sint32 extraStuff;
 #endif
 
-char enable_stereo;
-char enable_music;
-char cheatsEnabled;
+sint8 enable_stereo;
+sint8 enable_music;
+sint8 cheatsEnabled;
 
-unsigned int systemMemory;
+uint32 systemMemory;
 
 #define STICKSIZE 5096
-int mystack[STICKSIZE];
+sint32 mystack[STICKSIZE];
 void* _stackinit = &mystack[STICKSIZE];
 
-MthXyz* getVertex(int vindex, MthXyz* out)
+MthXyz* getVertex(sint32 vindex, MthXyz* out)
 {
     out->x = F(level_vertex[vindex].x);
     out->y = F(level_vertex[vindex].y);
@@ -36,9 +36,9 @@ MthXyz* getVertex(int vindex, MthXyz* out)
     return out;
 }
 
-int findFloorDistance(int s, MthXyz* p)
+sint32 findFloorDistance(sint32 s, MthXyz* p)
 {
-    int w;
+    sint32 w;
     sWallType* floor;
     for (w = level_sector[s].firstWall; w <= level_sector[s].lastWall; w++)
     {
@@ -58,7 +58,7 @@ int findFloorDistance(int s, MthXyz* p)
         return p->y - F(level_vertex[floor->v[0]].y);
     }
     {
-        Fixed32 planeDist;
+        fix32 planeDist;
         MthXyz wallP;
         getVertex(floor->v[0], &wallP);
         planeDist = (f(p->x - wallP.x)) * floor->normal[0] + (f(p->z - wallP.z)) * floor->normal[2];
@@ -66,9 +66,9 @@ int findFloorDistance(int s, MthXyz* p)
     }
 }
 
-int findCeilDistance(int s, MthXyz* p)
+sint32 findCeilDistance(sint32 s, MthXyz* p)
 {
-    int w;
+    sint32 w;
     sWallType* floor;
     for (w = level_sector[s].firstWall; w <= level_sector[s].lastWall; w++)
     {
@@ -84,7 +84,7 @@ int findCeilDistance(int s, MthXyz* p)
         return p->y - F(level_vertex[floor->v[0]].y);
     }
     {
-        Fixed32 planeDist;
+        fix32 planeDist;
         MthXyz wallP;
         getVertex(floor->v[0], &wallP);
         planeDist = (f(p->x - wallP.x)) * floor->normal[0] + (f(p->z - wallP.z)) * floor->normal[2];
@@ -97,7 +97,7 @@ int findCeilDistance(int s, MthXyz* p)
 #define SQRTTABLEMASK 0x3ff
 #include "sqrttab.h"
 
-int getAngle(int dx, int dy)
+sint32 getAngle(sint32 dx, sint32 dy)
 {
     while (dx > F(1) || dx < F(-1))
     {
@@ -112,12 +112,12 @@ int getAngle(int dx, int dy)
     return MTH_Atan(dy, dx);
 }
 
-unsigned short greyTable[33] = { 0x8000, 0x8000 | (1 << 10) | (1 << 5) | 1, 0x8000 | (2 << 10) | (2 << 5) | 2, 0x8000 | (3 << 10) | (3 << 5) | 3, 0x8000 | (4 << 10) | (4 << 5) | 4, 0x8000 | (5 << 10) | (5 << 5) | 5, 0x8000 | (6 << 10) | (6 << 5) | 6, 0x8000 | (7 << 10) | (7 << 5) | 7, 0x8000 | (8 << 10) | (8 << 5) | 8, 0x8000 | (9 << 10) | (9 << 5) | 9, 0x8000 | (10 << 10) | (10 << 5) | 10, 0x8000 | (11 << 10) | (11 << 5) | 11, 0x8000 | (12 << 10) | (12 << 5) | 12, 0x8000 | (13 << 10) | (13 << 5) | 13, 0x8000 | (14 << 10) | (14 << 5) | 14, 0x8000 | (15 << 10) | (15 << 5) | 15, 0x8000 | (16 << 10) | (16 << 5) | 16, 0x8000 | (17 << 10) | (17 << 5) | 17, 0x8000 | (18 << 10) | (18 << 5) | 18, 0x8000 | (19 << 10) | (19 << 5) | 19, 0x8000 | (20 << 10) | (20 << 5) | 20, 0x8000 | (21 << 10) | (21 << 5) | 21, 0x8000 | (22 << 10) | (22 << 5) | 22, 0x8000 | (23 << 10) | (23 << 5) | 23, 0x8000 | (24 << 10) | (24 << 5) | 24, 0x8000 | (25 << 10) | (25 << 5) | 25, 0x8000 | (26 << 10) | (26 << 5) | 26,
+uint16 greyTable[33] = { 0x8000, 0x8000 | (1 << 10) | (1 << 5) | 1, 0x8000 | (2 << 10) | (2 << 5) | 2, 0x8000 | (3 << 10) | (3 << 5) | 3, 0x8000 | (4 << 10) | (4 << 5) | 4, 0x8000 | (5 << 10) | (5 << 5) | 5, 0x8000 | (6 << 10) | (6 << 5) | 6, 0x8000 | (7 << 10) | (7 << 5) | 7, 0x8000 | (8 << 10) | (8 << 5) | 8, 0x8000 | (9 << 10) | (9 << 5) | 9, 0x8000 | (10 << 10) | (10 << 5) | 10, 0x8000 | (11 << 10) | (11 << 5) | 11, 0x8000 | (12 << 10) | (12 << 5) | 12, 0x8000 | (13 << 10) | (13 << 5) | 13, 0x8000 | (14 << 10) | (14 << 5) | 14, 0x8000 | (15 << 10) | (15 << 5) | 15, 0x8000 | (16 << 10) | (16 << 5) | 16, 0x8000 | (17 << 10) | (17 << 5) | 17, 0x8000 | (18 << 10) | (18 << 5) | 18, 0x8000 | (19 << 10) | (19 << 5) | 19, 0x8000 | (20 << 10) | (20 << 5) | 20, 0x8000 | (21 << 10) | (21 << 5) | 21, 0x8000 | (22 << 10) | (22 << 5) | 22, 0x8000 | (23 << 10) | (23 << 5) | 23, 0x8000 | (24 << 10) | (24 << 5) | 24, 0x8000 | (25 << 10) | (25 << 5) | 25, 0x8000 | (26 << 10) | (26 << 5) | 26,
     0x8000 | (27 << 10) | (27 << 5) | 27, 0x8000 | (28 << 10) | (28 << 5) | 28, 0x8000 | (29 << 10) | (29 << 5) | 29, 0x8000 | (30 << 10) | (30 << 5) | 30, 0x8000 | (31 << 10) | (31 << 5) | 31, 0x8000 | (31 << 10) | (31 << 5) | 31 };
 
 #if 0
-void setGreyTableBalance(int r,int g,int b) /* 0-31 */
-{int i;
+void setGreyTableBalance(sint32 r,sint32 g,sint32 b) /* 0-31 */
+(sint32 i;
  for (i=0;i<32;i++)
     {greyTable[i]=
 	0x8000|
@@ -128,16 +128,16 @@ void setGreyTableBalance(int r,int g,int b) /* 0-31 */
 }
 #endif
 
-Fixed32 dist(Fixed32 dx, Fixed32 dy, Fixed32 dz)
+fix32 dist(fix32 dx, fix32 dy, fix32 dz)
 {
-    int d;
+    sint32 d;
     d = f(dx) * f(dx) + f(dy) * f(dy) + f(dz) * f(dz);
     return fixSqrt(d, 0);
 }
 
-int approxDist(int dx, int dy, int dz)
+sint32 approxDist(sint32 dx, sint32 dy, sint32 dz)
 {
-    int min;
+    sint32 min;
     dx = abs(dx);
     dy = abs(dy);
     dz = abs(dz);
@@ -152,9 +152,9 @@ int approxDist(int dx, int dy, int dz)
 
 #define NMPARTS 5
 
-void assertFail(char* file, int line)
+void assertFail(char* file, sint32 line)
 {
-    Uint16 i, sw;
+    uint16 i, sw;
     MthXyz pos[NMPARTS], vel[NMPARTS];
     char* text[NMPARTS] = { NULL, NULL, "Write", "This", "Down" };
 
@@ -212,9 +212,9 @@ void assertFail(char* file, int line)
 
 void message(char* message)
 {
-    Uint16 i;
-    int data;
-    static int sw = 0;
+    uint16 i;
+    sint32 data;
+    static sint32 sw = 0;
     /** BEGIN ***************************************************************/
 
     SCL_SetFrameInterval(1);
@@ -243,11 +243,11 @@ void message(char* message)
     }
 }
 
-char* catFixed(char* buffer, int n, int frac)
+char* catFixed(char* buffer, sint32 n, sint32 frac)
 {
     char buff[80];
-    int bit, div, i;
-    int accum;
+    sint32 bit, div, i;
+    sint32 accum;
     if (n < 0)
     {
         strcat(buffer, "-");
@@ -272,11 +272,11 @@ char* catFixed(char* buffer, int n, int frac)
 }
 
 /* frac must be even! */
-int fixSqrt(int n, int frac)
+sint32 fixSqrt(sint32 n, sint32 frac)
 {
-    int shiftCount = 0;
-    int e;
-    int result;
+    sint32 shiftCount = 0;
+    sint32 e;
+    sint32 result;
     assert(!(frac & 1));
     assert(!(n & 0x80000000));
     while (n & (0xffffffff - SQRTTABLEMASK))
@@ -290,41 +290,41 @@ int fixSqrt(int n, int frac)
 }
 
 #ifdef TODO
-Fixed32 fixMul(Fixed32 a, Fixed32 b)
+fix32 fixMul(fix32 a, fix32 b)
 {
-    Fixed32 c;
-    __asm__ volatile("dmuls.l %1,%2\n sts mach,r11\n sts macl,%0\n xtrct r11,%0" : "=r"((Fixed32)c) : "r"((Fixed32)a), "r"((Fixed32)b) : "mach", "macl", "r11");
+    fix32 c;
+    __asm__ volatile("dmuls.l %1,%2\n sts mach,r11\n sts macl,%0\n xtrct r11,%0" : "=r"((fix32)c) : "r"((fix32)a), "r"((fix32)b) : "mach", "macl", "r11");
     return c;
 }
 #else
 #define fixMul(a, b) (((a) * (b)) >> 16)
 #endif
 
-Fixed32 evalHermite(Fixed32 t, Fixed32 p1, Fixed32 p2, Fixed32 d1, Fixed32 d2)
+fix32 evalHermite(fix32 t, fix32 p1, fix32 p2, fix32 d1, fix32 d2)
 {
-    Fixed32 t2 = MTH_Mul(t, t);
-    Fixed32 t3 = MTH_Mul(t2, t);
+    fix32 t2 = MTH_Mul(t, t);
+    fix32 t3 = MTH_Mul(t2, t);
 
     return (MTH_Mul(2 * t3 - 3 * t2 + F(1), p1) + MTH_Mul(-2 * t3 + 3 * t2, p2) + MTH_Mul(t3 - 2 * t2 + t, d1) + MTH_Mul(t3 - t2, d2));
 }
 
-Fixed32 evalHermiteD(Fixed32 t, Fixed32 p1, Fixed32 p2, Fixed32 d1, Fixed32 d2)
+fix32 evalHermiteD(fix32 t, fix32 p1, fix32 p2, fix32 d1, fix32 d2)
 {
-    Fixed32 t2 = MTH_Mul(t, t);
+    fix32 t2 = MTH_Mul(t, t);
 
     return (MTH_Mul(6 * t2 - 6 * t, p1) + MTH_Mul(-6 * t2 + 6 * t, p2) + MTH_Mul(3 * t2 - 4 * t + F(1), d1) + MTH_Mul(3 * t2 - 2 * t, d2));
 }
 
 #define NMAREAS 2
 #define STACKSIZE 8 /* must be power of 2 */
-static Uint8 *memStack[NMAREAS][STACKSIZE];
-static int stackPos[NMAREAS];
-static Uint8 *areaEnd[NMAREAS];
+static uint8 *memStack[NMAREAS][STACKSIZE];
+static sint32 stackPos[NMAREAS];
+static uint8 *areaEnd[NMAREAS];
 
-static Uint8 DRAM[2][1024 * 1024];
+static uint8 DRAM[2][1024 * 1024];
 
-static Uint8 *mem1Start = DRAM[0];
-static Uint8 *mem2Start = DRAM[1];
+static uint8 *mem1Start = DRAM[0];
+static uint8 *mem2Start = DRAM[1];
 
 void mem_init(void)
 {
@@ -342,15 +342,15 @@ void mem_lock(void)
     mem2Start = memStack[1][stackPos[1]];
 }
 
-int mem_coreleft(int a1)
+sint32 mem_coreleft(sint32 a1)
 {
     return areaEnd[a1] - memStack[a1][stackPos[a1]];
 }
 
-void* mem_nocheck_malloc(int area, int size)
+void* mem_nocheck_malloc(sint32 area, sint32 size)
 {
-    int a1 = area;
-    Uint8 *retAddr;
+    sint32 a1 = area;
+    uint8 *retAddr;
     assert(area >= 0);
     assert(area < NMAREAS);
     size = (size + 3) & (~3);
@@ -371,7 +371,7 @@ void* mem_nocheck_malloc(int area, int size)
     return NULL;
 }
 
-void* mem_malloc(int area, int size)
+void* mem_malloc(sint32 area, sint32 size)
 {
     void* r = mem_nocheck_malloc(area, size);
     assert(r);
@@ -380,11 +380,11 @@ void* mem_malloc(int area, int size)
 
 void mem_free(void* p)
 {
-    int a, s;
+    sint32 a, s;
     for (a = 0; a < NMAREAS; a++)
     {
         s = (stackPos[a] - 1) & (STACKSIZE - 1);
-        if (memStack[a][s] != (Uint8*)p)
+        if (memStack[a][s] != (uint8*)p)
             continue;
         stackPos[a] = s;
         return;
@@ -402,9 +402,9 @@ void debugPrint(char* message)
 void resetDisable(void)
 {
 #ifdef TODO // slave
-    volatile Uint8* SMPC_SF = (Uint8*)0x20100063;
-    volatile Uint8* SMPC_COM = (Uint8*)0x2010001f;
-    const Uint8 SMPC_RESDIS = 0x1a;
+    uint8* SMPC_SF = (uint8*)0x20100063;
+    uint8* SMPC_COM = (uint8*)0x2010001f;
+    const uint8 SMPC_RESDIS = 0x1a;
     while ((*SMPC_SF & 0x01) == 0x01)
         ;
     *SMPC_SF = 1;
@@ -417,9 +417,9 @@ void resetDisable(void)
 void resetEnable(void)
 {
 #ifdef TODO // slave
-    volatile Uint8* SMPC_SF = (Uint8*)0x20100063;
-    volatile Uint8* SMPC_COM = (Uint8*)0x2010001f;
-    const Uint8 SMPC_RESENA = 0x19;
+    uint8* SMPC_SF = (uint8*)0x20100063;
+    uint8* SMPC_COM = (uint8*)0x2010001f;
+    const uint8 SMPC_RESENA = 0x19;
     while ((*SMPC_SF & 0x01) == 0x01)
         ;
     *SMPC_SF = 1;
@@ -429,7 +429,7 @@ void resetEnable(void)
 #endif
 }
 
-int normalizeAngle(int angle)
+sint32 normalizeAngle(sint32 angle)
 {
     while (angle > F(180))
         angle -= F(360);
@@ -439,16 +439,16 @@ int normalizeAngle(int angle)
 }
 
 #ifndef NDEBUG
-void _checkStack(char* file, int line)
+void _checkStack(char* file, sint32 line)
 {
-    int c;
-    __asm__ volatile("mov.l r15,%0\n" : "=r"((int)c));
-    if (c < ((int)mystack) + 0x100)
+    sint32 c;
+    __asm__ volatile("mov.l r15,%0\n" : "=r"((sint32)c));
+    if (c < ((sint32)mystack) + 0x100)
         assertFail(file, line);
 }
 #endif
 
-int bitScanForward(unsigned int i, int start)
+sint32 bitScanForward(uint32 i, sint32 start)
 {
     start++;
     i = i >> start;
@@ -462,7 +462,7 @@ int bitScanForward(unsigned int i, int start)
     return -1;
 }
 
-int bitScanBackwards(unsigned int i, int start)
+sint32 bitScanBackwards(uint32 i, sint32 start)
 {
     i = i << (32 - start);
     start--;
@@ -476,39 +476,39 @@ int bitScanBackwards(unsigned int i, int start)
     return -1;
 }
 
-unsigned short buttonMasks[8] = { PER_DGT_A, PER_DGT_B, PER_DGT_C, PER_DGT_X, PER_DGT_Y, PER_DGT_Z, PER_DGT_TL, PER_DGT_TR };
-char controllerConfig[8] = { 0, 1, 2, 3, 4, 5, 6, 7 };
+uint16 buttonMasks[8] = { PER_DGT_A, PER_DGT_B, PER_DGT_C, PER_DGT_X, PER_DGT_Y, PER_DGT_Z, PER_DGT_TL, PER_DGT_TR };
+sint8 controllerConfig[8] = { 0, 1, 2, 3, 4, 5, 6, 7 };
 
 #include "rndtab.h"
-static int nextRand = 0;
-unsigned short getNextRand(void)
+static sint32 nextRand = 0;
+uint16 getNextRand(void)
 {
     if (nextRand >= RANDTABLESIZE)
         nextRand = 0;
     return randTable[nextRand++];
 }
 
-void getDateTime(int* year, int* month, int* day, int* hour, int* min)
+void getDateTime(sint32* year, sint32* month, sint32* day, sint32* hour, sint32* min)
 {
-    Uint8* time;
+    uint8* time;
     time = PER_GET_TIM();
-    *year = (Uint8)((Uint16)(time[6] >> 4) * 1000 + (Uint16)(time[6] & 0x0f) * 100 + (Uint16)(time[5] >> 4) * 10 + (Uint16)(time[5] & 0x0f) - 1980);
+    *year = (uint8)((uint16)(time[6] >> 4) * 1000 + (uint16)(time[6] & 0x0f) * 100 + (uint16)(time[5] >> 4) * 10 + (uint16)(time[5] & 0x0f) - 1980);
     *month = time[4] & 0x0f;
     *day = (time[3] >> 4) * 10 + (time[3] & 0x0f);
     *hour = (time[2] >> 4) * 10 + (time[2] & 0x0f);
     *min = (time[1] >> 4) * 10 + (time[1] & 0x0f);
 }
 
-int findWallsSector(int wallNm)
+sint32 findWallsSector(sint32 wallNm)
 {
-    int s;
+    sint32 s;
     for (s = 0; s < level_nmSectors && wallNm > level_sector[s].lastWall; s++)
         ;
     assert(s < level_nmSectors);
     return s;
 }
 
-void displayEnable(int state)
+void displayEnable(sint32 state)
 {
 #ifdef TODO // display
     if (state)
@@ -521,10 +521,10 @@ void displayEnable(int state)
 #endif
 }
 
-int findSectorHeight(int s)
+sint32 findSectorHeight(sint32 s)
 {
     MthXyz pos;
-    int a, b;
+    sint32 a, b;
     pos.x = 0;
     pos.y = 0;
     pos.z = 0;
@@ -533,9 +533,9 @@ int findSectorHeight(int s)
     return f(b - a);
 }
 
-void delay(int frames)
+void delay(sint32 frames)
 {
-    Uint32 v = vtimer + frames + 1;
+    uint32 v = vtimer + frames + 1;
     while (vtimer < v)
         ;
 }

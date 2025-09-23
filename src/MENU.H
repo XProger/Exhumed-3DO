@@ -6,32 +6,32 @@
 #ifdef SEGA_MTH_H
 typedef struct
 {
-    int type;
-    Fixed32 xp, yp;
-    short x1, y1, x2, y2, xv, yv;
-    int w, h;
-    int color, code;
+    sint32 type;
+    fix32 xp, yp;
+    sint16 x1, y1, x2, y2, xv, yv;
+    sint32 w, h;
+    sint32 color, code;
     char* text;
 } DlgItem;
 
 extern DlgItem dlgItem[];
-extern unsigned short lastUsedSelButton;
+extern uint16 lastUsedSelButton;
 #endif
 
 void dlg_clear(void);
-void dlg_addRect(int x, int y, int w, int h, int color);
-void dlg_addText(int x, int y, int w, char* text);
-void dlg_addFontText(int x, int y, int w, int font, char* text);
-void dlg_addCenteredText(int x, int y, int w, char* text);
-void dlg_addButton(int pressCode, int x, int y, int w, int h, char* text);
-void dlg_addBigWavyButton(int pressCode, int x, int y, char* text);
-void dlg_addGameButton(int x, int y, int gameNm);
-void dlg_addFontString(int x, int y, int font, char* text);
+void dlg_addRect(sint32 x, sint32 y, sint32 w, sint32 h, sint32 color);
+void dlg_addText(sint32 x, sint32 y, sint32 w, char* text);
+void dlg_addFontText(sint32 x, sint32 y, sint32 w, sint32 font, char* text);
+void dlg_addCenteredText(sint32 x, sint32 y, sint32 w, char* text);
+void dlg_addButton(sint32 pressCode, sint32 x, sint32 y, sint32 w, sint32 h, char* text);
+void dlg_addBigWavyButton(sint32 pressCode, sint32 x, sint32 y, char* text);
+void dlg_addGameButton(sint32 x, sint32 y, sint32 gameNm);
+void dlg_addFontString(sint32 x, sint32 y, sint32 font, char* text);
 #ifdef JAPAN
-void dlg_addBigWavyJapaneseButton(int pressCode, int x, int y, char* text);
+void dlg_addBigWavyJapaneseButton(sint32 pressCode, sint32 x, sint32 y, char* text);
 #endif
 
-void dlg_selectButton(int b);
+void dlg_selectButton(sint32 b);
 void dlg_centerStuff(void);
 
 enum
@@ -40,13 +40,13 @@ enum
     MENUMOVE_HORZ,
     MENUMOVE_VERT
 };
-int dlg_run(int selSound, int pushSound, int movement);
-void dlg_runMessage(char* message, int w);
-void dlg_flashMessage(char* message1, char* message2, int w, int h);
-int dlg_runYesNo(char* message, int w);
-void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeButton, int fadeSelection);
+sint32 dlg_run(sint32 selSound, sint32 pushSound, sint32 movement);
+void dlg_runMessage(char* message, sint32 w);
+void dlg_flashMessage(char* message1, char* message2, sint32 w, sint32 h);
+sint32 dlg_runYesNo(char* message, sint32 w);
+void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fade, sint32 fadeButton, sint32 fadeSelection);
 
-void dlg_init(int fd);
+void dlg_init(sint32 fd);
 
 void dlg_setupSlideIn(void);
 void dlg_setupSlideOut(void);
@@ -54,6 +54,6 @@ void dlg_setupSlideUp(void);
 void dlg_setupNoSlide(void);
 void dlg_runSlideIn(void);
 
-int runTravelQuestion(char* destination);
+sint32 runTravelQuestion(char* destination);
 
 #endif

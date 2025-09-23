@@ -37,15 +37,15 @@
 Sprite *camera;
 
 #ifdef JAPAN
-int level_frame,level_sequenceMap,level_sequence,level_chunk;
+sint32 level_frame,level_sequenceMap,level_sequence,level_chunk;
 #endif
 
 #define MAXNMPICS 20
-static unsigned short *picPals[MAXNMPICS];
-static unsigned int *picDatas[MAXNMPICS];
+static uint16 *picPals[MAXNMPICS];
+static uint32 *picDatas[MAXNMPICS];
 
 static void setupVDP2(void)
-{static Uint16 cycle[]=
+{static uint16 cycle[]=
     {0x44ee, 0xeeee,
      0x44ee, 0xeeee,
      0x55ee, 0xeeee,
@@ -79,8 +79,8 @@ static void setupVDP2(void)
  SCL_SET_N0CCEN(1);
 }
 
-static void loadVDPPic(int picNm,int bankNm)
-{int i,width,height,x,y,yoffs;
+static void loadVDPPic(sint32 picNm,sint32 bankNm)
+(sint32 i,width,height,x,y,yoffs;
 
  for (i=0;i<256;i++)
     POKE_W(SCL_COLRAM_ADDR+(bankNm?512:0)+(i<<1),picPals[picNm][i]);
@@ -112,7 +112,7 @@ static void loadVDPPic(int picNm,int bankNm)
 
 #if 0
 static void xFadeUp(void)
-{int f;
+(sint32 f;
  for (f=0;f<32;f++)
     {SCL_SetColMixRate(SCL_NBG0,f);
      SCL_DisplayFrame();
@@ -120,7 +120,7 @@ static void xFadeUp(void)
 }
 
 static void xFadeDown(void)
-{int f;
+(sint32 f;
  for (f=31;f>=0;f--)
     {SCL_SetColMixRate(SCL_NBG0,f);
      SCL_DisplayFrame();
@@ -129,7 +129,7 @@ static void xFadeDown(void)
 #endif
 
 static void fadeDown(void)
-{int f;
+(sint32 f;
  for (f=0;f>=-255;f-=4)
     {SCL_SetColOffset(SCL_OFFSET_A,SCL_NBG1|SCL_NBG0,f,f,f);
      SCL_DisplayFrame();
@@ -138,7 +138,7 @@ static void fadeDown(void)
 }
 
 static void fadeUp(void)
-{int f;
+(sint32 f;
  for (f=-255;f<0;f+=4)
     {SCL_SetColOffset(SCL_OFFSET_A,SCL_NBG1|SCL_NBG0,f,f,f);
      SCL_DisplayFrame();
@@ -149,8 +149,8 @@ static void fadeUp(void)
 /* #define CANCELKEYS (PER_DGT_A|PER_DGT_B|PER_DGT_C|PER_DGT_X|PER_DGT_Y|PER_DGT_Z|PER_DGT_S) */
 #define CANCELKEYS (PER_DGT_A)
 
-static int wait(int nmFrames)
-{int i;
+static sint32 wait(sint32 nmFrames)
+(sint32 i;
  for (i=0;i<nmFrames;i++)
     {SCL_DisplayFrame();
      if ((inputAccum & CANCELKEYS)!=CANCELKEYS)
@@ -160,7 +160,7 @@ static int wait(int nmFrames)
 }
 
 #if 0
-static int waitForFAD(int fad)
+static sint32 waitForFAD(sint32 fad)
 {while (getCurrentFAD()<fad)
     if ((inputAccum & CANCELKEYS)!=CANCELKEYS)
        return 1;
@@ -169,15 +169,15 @@ static int waitForFAD(int fad)
 #endif
 
 void playIntro(void)
-{int i;
+(sint32 i;
  displayEnable(0);
  mem_init();
  initSound();
  {
 #ifndef JAPAN
-  int fd=fs_open("+LOGOS.PCS");
+  sint32 fd=fs_open("+LOGOS.PCS");
 #else
-  int fd=fs_open("+JLOGOS.PCS");
+  sint32 fd=fs_open("+JLOGOS.PCS");
 #endif
   loadPicSet(fd,picPals,picDatas,MAXNMPICS);
 #ifndef PAL
@@ -241,8 +241,8 @@ void playIntro(void)
 }
 
 static void fadeSegaLogo(void)
-{int i,pos;
- int r,g,b;
+(sint32 i,pos;
+ sint32 r,g,b;
  POKE_W(SCL_VDP2_VRAM+0x180112,0x00); /* enable line scroll for nbg[01] */
  pos=0;
  for (i=0;i<32;i++)
@@ -260,7 +260,7 @@ static void fadeSegaLogo(void)
 }
 
 static void setVDP2(void)
-{static Uint16 cycle[]=
+{static uint16 cycle[]=
    {0xeeee, 0xeeee,
     0xeeee, 0xeeee,
     0x44ee, 0xeeee,
@@ -292,8 +292,8 @@ static void setVDP2(void)
 #define MAXNMSTRINGS 120
 
 
-static void stepWaterVel(int *pos,int *vel,int nmRows)
-{int *ppos,*pvel,y,x;
+static void stepWaterVel(sint32 *pos,sint32 *vel,sint32 nmRows)
+(sint32 *ppos,*pvel,y,x;
  for (y=0;y<nmRows;y++)
     {ppos=pos+y*XD+1;
      pvel=vel+y*XD+1;
@@ -307,8 +307,8 @@ static void stepWaterVel(int *pos,int *vel,int nmRows)
     }
 }
 
-static void stepWaterPos(int *ppos,int *pvel,int nmCells)
-{int y;
+static void stepWaterPos(sint32 *ppos,sint32 *pvel,sint32 nmCells)
+(sint32 y;
  for (y=nmCells;y;y--)
     {*ppos+=(*pvel)>>3;
      *pvel-=(*pvel)>>6;
@@ -316,8 +316,8 @@ static void stepWaterPos(int *ppos,int *pvel,int nmCells)
     }
 }
 
-static void drawWater(int *pvel,int vposStart,int nmRows)
-{int vpos,y,x;
+static void drawWater(sint32 *pvel,sint32 vposStart,sint32 nmRows)
+(sint32 vpos,y,x;
  vpos=vposStart;
  for (y=0;y<nmRows;y++)
     {for (x=0;x<XD;x++)
@@ -329,24 +329,24 @@ static void drawWater(int *pvel,int vposStart,int nmRows)
     }
 }
 
-void credits(int specialMessage)
-{int (*pos)[YD][XD];
- int (*vel)[YD][XD];
- int x,y,vpos,i,textYPos;
- int screen=0;
- int dropCount;
- int fading=0;
+void credits(sint32 specialMessage)
+(sint32 (*pos)[YD][XD];
+ sint32 (*vel)[YD][XD];
+ sint32 x,y,vpos,i,textYPos;
+ sint32 screen=0;
+ sint32 dropCount;
+ sint32 fading=0;
 #ifdef PAL
- static char creditSectionLen[]={3,2,5,2,2,11,2,2,6,8,2,10,7,-1};
+ static sint8 creditSectionLen[]={3,2,5,2,2,11,2,2,6,8,2,10,7,-1};
 #else
- static char creditSectionLen[]={3,2,2,2,2,8,3,2,3,3,11,4,2,2,6,2,7,
+ static sint8 creditSectionLen[]={3,2,2,2,2,8,3,2,3,3,11,4,2,2,6,2,7,
 				    1,2,2,2,2,2,8,3,3,4,7,1,7,-1};
 #endif
 #ifdef JAPAN
- int fontChange=100000;
+ sint32 fontChange=100000;
 #endif
  XyInt stringPos[MAXNMSTRINGS];
- int nmStrings;
+ sint32 nmStrings;
  displayEnable(0);
  SCL_DisplayFrame();
  SCL_DisplayFrame();
@@ -356,9 +356,9 @@ void credits(int specialMessage)
 
  EZ_initSprSystem(1000,8,1000,240,0x0000);
 #ifdef JAPAN
- {int i;
+ (sint32 i;
   i=initFonts(0,7);
-  initPicSystem(i,((int []){0,0,0,0,0,70,-1}));
+  initPicSystem(i,((sint32 []){0,0,0,0,0,70,-1}));
  }
  loadJapanFontPics();
 #else
@@ -373,7 +373,7 @@ void credits(int specialMessage)
     creditSectionLen[29]=-1;
 #endif
 
- {int section,ypos;
+ (sint32 section,ypos;
   nmStrings=0;
   ypos=0;
   for (section=0;creditSectionLen[section]!=-1;section++)
@@ -405,7 +405,7 @@ void credits(int specialMessage)
  pos=mem_malloc(1,XD*YD*4);
  vel=mem_malloc(1,XD*YD*4);
 
- {static Uint16 cycle[]=
+ {static uint16 cycle[]=
      {0x44ee, 0xeeee,
 	 0x44ee, 0xeeee,
 	 0x55ee, 0xeeee,
@@ -458,7 +458,7 @@ void credits(int specialMessage)
  dropCount=10;
  vtimer=0;
 
- drawWater((int *)vel,SCL_VDP2_VRAM,YD);
+ drawWater((sint32 *)vel,SCL_VDP2_VRAM,YD);
 
  while (1)
     {/* step water */
@@ -473,16 +473,16 @@ void credits(int specialMessage)
 	 (*vel)[y][x-1]=F(10);
 	}
      /* ... update water vel */
-     stepWaterVel(((int *)pos)+XD,
-		  ((int *)vel)+XD,
+     stepWaterVel(((sint32 *)pos)+XD,
+		  ((sint32 *)vel)+XD,
 		  YD-2);
      /* ... update water pos */
-     stepWaterPos((int *)pos,(int *)vel,YD*XD);
+     stepWaterPos((sint32 *)pos,(sint32 *)vel,YD*XD);
      /* draw water */
      vpos=SCL_VDP2_VRAM;
      if (screen==1)
 	vpos+=1024*256;
-     drawWater((int *)vel,vpos,YD);
+     drawWater((sint32 *)vel,vpos,YD);
      if (screen)
 	{Scl_s_reg.dispenbl&=~1;
 	 Scl_s_reg.dispenbl|=2;
@@ -549,7 +549,7 @@ void credits(int specialMessage)
 }
 
 void main(void)
-{int token;
+(sint32 token;
  fadeSegaLogo();
  megaInit();
  fs_init();
@@ -578,12 +578,12 @@ void main(void)
  if (token==GOODEND || token==BADEND || token==SUPERGOODEND)
     {
 #ifndef JAPAN
-     int fd=fs_open("+INITLOAD.DAT");
+     sint32 fd=fs_open("+INITLOAD.DAT");
      skipPicSet(fd);
      loadLocalText(fd); /* locks memory */
      fs_close(fd);
 #else
-     int fd=fs_open("+JINITLOD.DAT");
+     sint32 fd=fs_open("+JINITLOD.DAT");
      skipPicSet(fd);
      loadJapanFontData(fd);
      mem_lock();

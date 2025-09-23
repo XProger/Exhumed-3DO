@@ -27,7 +27,7 @@
 #include "gamestat.h"
 #include "sound.h"
 
-static int levelPos[NMLEVELS][2] = {
+static sint32 levelPos[NMLEVELS][2] = {
 
     { 419, 292 },
     { 572, 300 },
@@ -64,7 +64,7 @@ static int levelPos[NMLEVELS][2] = {
 
 typedef struct
 {
-    char link[4];
+    sint8 link[4];
     char* levelFile;
 } LevData;
 
@@ -109,54 +109,54 @@ static LevData levelGraph[NMLEVELS] = {
     /*30*/ { { -1, -1, -1, -1 }, "+TOMBEND.LEV" },
 };
 
-char* getLevelName(int lNm)
+char* getLevelName(sint32 lNm)
 {
     return levelGraph[lNm].levelFile;
 }
 
 static void completeGraph(void)
 {
-    int i;
+    sint32 i;
     /* complete graph */
     for (i = 0; i < NMLEVELS; i++)
     {
         if (levelGraph[i].link[0] > i)
-            levelGraph[(int)levelGraph[i].link[0]].link[2] = i;
+            levelGraph[(sint32)levelGraph[i].link[0]].link[2] = i;
         if (levelGraph[i].link[1] > i)
-            levelGraph[(int)levelGraph[i].link[1]].link[3] = i;
+            levelGraph[(sint32)levelGraph[i].link[1]].link[3] = i;
         if (levelGraph[i].link[2] > i)
-            levelGraph[(int)levelGraph[i].link[2]].link[0] = i;
+            levelGraph[(sint32)levelGraph[i].link[2]].link[0] = i;
         if (levelGraph[i].link[3] > i)
-            levelGraph[(int)levelGraph[i].link[3]].link[1] = i;
+            levelGraph[(sint32)levelGraph[i].link[3]].link[1] = i;
     }
 }
 
-int getMapLink(int fromLevel, int direction)
+sint32 getMapLink(sint32 fromLevel, sint32 direction)
 {
     completeGraph();
     return levelGraph[fromLevel].link[direction];
 }
 
-static int firstMapTile;
+static sint32 firstMapTile;
 
-int loadMapTiles(int fd)
+sint32 loadMapTiles(sint32 fd)
 { /* returns # of map tiles loaded */
-    int nmTiles, i, j;
-    unsigned char* b;
-    short flags;
+    sint32 nmTiles, i, j;
+    uint8* b;
+    sint16 flags;
     firstMapTile = -1;
-    fs_read(fd, (char*)&nmTiles, 4);
+    fs_read(fd, (sint8*)&nmTiles, 4);
 
     nmTiles = FS_INT(&nmTiles);
 
     assert(nmTiles < 100 && nmTiles >= 0);
     for (i = 0; i < nmTiles; i++)
     {
-        fs_read(fd, (char*)&flags, 2);
+        fs_read(fd, (sint8*)&flags, 2);
 
         flags = FS_SHORT(&flags);
 
-        b = (unsigned char*)mem_malloc(1, 64 * 64 * 2);
+        b = (uint8*)mem_malloc(1, 64 * 64 * 2);
         fs_read(fd, b, 64 * 64 * 2);
         j = addPic(TILE16BPP, b, NULL, 0);
         if (firstMapTile == -1)
@@ -175,22 +175,22 @@ static char* codez[NMCODEZ] = {
 #define MAPTILEWIDTH 10
 #define MAPTILEHEIGHT 8
 /* returns next level to load */
-int runMap(int currentLevel)
+sint32 runMap(sint32 currentLevel)
 {
-    int frame = 0;
-    int x, y, i, j;
-    int input, lastInput, changeInput;
-    int startVel[2];
-    int selX, selY;
-    int desiredXOffs, desiredYOffs;
-    int xoffs, yoffs;
-    int newPos[2], oldPos[2], time, haveNewPos;
-    int selectedLevel;
-    int fadeCount, mapFadeDir;
-    int arrowOffs, eyeFrame, eyeClock;
-    int codePos[NMCODEZ];
-    Fixed32 scaleFactor;
-    char cheatMove = 0;
+    sint32 frame = 0;
+    sint32 x, y, i, j;
+    sint32 input, lastInput, changeInput;
+    sint32 startVel[2];
+    sint32 selX, selY;
+    sint32 desiredXOffs, desiredYOffs;
+    sint32 xoffs, yoffs;
+    sint32 newPos[2], oldPos[2], time, haveNewPos;
+    sint32 selectedLevel;
+    sint32 fadeCount, mapFadeDir;
+    sint32 arrowOffs, eyeFrame, eyeClock;
+    sint32 codePos[NMCODEZ];
+    fix32 scaleFactor;
+    sint8 cheatMove = 0;
     XyInt pos;
     XyInt poly[4];
 
@@ -206,7 +206,7 @@ int runMap(int currentLevel)
     stopCD();
     initSound();
     {
-        int fd = fs_open("+MAP.DAT"); /* start read ahead of file */
+        sint32 fd = fs_open("+MAP.DAT"); /* start read ahead of file */
 #ifdef TODO
         while (fadeDir)
             ;
@@ -220,9 +220,9 @@ int runMap(int currentLevel)
 
 #ifndef JAPAN
         i = initFonts(0, 7);
-        initPicSystem(i, ((int[]) { 40, 0, 0, 36, 0, -1 }));
+        initPicSystem(i, ((sint32[]) { 40, 0, 0, 36, 0, -1 }));
 #else
-        initPicSystem(0, ((int[]) { 40, 0, 0, 36, 0, 30, -1 }));
+        initPicSystem(0, ((sint32[]) { 40, 0, 0, 36, 0, 30, -1 }));
 #endif
         loadPicSetAsPics(fd, TILESMALL16BPP);
         loadSound(fd);
@@ -263,7 +263,7 @@ int runMap(int currentLevel)
     {
         if (!(frame & 0x3f))
         {
-            static char tmitLevels[] = { 2, 5, 6, 21, 18, 20, 16, 10, -1 };
+            static sint8 tmitLevels[] = { 2, 5, 6, 21, 18, 20, 16, 10, -1 };
             for (i = 0; tmitLevels[i] != -1; i++)
             {
                 if (selectedLevel == tmitLevels[i] && !(currentState.inventory & (0x10000 << i)))
@@ -310,7 +310,7 @@ int runMap(int currentLevel)
                 }
         else
         {
-            int scx, scy;
+            sint32 scx, scy;
             scx = 160 + (desiredXOffs - xoffs);
             scy = 120 + (desiredYOffs - yoffs);
             for (y = 0; y < MAPTILEHEIGHT; y++)
@@ -335,7 +335,7 @@ int runMap(int currentLevel)
                 poly[0].y = levelPos[i][1] - yoffs - 5;
                 if (i == selectedLevel)
                 {
-                    int pic;
+                    sint32 pic;
                     if (eyeClock & 1)
                     {
                         eyeFrame++;
@@ -360,9 +360,9 @@ int runMap(int currentLevel)
                         {
                             static struct
                             {
-                                short pic, xo, yo, dx, dy;
+                                sint16 pic, xo, yo, dx, dy;
                             } arrows[] = { { 3, 15, -8, 0, -1 }, { 0, 30, 4, 1, 0 }, { 2, 15, 16, 0, 1 }, { 1, -1, 4, -1, 0 } };
-                            if (currentState.levFlags[(int)levelGraph[selectedLevel].link[j]] & LEVFLAG_CANENTER)
+                            if (currentState.levFlags[(sint32)levelGraph[selectedLevel].link[j]] & LEVFLAG_CANENTER)
                             {
                                 poly[1].x = poly[0].x + arrows[j].xo + abs(arrowOffs) * arrows[j].dx;
                                 poly[1].y = poly[0].y + arrows[j].yo + abs(arrowOffs) * arrows[j].dy;
@@ -465,9 +465,9 @@ int runMap(int currentLevel)
         else
         {
             { /* do cheats */
-                int i;
+                sint32 i;
 #define NMCP 9
-                static unsigned short cp[NMCP] = { PER_DGT_U, PER_DGT_D, PER_DGT_L, PER_DGT_R, PER_DGT_X, PER_DGT_Y, PER_DGT_Z, PER_DGT_A, PER_DGT_S };
+                static uint16 cp[NMCP] = { PER_DGT_U, PER_DGT_D, PER_DGT_L, PER_DGT_R, PER_DGT_X, PER_DGT_Y, PER_DGT_Z, PER_DGT_A, PER_DGT_S };
                 static char cpl[NMCP] = { 'U', 'D', 'L', 'R', 'X', 'Y', 'Z', 'A', 'T' };
                 char c = 0;
                 for (i = 0; i < NMCP; i++)
@@ -487,7 +487,7 @@ int runMap(int currentLevel)
                                 {
                                     case 0:
                                     {
-                                        extern char endUserCheatsEnabled;
+                                        extern sint8 endUserCheatsEnabled;
                                         endUserCheatsEnabled = 1;
                                     }
                                     break;
@@ -519,7 +519,7 @@ int runMap(int currentLevel)
 	     if (!(input & PER_DGT_R))
 		levelPos[selectedLevel][0]++;
 	     if ((changeInput & PER_DGT_Y) && !(input & PER_DGT_Y))
-		{int fd;
+		(sint32 fd;
 		 char buff[160];
 		 fd=PCopen("c:\\sr3\\levelpos.txt",1,0);
 		 for (i=0;i<NMLEVELS;i++)
@@ -533,7 +533,7 @@ int runMap(int currentLevel)
 #endif
 #endif
             {
-                int dir = -1;
+                sint32 dir = -1;
                 if ((changeInput & PER_DGT_D) && !(input & PER_DGT_D))
                     dir = 2;
                 if ((changeInput & PER_DGT_U) && !(input & PER_DGT_U))
@@ -545,9 +545,9 @@ int runMap(int currentLevel)
 
                 if (dir != -1 && levelGraph[selectedLevel].link[dir] != -1)
                 {
-                    if (cheatMove || currentState.levFlags[(int)levelGraph[selectedLevel].link[dir]] & LEVFLAG_CANENTER)
+                    if (cheatMove || currentState.levFlags[(sint32)levelGraph[selectedLevel].link[dir]] & LEVFLAG_CANENTER)
                     {
-                        currentState.levFlags[(int)levelGraph[selectedLevel].link[dir]] |= LEVFLAG_CANENTER;
+                        currentState.levFlags[(sint32)levelGraph[selectedLevel].link[dir]] |= LEVFLAG_CANENTER;
                         cheatMove = 0;
                         selectedLevel = levelGraph[selectedLevel].link[dir];
                         haveNewPos = 1;

@@ -1,6 +1,6 @@
 #include <sega_spr.h>
 
-unsigned char stat_compass0[] = {
+uint8 stat_compass0[] = {
     0,
     0,
     0,
@@ -650,7 +650,7 @@ unsigned char stat_compass0[] = {
     0,
     0,
 };
-unsigned char stat_compass1[] = {
+uint8 stat_compass1[] = {
     0,
     0,
     0,
@@ -1300,7 +1300,7 @@ unsigned char stat_compass1[] = {
     0,
     0,
 };
-unsigned char stat_compass2[] = {
+uint8 stat_compass2[] = {
     0,
     0,
     0,
@@ -1951,7 +1951,7 @@ unsigned char stat_compass2[] = {
     0,
 };
 
-unsigned char stat_bowl[] = {
+uint8 stat_bowl[] = {
     0,
     0,
     0,
@@ -2057,7 +2057,7 @@ unsigned char stat_bowl[] = {
     0,
     0,
 };
-unsigned char stat_bluedot[] = {
+uint8 stat_bluedot[] = {
     0,
     0,
     0,
@@ -2083,7 +2083,7 @@ unsigned char stat_bluedot[] = {
     0,
     0,
 };
-unsigned char stat_reddot[] = {
+uint8 stat_reddot[] = {
     0,
     0,
     0,
@@ -2109,7 +2109,7 @@ unsigned char stat_reddot[] = {
     0,
     0,
 };
-unsigned char stat_gem[] = {
+uint8 stat_gem[] = {
     0,
     0,
     0,
@@ -2159,7 +2159,7 @@ unsigned char stat_gem[] = {
     0,
     0,
 };
-unsigned char stat_bar[] = {
+uint8 stat_bar[] = {
     0,
     0,
     1,

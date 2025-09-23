@@ -1,16 +1,16 @@
 #ifndef ART_H
 #define ART_H
 
-extern Uint16 clr256[];
-extern unsigned char stat_bar[];
-extern unsigned char stat_compass0[];
-extern unsigned char stat_compass1[];
-extern unsigned char stat_compass2[];
-extern unsigned char stat_bowl[];
-extern unsigned char stat_bluedot[];
-extern unsigned char stat_reddot[];
-extern unsigned char stat_gem[];
-extern unsigned char meter_bubble[];
-extern unsigned char meter_back[];
+extern uint16 clr256[];
+extern uint8 stat_bar[];
+extern uint8 stat_compass0[];
+extern uint8 stat_compass1[];
+extern uint8 stat_compass2[];
+extern uint8 stat_bowl[];
+extern uint8 stat_bluedot[];
+extern uint8 stat_reddot[];
+extern uint8 stat_gem[];
+extern uint8 meter_bubble[];
+extern uint8 meter_back[];
 
 #endif

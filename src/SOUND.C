@@ -10,58 +10,58 @@
 #include "sound.h"
 #include "sruins.h"
 
-static int soundTop = 0; /* first unused byte of sound memory */
-static unsigned char soundFrame = 1;
+static sint32 soundTop = 0; /* first unused byte of sound memory */
+static uint8 soundFrame = 1;
 
 struct soundSaveData
 {
-    int owner;
-    short sound;
-    short pan, vol;
+    sint32 owner;
+    sint16 sound;
+    sint16 pan, vol;
 } soundSave[32];
 
-static int slotOwner[32]; /* -1 if empty */
-static short slotSound[32];
-static char slotDirty[32];
+static sint32 slotOwner[32]; /* -1 if empty */
+static sint16 slotSound[32];
+static sint8 slotDirty[32];
 
 #define SCSP_REG_SET 0x0200
-#define ADR_SCSP_REG ((volatile Uint8*)0x25b00400)
+#define ADR_SCSP_REG ((uint8*)0x25b00400)
 
-short level_objectSoundMap[OT_NMTYPES];
-short level_staticSoundMap[ST_NMSTATICSOUNDGROUPS];
+sint16 level_objectSoundMap[OT_NMTYPES];
+sint16 level_staticSoundMap[ST_NMSTATICSOUNDGROUPS];
 
 typedef struct
 {
-    int startAddr;
-    int loopStart; /* or -1 if no loop */
-    unsigned short sampleRate;
-    unsigned short size;
-    unsigned char lastFrameUsed, bps;
+    sint32 startAddr;
+    sint32 loopStart; /* or -1 if no loop */
+    uint16 sampleRate;
+    uint16 size;
+    uint8 lastFrameUsed, bps;
 } SoundRec;
 
 #define MAXNMSOUNDS 80
 
 SoundRec sounds[MAXNMSOUNDS];
-static int nmSounds;
+static sint32 nmSounds;
 
 #define SILENCE 8 /* must be power of 2 */
-static char silentQ[SILENCE];
-static int qHead, qTail;
+static sint8 silentQ[SILENCE];
+static sint32 qHead, qTail;
 
-void setMasterVolume(int vol)
+void setMasterVolume(sint32 vol)
 {
     POKE_W(SNDBASE + 0x100400, 0x0200 + (vol & 0xf));
     /* set dac18, mem4mb & master volume */
 }
 
-int getSoundTop(void)
+sint32 getSoundTop(void)
 {
     return soundTop;
 }
 
 static void silenceVoice(void)
 {
-    static int slot = 0;
+    static sint32 slot = 0;
     while (((qHead + 1) & (SILENCE - 1)) != qTail)
     { /* q has space for more silence */
         while (1)
@@ -82,7 +82,7 @@ static void silenceVoice(void)
 
 void stopAllLoopedSounds(void)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < 32; i++)
         if (sounds[slotSound[i]].loopStart != -1)
         {
@@ -98,9 +98,9 @@ void stopAllLoopedSounds(void)
 #endif
 }
 
-void stopAllSound(int source)
+void stopAllSound(sint32 source)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < 32; i++)
     {
         if (slotOwner[i] == source)
@@ -114,9 +114,9 @@ void stopAllSound(int source)
     POKE_W(SNDBASE + 0x100000 + 0, PEEK_W(0x20 * i + SNDBASE + 0x100000) | 0x1000);
 }
 
-void stopSound(int source, int sNm)
+void stopSound(sint32 source, sint32 sNm)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < 32; i++)
     {
         if (slotOwner[i] == source && slotSound[i] == sNm)
@@ -129,9 +129,9 @@ void stopSound(int source, int sNm)
     POKE_W(SNDBASE + 0x100000, PEEK_W(0x20 * i + SNDBASE + 0x100000) | 0x1000);
 }
 
-static int deQVoice(void)
+static sint32 deQVoice(void)
 {
-    int retVal;
+    sint32 retVal;
     assert(qHead != qTail);
     retVal = silentQ[qTail];
     qTail = (qTail + 1) & (SILENCE - 1);
@@ -139,7 +139,7 @@ static int deQVoice(void)
     return retVal;
 }
 
-static void initSlot(int i)
+static void initSlot(sint32 i)
 {
     POKE_W(0x20 * i + SNDBASE + 0x100000 + 2, 0x0000); /* start address */
     POKE_W(0x20 * i + SNDBASE + 0x100000 + 4, 0x0000); /* loop start address */
@@ -157,10 +157,10 @@ static void initSlot(int i)
 void initSound(void)
 {
 #ifdef TODO // sound
-    int i;
+    sint32 i;
 
-    volatile Uint8* SMPC_SF = (Uint8*)0x20100063;
-    volatile Uint8* SMPC_COM = (Uint8*)0x2010001f;
+    uint8* SMPC_SF = (uint8*)0x20100063;
+    uint8* SMPC_COM = (uint8*)0x2010001f;
 
     /* aaaaaaaaaaaarrrrrrrrghhhhhhhhhh!!!!!!!! */
     while ((*SMPC_SF & 0x01) == 0x01)
@@ -208,7 +208,7 @@ void initSound(void)
 
 void sound_nextFrame(void)
 {
-    int i;
+    sint32 i;
     soundFrame++;
     if (!soundFrame)
     {
@@ -218,24 +218,24 @@ void sound_nextFrame(void)
     }
 }
 
-void loadSound(int fd)
+void loadSound(sint32 fd)
 {
-    int size, rate, bps, loopStart;
-    int i;
-    unsigned short* buffer;
-    fs_read(fd, (char*)&size, 4);
-    fs_read(fd, (char*)&rate, 4);
-    fs_read(fd, (char*)&bps, 4);
-    fs_read(fd, (char*)&loopStart, 4);
+    sint32 size, rate, bps, loopStart;
+    sint32 i;
+    uint16* buffer;
+    fs_read(fd, (sint8*)&size, 4);
+    fs_read(fd, (sint8*)&rate, 4);
+    fs_read(fd, (sint8*)&bps, 4);
+    fs_read(fd, (sint8*)&loopStart, 4);
 
     size = FS_INT(&size);
     rate = FS_INT(&rate);
     bps = FS_INT(&bps);
     loopStart = FS_INT(&loopStart);
 
-    buffer = (unsigned short*)mem_malloc(0, size);
+    buffer = (uint16*)mem_malloc(0, size);
     assert(buffer);
-    fs_read(fd, (char*)buffer, size);
+    fs_read(fd, (sint8*)buffer, size);
     assert(nmSounds < MAXNMSOUNDS);
     sounds[nmSounds].startAddr = soundTop;
     sounds[nmSounds].sampleRate = rate;
@@ -259,20 +259,20 @@ void loadSound(int fd)
 #endif
 }
 
-int loadSoundSet(int fd, short* out_map, int mapSize)
+sint32 loadSoundSet(sint32 fd, sint16* out_map, sint32 mapSize)
 {
-    int nmSounds, i;
-    fs_read(fd, (char*)&nmSounds, 4);
+    sint32 nmSounds, i;
+    fs_read(fd, (sint8*)&nmSounds, 4);
     nmSounds = FS_INT(&nmSounds);
     assert(nmSounds == mapSize);
-    fs_read(fd, (char*)out_map, 2 * mapSize);
+    fs_read(fd, (sint8*)out_map, 2 * mapSize);
 
     for (i = 0; i < mapSize; i++)
     {
         out_map[i] = FS_SHORT(out_map + i);
     }
 
-    fs_read(fd, (char*)&nmSounds, 4);
+    fs_read(fd, (sint8*)&nmSounds, 4);
 
     nmSounds = FS_INT(&nmSounds);
 
@@ -282,23 +282,23 @@ int loadSoundSet(int fd, short* out_map, int mapSize)
     return nmSounds;
 }
 
-void loadDynamicSounds(int fd)
+void loadDynamicSounds(sint32 fd)
 {
-    int i;
-    int nmStaticSounds = nmSounds;
+    sint32 i;
+    sint32 nmStaticSounds = nmSounds;
     loadSoundSet(fd, level_objectSoundMap, OT_NMTYPES);
     for (i = 0; i < OT_NMTYPES; i++)
         level_objectSoundMap[i] += nmStaticSounds;
 }
 
-int loadStaticSounds(int fd)
+sint32 loadStaticSounds(sint32 fd)
 {
     return loadSoundSet(fd, level_staticSoundMap, ST_NMSTATICSOUNDGROUPS);
 }
 
 #if 0
 void testSound(void)
-{int i,j;
+(sint32 i,j;
  for (i=0;i<nmSounds;i++)
     {dPrint("Testing sound %d\n",i);
      playSound(0,i);
@@ -308,7 +308,7 @@ void testSound(void)
 }
 #endif
 
-void initSoundRegs(int sNm, int vol, int pan, struct soundSlotRegister* ssr)
+void initSoundRegs(sint32 sNm, sint32 vol, sint32 pan, struct soundSlotRegister* ssr)
 {
     assert(vol >= 0 && vol <= 255);
     assert(pan >= 0 && pan <= 31);
@@ -340,9 +340,9 @@ void initSoundRegs(int sNm, int vol, int pan, struct soundSlotRegister* ssr)
     ssr->soundNm = sNm;
 }
 
-struct soundSlotRegister* playSoundMegaE(int source, struct soundSlotRegister* ssr)
+struct soundSlotRegister* playSoundMegaE(sint32 source, struct soundSlotRegister* ssr)
 {
-    int i, slot, base;
+    sint32 i, slot, base;
     slot = deQVoice();
     slotOwner[slot] = source;
     slotSound[slot] = ssr->soundNm;
@@ -354,12 +354,12 @@ struct soundSlotRegister* playSoundMegaE(int source, struct soundSlotRegister* s
     return (struct soundSlotRegister*)(base);
 }
 
-void playSoundE(int source, int sNm, int vol, int pan)
+void playSoundE(sint32 source, sint32 sNm, sint32 vol, sint32 pan)
 {
 #ifdef TODO // sound
-    int slot, i;
-    unsigned short zeroReg;
-    int base;
+    sint32 slot, i;
+    uint16 zeroReg;
+    sint32 base;
     assert(sNm < nmSounds);
     assert(sNm >= 0);
     if (vol > 255)
@@ -416,7 +416,7 @@ void playSoundE(int source, int sNm, int vol, int pan)
 #endif
 }
 
-void playSound(int source, int sNm)
+void playSound(sint32 source, sint32 sNm)
 {
     playSoundE(source, sNm, 0, 0);
 }
@@ -438,22 +438,22 @@ enum
     S_MAP
 };
 
-static char trackMap[] = { S_KARNAK, S_TRIBAL, S_QUARRY, S_KARNAK, S_SELKIS, S_WATER2, S_TRIBAL, S_ROCKIN, S_WATER2, S_SELKIS, S_MAGMA, S_ROCKIN, S_MAGMA, S_KILMAT1, S_QUARRY, S_ROCKIN, S_MAGMA, S_QUARRY, S_SWAMP, S_WATER2, S_TRIBAL, S_QUARRY, S_TRIBAL, S_KILMAT1, S_KILMAT1, S_KILMAT1, S_KILMAT1, S_KILMAT1, S_KILMAT1, S_KILMAT2, S_KARNAK };
+static sint8 trackMap[] = { S_KARNAK, S_TRIBAL, S_QUARRY, S_KARNAK, S_SELKIS, S_WATER2, S_TRIBAL, S_ROCKIN, S_WATER2, S_SELKIS, S_MAGMA, S_ROCKIN, S_MAGMA, S_KILMAT1, S_QUARRY, S_ROCKIN, S_MAGMA, S_QUARRY, S_SWAMP, S_WATER2, S_TRIBAL, S_QUARRY, S_TRIBAL, S_KILMAT1, S_KILMAT1, S_KILMAT1, S_KILMAT1, S_KILMAT1, S_KILMAT1, S_KILMAT2, S_KARNAK };
 
-char mapMusic = S_MAP;
-char titleMusic = S_SANCTUM;
-char endMusic = S_ENDCREDIT;
-char firstVoiceTrack = S_MAP + 1;
+sint8 mapMusic = S_MAP;
+sint8 titleMusic = S_SANCTUM;
+sint8 endMusic = S_ENDCREDIT;
+sint8 firstVoiceTrack = S_MAP + 1;
 
-void playCDTrackForLevel(int lev)
+void playCDTrackForLevel(sint32 lev)
 {
     if (enable_music)
         playCDTrack(trackMap[lev], 1);
 }
 
-void posGetSoundParams(MthXyz* pos, int* vol, int* pan)
+void posGetSoundParams(MthXyz* pos, sint32* vol, sint32* pan)
 {
-    int angle;
+    sint32 angle;
     *vol = f(approxDist(pos->x - camera->pos.x, pos->y - camera->pos.y, pos->z - camera->pos.z));
     *vol = (*vol >> 5) - 15;
     if (*vol > 255)
@@ -468,14 +468,14 @@ void posGetSoundParams(MthXyz* pos, int* vol, int* pan)
         angle = F(180) - angle;
     if (angle < F(-90))
         angle = F(-180) - angle;
-    *pan = ((unsigned int)(abs(angle))) >> 19;
+    *pan = ((uint32)(abs(angle))) >> 19;
     if (angle < 0)
         *pan |= 0x10;
 }
 
-void posMakeSound(int source, MthXyz* pos, int sndNm)
+void posMakeSound(sint32 source, MthXyz* pos, sint32 sndNm)
 {
-    int vol, pan;
+    sint32 vol, pan;
     assert(sndNm >= 0);
     posGetSoundParams(pos, &vol, &pan);
     if (vol > 255)
@@ -483,18 +483,18 @@ void posMakeSound(int source, MthXyz* pos, int sndNm)
     playSoundE(source, sndNm, vol, pan);
 }
 
-void posAdjustSound(int source, MthXyz* pos)
+void posAdjustSound(sint32 source, MthXyz* pos)
 {
-    int vol, pan;
+    sint32 vol, pan;
     posGetSoundParams(pos, &vol, &pan);
     if (vol > 255)
         return;
     adjustSounds(source, vol, pan);
 }
 
-void adjustSounds(int source, int vol, int pan)
+void adjustSounds(sint32 source, sint32 vol, sint32 pan)
 {
-    int s, base;
+    sint32 s, base;
     for (s = 0; s < 32; s++)
         if (slotOwner[s] == source)
         {
@@ -506,12 +506,12 @@ void adjustSounds(int source, int vol, int pan)
 
 void saveSoundState(void)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < 32; i++)
     {
         if (sounds[slotSound[i]].loopStart != -1)
         {
-            int base = 0x20 * i + SNDBASE + 0x100000;
+            sint32 base = 0x20 * i + SNDBASE + 0x100000;
             soundSave[i].owner = slotOwner[i];
             soundSave[i].sound = slotSound[i];
             soundSave[i].pan = (PEEK_W(base + 0x16) >> 8) & 0x1f;
@@ -524,7 +524,7 @@ void saveSoundState(void)
 
 void restoreSoundState(void)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < 32; i++)
     {
         if (soundSave[i].sound != -1)

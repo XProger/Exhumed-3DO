@@ -8,8 +8,8 @@
 
 #define VRAM_SIZE   (1024 * 1024 * 1)
 
-extern Uint8 VRAM[VRAM_SIZE];
-extern Uint32 VRAM_ADDR;
+extern uint8 VRAM[VRAM_SIZE];
+extern uint32 VRAM_ADDR;
 
 #define FBUF_ADDR 0
 
@@ -21,161 +21,161 @@ extern Uint32 VRAM_ADDR;
 #define SCL_VblankEnd()
 
 typedef	struct	SclConfig {
-    Uint8       dispenbl;
-    Uint8       charsize;
-    Uint8       pnamesize;
-    Uint8       platesize;
-    Uint8       bmpsize;
-    Uint8       coltype;
-    Uint8       datatype;
-    Uint8       mapover;
-    Uint8       flip;
-    Uint16      patnamecontrl;
-    Uint32      plate_addr[16];
+    uint8       dispenbl;
+    uint8       charsize;
+    uint8       pnamesize;
+    uint8       platesize;
+    uint8       bmpsize;
+    uint8       coltype;
+    uint8       datatype;
+    uint8       mapover;
+    uint8       flip;
+    uint16      patnamecontrl;
+    uint32      plate_addr[16];
 } SclConfig;
 
 typedef struct SclVramConfig{
-    Uint32  ktboffsetA;
-    Uint32  ktboffsetB;
-    Uint8   vramModeA;
-    Uint8   vramModeB;
-    Uint8   vramA0;
-    Uint8   vramA1;
-    Uint8   vramB0;
-    Uint8   vramB1;
-    Uint8   colram;
+    uint32  ktboffsetA;
+    uint32  ktboffsetB;
+    uint8   vramModeA;
+    uint8   vramModeB;
+    uint8   vramA0;
+    uint8   vramA1;
+    uint8   vramB0;
+    uint8   vramB1;
+    uint8   colram;
 } SclVramConfig;
 
  typedef struct	SclSysreg{
-    Uint16  tvmode;
-    Uint16  extenbl;
-    Uint16  tvstatus;
-    Uint16  vramsize;
-    Uint16  H_val;
-    Uint16  V_val;
-    Uint16  vramchg;
-    Uint16  ramcontrl;
-    Uint16  vramcyc[8];
-    Uint16  dispenbl;
-    Uint16  mosaic;
-    Uint16  specialcode_sel;
-    Uint16  specialcode;
+    uint16  tvmode;
+    uint16  extenbl;
+    uint16  tvstatus;
+    uint16  vramsize;
+    uint16  H_val;
+    uint16  V_val;
+    uint16  vramchg;
+    uint16  ramcontrl;
+    uint16  vramcyc[8];
+    uint16  dispenbl;
+    uint16  mosaic;
+    uint16  specialcode_sel;
+    uint16  specialcode;
  } SclSysreg;
 
  typedef struct SclDataset{
-	Uint16	charcontrl0;
-	Uint16	charcontrl1;
-	Uint16	bmpalnum0;
-	Uint16	bmpalnum1;
-	Uint16	patnamecontrl[5];
-	Uint16	platesize;
-	Uint16	mapoffset0;
-	Uint16	mapoffset1;
-	Uint16	normap[8];
-	Uint16	rotmap[16];
+	uint16	charcontrl0;
+	uint16	charcontrl1;
+	uint16	bmpalnum0;
+	uint16	bmpalnum1;
+	uint16	patnamecontrl[5];
+	uint16	platesize;
+	uint16	mapoffset0;
+	uint16	mapoffset1;
+	uint16	normap[8];
+	uint16	rotmap[16];
 } SclDataset;
 
  typedef struct SclNorscl{
-	Fixed32	n0_move_x;
-	Fixed32	n0_move_y;
-	Fixed32	n0_delta_x;
-	Fixed32	n0_delta_y;
-	Fixed32	n1_move_x;
-	Fixed32	n1_move_y;
-	Fixed32	n1_delta_x;
-	Fixed32	n1_delta_y;
-	Uint16	n2_move_x;
-	Uint16	n2_move_y;
-	Uint16	n3_move_x;
-	Uint16	n3_move_y;
-	Uint16	zoomenbl;
-	Uint16	linecontrl;
-	Uint32	celladdr;
-	Uint32	lineaddr[2];
-	Uint32	linecolmode;
-	Uint32	backcolmode;
+	fix32	n0_move_x;
+	fix32	n0_move_y;
+	fix32	n0_delta_x;
+	fix32	n0_delta_y;
+	fix32	n1_move_x;
+	fix32	n1_move_y;
+	fix32	n1_delta_x;
+	fix32	n1_delta_y;
+	uint16	n2_move_x;
+	uint16	n2_move_y;
+	uint16	n3_move_x;
+	uint16	n3_move_y;
+	uint16	zoomenbl;
+	uint16	linecontrl;
+	uint32	celladdr;
+	uint32	lineaddr[2];
+	uint32	linecolmode;
+	uint32	backcolmode;
 } SclNorscl;
 
  typedef	struct	SclSblSgl{
-	Uint16		sgl_flag;
+	uint16		sgl_flag;
 }SclSblSgl;
 
  typedef struct
 {
-    Uint32 SclOtherPri:1;
-    Uint32 SclSpPriNum:1;
-    Uint32 SclBgPriNum:1;
-    Uint32 SclSpColMix:1;
-    Uint32 SclBgColMix:1;
-    Uint32 SclColOffset:1;
+    uint32 SclOtherPri:1;
+    uint32 SclSpPriNum:1;
+    uint32 SclBgPriNum:1;
+    uint32 SclSpColMix:1;
+    uint32 SclBgColMix:1;
+    uint32 SclColOffset:1;
 } SclPriBuffDirtyFlags;
 
  typedef struct  SclXy {
-	 Fixed32         x;
-	 Fixed32         y;
+	 fix32         x;
+	 fix32         y;
 } SclXy;
 
  typedef struct  SclXyz {
-	 Fixed32         x;
-	 Fixed32         y;
-	 Fixed32         z;
+	 fix32         x;
+	 fix32         y;
+	 fix32         z;
 } SclXyz;
 
 typedef struct  SclXy16 {
-        Uint16         x;
-        Uint16         y;
+        uint16         x;
+        uint16         y;
 } SclXy16;
 
 typedef struct  SclXyz16 {
-        Sint16         x;
-        Sint16         y;
-        Sint16         z;
+        sint16         x;
+        sint16         y;
+        sint16         z;
 } SclXyz16;
 
  typedef struct SclRotreg{
 	SclXyz		screenst;
 	SclXy		screendlt;
 	SclXy		delta;
-	Fixed32		matrix_a;
-	Fixed32		matrix_b;
-	Fixed32		matrix_c;
-	Fixed32		matrix_d;
-	Fixed32		matrix_e;
-	Fixed32		matrix_f;
+	fix32		matrix_a;
+	fix32		matrix_b;
+	fix32		matrix_c;
+	fix32		matrix_d;
+	fix32		matrix_e;
+	fix32		matrix_f;
 	SclXyz16	viewp;
-	Uint16		dummy1;
+	uint16		dummy1;
 	SclXyz16	rotatecenter;
-	Uint16		dummy2;
+	uint16		dummy2;
 	SclXy		move;
 	SclXy		zoom;
-	Fixed32		k_tab;
+	fix32		k_tab;
 	SclXy		k_delta;
-/*	Fixed32		dummy3[8];	*/
-	Fixed32		dummy3[2];
+/*	fix32		dummy3[8];	*/
+	fix32		dummy3[2];
 } SclRotreg;
 
  typedef struct SclWinscl{
-	Uint16	win0_start[2];
-	Uint16	win0_end[2];
-	Uint16	win1_start[2];
-	Uint16	win1_end[2];
-	Uint16	wincontrl[4];
-	Uint32 	linewin0_addr;
-	Uint32 	linewin1_addr;
+	uint16	win0_start[2];
+	uint16	win0_end[2];
+	uint16	win1_start[2];
+	uint16	win1_end[2];
+	uint16	wincontrl[4];
+	uint32 	linewin0_addr;
+	uint32 	linewin1_addr;
 } SclWinscl;
 
  typedef struct SclRotscl{
-	Uint16	paramode;		/* Rotate Parameter Mode */
-	Uint16	paramcontrl;		/* Rotate Parameter Read Control */
-	Uint16	k_contrl;		/* Keisu Table Control */
-	Uint16	k_offset;		/* Keisu Addres Offset */
-	Uint16	mapover[2];		/* Rotate Scroll Map Over */
-	Uint32	paramaddr;		/* Rotate Parameter Tabel Address */
+	uint16	paramode;		/* Rotate Parameter Mode */
+	uint16	paramcontrl;		/* Rotate Parameter Read Control */
+	uint16	k_contrl;		/* Keisu Table Control */
+	uint16	k_offset;		/* Keisu Addres Offset */
+	uint16	mapover[2];		/* Rotate Scroll Map Over */
+	uint32	paramaddr;		/* Rotate Parameter Tabel Address */
 } SclRotscl;
 
 extern	SclSysreg	Scl_s_reg;
 extern	SclRotscl	Scl_r_reg;
-extern	Uint16		SclProcess;
+extern	uint16		SclProcess;
 
 #define	SCL_W0  0
 #define	SCL_W1  1
@@ -293,10 +293,10 @@ extern	Uint16		SclProcess;
 #define SCL_RBG_TB_B	SCL_RBG1
 
 void    SCL_Vdp2Init(void);
-void    SCL_Open(Uint32 sclnum);
+void    SCL_Open(uint32 sclnum);
 void    SCL_Close(void);
-void    SCL_MoveTo(Fixed32 x,Fixed32 y,Fixed32 z);
-void    SCL_SetColRamMode(Uint32 ComRamMode);
+void    SCL_MoveTo(fix32 x,fix32 y,fix32 z);
+void    SCL_SetColRamMode(uint32 ComRamMode);
 
 // dummy functions
 #define SCL_InitVramConfigTb(tp)

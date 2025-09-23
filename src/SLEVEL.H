@@ -2,22 +2,24 @@
 #ifndef __INCLUDEDslevelh
 #define __INCLUDEDslevelh
 
+#include <sega_xpt.h>
+
 struct sLevelHeader
 {
-    int nmSectors;
-    int nmWalls;
-    int nmVerticies;
-    int nmFaces;
-    int nmTextureIndexes;
-    int nmLightValues;
-    int nmObjects;
-    int nmObjectParams;
-    int nmPushBlocks;
-    int nmPBWalls;
-    int nmPBVert;
-    int nmWaveVert;
-    int nmWaveFace;
-    int nmCutSectors;
+    sint32 nmSectors;
+    sint32 nmWalls;
+    sint32 nmVerticies;
+    sint32 nmFaces;
+    sint32 nmTextureIndexes;
+    sint32 nmLightValues;
+    sint32 nmObjects;
+    sint32 nmObjectParams;
+    sint32 nmPushBlocks;
+    sint32 nmPBWalls;
+    sint32 nmPBVert;
+    sint32 nmWaveVert;
+    sint32 nmWaveFace;
+    sint32 nmCutSectors;
 };
 
 enum ObjectType
@@ -263,29 +265,29 @@ enum ObjectType
 
 typedef struct
 {
-    int pos, vel;
-    short connect[4]; /* -1 means no connection */
+    sint32 pos, vel;
+    sint16 connect[4]; /* -1 means no connection */
 } WaveVert;
 
 typedef struct
 {
-    short connect[4];
+    sint16 connect[4];
 } WaveFace;
 
 typedef struct
 {
-    short type;
-    short firstParam;
+    sint16 type;
+    sint16 firstParam;
 } sObjectType;
 
 typedef struct
 {
-    short enclosingSector;
-    short startWall, endWall; /* indexes into the pbwall array */
-    short startVertex, endVertex; /* indexes into the pbvertex array */
-    short floorSector; /* a sector's floor that moves with the block,
+    sint16 enclosingSector;
+    sint16 startWall, endWall; /* indexes into the pbwall array */
+    sint16 startVertex, endVertex; /* indexes into the pbvertex array */
+    sint16 floorSector; /* a sector's floor that moves with the block,
                           or -1 if none */
-    short dx, dy, dz;
+    sint16 dx, dy, dz;
 } sPBType;
 
 #define PBVFLAG_XLOCK 1
@@ -293,22 +295,22 @@ typedef struct
 #define PBVFLAG_ZLOCK 4
 typedef struct
 {
-    unsigned short vStart;
-    unsigned char vNm;
-    char flags;
+    uint16 vStart;
+    uint8 vNm;
+    sint8 flags;
 } sPBVertex;
 
 typedef struct
 {
-    short x, y, z;
-    char light, pad;
+    sint16 x, y, z;
+    sint8 light, pad;
 } sVertexType;
 
 typedef struct
 {
-    unsigned short v[4];
-    unsigned char tile;
-    char pad;
+    uint16 v[4];
+    uint8 tile;
+    sint8 pad;
 } sFaceType;
 
 #define TILESIZE 64
@@ -337,22 +339,22 @@ typedef struct
 
 typedef struct
 { /* plane equation */
-    int normal[3];
-    int d;
+    sint32 normal[3];
+    sint32 d;
     void* object;
 
-    short flags;
+    sint16 flags;
     /* if RECTANGLE then */
-    unsigned short textures; /* index into texture array */
+    uint16 textures; /* index into texture array */
     /* else */
-    short firstFace, lastFace;
-    unsigned short firstVertex, lastVertex;
+    sint16 firstFace, lastFace;
+    uint16 firstVertex, lastVertex;
     /* endif */
-    unsigned short v[4];
-    short nextSector; /* or -1 */
-    unsigned short firstLight;
-    short pixelLength;
-    unsigned char tileLength, tileHeight;
+    uint16 v[4];
+    sint16 nextSector; /* or -1 */
+    uint16 firstLight;
+    sint16 pixelLength;
+    uint8 tileLength, tileHeight;
     /* length is number of tiles along v0 -> v1,
        height is number along v1->v2 */
 } sWallType;
@@ -369,13 +371,13 @@ typedef struct
 typedef struct
 {
     void* object;
-    short center[3];
-    short floorLevel; /* avg floor level if sloped */
-    short firstWall, lastWall;
-    short light; /*lighting level (-16 to 16)*/
-    short flags;
-    char cutIndex, cutChannel;
-    short pad;
+    sint16 center[3];
+    sint16 floorLevel; /* avg floor level if sloped */
+    sint16 firstWall, lastWall;
+    sint16 light; /*lighting level (-16 to 16)*/
+    sint16 flags;
+    sint8 cutIndex, cutChannel;
+    sint16 pad;
 } sSectorType;
 
 #define TILEFLAG_VDP2 0x01
@@ -387,13 +389,13 @@ typedef struct
 #define TILEFLAG_RLE 0x40
 struct seqHeader
 {
-    int nmSequences;
-    int nmFrames;
-    int nmChunks;
+    sint32 nmSequences;
+    sint32 nmFrames;
+    sint32 nmChunks;
 };
 
 /* sequence data */
-/*short *sequenceList; declared elsewhere */
+/*sint16 *sequenceList; declared elsewhere */
 /*index into the frame array for start of each sequence*/
 /* there is always an extra entry on the end which points to the element past
    the end of the frameArray */
@@ -403,18 +405,18 @@ struct seqHeader
 
 typedef struct
 {
-    short chunkIndex; /* index into the chunk array for each frame */
-    short flags;
-    short sound;
-    char pad[2];
+    sint16 chunkIndex; /* index into the chunk array for each frame */
+    sint16 flags;
+    sint16 sound;
+    sint8 pad[2];
 } sFrameType;
 
 typedef struct
 {
-    short chunkx, chunky;
-    short tile;
-    char flags;
-    char pad;
+    sint16 chunkx, chunky;
+    sint16 tile;
+    sint8 flags;
+    sint8 pad;
 } sChunkType;
 
 #endif

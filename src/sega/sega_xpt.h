@@ -8,17 +8,15 @@
 #define NULL ((void*)0)
 #endif
 
-typedef signed char Sint8;
-typedef signed short Sint16;
-typedef signed int Sint32;
+typedef signed char sint8;
+typedef signed short sint16;
+typedef signed int sint32;
 
-typedef unsigned char Uint8;
-typedef unsigned short Uint16;
-typedef unsigned int Uint32;
+typedef unsigned char uint8;
+typedef unsigned short uint16;
+typedef unsigned int uint32;
 
-typedef signed int Fixed32;
-
-typedef Sint32 Bool;
+typedef sint32 fix32;
 
 enum BooleanLogic
 {
@@ -38,7 +36,7 @@ enum Judgement
     NG = -1
 };
 
-#define FIXED(a) ((Fixed32)((a) * 65536.0))
+#define FIXED(a) ((fix32)((a) * 65536.0))
 #define DIV_FIXED(a, b) (((a) / ((b) >> 8)) << 8)
 
 #endif

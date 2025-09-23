@@ -1,5 +1,5 @@
 #define RANDTABLESIZE 4096
-unsigned short randTable[RANDTABLESIZE] = {
+uint16 randTable[RANDTABLESIZE] = {
     50065U,
     38047U,
     64270U,

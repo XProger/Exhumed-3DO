@@ -72,7 +72,7 @@
 #undef STATUSTEXT
 #endif
 
-int end;
+sint32 end;
 
 SaveState currentState;
 
@@ -81,12 +81,12 @@ Sprite* camera;
 
 Orient playerAngle;
 
-int mapOn;
-int quitRequest;
+sint32 mapOn;
+sint32 quitRequest;
 
-int debugFlag = 0;
+sint32 debugFlag = 0;
 
-Fixed32 xavel = 0, yavel = 0;
+fix32 xavel = 0, yavel = 0;
 
 #define MAXTVELOCITY 130000
 #define MAXRTVELOCITY 200000
@@ -100,25 +100,25 @@ Fixed32 xavel = 0, yavel = 0;
 #define NORMALJUMPVEL (39 << 13)
 
 /* game status variables */
-static int nmFullBowls = 0;
-int keyMask = 0;
+static sint32 nmFullBowls = 0;
+sint32 keyMask = 0;
 
-static int playerIsDead;
-static int playerMotionEnable;
-static int hitCamel, hitPyramid, hitTeleport;
-static int stunCounter = 0;
+static sint32 playerIsDead;
+static sint32 playerMotionEnable;
+static sint32 hitCamel, hitPyramid, hitTeleport;
+static sint32 stunCounter = 0;
 #define INVISIBLEDOSE (30 * 30)
-int invisibleCounter = 0;
+sint32 invisibleCounter = 0;
 #define WEAPONPOWERDOSE (30 * 30)
-int weaponPowerUpCounter = 0;
+sint32 weaponPowerUpCounter = 0;
 
-static int deathTimer;
+static sint32 deathTimer;
 
 void redrawBowlDots(void);
 
-static int colorOffset[3] = { 0, 0, 0 };
-static int colorCenter[3] = { 0, 0, 0 };
-static int colorStepRate = 3;
+static sint32 colorOffset[3] = { 0, 0, 0 };
+static sint32 colorCenter[3] = { 0, 0, 0 };
+static sint32 colorStepRate = 3;
 
 ////////////////////
 // dummy GFS
@@ -127,7 +127,7 @@ static int colorStepRate = 3;
 #include <sega_gfs.h>
 #include <sega_cdc.h>
 
-void GFS_GetFileSize(GfsHn gfs, Sint32* sctsz, Sint32* nsct, Sint32* lstsz)
+void GFS_GetFileSize(GfsHn gfs, sint32* sctsz, sint32* nsct, sint32* lstsz)
 {
     if (sctsz)
         *sctsz = 0;
@@ -137,21 +137,21 @@ void GFS_GetFileSize(GfsHn gfs, Sint32* sctsz, Sint32* nsct, Sint32* lstsz)
         *lstsz = 0;
 }
 
-Sint32 CDC_GetPeriStat(CdcStat* stat)
+sint32 CDC_GetPeriStat(CdcStat* stat)
 {
     memset(stat, 0, sizeof(*stat));
     return 0;
 }
 ////////////////////
 
-int getKeyMask(void)
+sint32 getKeyMask(void)
 {
     return keyMask;
 }
 
 void stepColorOffset(void)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < 3; i++)
     {
         if (colorOffset[i] - colorStepRate > colorCenter[i])
@@ -167,7 +167,7 @@ void stepColorOffset(void)
     SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0 | SCL_NBG0 | SCL_RBG0, colorOffset[0], colorOffset[1], colorOffset[2]);
 }
 
-void changeColorOffset(int r, int g, int b, int rate)
+void changeColorOffset(sint32 r, sint32 g, sint32 b, sint32 rate)
 {
     colorOffset[0] = r;
     colorOffset[1] = g;
@@ -175,17 +175,17 @@ void changeColorOffset(int r, int g, int b, int rate)
     colorStepRate = rate;
 }
 
-void addColorOffset(int r, int g, int b)
+void addColorOffset(sint32 r, sint32 g, sint32 b)
 {
     colorOffset[0] += r;
     colorOffset[1] += g;
     colorOffset[2] += b;
 }
 
-static int ouchTime = 0;
-void playerHurt(int hpLost)
+static sint32 ouchTime = 0;
+void playerHurt(sint32 hpLost)
 {
-    int i;
+    sint32 i;
     if (hpLost <= 0)
         return;
     if (playerIsDead)
@@ -205,9 +205,9 @@ void playerHurt(int hpLost)
     }
 }
 
-static int ltHurtAmount = 0;
-static int ltHurtTime = 0;
-void playerLongHurt(int lava)
+static sint32 ltHurtAmount = 0;
+static sint32 ltHurtTime = 0;
+void playerLongHurt(sint32 lava)
 {
     if (lava)
     {
@@ -237,12 +237,12 @@ static void greenFlash(void)
     colorOffset[1] += 32;
 }
 
-void switchPlayerMotion(int state)
+void switchPlayerMotion(sint32 state)
 {
     playerMotionEnable = state;
 }
 
-int playerHeightOffset = 0, playerHeightVel = 0;
+sint32 playerHeightOffset = 0, playerHeightVel = 0;
 
 static void stepPlayerHeight(void)
 {
@@ -270,9 +270,9 @@ static void stepPlayerHeight(void)
     }
 }
 
-void playerDYChange(Fixed32 dvel)
+void playerDYChange(fix32 dvel)
 {
-    int ouch;
+    sint32 ouch;
     if (dvel < F(1))
         return;
     if (dvel > F(15))
@@ -284,13 +284,13 @@ void playerDYChange(Fixed32 dvel)
     /* weaponForce(0,dvel>>1);*/
 }
 
-void underWaterControl(unsigned short input)
+void underWaterControl(uint16 input)
 {
-    Fixed32 dir = 0, vel, tvel;
-    Fixed32 maxTVel, walking;
+    fix32 dir = 0, vel, tvel;
+    fix32 maxTVel, walking;
     MthXyz ray;
-    static int swimTime = 0;
-    int run, turningLeft = 0, turningRight = 0;
+    static sint32 swimTime = 0;
+    sint32 run, turningLeft = 0, turningRight = 0;
     MthXyz force;
     force.x = 0;
     force.y = 0;
@@ -478,11 +478,11 @@ void underWaterControl(unsigned short input)
     if (camera->vel.y < -160 << 15)
         camera->vel.y = -160 << 15;
 
-    playerAngle.roll = -((Fixed32)yavel) << 2;
+    playerAngle.roll = -((fix32)yavel) << 2;
 
     if (!(level_sector[camera->s].flags & SECFLAG_WATER))
     {
-        int d;
+        sint32 d;
         playerAngle.roll = 0;
         d = findFloorDistance(camera->s, &camera->pos);
         if (d < F(14))
@@ -501,14 +501,14 @@ void underWaterControl(unsigned short input)
     }
 }
 
-void controlInput(unsigned short input, unsigned short changeInput)
+void controlInput(uint16 input, uint16 changeInput)
 {
-    Fixed32 dir = 0, vel, tvel;
-    Fixed32 maxTVel, walking;
-    static int walkTime = 0, hoverTime = 0;
-    static int shawlActive = 0;
-    static int dirChange = 0;
-    int turningLeft = 0, turningRight = 0, turningUp = 0, turningDown = 0;
+    fix32 dir = 0, vel, tvel;
+    fix32 maxTVel, walking;
+    static sint32 walkTime = 0, hoverTime = 0;
+    static sint32 shawlActive = 0;
+    static sint32 dirChange = 0;
+    sint32 turningLeft = 0, turningRight = 0, turningUp = 0, turningDown = 0;
     MthXyz force;
 
     force.x = 0;
@@ -786,16 +786,16 @@ void controlInput(unsigned short input, unsigned short changeInput)
     else
         walkTime = 0;
 
-    playerAngle.roll = -((Fixed32)yavel);
+    playerAngle.roll = -((fix32)yavel);
 }
 
-void dollPowerControlInput(unsigned short input, unsigned short changeInput)
+void dollPowerControlInput(uint16 input, uint16 changeInput)
 {
-    Fixed32 dir = 0, vel, tvel;
-    Fixed32 maxTVel, walking;
+    fix32 dir = 0, vel, tvel;
+    fix32 maxTVel, walking;
     MthXyz ray;
-    int turningLeft = 0, turningRight = 0, turningUp = 0, turningDown = 0;
-    static int hoverTime;
+    sint32 turningLeft = 0, turningRight = 0, turningUp = 0, turningDown = 0;
+    static sint32 hoverTime;
     MthXyz force;
 
     force.x = 0;
@@ -972,7 +972,7 @@ void dollPowerControlInput(unsigned short input, unsigned short changeInput)
         camera->vel.z = (15 * camera->vel.z + force.z) >> 4;
     }
 
-    playerAngle.roll = -((Fixed32)yavel) << 2;
+    playerAngle.roll = -((fix32)yavel) << 2;
     hoverTime += 3;
     if (hoverTime > 360)
         hoverTime = 0;
@@ -981,10 +981,10 @@ void dollPowerControlInput(unsigned short input, unsigned short changeInput)
 
 static void push(void)
 {
-    int hscan;
+    sint32 hscan;
     MthXyz pos, ray, collidePos;
-    Fixed32 yaw, pitch;
-    int sector;
+    fix32 yaw, pitch;
+    sint32 sector;
 
     pos = camera->pos;
     yaw = playerAngle.yaw;
@@ -1002,19 +1002,19 @@ static void push(void)
         dPrint("hit wall %d\n", hscan & 0xffff);
         if (level_wall[hscan & 0xffff].object)
         {
-            signalObject((Object*)(level_wall[hscan & 0xffff].object), SIGNAL_PRESS, (int)(&collidePos), 0);
+            signalObject((Object*)(level_wall[hscan & 0xffff].object), SIGNAL_PRESS, (sint32)(&collidePos), 0);
         }
     }
 }
 
-void movePlayer(int inputEnd, int nmFrames)
+void movePlayer(sint32 inputEnd, sint32 nmFrames)
 {
-    unsigned short input;
-    unsigned short changeInput = 0;
-    unsigned short pushed;
-    static unsigned short lastInput = 0;
-    static char wasUnderWater = 0;
-    int inputPos, i;
+    uint16 input;
+    uint16 changeInput = 0;
+    uint16 pushed;
+    static uint16 lastInput = 0;
+    static sint8 wasUnderWater = 0;
+    sint32 inputPos, i;
     inputPos = inputEnd - nmFrames;
     if (inputPos < 0)
         inputPos += INPUTQSIZE;
@@ -1078,8 +1078,8 @@ void movePlayer(int inputEnd, int nmFrames)
                 wasUnderWater = 5;
                 if ((level_sector[camera->s].flags & SECFLAG_WATER) && (getNextRand()) < 3000)
                 { /* decide which sector to put bubble in */
-                    int s = camera->s;
-                    int i, j, k;
+                    sint32 s = camera->s;
+                    sint32 i, j, k;
                     /* start in the player's sector and random walk away */
                     for (i = 0; i < 10; i++)
                     {
@@ -1121,7 +1121,7 @@ void movePlayer(int inputEnd, int nmFrames)
                 {
                     wasUnderWater--;
                     input &= ~PER_DGT_U;
-                    camera->vel.y += (int)(0.45 * 65536);
+                    camera->vel.y += (sint32)(0.45 * 65536);
                 }
                 if (currentState.gameFlags & GAMEFLAG_DOLLPOWERMODE)
                     dollPowerControlInput(input, changeInput);
@@ -1169,10 +1169,10 @@ void movePlayer(int inputEnd, int nmFrames)
                 debugFlag = !debugFlag;
                 dumpProfileData();
 #if 0
-	     {int sec;
+	     (sint32 sec;
 	      Sprite *s;
 	      Sprite *bestSprite;
-	      Fixed32 minDist,d;
+	      fix32 minDist,d;
 	      minDist=INT_MAX;
 	      for (sec=0;sec<level_nmSectors;sec++)
 		 {for (s=sectorSpriteList[sec];s;s=s->next)
@@ -1213,7 +1213,7 @@ void movePlayer(int inputEnd, int nmFrames)
 
         /* player position update */
         {
-            int flags = camera->flags;
+            sint32 flags = camera->flags;
             if (currentState.gameFlags & GAMEFLAG_DOLLPOWERMODE)
                 camera->flags |= SPRITEFLAG_UNDERWATER;
             moveCamera();
@@ -1231,7 +1231,7 @@ void movePlayer(int inputEnd, int nmFrames)
 void setVDP2(void)
 {
 #if TODO // VDP2
-    static Uint16 cycle[] = { 0xeeee, 0xeeee, 0xeeee, 0xeeee, 0x44ee, 0xeeee, 0x44ee, 0xeeee };
+    static uint16 cycle[] = { 0xeeee, 0xeeee, 0xeeee, 0xeeee, 0x44ee, 0xeeee, 0x44ee, 0xeeee };
 
     SclVramConfig vcfg;
     SCL_InitVramConfigTb(&vcfg);
@@ -1254,11 +1254,11 @@ void setVDP2(void)
 #endif
 }
 
-void loadVDP2Sprites(int fd)
+void loadVDP2Sprites(sint32 fd)
 {
-    unsigned char* vram;
+    uint8* vram;
     SclConfig scfg;
-    vram = (unsigned char*)SCL_VDP2_VRAM;
+    vram = (uint8*)SCL_VDP2_VRAM;
     fs_read(fd, vram + 1024 * 256, 1024 * 256);
     /* setup VDP2Sprite screen */
     SCL_InitConfigTb(&scfg);
@@ -1273,14 +1273,14 @@ void loadVDP2Sprites(int fd)
     dontDisplayVDP2Pic();
 }
 
-void loadLoadingScreen(int fd)
+void loadLoadingScreen(sint32 fd)
 {
-    unsigned char* data;
-    int xsize, ysize;// , y, x;
-    unsigned short colorRam[256];
-    fs_read(fd, (char*)&colorRam, 512);
-    fs_read(fd, (char*)&xsize, 4);
-    fs_read(fd, (char*)&ysize, 4);
+    uint8* data;
+    sint32 xsize, ysize;// , y, x;
+    uint16 colorRam[256];
+    fs_read(fd, (sint8*)&colorRam, 512);
+    fs_read(fd, (sint8*)&xsize, 4);
+    fs_read(fd, (sint8*)&ysize, 4);
 
     xsize = FS_INT(&xsize);
     ysize = FS_INT(&ysize);
@@ -1288,7 +1288,7 @@ void loadLoadingScreen(int fd)
     assert(xsize == 320);
     assert(ysize == 240);
     data = mem_malloc(1, 320 * 240);
-    fs_read(fd, (char*)data, 320 * 240);
+    fs_read(fd, (sint8*)data, 320 * 240);
     EZ_setErase(0, 0x0000);
 #if TODO // render loading screen
     for (y = 0; y < 240; y++)
@@ -1303,15 +1303,15 @@ void loadLoadingScreen(int fd)
     mem_free(data);
 }
 
-static void plotBowl(unsigned char* pos)
+static void plotBowl(uint8* pos)
 {
-    int y, x;
-    unsigned char c;
-    for (y = 0; y < *(((int*)stat_bowl) + 1); y++)
+    sint32 y, x;
+    uint8 c;
+    for (y = 0; y < *(((sint32*)stat_bowl) + 1); y++)
     {
-        for (x = 0; x < *(((int*)stat_bowl)); x++)
+        for (x = 0; x < *(((sint32*)stat_bowl)); x++)
         {
-            c = stat_bowl[y * (*(int*)stat_bowl) + x + 8];
+            c = stat_bowl[y * (*(sint32*)stat_bowl) + x + 8];
             if (c != 0)
                 *(pos + x) = c;
         }
@@ -1319,20 +1319,20 @@ static void plotBowl(unsigned char* pos)
     }
 }
 
-static void plotDot(unsigned char* pos, int blue)
+static void plotDot(uint8* pos, sint32 blue)
 {
-    int y, x;
-    unsigned char* art;
-    unsigned char c;
+    sint32 y, x;
+    uint8* art;
+    uint8 c;
     if (blue)
         art = stat_bluedot;
     else
         art = stat_reddot;
-    for (y = 0; y < *(((int*)art) + 1); y++)
+    for (y = 0; y < *(((sint32*)art) + 1); y++)
     {
-        for (x = 0; x < *(((int*)art)); x++)
+        for (x = 0; x < *(((sint32*)art)); x++)
         {
-            c = art[y * (*(int*)art) + x + 8];
+            c = art[y * (*(sint32*)art) + x + 8];
             if (c != 0)
                 *(pos + x) = c;
         }
@@ -1340,15 +1340,15 @@ static void plotDot(unsigned char* pos, int blue)
     }
 }
 
-static void plotNoDot(unsigned char* pos)
+static void plotNoDot(uint8* pos)
 {
-    int y, x;
-    unsigned char c;
-    for (y = 0; y < *(((int*)stat_bluedot) + 1); y++)
+    sint32 y, x;
+    uint8 c;
+    for (y = 0; y < *(((sint32*)stat_bluedot) + 1); y++)
     {
-        for (x = 0; x < *(((int*)stat_bluedot)); x++)
+        for (x = 0; x < *(((sint32*)stat_bluedot)); x++)
         {
-            c = stat_bluedot[y * (*(int*)stat_bluedot) + x + 8];
+            c = stat_bluedot[y * (*(sint32*)stat_bluedot) + x + 8];
             if (c != 0)
                 *(pos + x) = 96; /* black in ruins pallete */
         }
@@ -1358,9 +1358,9 @@ static void plotNoDot(unsigned char* pos)
 
 void redrawBowlDots(void)
 {
-    unsigned char *barPic, *pos;
-    int i, w;
-    barPic = (unsigned char*)((EZ_charNoToVram(0) << 3) + 0x5c00000);
+    uint8 *barPic, *pos;
+    sint32 i, w;
+    barPic = (uint8*)((EZ_charNoToVram(0) << 3) + 0x5c00000);
     for (i = 0; i < currentState.nmBowls - 1; i++)
     {
         pos = barPic + 196 + 320 * 29 + (10 * i);
@@ -1393,19 +1393,19 @@ void redrawBowlDots(void)
 
 void redrawStatBar(void)
 {
-    EZ_setChar(0, COLOR_4, *(int*)stat_bar, *(int*)(stat_bar + 4), (Uint8*)stat_bar + 8);
+    EZ_setChar(0, COLOR_4, *(sint32*)stat_bar, *(sint32*)(stat_bar + 4), (uint8*)stat_bar + 8);
     redrawBowlDots();
 }
 
-static int sparkle = 0;
-static int healthMeterPos;
-void drawStatBar(int time)
+static sint32 sparkle = 0;
+static sint32 healthMeterPos;
+void drawStatBar(sint32 time)
 {
-    int weapon;
+    sint32 weapon;
     static XyInt statusbar = { -160, 112 - 40 };
     XyInt compass = { -14, 93 };
-    int hmp;
-    int healthDiff;
+    sint32 hmp;
+    sint32 healthDiff;
 
     if (abs(healthMeterPos - F(currentState.health)) < F(1))
     {
@@ -1445,8 +1445,8 @@ void drawStatBar(int time)
     if (weaponMaxAmmo[weapon] && currentState.weaponAmmo[weapon])
     {
         XyInt ammoBar[4];
-        int ammoPos;
-        int i;
+        sint32 ammoPos;
+        sint32 i;
         ammoPos = (87 * currentState.weaponAmmo[weapon]) / weaponMaxAmmo[weapon];
 
         ammoBar[0].x = -105;
@@ -1477,7 +1477,7 @@ void drawStatBar(int time)
     /* draw health indicator */
     if (hmp > 0)
     {
-        int pos = ((hmp % 200) * 87) / 200;
+        sint32 pos = ((hmp % 200) * 87) / 200;
         XyInt rect[4];
         if (pos == 0 && hmp > 100)
             pos = (199 * 87) / 200;
@@ -1490,7 +1490,7 @@ void drawStatBar(int time)
         rect[3].x = 35 + pos;
         rect[3].y = 95;
         {
-            char r, g, b;
+            sint8 r, g, b;
             r = 17;
             g = 3;
             b = 2;
@@ -1510,9 +1510,9 @@ void drawStatBar(int time)
         }
         if (sparkle)
         {
-            unsigned int fadeReg = 1;
-            char r = 17, g = 3, b = 2;
-            int x, y, i;
+            uint32 fadeReg = 1;
+            sint8 r = 17, g = 3, b = 2;
+            sint32 x, y, i;
             for (i = 0; i < 512; i++)
             {
                 if (i > sparkle + 128)
@@ -1553,7 +1553,7 @@ void drawStatBar(int time)
 
     /* draw compass */
     {
-        int angle, flip;
+        sint32 angle, flip;
         angle = camera->angle;
         flip = 0;
         if (angle < 0)
@@ -1577,7 +1577,7 @@ void drawStatBar(int time)
 }
 
 static char* currentMessage = NULL;
-static int messageAge, messageXPos;
+static sint32 messageAge, messageXPos;
 
 #ifdef JAPAN
 #define MESSAGEFONT 3
@@ -1592,10 +1592,10 @@ void changeMessage(char* message)
     messageXPos = -getStringWidth(MESSAGEFONT, message) / 2;
 }
 
-static void drawMessage(int nmFrames)
+static void drawMessage(sint32 nmFrames)
 {
-    int t, b;
-    int s;
+    sint32 t, b;
+    sint32 s;
     if (!currentMessage)
         return;
 
@@ -1608,7 +1608,7 @@ static void drawMessage(int nmFrames)
 #else
     {
         char buffer[80];
-        int bpos;
+        sint32 bpos;
         XyInt p;
         char* c;
         p.y = -100;
@@ -1634,15 +1634,15 @@ static void drawMessage(int nmFrames)
         currentMessage = NULL;
 }
 
-extern int slaveSize;
-extern int lastHitWall;
+extern sint32 slaveSize;
+extern sint32 lastHitWall;
 
-void playerGetCamel(int toLevel)
+void playerGetCamel(sint32 toLevel)
 {
     hitCamel = toLevel + 100;
 }
 
-void playerHitTeleport(int toLevel)
+void playerHitTeleport(sint32 toLevel)
 {
     hitTeleport = toLevel + 200;
 }
@@ -1652,19 +1652,19 @@ void playerGotEntombedWithRamses(void)
     hitTeleport = 5;
 }
 
-static Fixed32 airStatus = 0;
-static int drownStatus = 0;
-static int meterPos = 0;
-static Fixed32 dialPos = 0;
+static fix32 airStatus = 0;
+static sint32 drownStatus = 0;
+static sint32 meterPos = 0;
+static fix32 dialPos = 0;
 static enum { METERUP, METERDOWN, TRANSITION } meterState = METERUP;
-static int airBase;
-void drawAirMeter(int frames)
+static sint32 airBase;
+void drawAirMeter(sint32 frames)
 {
-    int i;
-    static int transitionTimer = 0;
-    Fixed32 angle = 0;
-    static Fixed32 dialVel = 0;
-    static int underCount = 0;
+    sint32 i;
+    static sint32 transitionTimer = 0;
+    fix32 angle = 0;
+    static fix32 dialVel = 0;
+    static sint32 underCount = 0;
     static airFrom, airTo;
     XyInt pos[4];
 
@@ -1716,7 +1716,7 @@ void drawAirMeter(int frames)
                     airStatus = F(270);
 #if 0
 		 if (currentState.health<100 && !playerIsDead)
-		    {int j;
+		    (sint32 j;
 		     for (j=0;j<3;j++)
 			colorCenter[j]=-128+currentState.health;
 		    }
@@ -1795,8 +1795,8 @@ void drawAirMeter(int frames)
     pos[0].y = -130 + 120;
     EZ_normSpr(0, UCLPIN_ENABLE | COLOR_5 | ECD_DISABLE, 0, 4, pos, NULL);
     {
-        int c = 0;
-        unsigned short color = RGB(31, 5, 5);
+        sint32 c = 0;
+        uint16 color = RGB(31, 5, 5);
         MthXyz north, east;
         north.x = MTH_Cos(angle);
         north.y = MTH_Sin(angle);
@@ -1821,11 +1821,11 @@ void drawAirMeter(int frames)
     EZ_localCoord(320 / 2, 240 / 2);
 }
 
-static int delayed_fade = 0;
-static int delayed_fadeButton = 0;
-static int delayed_fadeSel = 0;
+static sint32 delayed_fade = 0;
+static sint32 delayed_fadeButton = 0;
+static sint32 delayed_fadeSel = 0;
 
-int playerGetObject(int objectType)
+sint32 playerGetObject(sint32 objectType)
 {
     switch (objectType)
     {
@@ -1894,7 +1894,7 @@ int playerGetObject(int objectType)
             break;
         case OT_PYRAMID:
             hitPyramid = 1;
-            currentState.levFlags[(int)currentState.currentLevel] |= LEVFLAG_GOTPYRAMID;
+            currentState.levFlags[(sint32)currentState.currentLevel] |= LEVFLAG_GOTPYRAMID;
             break;
         case OT_M60:
             playStaticSound(ST_ITEM, 3);
@@ -2010,7 +2010,7 @@ int playerGetObject(int objectType)
         case OT_BLOODBOWL:
             playStaticSound(ST_ITEM, 4);
             currentState.nmBowls++;
-            currentState.levFlags[(int)currentState.currentLevel] |= LEVFLAG_GOTVESSEL;
+            currentState.levFlags[(sint32)currentState.currentLevel] |= LEVFLAG_GOTVESSEL;
             changeMessage(getText(LB_ITEMMESSAGE, 15));
             redrawBowlDots();
             break;
@@ -2050,8 +2050,8 @@ int playerGetObject(int objectType)
         case OT_AMMOBALL:
         case OT_AMMOORB:
         {
-            int diff;
-            int weapon = currentState.desiredWeapon;
+            sint32 diff;
+            sint32 weapon = currentState.desiredWeapon;
             if (currentState.weaponAmmo[weapon] == weaponMaxAmmo[weapon])
                 return 0;
             diff = (weaponMaxAmmo[weapon] * (objectType == OT_AMMOBALL ? 15 : 30)) / 100;
@@ -2067,7 +2067,7 @@ int playerGetObject(int objectType)
         case OT_AMMOSPHERE:
 #if 1
         {
-            int i;
+            sint32 i;
             for (i = 0; i < WP_NMWEAPONS; i++)
                 if (currentState.weaponAmmo[i] < weaponMaxAmmo[i])
                     break;
@@ -2089,10 +2089,10 @@ int playerGetObject(int objectType)
     return 1;
 }
 
-void rotateRectangle(int width, int height, int cx, int cy, Fixed32 angle, XyInt* result)
+void rotateRectangle(sint32 width, sint32 height, sint32 cx, sint32 cy, fix32 angle, XyInt* result)
 {
     MthXyz north, east;
-    int x, y;
+    sint32 x, y;
     north.x = MTH_Cos(angle);
     north.y = MTH_Sin(angle);
     east.x = -north.y;
@@ -2116,37 +2116,37 @@ void rotateRectangle(int width, int height, int cx, int cy, Fixed32 angle, XyInt
     result[3].y = f(x * east.x + y * east.y);
 }
 
-static int earthQuake;
-int getEarthQuake(void)
+static sint32 earthQuake;
+sint32 getEarthQuake(void)
 {
     return earthQuake;
 }
 
-void setEarthQuake(int richter)
+void setEarthQuake(sint32 richter)
 {
     if (richter > earthQuake)
         earthQuake = richter;
 }
 
-void stunPlayer(int ticks)
+void stunPlayer(sint32 ticks)
 {
     stunCounter = ticks;
     playStaticSound(ST_JOHN, 3);
     colorOffset[2] = 128;
 }
 
-int runLevel(char* filename, int levelNm)
+sint32 runLevel(char* filename, sint32 levelNm)
 {
     XyInt parms;
     XyInt noUserClip[2] = { { 0, 0 }, { 320 - 1, 240 - 1 } };
-    int i, monsterMoveCounter;
-    int nmWeaponTiles, nmStaticSounds;
-    int lastDraw = 0, lastCalc = 0;
-    int framesElapsed, inputEnd;
-    unsigned int smoothVTime;
-    int vspeedSwitchCount;
-    int lastLastCalc = 0;
-    int lastYaw, lastPitch, mmcSave;
+    sint32 i, monsterMoveCounter;
+    sint32 nmWeaponTiles, nmStaticSounds;
+    sint32 lastDraw = 0, lastCalc = 0;
+    sint32 framesElapsed, inputEnd;
+    uint32 smoothVTime;
+    sint32 vspeedSwitchCount;
+    sint32 lastLastCalc = 0;
+    sint32 lastYaw, lastPitch, mmcSave;
 
     MthMatrixTbl viewTransform;
     MthMatrix matstack[4];
@@ -2179,16 +2179,16 @@ int runLevel(char* filename, int levelNm)
         EZ_closeCommand();
         SCL_DisplayFrame();
     }
-    EZ_setChar(0, COLOR_4, *(int*)stat_bar, *(int*)(stat_bar + 4), (Uint8*)stat_bar + 8);
-    EZ_setChar(1, COLOR_4, *(int*)stat_compass0, *(int*)(stat_compass0 + 4), (Uint8*)stat_compass0 + 8);
-    EZ_setChar(2, COLOR_4, *(int*)stat_compass1, *(int*)(stat_compass1 + 4), (Uint8*)stat_compass1 + 8);
-    EZ_setChar(3, COLOR_4, *(int*)stat_compass2, *(int*)(stat_compass2 + 4), (Uint8*)stat_compass2 + 8);
+    EZ_setChar(0, COLOR_4, *(sint32*)stat_bar, *(sint32*)(stat_bar + 4), (uint8*)stat_bar + 8);
+    EZ_setChar(1, COLOR_4, *(sint32*)stat_compass0, *(sint32*)(stat_compass0 + 4), (uint8*)stat_compass0 + 8);
+    EZ_setChar(2, COLOR_4, *(sint32*)stat_compass1, *(sint32*)(stat_compass1 + 4), (uint8*)stat_compass1 + 8);
+    EZ_setChar(3, COLOR_4, *(sint32*)stat_compass2, *(sint32*)(stat_compass2 + 4), (uint8*)stat_compass2 + 8);
 
 #ifdef JAPAN
-    initPicSystem(4, ((int[]) { 28, 30, 1, 10, 12, 30, -1 }));
+    initPicSystem(4, ((sint32[]) { 28, 30, 1, 10, 12, 30, -1 }));
 #else
     i = initFonts(4, 3);
-    initPicSystem(i, ((int[]) { 28, 31, 1, 10, 12, -1 }));
+    initPicSystem(i, ((sint32[]) { 28, 31, 1, 10, 12, -1 }));
 #endif
     dPrint("ert!\n");
     redrawStatBar();
@@ -2207,7 +2207,7 @@ int runLevel(char* filename, int levelNm)
     fs_addToProgress(filename);
     /* load static data */
     {
-        int fd;
+        sint32 fd;
         fd = fs_open("+STATIC.DAT");
         assert(fd >= 0);
         dPrint("blat!\n");
@@ -2223,7 +2223,7 @@ int runLevel(char* filename, int levelNm)
     /* load level file */
     debugPrint("Loaded static\n");
     {
-        int fd;
+        sint32 fd;
         fd = fs_open(filename);
         assert(fd >= 0);
         initPlax(fd);
@@ -2241,7 +2241,7 @@ int runLevel(char* filename, int levelNm)
 
 #if 0
  {/* mirror level */
-  int i;
+  sint32 i;
   for (i=0;i<level_nmVertex;i++)
      level_vertex[i].x=-level_vertex[i].x;
   for (i=0;i<level_nmWalls;i++)
@@ -2344,7 +2344,7 @@ int runLevel(char* filename, int levelNm)
 
     if (currentState.gameFlags & GAMEFLAG_KILENTRYCHEATENABLED)
     {
-        int i;
+        sint32 i;
         currentState.gameFlags &= ~GAMEFLAG_KILENTRYCHEATENABLED;
         for (i = 0; i < 6; i++)
             signalAllObjects(SIGNAL_SWITCH, i + 11000, 0);
@@ -2431,19 +2431,19 @@ int runLevel(char* filename, int levelNm)
             }
             if (invisibleCounter)
             {
-                int rev;
+                sint32 rev;
                 invisibleCounter--;
                 if (invisibleCounter < 60 && !(invisibleCounter & 0xf))
                     playStaticSound(ST_ITEM, 5);
                 rev = INVISIBLEDOSE - invisibleCounter;
                 if (rev > 16 && rev < 16 + 20)
                 {
-                    int c = rev - 16;
+                    sint32 c = rev - 16;
                     SCL_SetColMixRate(SCL_NBG0, c);
                 }
                 if (rev < 32)
                 {
-                    int rg, b, o;
+                    sint32 rg, b, o;
                     o = 16 - abs(rev - 16);
                     rg = o << 4;
                     if (rg > 255)
@@ -2512,8 +2512,8 @@ int runLevel(char* filename, int levelNm)
         lastCalc = htimer;
         sound_nextFrame();
         {
-            int nmSwaps[NMCLASSES];
-            int used[NMCLASSES];
+            sint32 nmSwaps[NMCLASSES];
+            sint32 used[NMCLASSES];
             pic_nextFrame(nmSwaps, used);
 #ifndef NDEBUG
 #ifdef STATUSTEXT
@@ -2620,8 +2620,8 @@ int runLevel(char* filename, int levelNm)
 
 #if 0
 static void fadeSegaLogo(void)
-{int i,pos;
- int r,g,b;
+(sint32 i,pos;
+ sint32 r,g,b;
  POKE_W(SCL_VDP2_VRAM+0x180110,0x7f);
  POKE_W(SCL_VDP2_VRAM+0x180112,0x00);
  pos=0;
@@ -2640,13 +2640,13 @@ static void fadeSegaLogo(void)
 }
 #endif
 
-Uint8 VRAM[VRAM_SIZE];
-Uint32 VRAM_ADDR = (Uint32)VRAM;
+uint8 VRAM[VRAM_SIZE];
+uint32 VRAM_ADDR = (uint32)VRAM;
 
 void main(void)
 {
     char* levelFile;
-    int level;
+    sint32 level;
     enable_stereo = 1;
     enable_music = 1;
     abcResetEnable = 1;
@@ -2689,7 +2689,7 @@ void main(void)
     dPrint("loading initial...");
     /* do initial load */
     {
-        int fd = fs_open(
+        sint32 fd = fs_open(
 #ifndef JAPAN
             "+INITLOAD.DAT"
 #else
@@ -2717,9 +2717,9 @@ void main(void)
 
 #ifdef JAPAN
     {
-        int i;
+        sint32 i;
         i = initFonts(1, 7);
-        initPicSystem(i, ((int[]) { 0, 0, 0, 0, 0, 70, -1 }));
+        initPicSystem(i, ((sint32[]) { 0, 0, 0, 0, 0, 70, -1 }));
         loadJapanFontPics();
     }
 #else
@@ -2738,7 +2738,7 @@ void main(void)
 
 #ifdef FLASH
     {
-        int level = 0;
+        sint32 level = 0;
         char* levelFile;
         do
         {
@@ -2793,7 +2793,7 @@ intro:
 
     while (1)
     {
-        int action;
+        sint32 action;
         SaveState levStart = currentState;
         if (level == -1)
         { /* map was aborted with abc-start */
@@ -2805,7 +2805,7 @@ intro:
         action = runLevel(levelFile, level);
 
         {
-            extern int SclRotateTableAddress;
+            extern sint32 SclRotateTableAddress;
             SclRotateTableAddress = 0;
         }
         stopAllLoopedSounds();
@@ -2850,7 +2850,7 @@ intro:
                 {
                     currentState.health = currentState.nmBowls * 200;
                     {
-                        int i;
+                        sint32 i;
                         for (i = 0; i < WP_NMWEAPONS; i++)
                             currentState.weaponAmmo[i] = weaponMaxAmmo[i];
                     }

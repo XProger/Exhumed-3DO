@@ -15,9 +15,9 @@ enum
     LB_CREDITS
 };
 
-char* getText(int block, int string);
-void loadLocalText(int fd);
+char* getText(sint32 block, sint32 string);
+void loadLocalText(sint32 fd);
 
-int getLanguageNumber(void);
+sint32 getLanguageNumber(void);
 
 #endif

@@ -11,9 +11,9 @@
 
 #define BUFFERWRITES 1
 
-static int bank;
-static BYTE *commandStart[2], *clutStart, *gourStart[2], *charStart;
-static BYTE *ccommand, *cgouraud;
+static sint32 bank;
+static uint8 *commandStart[2], *clutStart, *gourStart[2], *charStart;
+static uint8 *ccommand, *cgouraud;
 
 #define MAXNMCHARS 512
 #define CMDBUFFERSIZE 256
@@ -21,24 +21,24 @@ static BYTE *ccommand, *cgouraud;
 
 typedef struct
 {
-    unsigned short addr; /* (address-VRAM START)/8 */
-    short xysize; /* (xs/8)<<8 + ysize */
+    uint16 addr; /* (address-VRAM START)/8 */
+    sint16 xysize; /* (xs/8)<<8 + ysize */
 } CharData;
 
 static CharData chars[MAXNMCHARS];
-static int nmChars;
+static sint32 nmChars;
 
 #if BUFFERWRITES
-static int commandAreaSize, gourauAreaSize;
-static int cmdBufferUsed, totCommand;
-static int gourBufferUsed, totGourau;
+static sint32 commandAreaSize, gourauAreaSize;
+static sint32 cmdBufferUsed, totCommand;
+static sint32 gourBufferUsed, totGourau;
 static struct gourTable gourBuffer[GOURBUFFERSIZE];
 static struct cmdTable cmdBuffer[CMDBUFFERSIZE];
 #endif
 
 #define ERASEWRITESTARTLINE 110
 
-void EZ_setErase(int eraseWriteEndLine, unsigned short eraseWriteColor)
+void EZ_setErase(sint32 eraseWriteEndLine, uint16 eraseWriteColor)
 {
     struct cmdTable* first = (struct cmdTable*)VRAM_ADDR;
     if (eraseWriteEndLine > 0)
@@ -68,13 +68,13 @@ void EZ_setErase(int eraseWriteEndLine, unsigned short eraseWriteColor)
         first->control = SKIP_ASSIGN;
 }
 
-void EZ_initSprSystem(int nmCommands, int nmCluts, int nmGour, int eraseWriteEndLine, unsigned short eraseWriteColor)
+void EZ_initSprSystem(sint32 nmCommands, sint32 nmCluts, sint32 nmGour, sint32 eraseWriteEndLine, uint16 eraseWriteColor)
 {
-    int i;
-    Uint8* vram;
+    sint32 i;
+    uint8* vram;
     SPR_Initial(&vram);
     SPR_SetEosMode(0);
-    commandStart[0] = (BYTE*)64;
+    commandStart[0] = (uint8*)64;
     commandStart[1] = commandStart[0] + (nmCommands << 5);
     clutStart = commandStart[1] + (nmCommands << 5);
     gourStart[0] = clutStart + (nmCluts << 5);
@@ -100,9 +100,9 @@ void EZ_initSprSystem(int nmCommands, int nmCluts, int nmGour, int eraseWriteEnd
     }
 }
 
-void EZ_setChar(int charNm, int colorMode, int width, int height, BYTE* data)
+void EZ_setChar(sint32 charNm, sint32 colorMode, sint32 width, sint32 height, uint8* data)
 {
-    int size = width * height;
+    sint32 size = width * height;
     assert(charNm >= 0);
     assert(charNm < MAXNMCHARS);
     assert(!(width & 3));
@@ -111,28 +111,28 @@ void EZ_setChar(int charNm, int colorMode, int width, int height, BYTE* data)
         size <<= 1;
     if (colorMode <= COLOR_1)
         size >>= 1;
-    assert(!(((int)charStart) & 0x1f));
+    assert(!(((sint32)charStart) & 0x1f));
     if (!chars[charNm].addr)
     {
-        chars[charNm].addr = ((int)charStart) >> 3;
+        chars[charNm].addr = ((sint32)charStart) >> 3;
         charStart += size;
-        charStart = (BYTE*)((((int)charStart) + 31) & (~0x1f));
-        assert(((int)charStart) < 1024 * 512);
+        charStart = (uint8*)((((sint32)charStart) + 31) & (~0x1f));
+        assert(((sint32)charStart) < 1024 * 512);
         chars[charNm].xysize = ((width >> 3) << 8) | height;
     }
     if (data)
     { /* copy char data into area */
         validPtr(data);
-        dmaMemCpy(data, (BYTE*)((chars[charNm].addr << 3) + VRAM_ADDR), size);
+        dmaMemCpy(data, (uint8*)((chars[charNm].addr << 3) + VRAM_ADDR), size);
     }
 }
 
-void EZ_setLookupTbl(int tblNm, struct sprLookupTbl* tbl)
+void EZ_setLookupTbl(sint32 tblNm, struct sprLookupTbl* tbl)
 {
     assert(tblNm >= 0);
     assert(tblNm <= 10);
     validPtr(tbl);
-    dmaMemCpy(tbl, (BYTE*)(VRAM_ADDR + clutStart + (tblNm << 5)), 1 << 5);
+    dmaMemCpy(tbl, (uint8*)(VRAM_ADDR + clutStart + (tblNm << 5)), 1 << 5);
 }
 
 void EZ_openCommand(void)
@@ -186,7 +186,7 @@ static inline void setGourPara(struct cmdTable* cmd, struct gourTable* gTable)
         if (gourBufferUsed == GOURBUFFERSIZE)
             flushGourBuffer();
         gourBuffer[gourBufferUsed] = *gTable;
-        cmd->grshAddr = (((int)cgouraud) >> 3) + gourBufferUsed++;
+        cmd->grshAddr = (((sint32)cgouraud) >> 3) + gourBufferUsed++;
     }
 }
 #else
@@ -206,30 +206,30 @@ static inline void setGourPara(struct cmdTable* cmd, struct gourTable* gTable)
         struct gourTable* g = (struct gourTable*)(cgouraud + VRAM_ADDR);
         validPtr(gTable);
         *g = *gTable;
-        cmd->grshAddr = (((int)cgouraud) >> 3);
+        cmd->grshAddr = (((sint32)cgouraud) >> 3);
         cgouraud += 8;
     }
 }
 #endif
 
-static inline void setCharPara(struct cmdTable* cmd, short charNm)
+static inline void setCharPara(struct cmdTable* cmd, sint16 charNm)
 {
     validPtr(cmd);
     cmd->charAddr = chars[charNm].addr;
     cmd->charSize = chars[charNm].xysize;
 }
 
-static inline void setDrawPara(struct cmdTable* cmd, short drawMode, short color)
+static inline void setDrawPara(struct cmdTable* cmd, sint16 drawMode, sint16 color)
 {
     validPtr(cmd);
     cmd->drawMode = drawMode;
     if ((drawMode & DRAW_COLOR) == COLOR_1)
-        cmd->color = (((int)clutStart) + (color << 5)) >> 3;
+        cmd->color = (((sint32)clutStart) + (color << 5)) >> 3;
     else
         cmd->color = color;
 }
 
-void EZ_normSpr(short dir, short drawMode, short color, short charNm, XyInt* pos, struct gourTable* gTable)
+void EZ_normSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt* pos, struct gourTable* gTable)
 {
     struct cmdTable* cmd;
     validPtr(pos);
@@ -247,9 +247,9 @@ struct slaveDrawResult
 {
     XyInt poly[4];
     struct gourTable gtable;
-    short tile;
+    sint16 tile;
 };
-void EZ_specialDistSpr(struct slaveDrawResult* sdr, int charNm)
+void EZ_specialDistSpr(struct slaveDrawResult* sdr, sint32 charNm)
 {
     struct cmdTable* cmd;
     cmd = getCmdTable();
@@ -257,14 +257,14 @@ void EZ_specialDistSpr(struct slaveDrawResult* sdr, int charNm)
     setCharPara(cmd, charNm);
     setDrawPara(cmd, UCLPIN_ENABLE | COLOR_5 | HSS_ENABLE | ECD_DISABLE | DRAW_GOURAU, 0);
     {
-        int i;
-        int *from = (int*)sdr->poly, *to = (int*)&cmd->ax;
+        sint32 i;
+        sint32 *from = (sint32*)sdr->poly, *to = (sint32*)&cmd->ax;
         for (i = 4; i; i--)
             *(to++) = *(from++);
     }
     setGourPara(cmd, &sdr->gtable);
 }
-void EZ_specialDistSpr2(short charNm, XyInt* xy, struct gourTable* gTable)
+void EZ_specialDistSpr2(sint16 charNm, XyInt* xy, struct gourTable* gTable)
 {
     struct cmdTable* cmd;
     validPtr(xy);
@@ -273,8 +273,8 @@ void EZ_specialDistSpr2(short charNm, XyInt* xy, struct gourTable* gTable)
     setCharPara(cmd, charNm);
     setDrawPara(cmd, UCLPIN_ENABLE | COLOR_5 | HSS_ENABLE | ECD_DISABLE | DRAW_GOURAU, 0);
     {
-        int i;
-        short *from = (short*)xy, *to = (short*)&cmd->ax;
+        sint32 i;
+        sint16 *from = (sint16*)xy, *to = (sint16*)&cmd->ax;
         for (i = 8; i; i--)
             *(to++) = *(from++);
     }
@@ -282,7 +282,7 @@ void EZ_specialDistSpr2(short charNm, XyInt* xy, struct gourTable* gTable)
 }
 #endif
 
-void EZ_distSpr(short dir, short drawMode, short color, short charNm, XyInt* xy, struct gourTable* gTable)
+void EZ_distSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt* xy, struct gourTable* gTable)
 {
     struct cmdTable* cmd;
     validPtr(xy);
@@ -291,8 +291,8 @@ void EZ_distSpr(short dir, short drawMode, short color, short charNm, XyInt* xy,
     setCharPara(cmd, charNm);
     setDrawPara(cmd, drawMode, color);
     {
-        int i;
-        short *from = (short*)xy, *to = (short*)&cmd->ax;
+        sint32 i;
+        sint16 *from = (sint16*)xy, *to = (sint16*)&cmd->ax;
         for (i = 8; i; i--)
             *(to++) = *(from++);
     }
@@ -307,7 +307,7 @@ void EZ_cmd(struct cmdTable* inCmd)
     qmemcpy(cmd, inCmd, sizeof(struct cmdTable));
 }
 
-void EZ_scaleSpr(short dir, short drawMode, short color, short charNm, XyInt* pos, struct gourTable* gTable)
+void EZ_scaleSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt* pos, struct gourTable* gTable)
 {
     struct cmdTable* cmd;
     validPtr(pos);
@@ -334,7 +334,7 @@ void EZ_scaleSpr(short dir, short drawMode, short color, short charNm, XyInt* po
     setGourPara(cmd, gTable);
 }
 
-void EZ_localCoord(short x, short y)
+void EZ_localCoord(sint16 x, sint16 y)
 {
     struct cmdTable* cmd;
     cmd = getCmdTable();
@@ -364,7 +364,7 @@ void EZ_sysClip(void)
     cmd->cy = 239;
 }
 
-void EZ_polygon(short drawMode, short color, XyInt* xy, struct gourTable* gTable)
+void EZ_polygon(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable)
 {
     struct cmdTable* cmd;
     validPtr(xy);
@@ -372,15 +372,15 @@ void EZ_polygon(short drawMode, short color, XyInt* xy, struct gourTable* gTable
     cmd->control = ZOOM_NOPOINT | DIR_NOREV | FUNC_POLYGON;
     setDrawPara(cmd, drawMode, color);
     {
-        int i;
-        short *from = (short*)xy, *to = (short*)&cmd->ax;
+        sint32 i;
+        sint16 *from = (sint16*)xy, *to = (sint16*)&cmd->ax;
         for (i = 8; i; i--)
             *(to++) = *(from++);
     }
     setGourPara(cmd, gTable);
 }
 
-void EZ_polyLine(short drawMode, short color, XyInt* xy, struct gourTable* gTable)
+void EZ_polyLine(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable)
 {
     struct cmdTable* cmd;
     validPtr(xy);
@@ -388,15 +388,15 @@ void EZ_polyLine(short drawMode, short color, XyInt* xy, struct gourTable* gTabl
     cmd->control = ZOOM_NOPOINT | DIR_NOREV | FUNC_POLYLINE;
     setDrawPara(cmd, drawMode, color);
     {
-        int i;
-        short *from = (short*)xy, *to = (short*)&cmd->ax;
+        sint32 i;
+        sint16 *from = (sint16*)xy, *to = (sint16*)&cmd->ax;
         for (i = 8; i; i--)
             *(to++) = *(from++);
     }
     setGourPara(cmd, gTable);
 }
 
-void EZ_line(short drawMode, short color, XyInt* xy, struct gourTable* gTable)
+void EZ_line(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable)
 {
     struct cmdTable* cmd;
     validPtr(xy);
@@ -412,7 +412,7 @@ void EZ_line(short drawMode, short color, XyInt* xy, struct gourTable* gTable)
     setGourPara(cmd, gTable);
 }
 
-int EZ_charNoToVram(int charNm)
+sint32 EZ_charNoToVram(sint32 charNm)
 {
     return chars[charNm].addr;
 }
@@ -428,7 +428,7 @@ void EZ_closeCommand(void)
     /* make first command link to the frame's command table */
     {
         struct cmdTable* first = (struct cmdTable*)VRAM_ADDR;
-        first->link = ((int)commandStart[bank]) >> 3;
+        first->link = ((sint32)commandStart[bank]) >> 3;
     }
     /* make last command point to end command */
     if (ccommand == commandStart[bank])
@@ -458,25 +458,25 @@ void EZ_clearCommand(void)
     last->link = 32 >> 3;
 }
 
-int EZ_getNextCmdNm(void)
+sint32 EZ_getNextCmdNm(void)
 {
 #if BUFFERWRITES
-    int c = (((unsigned int)ccommand) >> 5) + cmdBufferUsed;
-    int maxc = (((unsigned int)commandStart[bank]) >> 5) + commandAreaSize;
+    sint32 c = (((uint32)ccommand) >> 5) + cmdBufferUsed;
+    sint32 maxc = (((uint32)commandStart[bank]) >> 5) + commandAreaSize;
     if (c > maxc - 1)
         c = maxc - 1;
     return c;
 #else
-    return ((unsigned int)ccommand) >> 5;
+    return ((uint32)ccommand) >> 5;
 #endif
 }
 
-void EZ_linkCommand(int cmdNm, int mode, int to)
+void EZ_linkCommand(sint32 cmdNm, sint32 mode, sint32 to)
 {
     struct cmdTable* cmd;
 #if BUFFERWRITES
     /* if command to be linked is still in the command buffer */
-    int offs = cmdNm - (((unsigned int)ccommand) >> 5);
+    sint32 offs = cmdNm - (((uint32)ccommand) >> 5);
     if (offs >= 0)
     {
         assert(offs < cmdBufferUsed);

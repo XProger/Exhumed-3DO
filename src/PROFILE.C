@@ -22,9 +22,9 @@ void setFastTimer(void)
     POKE_B(FRT + FRT_L, 0);
 }
 
-unsigned short getTimer(void)
+uint16 getTimer(void)
 {
-    unsigned char h, l;
+    uint8 h, l;
     h = PEEK_B(FRT + FRT_H);
     l = PEEK_B(FRT + FRT_L);
     return (h << 8) | l;
@@ -35,23 +35,23 @@ unsigned short getTimer(void)
 typedef struct _node
 {
     char* id;
-    unsigned int totalTime, lastReportedTime;
+    uint32 totalTime, lastReportedTime;
     struct _node* child[MAXNMCHILDREN];
     struct _node* parent;
-    int nmChildren;
+    sint32 nmChildren;
 } ProfileNode;
 
 #define MAXNMNODES 60
 static ProfileNode nodes[MAXNMNODES];
 
-static int nmNodes;
-static int level;
-static unsigned short lastTime;
+static sint32 nmNodes;
+static sint32 level;
+static uint16 lastTime;
 ProfileNode* currentNode;
 
 void initProfiler(void)
 {
-    int i;
+    sint32 i;
     setFastTimer();
     level = 0;
 
@@ -71,7 +71,7 @@ void initProfiler(void)
 
 void pushProfile(char* id)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < currentNode->nmChildren; i++)
         if (currentNode->child[i]->id == id)
             break;
@@ -102,22 +102,22 @@ void popProfile(void)
     lastTime = getTimer();
 }
 
-static unsigned int sumChildren(ProfileNode* node)
+static uint32 sumChildren(ProfileNode* node)
 {
-    int i;
-    unsigned int tot;
+    sint32 i;
+    uint32 tot;
     tot = node->totalTime;
     for (i = 0; i < node->nmChildren; i++)
         tot += sumChildren(node->child[i]);
     return tot;
 }
 
-static void printTree(ProfileNode* tree, int level, unsigned int parentTotal, unsigned int parentDifference)
+static void printTree(ProfileNode* tree, sint32 level, uint32 parentTotal, uint32 parentDifference)
 {
-    int i;
+    sint32 i;
     char buff[80];
-    unsigned int difPercent, totPercent;
-    unsigned int sum;
+    uint32 difPercent, totPercent;
+    uint32 sum;
     for (i = 0; i < level; i++)
         debugPrint(" ");
     sum = sumChildren(tree) >> 10;
@@ -141,7 +141,7 @@ static void printTree(ProfileNode* tree, int level, unsigned int parentTotal, un
 
 void dumpProfileData(void)
 {
-    unsigned int sum;
+    uint32 sum;
     debugPrint("\n\n");
     sum = sumChildren(nodes) >> 10;
     printTree(nodes, 0, sum, sum - nodes->lastReportedTime);

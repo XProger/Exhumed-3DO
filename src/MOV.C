@@ -30,19 +30,19 @@
 #define USEDMA 0
 
 #define MAXNMBUFFERS 2000
-static int qPos, qHead, qTail, nmBuffers;
-static unsigned char** buffer;
+static sint32 qPos, qHead, qTail, nmBuffers;
+static uint8** buffer;
 
-static int sndRingPos, BPS, waveChannels;
-static int ourPrtn;
+static sint32 sndRingPos, BPS, waveChannels;
+static sint32 ourPrtn;
 
 static GfsHn cdFile; /* only one cd file may be open at a time */
 
-static Sint32 bsize;
+static sint32 bsize;
 
-static int maybeReadBuffer(void)
+static sint32 maybeReadBuffer(void)
 {
-    int nextHead;
+    sint32 nextHead;
     GFS_NwExecOne(cdFile);
     assert(qHead < nmBuffers);
     nextHead = qHead + 1;
@@ -61,9 +61,9 @@ static int maybeReadBuffer(void)
     return 0;
 }
 
-static unsigned char deQByte(void)
+static uint8 deQByte(void)
 {
-    unsigned char r = *(buffer[qTail] + qPos);
+    uint8 r = *(buffer[qTail] + qPos);
     assert(qPos < 2048);
     assert(qTail < nmBuffers);
     qPos++;
@@ -77,9 +77,9 @@ static unsigned char deQByte(void)
     return r;
 }
 
-static unsigned short deQShort(void)
+static uint16 deQShort(void)
 {
-    int r;
+    sint32 r;
     r = deQByte() << 8;
     r += deQByte();
     return r;
@@ -87,9 +87,9 @@ static unsigned short deQShort(void)
 
 #define deQCount deQInt
 
-static int deQInt(void)
+static sint32 deQInt(void)
 {
-    int r;
+    sint32 r;
     r = deQByte() << 24;
     r |= deQByte() << 16;
     r |= deQByte() << 8;
@@ -97,16 +97,16 @@ static int deQInt(void)
     return r;
 }
 
-static void deQCopy(void* dest, int size)
+static void deQCopy(void* dest, sint32 size)
 {
-    int s;
+    sint32 s;
     assert(qPos < 2048);
     while (size)
     {
         s = 2048 - qPos;
         if (s > size)
         {
-            /* assert(!(((int)dest) & 3));
+            /* assert(!(((sint32)dest) & 3));
                assert(!(qPos & 3)); */
 #if USEDMA
             dmaMemCpy(buffer[qTail] + qPos, dest, size);
@@ -116,14 +116,14 @@ static void deQCopy(void* dest, int size)
             qPos += size;
             break;
         }
-        /* assert(!(((int)dest) & 3));
+        /* assert(!(((sint32)dest) & 3));
            assert(!(qPos & 3)); */
 #if USEDMA
         dmaMemCpy(buffer[qTail] + qPos, dest, s);
 #else
         qmemcpy(dest, buffer[qTail] + qPos, s);
 #endif
-        (Uint8*)dest += s;
+        (uint8*)dest += s;
         size -= s;
         assert(qTail < nmBuffers);
         qTail++;
@@ -137,9 +137,9 @@ static void deQCopy(void* dest, int size)
 
 static void deQSound(void)
 {
-    int amount;
-    int s;
-    int saveAmount, saveSndRingPos;
+    sint32 amount;
+    sint32 s;
+    sint32 saveAmount, saveSndRingPos;
     amount = deQInt();
     assert(amount >= 0);
     assert(amount < 40000);
@@ -193,16 +193,16 @@ static void deQSound(void)
 #define FRAMESKIP 3
 #define NMLINES 6
 
-void playMovie(char* fileName, int canSkip)
+void playMovie(char* fileName, sint32 canSkip)
 {
-    unsigned char* booffer[MAXNMBUFFERS];
-    short nmFrames, frame;
-    int waveRate;
+    uint8* booffer[MAXNMBUFFERS];
+    sint16 nmFrames, frame;
+    sint32 waveRate;
     char* text;
     char* line[NMLINES];
-    int* textData;
-    short linePos[NMLINES], nmChars[NMLINES];
-    int i, size, screenPos, charNm, vdp1Vram, textOffset = 0, textDone = 0;
+    sint32* textData;
+    sint16 linePos[NMLINES], nmChars[NMLINES];
+    sint32 i, size, screenPos, charNm, vdp1Vram, textOffset = 0, textDone = 0;
 
     checkStack();
 
@@ -218,7 +218,7 @@ void playMovie(char* fileName, int canSkip)
     /* allocate buffers */
     nmBuffers = 0;
     /* for (i=0;i<512*1024;i+=2048)
-        buffer[nmBuffers++]=(char *)(SCL_VDP2_VRAM+i);*/
+        buffer[nmBuffers++]=(sint8 *)(SCL_VDP2_VRAM+i);*/
 
     do
         buffer[nmBuffers++] = mem_nocheck_malloc(!(nmBuffers & 1), 2048);
@@ -231,7 +231,7 @@ void playMovie(char* fileName, int canSkip)
     qPos = 0;
 
     {
-        int id = GFS_NameToId(fileName);
+        sint32 id = GFS_NameToId(fileName);
         assert(id >= 0);
         cdFile = GFS_Open(id);
         assert(cdFile);
@@ -247,16 +247,16 @@ void playMovie(char* fileName, int canSkip)
     qPos = 0;
     qTail = 0;
 
-    ourPrtn = CDC_CdGetLastBuf((Sint32*)&ourPrtn);
+    ourPrtn = CDC_CdGetLastBuf((sint32*)&ourPrtn);
 
     /* read language file */
     {
-        int size;
+        sint32 size;
         size = deQInt();
         if (size)
         {
             deQCopy(textData, 1024 * 6 - 4);
-            text = (char*)(((int)textData) + textData[textData[getLanguageNumber()] >> 2]);
+            text = (char*)(((sint32)textData) + textData[textData[getLanguageNumber()] >> 2]);
             dPrint("%d %d offset=%d\n", getLanguageNumber(), textData[getLanguageNumber()], textData[textData[getLanguageNumber()] >> 2]);
         }
         else
@@ -303,7 +303,7 @@ void playMovie(char* fileName, int canSkip)
     deQSound();
     if (BPS)
     { /* start sound */
-        int base = SNDBASE + 0x100000;
+        sint32 base = SNDBASE + 0x100000;
         POKE_W(base + 2, 0); /* start addr */
         POKE_W(base + 6, 0xffff); /* end addr */
         POKE_W(base + 0x10, waveRate);
@@ -315,7 +315,7 @@ void playMovie(char* fileName, int canSkip)
 
         if (waveChannels == 2)
         {
-            int base = SNDBASE + 0x100000 + 0x40;
+            sint32 base = SNDBASE + 0x100000 + 0x40;
             if (BPS == 16)
                 POKE_W(base, 0x800 | (1 << 5) | 0x02);
             else
@@ -381,7 +381,7 @@ void playMovie(char* fileName, int canSkip)
 #ifndef NDEBUG
         {
             XyInt parms[4];
-            int fullBuffers;
+            sint32 fullBuffers;
             fullBuffers = qHead - qTail;
             if (fullBuffers < 0)
                 fullBuffers += nmBuffers;
@@ -399,7 +399,7 @@ void playMovie(char* fileName, int canSkip)
         /* draw subtitle */
         if (text)
         {
-            int y;
+            sint32 y;
             XyInt pos[4];
             pos[0].x = 0;
             pos[0].y = 170;
@@ -430,7 +430,7 @@ void playMovie(char* fileName, int canSkip)
                 textOffset--;
             if (textOffset < 0)
             {
-                int width;
+                sint32 width;
                 char* c;
                 textOffset = 9;
                 /* ... move all lines up one */

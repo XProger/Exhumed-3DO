@@ -37,7 +37,7 @@
 void *bupSpace=NULL;
 void *bupWork=NULL;
 
-char saveGames[1024];
+sint8 saveGames[1024];
 static BupConfig config[3];
 
 static void loadBUP(void)
@@ -65,18 +65,18 @@ static void unloadBup(void)
 void *camera;
 
 static void bup_createKeyFile(char *filename)
-{//int ret;
- int device=0;
+{//sint32 ret;
+ sint32 device=0;
  BupStat sttb;
  BupDir writetb;
  BupDate datetb;
  loadBUP();
  BUP_Stat(0,64,&sttb);
  assert(device>=0);
- strcpy((char *)writetb.filename,filename);
- strcpy((char *)writetb.comment,"cheat key");
+ strcpy((char*)writetb.filename,filename);
+ strcpy((char*)writetb.comment,"cheat key");
  writetb.language=BUP_ENGLISH;
- {int year,month,day,hour,min;
+ (sint32 year,month,day,hour,min;
   getDateTime(&year,&month,&day,&hour,&min);
   datetb.year=year;
   datetb.month=month;
@@ -88,7 +88,7 @@ static void bup_createKeyFile(char *filename)
  writetb.datasize=64;
  writetb.blocksize=1;
  resetDisable();
- BUP_Write(device,&writetb,(Uint8 *)saveGames,OFF);
+ BUP_Write(device,&writetb,(uint8 *)saveGames,OFF);
  resetEnable();
  unloadBup();
 }

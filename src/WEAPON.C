@@ -32,7 +32,7 @@
 #include "gamestat.h"
 #include "level.h"
 
-static int const weaponMap[] = { 0, /* sword */
+static sint32 const weaponMap[] = { 0, /* sword */
     13, /* pistol */
     17, /* m60 */
     30, /* gernade! */
@@ -57,7 +57,7 @@ static XyInt const weaponCenter[] = {
 };
 
 #ifndef JAPAN
-int const weaponMaxAmmo[] = {
+sint32 const weaponMaxAmmo[] = {
     0, 60, 30, /* m60 */
     10, /* gernade */
     200, /* flamer */
@@ -66,7 +66,7 @@ int const weaponMaxAmmo[] = {
     4 /* ravolt */
 };
 #else
-int const weaponMaxAmmo[] = {
+sint32 const weaponMaxAmmo[] = {
     0, 70, 40, /* m60 */
     15, /* gernade */
     200, /* flamer */
@@ -76,18 +76,18 @@ int const weaponMaxAmmo[] = {
 };
 #endif
 
-static int weaponPos[2], weaponVel[2];
-int currentWeapon = 0;
-static int grenadeHoldTime;
-static int swordForeSwing = 3;
-static int recoverInProgress = 0;
+static sint32 weaponPos[2], weaponVel[2];
+sint32 currentWeapon = 0;
+static sint32 grenadeHoldTime;
+static sint32 swordForeSwing = 3;
+static sint32 recoverInProgress = 0;
 
-/* static int ray1Dist=0,ray2Dist=0;
-static int ray1Spark,ray2Spark; */
-static int weaponSwitchTimer;
+/* static sint32 ray1Dist=0,ray2Dist=0;
+static sint32 ray1Spark,ray2Spark; */
+static sint32 weaponSwitchTimer;
 
-static short ringDepletion = 0;
-static short ringCharging = 0;
+static sint16 ringDepletion = 0;
+static sint16 ringCharging = 0;
 
 void initWeapon(void)
 {
@@ -101,13 +101,13 @@ void initWeapon(void)
     ringCharging = 0;
 }
 
-void weaponForce(int fx, int fy)
+void weaponForce(sint32 fx, sint32 fy)
 {
     weaponVel[0] += fx;
     weaponVel[1] += fy;
 }
 
-void weaponSetVel(int vx, int vy)
+void weaponSetVel(sint32 vx, sint32 vy)
 {
     weaponVel[0] = vx;
     weaponVel[1] = vy;
@@ -122,13 +122,13 @@ static void moveWeapon(void)
     weaponVel[1] = weaponVel[1] - (weaponVel[1] >> 2);
 }
 
-static int weaponState = 1;
-void switchWeapons(int on)
+static sint32 weaponState = 1;
+void switchWeapons(sint32 on)
 {
     weaponState = on;
 }
 
-static int weaponOK(void)
+static sint32 weaponOK(void)
 {
     if (!weaponState)
         return 0;
@@ -143,7 +143,7 @@ void fireWeapon(void)
         return;
     if (weaponMaxAmmo[currentWeapon] && !currentState.weaponAmmo[currentWeapon])
     {
-        int w;
+        sint32 w;
         if (currentWeapon != currentState.desiredWeapon)
             return;
         /* out of ammo for current weapon, switch to next lower weapon that
@@ -152,7 +152,7 @@ void fireWeapon(void)
         {
             w = currentState.desiredWeapon;
             weaponDown(WEAPONINV(currentState.inventory));
-        } while (w != currentState.desiredWeapon && !currentState.weaponAmmo[(int)currentState.desiredWeapon]);
+        } while (w != currentState.desiredWeapon && !currentState.weaponAmmo[(sint32)currentState.desiredWeapon]);
         redrawBowlDots();
         return;
     }
@@ -234,9 +234,9 @@ void fireWeapon(void)
         currentState.weaponAmmo[currentWeapon]--;
 }
 
-static void getRay(Fixed32 yaw, Fixed32 pitch, MthXyz* outRay)
+static void getRay(fix32 yaw, fix32 pitch, MthXyz* outRay)
 {
-    Fixed32 c;
+    fix32 c;
     outRay->x = -MTH_Sin(yaw);
     outRay->z = MTH_Cos(yaw);
     c = MTH_Cos(pitch);
@@ -245,9 +245,9 @@ static void getRay(Fixed32 yaw, Fixed32 pitch, MthXyz* outRay)
     outRay->y = MTH_Sin(pitch);
 }
 
-static void getAutoAimRay(MthXyz* outRay, Fixed32 dYaw, Fixed32 dPitch, int jitter)
+static void getAutoAimRay(MthXyz* outRay, fix32 dYaw, fix32 dPitch, sint32 jitter)
 {
-    Fixed32 dist;
+    fix32 dist;
     if (!autoTarget /* || playerAngle.pitch!=0*/)
     {
         getRay(normalizeAngle(playerAngle.yaw + dYaw), normalizeAngle(playerAngle.pitch + dPitch), outRay);
@@ -292,10 +292,10 @@ static void weaponFire(void)
         {
             MthXyz orfice;
             MthXyz ray;
-            static int angleOffset[] = { F(0), F(0), F(20), F(-20), F(-20), F(20) };
-            static int pattern = 0;
-            static int fire = 0;
-            static int hand = 0;
+            static sint32 angleOffset[] = { F(0), F(0), F(20), F(-20), F(-20), F(20) };
+            static sint32 pattern = 0;
+            static sint32 fire = 0;
+            static sint32 hand = 0;
 
             /*ringDepletion+=8;*/
             if (ringDepletion > 140)
@@ -350,10 +350,10 @@ static void weaponFire(void)
             Object* o;
 #define MAXNMVOLTTARGETS 20
             Object* targetList[MAXNMVOLTTARGETS];
-            int targetRating[MAXNMVOLTTARGETS];
-            int nmTargets, i, j, onIdleList;
+            sint32 targetRating[MAXNMVOLTTARGETS];
+            sint32 nmTargets, i, j, onIdleList;
             MonsterObject* m;
-            int dist, angle, rating, sec;
+            sint32 dist, angle, rating, sec;
 
             currentState.weaponAmmo[WP_RAVOLT]--;
             changeColorOffset(255, 255, 255, 30);
@@ -403,7 +403,7 @@ static void weaponFire(void)
             /* sort targets in order of rating */
             for (i = 1; i < nmTargets; i++)
             {
-                int saveRating = targetRating[i];
+                sint32 saveRating = targetRating[i];
                 Object* saveMonster = targetList[i];
                 for (j = i; j > 0; j--)
                 {
@@ -451,9 +451,9 @@ static void weaponFire(void)
         case WP_FLAMER:
         {
             MthXyz p;
-            Fixed32 pitch, yaw;
+            fix32 pitch, yaw;
             MthXyz orfice, ray;
-            int heading;
+            sint32 heading;
 
             if (!currentState.weaponAmmo[WP_FLAMER])
             {
@@ -488,7 +488,7 @@ static void weaponFire(void)
 	     use straight ahead ray instead */
 	  MthXyz straight;
 	  getRay(playerAngle.yaw,playerAngle.pitch,&straight);
-	  if (MTH_Product((Fixed32 *)&straight,(Fixed32 *)&ray)<50000)
+	  if (MTH_Product((fix32 *)&straight,(fix32 *)&ray)<50000)
 	     ray=straight;
 	 }
 #else
@@ -504,8 +504,8 @@ static void weaponFire(void)
         {
             MthXyz p;
             MthXyz orfice, ray;
-            int heading;
-            int vel;
+            sint32 heading;
+            sint32 vel;
             currentState.weaponAmmo[WP_GRENADE]--;
             getRay(playerAngle.yaw, normalizeAngle(playerAngle.pitch - F(10)), &orfice);
             p = camera->pos;
@@ -530,7 +530,7 @@ static void weaponFire(void)
     {
         MthXyz ray;
         MthXyz hitPos;
-        int hitSector, hscan;
+        sint32 hitSector, hscan;
         /* weapons that do need hit scan */
         if (currentWeapon == WP_M60)
         {
@@ -567,7 +567,7 @@ static void weaponFire(void)
             }
             case WP_SWORD:
             {
-                int range = F(80);
+                sint32 range = F(80);
                 if (hscan & COLLIDE_SPRITE)
                     range += sprites[hscan & 0xffff].radius;
                 recoverInProgress = 1;
@@ -689,8 +689,8 @@ static void weaponIn(void)
     }
 }
 
-static int yavel = 0;
-void weaponPlayerMove(int _yavel)
+static sint32 yavel = 0;
+void weaponPlayerMove(sint32 _yavel)
 {
     yavel = _yavel;
     if (currentWeapon == WP_FLAMER)
@@ -700,13 +700,13 @@ void weaponPlayerMove(int _yavel)
     }
 }
 
-void runWeapon(int nmFrames, int invisible, int boost)
+void runWeapon(sint32 nmFrames, sint32 invisible, sint32 boost)
 {
-    int i, frame;
-    int flags;
-    int yoffs;
+    sint32 i, frame;
+    sint32 flags;
+    sint32 yoffs;
 
-    /* static int counter=0;
+    /* static sint32 counter=0;
      if (counter++>8)
         {counter=0;
          nmFrames=1;
@@ -788,7 +788,7 @@ void runWeapon(int nmFrames, int invisible, int boost)
             }
             else
             {
-                int snd, grunch;
+                sint32 snd, grunch;
                 static struct soundSlotRegister* afterTouch;
                 struct soundSlotRegister ssr;
                 initSoundRegs(level_staticSoundMap[ST_MANACLE], 32, 0, &ssr);
@@ -799,7 +799,7 @@ void runWeapon(int nmFrames, int invisible, int boost)
                 ssr.reg[8] = grunch;
                 if ((grenadeHoldTime & 0x3f) == 0)
                 {
-                    int step = grenadeHoldTime >> 6;
+                    sint32 step = grenadeHoldTime >> 6;
                     if (step < 1 /*5*/)
                     {
                         stopAllSound(1234);
@@ -834,9 +834,9 @@ void runWeapon(int nmFrames, int invisible, int boost)
     if (currentWeapon == WP_FLAMER)
         if (getCurrentWeaponSequence() == weaponMap[WP_FLAMER] + 2 && !invisible)
         {
-            static int flameFrame = 0;
-            static int flameClock = 0;
-            const int flameSeq = weaponMap[WP_FLAMER] + 3;
+            static sint32 flameFrame = 0;
+            static sint32 flameClock = 0;
+            const sint32 flameSeq = weaponMap[WP_FLAMER] + 3;
             XyInt pos[4];
             sChunkType* c;
             flameClock -= nmFrames;
@@ -849,8 +849,8 @@ void runWeapon(int nmFrames, int invisible, int boost)
             }
             c = level_wChunk + level_wFrame[flameFrame + level_wSequence[flameSeq]].chunkIndex;
             {
-                int angle = yavel << 3;
-                int x, y;
+                sint32 angle = yavel << 3;
+                sint32 x, y;
                 pos[0].x = 0;
                 pos[0].y = 0;
                 pos[1].x = 64;
@@ -872,12 +872,12 @@ void runWeapon(int nmFrames, int invisible, int boost)
         }
 }
 
-int getCurrentWeapon(void)
+sint32 getCurrentWeapon(void)
 {
     return currentWeapon;
 }
 
-void setCurrentWeapon(int i)
+void setCurrentWeapon(sint32 i)
 {
     if (i < 0)
         return;
@@ -888,9 +888,9 @@ void setCurrentWeapon(int i)
     currentState.desiredWeapon = i;
 }
 
-void weaponUp(int weaponMask)
+void weaponUp(sint32 weaponMask)
 {
-    int newD;
+    sint32 newD;
     if (level_sector[camera->s].flags & SECFLAG_WATER)
         weaponMask &= UNDERWATERWEAPONS;
     newD = bitScanForward(weaponMask, currentState.desiredWeapon);
@@ -901,9 +901,9 @@ void weaponUp(int weaponMask)
     }
 }
 
-void weaponDown(int weaponMask)
+void weaponDown(sint32 weaponMask)
 {
-    int newD;
+    sint32 newD;
     if (level_sector[camera->s].flags & SECFLAG_WATER)
         weaponMask &= UNDERWATERWEAPONS;
     newD = bitScanBackwards(weaponMask, currentState.desiredWeapon);
@@ -914,9 +914,9 @@ void weaponDown(int weaponMask)
     }
 }
 
-void weaponChangeAmmo(int weapon, int deltaAmmo)
+void weaponChangeAmmo(sint32 weapon, sint32 deltaAmmo)
 {
-    int flag;
+    sint32 flag;
     flag = 0;
     if (weapon == WP_M60 && currentWeapon == WP_M60 && currentState.weaponAmmo[WP_M60] < 2)
     {

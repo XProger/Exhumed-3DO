@@ -22,10 +22,10 @@
 #define MINY (-110)
 #define MAXY (90)
 
-char mapColor[MAXNMWALLS];
+sint8 mapColor[MAXNMWALLS];
 
-static Fixed32 mapScale;
-static int gotFullMap;
+static fix32 mapScale;
+static sint32 gotFullMap;
 
 void mapScaleUp(void)
 {
@@ -48,7 +48,7 @@ void revealMap(void)
 
 void initMap(void)
 {
-    int s, w;
+    sint32 s, w;
     MthXyz t;
     mapScale = F(1) / 8;
     gotFullMap = 0;
@@ -68,7 +68,7 @@ void initMap(void)
             }
             else
             { /* only draw wall if floor is different heights on both sides */
-                Fixed32 minDiff, f;
+                fix32 minDiff, f;
                 minDiff = abs(findFloorDistance(s, getVertex(level_wall[w].v[3], &t)) - findFloorDistance(level_wall[w].nextSector, getVertex(level_wall[w].v[3], &t)));
                 f = abs(findFloorDistance(s, getVertex(level_wall[w].v[2], &t)) - findFloorDistance(level_wall[w].nextSector, getVertex(level_wall[w].v[2], &t)));
                 if (f > minDiff)
@@ -88,9 +88,9 @@ void initMap(void)
 
 #ifndef NDEBUG
 #define MAXMARKS 5
-static int markX[MAXMARKS], markY[MAXMARKS];
-static int nmMarks = 0;
-void setMark(Fixed32 x, Fixed32 y)
+static sint32 markX[MAXMARKS], markY[MAXMARKS];
+static sint32 nmMarks = 0;
+void setMark(fix32 x, fix32 y)
 {
     if (nmMarks == MAXMARKS)
         return;
@@ -99,20 +99,20 @@ void setMark(Fixed32 x, Fixed32 y)
     nmMarks++;
 }
 #else
-void setMark(Fixed32 x, Fixed32 y)
+void setMark(fix32 x, fix32 y)
 {
     return;
 }
 #endif
 
-static unsigned short colors[4] = { 0, 0x8000 | 31 << 10 | 31 << 5 | 31, 0x8000 | 25 << 10 | 25 << 5 | 25, 0x8000 | 18 << 10 | 18 << 5 | 18 };
+static uint16 colors[4] = { 0, 0x8000 | 31 << 10 | 31 << 5 | 31, 0x8000 | 25 << 10 | 25 << 5 | 25, 0x8000 | 18 << 10 | 18 << 5 | 18 };
 
 #define ARROWR 5
 
-void drawMap(int cx, int cy, int cz, int yaw, int currentSector)
+void drawMap(sint32 cx, sint32 cy, sint32 cz, sint32 yaw, sint32 currentSector)
 {
-    int w, s, color, transp;
-    short currentHeight;
+    sint32 w, s, color, transp;
+    sint16 currentHeight;
     XyInt mapLine[2];
     MthXyz north, east;
     MthXyz p1, p2, wallP;
@@ -131,7 +131,7 @@ void drawMap(int cx, int cy, int cz, int yaw, int currentSector)
 #ifndef NDEBUG
     for (i = 0; i < nmMarks; i++)
     {
-        int x, y, tx, ty;
+        sint32 x, y, tx, ty;
         XyInt mark[4];
         x = f(markX[i] - cx);
         y = f(markY[i] - cy);
@@ -236,12 +236,12 @@ void drawMap(int cx, int cy, int cz, int yaw, int currentSector)
     EZ_line(ECDSPD_DISABLE | COLOR_5 | COMPO_REP, colors[1], mapLine, NULL);
 #if 0
 #ifndef NDEBUG
- {int sec;
+ (sint32 sec;
   Sprite *s;
   for (sec=0;sec<level_nmSectors;sec++)
      {for (s=sectorSpriteList[sec];s;s=s->next)
-	 {int x,y,tx,ty;
-	  int color;
+	 (sint32 x,y,tx,ty;
+	  sint32 color;
 	  XyInt mark[4];
 	  x=f(s->pos.x-cx);
 	  y=f(s->pos.z-cy);
@@ -266,7 +266,7 @@ void drawMap(int cx, int cy, int cz, int yaw, int currentSector)
     if (cheatsEnabled)
     {
         char buffer[160];
-        sprintf(buffer, "x:%d y:%d  sector:%d", (int)f(camera->pos.x), (int)f(camera->pos.z), camera->s);
+        sprintf(buffer, "x:%d y:%d  sector:%d", (sint32)f(camera->pos.x), (sint32)f(camera->pos.z), camera->s);
         drawString(-90, -100, 1, buffer);
     }
 #endif

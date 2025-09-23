@@ -1,4 +1,4 @@
-unsigned char manaclePal[] = {
+uint8 manaclePal[] = {
     255,
     224,
     136,

@@ -4,41 +4,41 @@
 #include <sega_xpt.h>
 
 typedef struct {
-    Sint32  fad;
-    Sint32  size;
-    Uint8   unit;
-    Uint8   gap;
-    Uint8   fn;
-    Uint8   atr;
+    sint32  fad;
+    sint32  size;
+    uint8   unit;
+    uint8   gap;
+    uint8   fn;
+    uint8   atr;
 } CdcFile;
 
 typedef struct {
-    Uint8   fn;
-    Uint8   cn;
-    Uint8   smmsk;
-    Uint8   smval;
-    Uint8   cimsk;
-    Uint8   cival;
+    uint8   fn;
+    uint8   cn;
+    uint8   smmsk;
+    uint8   smval;
+    uint8   cimsk;
+    uint8   cival;
 } CdcSubh;
 
 typedef struct {
-    Uint8   status;
+    uint8   status;
     struct {
-        Uint8   flgrep;
-        Uint8   ctladr;
-        Uint8   tno;
-        Uint8   idx;
-        Sint32  fad;
+        uint8   flgrep;
+        uint8   ctladr;
+        uint8   tno;
+        uint8   idx;
+        sint32  fad;
     } report;
 } CdcStat;
 
 typedef struct {
-    Sint32 ptype;
+    sint32 ptype;
     union {
-        Sint32 fad;
+        sint32 fad;
         struct {
-            Uint8 tno;
-            Uint8 idx;
+            uint8 tno;
+            uint8 idx;
         } trkidx;
     } pbody;
 } CdcPos;
@@ -46,7 +46,7 @@ typedef struct {
 typedef struct {
     CdcPos  start;
     CdcPos  end;
-    Uint8   pmode;
+    uint8   pmode;
 } CdcPly;
 
 enum CdcPosType {
@@ -101,14 +101,14 @@ enum CdcErrCode {
 #define CDC_HIRQ_DCHG       0x0020
 #define CDC_GetHirqReq()    0
 
-Sint32  CDC_GetPeriStat(CdcStat *stat);
+sint32  CDC_GetPeriStat(CdcStat *stat);
 
 #if 0
-Sint32  CDC_CdPlay(CdcPly *ply);
-Sint32  CDC_CdSeek(CdcPos *pos);
-Sint32  CDC_TgetToc(Uint32 *toc);
-Sint32  CDC_GetSctNum(Sint32 bufno, Sint32 *snum);
-Sint32  CDC_CdGetLastBuf(Sint32 *bufno);
+sint32  CDC_CdPlay(CdcPly *ply);
+sint32  CDC_CdSeek(CdcPos *pos);
+sint32  CDC_TgetToc(uint32 *toc);
+sint32  CDC_GetSctNum(sint32 bufno, sint32 *snum);
+sint32  CDC_CdGetLastBuf(sint32 *bufno);
 #else
 #define CDC_CdPlay(ply) 0
 #define CDC_CdSeek(pos) 0

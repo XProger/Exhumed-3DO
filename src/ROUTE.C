@@ -4,13 +4,13 @@
 #include "util.h"
 #include "route.h"
 
-static short fromWall[MAXNMSECTORS];
-static short fromSector[MAXNMSECTORS];
+static sint16 fromWall[MAXNMSECTORS];
+static sint16 fromSector[MAXNMSECTORS];
 
 typedef struct __qNode
 {
     struct __qNode* next;
-    short s;
+    sint16 s;
 } QNode;
 
 #define MAXFRONTIER 100
@@ -20,7 +20,7 @@ QNode* freeNodes;
 
 void initRoutePlotter(void)
 {
-    int i, s, w;
+    sint32 i, s, w;
     MthXyz t;
     freeNodes = NULL;
     for (i = 0; i < MAXFRONTIER; i++)
@@ -44,13 +44,13 @@ void initRoutePlotter(void)
     }
 }
 
-short routeBuffer[MAXNMSECTORS];
+sint16 routeBuffer[MAXNMSECTORS];
 
-int plotRouteToObject(MonsterObject* from, SpriteObject* to, int floater)
+sint32 plotRouteToObject(MonsterObject* from, SpriteObject* to, sint32 floater)
 {
-    int s, w, nextSector, i, c;
+    sint32 s, w, nextSector, i, c;
 #ifndef NDEBUG
-    int loopCount = 0;
+    sint32 loopCount = 0;
 #endif
     QNode *frontier, *ftail, *n, *q;
     for (s = 0; s < level_nmSectors; s++)

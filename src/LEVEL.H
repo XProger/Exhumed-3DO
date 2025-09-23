@@ -7,23 +7,23 @@ extern sVertexType* level_vertex;
 extern sFaceType* level_face;
 extern sWallType* level_wall;
 extern sSectorType* level_sector;
-extern unsigned char* level_texture;
-extern unsigned char (*level_cutPlane)[][MAXCUTSECTORS];
-extern unsigned char* level_vertexLight;
-extern unsigned char* level_objectParams;
+extern uint8* level_texture;
+extern uint8 (*level_cutPlane)[][MAXCUTSECTORS];
+extern uint8* level_vertexLight;
+extern uint8* level_objectParams;
 extern sObjectType* level_object;
 extern sPBType* level_pushBlock;
 extern sPBVertex* level_PBVert;
-extern short* level_PBWall;
+extern sint16* level_PBWall;
 extern WaveVert* level_waveVert;
 extern WaveFace* level_waveFace;
-extern int level_nmSectors;
-extern int level_nmWalls;
-extern int level_nmObjects;
-extern int level_nmPushBlocks;
-extern int level_nmWaveVert;
-extern int level_nmVertex;
+extern sint32 level_nmSectors;
+extern sint32 level_nmWalls;
+extern sint32 level_nmObjects;
+extern sint32 level_nmPushBlocks;
+extern sint32 level_nmWaveVert;
+extern sint32 level_nmVertex;
 
-int loadLevel(int fd, int tileBase);
+sint32 loadLevel(sint32 fd, sint32 tileBase);
 
 #endif

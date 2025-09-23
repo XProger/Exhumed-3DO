@@ -5,12 +5,12 @@
 
 void bup_initialProc(void);
 void bup_initCurrentGame(void);
-int bup_newGame(int slot);
+sint32 bup_newGame(sint32 slot);
 void bup_saveGame(void);
-int bup_canSaveGame(void);
-SaveState* bup_getGameData(int slot);
+sint32 bup_canSaveGame(void);
+SaveState* bup_getGameData(sint32 slot);
 
-int bup_loadGame(int slot);
-int bup_canLoadGame(void);
+sint32 bup_loadGame(sint32 slot);
+sint32 bup_canLoadGame(void);
 
 #endif

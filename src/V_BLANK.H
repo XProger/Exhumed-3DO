@@ -6,30 +6,30 @@
 void SetVblank(void);
 
 #define INPUTQSIZE 16 /* dont change this */
-extern volatile unsigned short inputQ[INPUTQSIZE];
-extern volatile char inputQHead;
+extern uint16 inputQ[INPUTQSIZE];
+extern sint8 inputQHead;
 /* interrupt only changes QHead, main thread only changes
    QTail */
-extern volatile char controlerPresent;
-extern volatile unsigned short lastInputSample;
-extern volatile unsigned short inputAccum;
-extern volatile int fadeDir, fadePos, fadeEnd;
-extern volatile int abcResetEnable;
-extern Uint8 PadWorkArea[];
-extern volatile char analogControlerPresent;
-extern volatile short analogX;
-extern volatile short analogY;
-extern volatile char analogIndexButtonsPresent;
-extern volatile short analogTR;
-extern volatile short analogTL;
-extern volatile char enableDoorReset;
+extern sint8 controlerPresent;
+extern uint16 lastInputSample;
+extern uint16 inputAccum;
+extern sint32 fadeDir, fadePos, fadeEnd;
+extern sint32 abcResetEnable;
+extern uint8 PadWorkArea[];
+extern sint8 analogControlerPresent;
+extern sint16 analogX;
+extern sint16 analogY;
+extern sint8 analogIndexButtonsPresent;
+extern sint16 analogTR;
+extern sint16 analogTL;
+extern sint8 enableDoorReset;
 void initInput(void);
 
-extern volatile Uint32 vtimer, htimer;
+extern uint32 vtimer, htimer;
 
 #ifndef NDEBUG
-extern int errorQ[];
-extern int prQ[];
+extern sint32 errorQ[];
+extern sint32 prQ[];
 #endif
 
 #if 0

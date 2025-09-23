@@ -22,13 +22,13 @@
 
 #include "aicommon.h"
 
-static int kilmaatPuzzleNumber = 0;
+static sint32 kilmaatPuzzleNumber = 0;
 
 /********************************\
  *          PLAYER STUFF        *
 \********************************/
 
-void player_func(Object* o, int message, int param1, int param2)
+void player_func(Object* o, sint32 message, sint32 param1, sint32 param2)
 {
     switch (message)
     {
@@ -38,8 +38,8 @@ void player_func(Object* o, int message, int param1, int param2)
     }
 }
 
-unsigned short playerSeqList[] = { -1 };
-PlayerObject* constructPlayer(int sector, int suckParams)
+uint16 playerSeqList[] = { -1 };
+PlayerObject* constructPlayer(sint32 sector, sint32 suckParams)
 {
     PlayerObject* this = (PlayerObject*)getFreeObject(player_func, OT_PLAYER, CLASS_MONSTER);
     assert(sizeof(*this) < sizeof(Object));
@@ -61,10 +61,10 @@ PlayerObject* constructPlayer(int sector, int suckParams)
 /********************************\
  *          GENPROJ STUFF       *
 \********************************/
-void genproj_func(Object* _this, int msg, int param1, int param2)
+void genproj_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     GenericProjectileObject* this = (GenericProjectileObject*)_this;
-    int collide, fflags;
+    sint32 collide, fflags;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -93,7 +93,7 @@ void genproj_func(Object* _this, int msg, int param1, int param2)
             if ((collide & COLLIDE_SPRITE) && sprites[collide & 0xffff].owner != this->owner)
             {
                 assert(sprites[collide & 0xffff].owner->class != CLASS_DEAD);
-                signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, this->damage, (int)this);
+                signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, this->damage, (sint32)this);
             }
             if (!(collide & COLLIDE_SPRITE) && this->type == OT_MAGBALL && (collide & (COLLIDE_WALL | COLLIDE_FLOOR | COLLIDE_CEILING)) && (level_wall[collide & 0xffff].flags & WALLFLAG_EXPLODABLE))
                 explodeAllMaskedWallsInSector(findWallsSector(collide & 0xffff));
@@ -108,10 +108,10 @@ void genproj_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-unsigned short genprojTurnSequenceMap[] = { HB | 0 };
-unsigned short genprojFlatSequenceMap[] = { 0 };
+uint16 genprojTurnSequenceMap[] = { HB | 0 };
+uint16 genprojFlatSequenceMap[] = { 0 };
 
-Object* constructGenproj(int sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner, int heading, int flat, int type, int damage, int explosionColor, char r, char g, char b, int armTime)
+Object* constructGenproj(sint32 sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner, sint32 heading, sint32 flat, sint32 type, sint32 damage, sint32 explosionColor, sint8 r, sint8 g, sint8 b, sint32 armTime)
 {
     GenericProjectileObject* this = (GenericProjectileObject*)getFreeObject(genproj_func, type, CLASS_PROJECTILE);
     assert(sizeof(*this) < sizeof(Object));
@@ -149,11 +149,11 @@ Object* constructGenproj(int sector, MthXyz* pos, MthXyz* vel, SpriteObject* own
 /********************************\
  *           BIT STUFF          *
 \********************************/
-static int nmBits = 0;
-void bit_func(Object* _this, int msg, int param1, int param2)
+static sint32 nmBits = 0;
+void bit_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     BitObject* this = (BitObject*)_this;
-    int collide;
+    sint32 collide;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -187,7 +187,7 @@ void bit_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructBit(int sector, MthXyz* pos, int sequence, int onFloor)
+Object* constructBit(sint32 sector, MthXyz* pos, sint32 sequence, sint32 onFloor)
 {
     BitObject* this;
     if (nmBits > 20)
@@ -218,9 +218,9 @@ Object* constructBit(int sector, MthXyz* pos, int sequence, int onFloor)
     return (Object*)this;
 }
 
-void makeExplosion(MonsterObject* this, int bitSeqStart, int nmBits)
+void makeExplosion(MonsterObject* this, sint32 bitSeqStart, sint32 nmBits)
 {
-    int seq, i;
+    sint32 seq, i;
     seq = level_sequenceMap[this->type] + bitSeqStart;
     for (i = 0; i < nmBits; i++)
         constructBit(this->sprite->s, &this->sprite->pos, seq++, this->sprite->floorSector != -1);
@@ -229,12 +229,12 @@ void makeExplosion(MonsterObject* this, int bitSeqStart, int nmBits)
 /********************************\
  *        BOUNCYBIT STUFF       *
 \********************************/
-static int nmBouncyBits = 0;
+static sint32 nmBouncyBits = 0;
 
-void bouncyBit_func(Object* _this, int msg, int param1, int param2)
+void bouncyBit_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     BitObject* this = (BitObject*)_this;
-    int collide;
+    sint32 collide;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -256,9 +256,9 @@ void bouncyBit_func(Object* _this, int msg, int param1, int param2)
                 if (this->age < 2)
                 {
                     if (this->soft)
-                        posMakeSound((int)this, &this->sprite->pos, level_objectSoundMap[OT_CONTAIN10] + (getNextRand() % 3));
+                        posMakeSound((sint32)this, &this->sprite->pos, level_objectSoundMap[OT_CONTAIN10] + (getNextRand() % 3));
                     else
-                        posMakeSound((int)this, &this->sprite->pos, level_staticSoundMap[ST_BLOWPOT] + (getNextRand() % 3));
+                        posMakeSound((sint32)this, &this->sprite->pos, level_staticSoundMap[ST_BLOWPOT] + (getNextRand() % 3));
                 }
                 this->sprite->vel.x >>= 1;
                 this->sprite->vel.y >>= 1;
@@ -271,7 +271,7 @@ void bouncyBit_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructBouncyBit(int sector, MthXyz* pos, int sequence, int frame, int softType)
+Object* constructBouncyBit(sint32 sector, MthXyz* pos, sint32 sequence, sint32 frame, sint32 softType)
 {
     BitObject* this;
     if (nmBouncyBits > 10)
@@ -305,10 +305,10 @@ Object* constructBouncyBit(int sector, MthXyz* pos, int sequence, int frame, int
  *        HARDBIT STUFF         *
 \********************************/
 
-void hardBit_func(Object* _this, int msg, int param1, int param2)
+void hardBit_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     HardBitObject* this = (HardBitObject*)_this;
-    int collide;
+    sint32 collide;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -337,7 +337,7 @@ void hardBit_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructHardBit(int sector, MthXyz* pos, int sequence, int onFloor, int frame)
+Object* constructHardBit(sint32 sector, MthXyz* pos, sint32 sequence, sint32 onFloor, sint32 frame)
 {
     HardBitObject* this = (HardBitObject*)getFreeObject(hardBit_func, OT_HARDBIT, CLASS_SPRITE);
     assert(sizeof(*this) < sizeof(Object));
@@ -370,10 +370,10 @@ Object* constructHardBit(int sector, MthXyz* pos, int sequence, int onFloor, int
  *           ZORCH STUFF        *
 \********************************/
 
-void zorch_func(Object* _this, int msg, int param1, int param2)
+void zorch_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     ZorchObject* this = (ZorchObject*)_this;
-    int fflags;
+    sint32 fflags;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -405,9 +405,9 @@ void zorch_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-unsigned short zorchSequenceMap[] = { 0 };
+uint16 zorchSequenceMap[] = { 0 };
 
-Object* constructZorch(int sector, int x, int y, int z, int zorchType)
+Object* constructZorch(sint32 sector, sint32 x, sint32 y, sint32 z, sint32 zorchType)
 {
     ZorchObject* this = (ZorchObject*)getFreeObject(zorch_func, zorchType, CLASS_SPRITE);
     assert(sizeof(*this) < sizeof(Object));
@@ -447,12 +447,12 @@ enum
     AI_SPIDER_NMSEQ
 };
 
-unsigned short spiderSeqMap[] = { HB | 0, HB | 0, HB | 0, HB | 8, HB | 0, 16 };
+uint16 spiderSeqMap[] = { HB | 0, HB | 0, HB | 0, HB | 8, HB | 0, 16 };
 
-void spider_func(Object* _this, int message, int param1, int param2)
+void spider_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     SpiderObject* this = (SpiderObject*)_this;
-    int collide = 0, fflags = 0;
+    sint32 collide = 0, fflags = 0;
     switch (message)
     {
         case SIGNAL_HURT:
@@ -532,7 +532,7 @@ void spider_func(Object* _this, int message, int param1, int param2)
                                 break;
                             case DO_RANDOMWANDER:
                                 if (AISLOT(0x1f))
-                                    this->sprite->angle = ((short)getNextRand()) * 360;
+                                    this->sprite->angle = ((sint16)getNextRand()) * 360;
                                 break;
                         }
                         this->sprite->vel.x = MTH_Cos(this->sprite->angle) << 2;
@@ -551,7 +551,7 @@ void spider_func(Object* _this, int message, int param1, int param2)
                         spriteObject_makeSound((SpriteObject*)this, 3);
                         assert(this->enemy);
                         assert(this->enemy->class != CLASS_DEAD);
-                        signalObject((Object*)this->enemy, SIGNAL_HURT, 10, (int)this);
+                        signalObject((Object*)this->enemy, SIGNAL_HURT, 10, (sint32)this);
                         setState((SpriteObject*)this, AI_SPIDER_WALK);
                     }
                     break;
@@ -560,7 +560,7 @@ void spider_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructSpider(int sector, int suckParams, MthXyz* pos, MthXyz* vel)
+Object* constructSpider(sint32 sector, sint32 suckParams, MthXyz* pos, MthXyz* vel)
 {
     SpiderObject* this = (SpiderObject*)getFreeObject(spider_func, OT_SPIDER, CLASS_MONSTER);
     assert(sizeof(*this) < sizeof(Object));
@@ -600,12 +600,12 @@ enum
     AI_FISH_SEEK
 };
 
-unsigned short fishSeqMap[] = { HB | 8, HB | 0, HB | 19 };
+uint16 fishSeqMap[] = { HB | 8, HB | 0, HB | 19 };
 
-void fish_func(Object* _this, int message, int param1, int param2)
+void fish_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     FishObject* this = (FishObject*)_this;
-    int collide = 0, fflags = 0;
+    sint32 collide = 0, fflags = 0;
     switch (message)
     {
         case SIGNAL_HURT:
@@ -691,7 +691,7 @@ void fish_func(Object* _this, int message, int param1, int param2)
                                 break;
                             case DO_RANDOMWANDER:
                                 if (AISLOT(0x1f))
-                                    this->sprite->angle = ((short)getNextRand()) * 360;
+                                    this->sprite->angle = ((sint16)getNextRand()) * 360;
                                 break;
                         }
                         this->sprite->vel.x = MTH_Cos(this->sprite->angle) << 2;
@@ -705,7 +705,7 @@ void fish_func(Object* _this, int message, int param1, int param2)
                         {
                             PlotCourseToObject((SpriteObject*)this, (SpriteObject*)this->enemy);
                             assert(this->enemy->class != CLASS_DEAD);
-                            signalObject((Object*)this->enemy, SIGNAL_HURT, 20, (int)this);
+                            signalObject((Object*)this->enemy, SIGNAL_HURT, 20, (sint32)this);
                             setState((SpriteObject*)this, AI_FISH_WALK);
                         }
                         else
@@ -727,7 +727,7 @@ void fish_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructFish(int sector)
+Object* constructFish(sint32 sector)
 {
     FishObject* this = (FishObject*)getFreeObject(fish_func, OT_FISH, CLASS_MONSTER);
     assert(sizeof(*this) < sizeof(Object));
@@ -756,15 +756,15 @@ enum
     AI_COBRA_HOME
 };
 
-unsigned short cobraSeqMap[] = { HB | 0, HB | 0 };
+uint16 cobraSeqMap[] = { HB | 0, HB | 0 };
 
-void cobra_func(Object* _this, int message, int param1, int param2)
+void cobra_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     CobraObject* this = (CobraObject*)_this;
-    int collide, fflags, i;
-    static int lightP[] = { F(5), F(25), -F(1), 0, F(0), F(25), 0, 0, F(5), F(25), -F(1), 0 };
-    static int mlightP[] = { F(0), F(25), 0, 0, F(5), F(25), -F(1), 0, F(5), F(25), -F(1), 0 };
-    int c, s, wave;
+    sint32 collide, fflags, i;
+    static sint32 lightP[] = { F(5), F(25), -F(1), 0, F(0), F(25), 0, 0, F(5), F(25), -F(1), 0 };
+    static sint32 mlightP[] = { F(0), F(25), 0, 0, F(5), F(25), -F(1), 0, F(5), F(25), -F(1), 0 };
+    sint32 c, s, wave;
     switch (message)
     {
         case SIGNAL_HURT:
@@ -839,7 +839,7 @@ void cobra_func(Object* _this, int message, int param1, int param2)
                         Object* list;
                         MonsterObject* m;
                         MonsterObject* best;
-                        int dist, angle, rating, bestRating;
+                        sint32 dist, angle, rating, bestRating;
                         best = NULL;
                         bestRating = INT_MAX;
                         for (list = o = objectRunList;; o = o->next)
@@ -891,7 +891,7 @@ void cobra_func(Object* _this, int message, int param1, int param2)
                 if (!(collide & COLLIDE_WALL) && (collide & COLLIDE_SPRITE) && (sprites[collide & 0xffff].owner == this->owner))
                     break;
                 for (i = 0; i < 3; i++)
-                    constructOneShot(this->sprite->s, this->sprite->pos.x + (((int)MTH_GetRand()) >> 10), this->sprite->pos.y + (((int)MTH_GetRand()) >> 10) + F(10), this->sprite->pos.z + (((int)MTH_GetRand()) >> 10), OT_POOF, F(1), this->type == OT_MUMBALL ? RGB(20, 5, 5) : RGB(5, 20, 5), i * 3);
+                    constructOneShot(this->sprite->s, this->sprite->pos.x + (((sint32)MTH_GetRand()) >> 10), this->sprite->pos.y + (((sint32)MTH_GetRand()) >> 10) + F(10), this->sprite->pos.z + (((sint32)MTH_GetRand()) >> 10), OT_POOF, F(1), this->type == OT_MUMBALL ? RGB(20, 5, 5) : RGB(5, 20, 5), i * 3);
                 constructLight(this->sprite->s, this->sprite->pos.x, this->sprite->pos.y + F(30), this->sprite->pos.z, this->type == OT_MUMBALL ? mlightP : lightP, F(1) / 16);
                 if (this->type == OT_MUMBALL)
                     radialDamage((Object*)this, &this->sprite->pos, this->sprite->s, 70, F(200));
@@ -903,9 +903,9 @@ void cobra_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructCobra(int sector, int x, int y, int z, int heading, Fixed32 yvel, SpriteObject* owner, int type, int glow)
+Object* constructCobra(sint32 sector, sint32 x, sint32 y, sint32 z, sint32 heading, fix32 yvel, SpriteObject* owner, sint32 type, sint32 glow)
 {
-    int i;
+    sint32 i;
     CobraObject* this = (CobraObject*)getFreeObject(cobra_func, type, CLASS_PROJECTILE);
     assert(sizeof(*this) < sizeof(Object));
     assert(this);
@@ -960,15 +960,15 @@ Object* constructCobra(int sector, int x, int y, int z, int heading, Fixed32 yve
 
 enum {AI_BADCOBRA_HOME};
 
-unsigned short badCobraSeqMap[]={HB|0};
+uint16 badCobraSeqMap[]={HB|0};
 
-void badCobra_func(Object *_this,int message,int param1,int param2)
+void badCobra_func(Object *_this,sint32 message,sint32 param1,sint32 param2)
 {BadCobraObject *this=(BadCobraObject *)_this;
- int collide,fflags,i;
- static int lightP[]={F(5),F(25),-F(1),0,
+ sint32 collide,fflags,i;
+ static sint32 lightP[]={F(5),F(25),-F(1),0,
 		      F(0),F(25),0,0,
 		      F(5),F(25),-F(1),0};
- int c,s,wave;
+ sint32 c,s,wave;
  switch (message)
     {case SIGNAL_HURT:
 	break;
@@ -1039,10 +1039,10 @@ void badCobra_func(Object *_this,int message,int param1,int param2)
 	       break;
 	    for (i=0;i<3;i++)
 	       constructOneShot(this->sprite->s,
-				this->sprite->pos.x+(((int)MTH_GetRand())>>10),
-				this->sprite->pos.y+(((int)MTH_GetRand())>>10)
+				this->sprite->pos.x+(((sint32)MTH_GetRand())>>10),
+				this->sprite->pos.y+(((sint32)MTH_GetRand())>>10)
 				         +F(10),
-				this->sprite->pos.z+(((int)MTH_GetRand())>>10),
+				this->sprite->pos.z+(((sint32)MTH_GetRand())>>10),
 				OT_POOF,F(1),
 				this->type==OT_MUMBALL?RGB(20,5,5):RGB(5,20,5),
 				i*3);
@@ -1059,9 +1059,9 @@ void badCobra_func(Object *_this,int message,int param1,int param2)
        }
 }
 
-Object *constructBadCobra(int sector,int x,int y,int z,int heading,
-			  Fixed32 yvel,SpriteObject *owner)
-{int i;
+Object *constructBadCobra(sint32 sector,sint32 x,sint32 y,sint32 z,sint32 heading,
+			  fix32 yvel,SpriteObject *owner)
+(sint32 i;
  BadCobraObject *this=(BadCobraObject *)getFreeObject(badCobra_func,type,
 						      CLASS_MONSTER);
  assert(sizeof(*this)<sizeof(Object));
@@ -1118,15 +1118,15 @@ Object *constructBadCobra(int sector,int x,int y,int z,int heading,
 
 enum {AI_GLOWWORM_SLEEP,AI_GLOWWORM_SEEK,AI_GLOWWORM_RETREAT};
 
-unsigned short glowWormSeqMap[]={HB|0,HB|0};
+uint16 glowWormSeqMap[]={HB|0,HB|0};
 
-void glowWorm_func(Object *_this,int message,int param1,int param2)
+void glowWorm_func(Object *_this,sint32 message,sint32 param1,sint32 param2)
 {GlowWormObject *this=(GlowWormObject *)_this;
- int collide,fflags,i;
- static int lightP[]={F(5),F(25),-F(1),0,
+ sint32 collide,fflags,i;
+ static sint32 lightP[]={F(5),F(25),-F(1),0,
 		      F(0),F(25),0,0,
 		      F(5),F(25),-F(1),0};
- int c,s,wave;
+ sint32 c,s,wave;
  switch (message)
     {case SIGNAL_HURT:
 	break;
@@ -1201,7 +1201,7 @@ void glowWorm_func(Object *_this,int message,int param1,int param2)
 		 Object *list;
 		 MonsterObject *m;
 		 MonsterObject *best;
-		 int rating,bestRating;
+		 sint32 rating,bestRating;
 		 best=NULL;
 		 bestRating=F(10000);
 		 for (list=o=objectRunList;;o=o->next)
@@ -1248,10 +1248,10 @@ void glowWorm_func(Object *_this,int message,int param1,int param2)
 	       break;
 	    for (i=0;i<3;i++)
 	       constructOneShot(this->sprite->s,
-				this->sprite->pos.x+(((int)MTH_GetRand())>>10),
-				this->sprite->pos.y+(((int)MTH_GetRand())>>10)
+				this->sprite->pos.x+(((sint32)MTH_GetRand())>>10),
+				this->sprite->pos.y+(((sint32)MTH_GetRand())>>10)
 				         +F(10),
-				this->sprite->pos.z+(((int)MTH_GetRand())>>10),
+				this->sprite->pos.z+(((sint32)MTH_GetRand())>>10),
 				OT_POOF,F(1),RGB(5,20,5),i*3);
 	    constructLight(this->sprite->s,
 			   this->sprite->pos.x,
@@ -1270,8 +1270,8 @@ void glowWorm_func(Object *_this,int message,int param1,int param2)
        }
 }
 
-Object *constructGlowWorm(int sector)
-{int i;
+Object *constructGlowWorm(sint32 sector)
+(sint32 i;
  GlowWormObject *this=(GlowWormObject *)getFreeObject(glowWorm_func,
 						      OT_GLOWWORM,
 						      CLASS_MONSTER);
@@ -1326,10 +1326,10 @@ Object *constructGlowWorm(int sector)
  *           ZAP  STUFF         *
 \********************************/
 
-void zap_func(Object* _this, int message, int param1, int param2)
+void zap_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     ZapObject* this = (ZapObject*)_this;
-    int i, collide, loop;
+    sint32 i, collide, loop;
     switch (message)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -1370,16 +1370,16 @@ void zap_func(Object* _this, int message, int param1, int param2)
                 }
                 moveSpriteTo(this->balls[0], this->sprite->s, &this->sprite->pos);
                 {
-                    Fixed32 tDist;
+                    fix32 tDist;
                     MthXyz del;
                     del.x = this->enemy->sprite->pos.x - this->sprite->pos.x;
                     del.y = this->enemy->sprite->pos.y - this->sprite->pos.y;
                     del.z = this->enemy->sprite->pos.z - this->sprite->pos.z;
                     tDist = approxDist(del.x, del.y, del.z);
                     tDist /= 16; /* distance to move */
-                    del.x = MTH_Div(del.x, tDist) + (((short)getNextRand()) << 4);
-                    del.y = MTH_Div(del.y, tDist) + (((short)getNextRand()) << 4);
-                    del.z = MTH_Div(del.z, tDist) + (((short)getNextRand()) << 4);
+                    del.x = MTH_Div(del.x, tDist) + (((sint16)getNextRand()) << 4);
+                    del.y = MTH_Div(del.y, tDist) + (((sint16)getNextRand()) << 4);
+                    del.z = MTH_Div(del.z, tDist) + (((sint16)getNextRand()) << 4);
                     /*del is now a length 64 vector pointing in the right direction*/
                     this->sprite->vel = del;
                 }
@@ -1388,7 +1388,7 @@ void zap_func(Object* _this, int message, int param1, int param2)
                 {
                     if (this->red)
                     {
-                        int i;
+                        sint32 i;
                         MthXyz vel;
                         for (i = 0; i < 5; i++)
                         {
@@ -1399,7 +1399,7 @@ void zap_func(Object* _this, int message, int param1, int param2)
                         }
                     }
                     assert(sprites[collide & 0xffff].owner->class != CLASS_DEAD);
-                    signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, 100, (int)this);
+                    signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, 100, (sint32)this);
                     delayKill((Object*)this);
                     return;
                 }
@@ -1407,10 +1407,10 @@ void zap_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-unsigned short zapSeqMap[] = { 0 };
-Object* constructZap(int sector, MthXyz* pos, SpriteObject* owner, MonsterObject* enemy, int red)
+uint16 zapSeqMap[] = { 0 };
+Object* constructZap(sint32 sector, MthXyz* pos, SpriteObject* owner, MonsterObject* enemy, sint32 red)
 {
-    int i;
+    sint32 i;
     ZapObject* this = (ZapObject*)getFreeObject(zap_func, OT_LIGHTNING, CLASS_PROJECTILE);
     assert(sizeof(*this) < sizeof(Object));
     assert(this);
@@ -1462,12 +1462,12 @@ enum
     AI_HAWK_NMSTATES
 };
 
-unsigned short hawkSeqMap[] = { HB | 8, HB | 8, HB | 8, HB | 0, HB | 16 };
+uint16 hawkSeqMap[] = { HB | 8, HB | 8, HB | 8, HB | 0, HB | 16 };
 
-void hawk_func(Object* _this, int message, int param1, int param2)
+void hawk_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     HawkObject* this = (HawkObject*)_this;
-    int collide = 0, fflags = 0, i;
+    sint32 collide = 0, fflags = 0, i;
     switch (message)
     {
         case SIGNAL_HURT:
@@ -1539,7 +1539,7 @@ void hawk_func(Object* _this, int message, int param1, int param2)
                     if ((collide & COLLIDE_SPRITE) && sprites[collide & 0xffff].owner == (Object*)this->enemy)
                     {
                         assert(this->enemy->class != CLASS_DEAD);
-                        signalObject((Object*)this->enemy, SIGNAL_HURT, 20, (int)this);
+                        signalObject((Object*)this->enemy, SIGNAL_HURT, 20, (sint32)this);
                         this->sprite->angle = normalizeAngle(this->sprite->angle + F(180));
                         setState((SpriteObject*)this, AI_HAWK_RETREAT);
                         this->diveTimer = 0;
@@ -1568,7 +1568,7 @@ void hawk_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructHawk(int sector)
+Object* constructHawk(sint32 sector)
 {
     HawkObject* this = (HawkObject*)getFreeObject(hawk_func, OT_HAWK, CLASS_MONSTER);
     assert(sizeof(*this) < sizeof(Object));
@@ -1603,12 +1603,12 @@ enum
     AI_WASP_NMSTATES
 };
 
-unsigned short waspSeqMap[] = { HB | 0, HB | 0, HB | 0, HB | 9, HB | 0 };
+uint16 waspSeqMap[] = { HB | 0, HB | 0, HB | 0, HB | 9, HB | 0 };
 
-void wasp_func(Object* _this, int message, int param1, int param2)
+void wasp_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     WaspObject* this = (WaspObject*)_this;
-    int collide = 0, fflags = 0;
+    sint32 collide = 0, fflags = 0;
     switch (message)
     {
         case SIGNAL_HURT:
@@ -1678,7 +1678,7 @@ void wasp_func(Object* _this, int message, int param1, int param2)
                             this->sprite->angle = normalizeAngle(this->sprite->angle + randomAngle(5));
                             break;
                         case DO_RANDOMWANDER:
-                            this->sprite->angle = ((short)getNextRand()) * 360;
+                            this->sprite->angle = ((sint16)getNextRand()) * 360;
                             break;
                     }
                     setState((SpriteObject*)this, AI_WASP_DART);
@@ -1716,7 +1716,7 @@ void wasp_func(Object* _this, int message, int param1, int param2)
                         if (this->enemy)
                         {
                             assert(this->enemy->class != CLASS_DEAD);
-                            signalObject((Object*)this->enemy, SIGNAL_HURT, 20, (int)this);
+                            signalObject((Object*)this->enemy, SIGNAL_HURT, 20, (sint32)this);
                             this->sprite->vel.x = -MTH_Cos(this->sprite->angle) << 4;
                             this->sprite->vel.z = -MTH_Sin(this->sprite->angle) << 4;
                             setState((SpriteObject*)this, AI_WASP_DART);
@@ -1740,7 +1740,7 @@ void wasp_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructWasp(int sector)
+Object* constructWasp(sint32 sector)
 {
     WaspObject* this = (WaspObject*)getFreeObject(wasp_func, OT_WASP, CLASS_MONSTER);
     assert(sizeof(*this) < sizeof(Object));
@@ -1763,10 +1763,10 @@ Object* constructWasp(int sector)
 /********************************\
  *          ANUBALL STUFF       *
 \********************************/
-void anuball_func(Object* _this, int msg, int param1, int param2)
+void anuball_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     ProjectileObject* this = (ProjectileObject*)_this;
-    int collide, fflags;
+    sint32 collide, fflags;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -1790,7 +1790,7 @@ void anuball_func(Object* _this, int msg, int param1, int param2)
                 if (collide & COLLIDE_SPRITE && sprites[collide & 0xffff].owner != this->owner)
                 {
                     assert(sprites[collide & 0xffff].owner->class != CLASS_DEAD);
-                    signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, 20, (int)this);
+                    signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, 20, (sint32)this);
                     setState((SpriteObject*)this, 1);
                     changeLightColor(this->sprite, 5, 5, 0);
                 }
@@ -1807,9 +1807,9 @@ void anuball_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-unsigned short anuballSequenceMap[] = { HB | 0, 8 };
+uint16 anuballSequenceMap[] = { HB | 0, 8 };
 
-Object* constructAnuball(int sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner, int heading)
+Object* constructAnuball(sint32 sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner, sint32 heading)
 {
     ProjectileObject* this = (ProjectileObject*)getFreeObject(anuball_func, OT_ANUBALL, CLASS_PROJECTILE);
     assert(sizeof(*this) < sizeof(Object));
@@ -1835,10 +1835,10 @@ Object* constructAnuball(int sector, MthXyz* pos, MthXyz* vel, SpriteObject* own
 /********************************\
  *           RINGO STUFF        *
 \********************************/
-void ringo_func(Object* _this, int msg, int param1, int param2)
+void ringo_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     ProjectileObject* this = (ProjectileObject*)_this;
-    int collide, fflags;
+    sint32 collide, fflags;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -1861,13 +1861,13 @@ void ringo_func(Object* _this, int msg, int param1, int param2)
                } */
             if (collide & COLLIDE_SPRITE && sprites[collide & 0xffff].owner != this->owner)
             {
-                int hurtAmount;
+                sint32 hurtAmount;
                 assert(sprites[collide & 0xffff].owner->class != CLASS_DEAD);
                 if (weaponPowerUpCounter && this->owner == (Object*)player)
                     hurtAmount = 40;
                 else
                     hurtAmount = 20;
-                signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, hurtAmount, (int)this);
+                signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, hurtAmount, (sint32)this);
                 constructOneShot(this->sprite->s, this->sprite->pos.x, this->sprite->pos.y, this->sprite->pos.z, OT_POOF, F(1), RGB(31, 8, 8), 0);
                 delayKill(_this);
                 break;
@@ -1883,9 +1883,9 @@ void ringo_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-unsigned short ringoSequenceMap[] = { 0 };
+uint16 ringoSequenceMap[] = { 0 };
 
-Object* constructRingo(int sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner)
+Object* constructRingo(sint32 sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner)
 {
     ProjectileObject* this = (ProjectileObject*)getFreeObject(ringo_func, OT_RINGO, CLASS_PROJECTILE);
     assert(sizeof(*this) < sizeof(Object));
@@ -1917,18 +1917,18 @@ Object* constructRingo(int sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner
 \********************************/
 #define MAXFLAMEBALLAGE 50
 static ProjectileObject* flameList[MAXFLAMEBALLAGE];
-static int flameHead;
+static sint32 flameHead;
 void initFlames(void)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < MAXFLAMEBALLAGE; i++)
         flameList[i] = NULL;
     flameHead = 0;
 }
 
-void translateFlames(int dx, int dy, int dz)
+void translateFlames(sint32 dx, sint32 dy, sint32 dz)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < MAXFLAMEBALLAGE; i++)
         if (flameList[i] && flameList[i]->state < 2)
         {
@@ -1938,10 +1938,10 @@ void translateFlames(int dx, int dy, int dz)
         }
 }
 
-void rotateFlames(int angle, int cx, int cz)
+void rotateFlames(sint32 angle, sint32 cx, sint32 cz)
 {
-    int i, x, z;
-    int C, S;
+    sint32 i, x, z;
+    sint32 C, S;
     for (i = 0; i < MAXFLAMEBALLAGE; i++)
         if (flameList[i] && flameList[i]->state < 2)
         {
@@ -1962,16 +1962,16 @@ void rotateFlames(int angle, int cx, int cz)
 }
 
 #define FLAMELEN 30
-static unsigned short flameColor[FLAMELEN];
-static int flameInit = 0;
+static uint16 flameColor[FLAMELEN];
+static sint32 flameInit = 0;
 
 static void initFlameColor(void)
 {
-    const char colors[3][3] = { { 15, 15, 31 }, { 31, 31, 0 }, { 15, 0, 0 } };
-    const int slideLen[] = { 5, 20, 0 };
-    int i, c, count;
-    int r, g, b;
-    Fixed32 frac1, frac2;
+    const sint8 colors[3][3] = { { 15, 15, 31 }, { 31, 31, 0 }, { 15, 0, 0 } };
+    const sint32 slideLen[] = { 5, 20, 0 };
+    sint32 i, c, count;
+    sint32 r, g, b;
+    fix32 frac1, frac2;
 
     flameInit = 1;
     count = 0;
@@ -1989,10 +1989,10 @@ static void initFlameColor(void)
     }
 }
 
-void flameball_func(Object* _this, int msg, int param1, int param2)
+void flameball_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     ProjectileObject* this = (ProjectileObject*)_this;
-    int collide, i;
+    sint32 collide, i;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -2034,7 +2034,7 @@ void flameball_func(Object* _this, int msg, int param1, int param2)
                 this->sprite->pos.y += (MTH_GetRand() & 0xfffff) - F(8);
                 this->sprite->pos.z += (MTH_GetRand() & 0xfffff) - F(8);
                 assert(sprites[collide & 0xffff].owner->class != CLASS_DEAD);
-                signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, weaponPowerUpCounter ? 8 : 4, (int)this);
+                signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, weaponPowerUpCounter ? 8 : 4, (sint32)this);
                 this->sprite->flags &= ~SPRITEFLAG_INVISIBLE;
                 constructOneShot(this->sprite->s, this->sprite->pos.x, this->sprite->pos.y, this->sprite->pos.z, OT_FLAMEWALL, 40000, 0, 0);
                 delayKill(_this);
@@ -2061,12 +2061,12 @@ void flameball_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-unsigned short flameballSequenceMap[] = { 0, 1 };
+uint16 flameballSequenceMap[] = { 0, 1 };
 
-Object* constructFlameball(int sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner, int heading, int frame)
+Object* constructFlameball(sint32 sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner, sint32 heading, sint32 frame)
 {
     ProjectileObject* this = (ProjectileObject*)getFreeObject(flameball_func, OT_FLAMEBALL, CLASS_PROJECTILE);
-    int i;
+    sint32 i;
     assert(sizeof(*this) < sizeof(Object));
     assert(this);
     if (!this)
@@ -2108,7 +2108,7 @@ void spriteObject_makeGrenadeExplosion(SpriteObject* this)
     {
         constructOneShot(this->sprite->s, this->sprite->pos.x, this->sprite->pos.y + F(30), this->sprite->pos.z, OT_GRENBUBB, F(1), 0, 0);
         {
-            int vol, pan, oct;
+            sint32 vol, pan, oct;
             struct soundSlotRegister ssr;
 
             posGetSoundParams(&this->sprite->pos, &vol, &pan);
@@ -2116,18 +2116,18 @@ void spriteObject_makeGrenadeExplosion(SpriteObject* this)
             oct = (ssr.reg[8] - 0x0800) & 0xf800;
             ssr.reg[8] = (ssr.reg[8] & ~(0xf800)) | oct;
             ssr.reg[8] |= 0x100;
-            playSoundMegaE((int)this, &ssr);
+            playSoundMegaE((sint32)this, &ssr);
         }
     }
     else
         constructOneShot(this->sprite->s, this->sprite->pos.x, this->sprite->pos.y + F(30), this->sprite->pos.z, OT_GRENPOW, F(2), 0, 0);
 }
 
-void grenade_func(Object* _this, int msg, int param1, int param2)
+void grenade_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     ProjectileObject* this = (ProjectileObject*)_this;
-    int collide, fflags;
-    static int lightP[] = { 0, F(25), 0, 0, F(5), F(25), 0, 0, F(25), F(25), 0, 0 };
+    sint32 collide, fflags;
+    static sint32 lightP[] = { 0, F(25), 0, 0, F(5), F(25), 0, 0, F(25), F(25), 0, 0 };
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -2172,9 +2172,9 @@ void grenade_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-unsigned short grenadeSequenceMap[] = { 0, 1 };
+uint16 grenadeSequenceMap[] = { 0, 1 };
 
-Object* constructGrenade(int sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner)
+Object* constructGrenade(sint32 sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner)
 {
     ProjectileObject* this = (ProjectileObject*)getFreeObject(grenade_func, OT_GRENADE, CLASS_PROJECTILE);
     assert(sizeof(*this) < sizeof(Object));
@@ -2212,13 +2212,13 @@ enum
     AI_MAGMANTIS_NMSEQ
 };
 
-unsigned short magmantisSeqMap[] = { 0, 0, 0, HB | 1, HB | 9, HB | 25, 33 };
+uint16 magmantisSeqMap[] = { 0, 0, 0, HB | 1, HB | 9, HB | 25, 33 };
 
-void magmantis_func(Object* _this, int message, int param1, int param2)
+void magmantis_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     MagmantisObject* this = (MagmantisObject*)_this;
-    int collide;
-    int fflags;
+    sint32 collide;
+    sint32 fflags;
     collide = 0;
     fflags = 0;
     switch (message)
@@ -2228,7 +2228,7 @@ void magmantis_func(Object* _this, int message, int param1, int param2)
             {
                 spriteObject_makeSound((SpriteObject*)this, 0);
                 {
-                    int i;
+                    sint32 i;
                     for (i = 0; i < 20; i++)
                     {
                         MthXyz vel;
@@ -2241,9 +2241,9 @@ void magmantis_func(Object* _this, int message, int param1, int param2)
                     {
                         MthXyz pos;
                         pos = this->sprite->pos;
-                        pos.x += ((short)getNextRand()) << 5;
-                        pos.z += ((short)getNextRand()) << 5;
-                        pos.y += (((short)getNextRand()) << 8) + F(40);
+                        pos.x += ((sint16)getNextRand()) << 5;
+                        pos.z += ((sint16)getNextRand()) << 5;
+                        pos.y += (((sint16)getNextRand()) << 8) + F(40);
                         constructOneShot(this->sprite->s, pos.x, pos.y, pos.z, OT_GRENPOW, F(2), 0, 0);
                     }
                 }
@@ -2376,7 +2376,7 @@ void magmantis_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructMagmantis(int sector)
+Object* constructMagmantis(sint32 sector)
 {
     MagmantisObject* this = (MagmantisObject*)getFreeObject(magmantis_func, OT_MAGMANTIS, CLASS_MONSTER);
     assert(sizeof(*this) < sizeof(Object));
@@ -2413,13 +2413,13 @@ enum
     AI_ANUBIS_NMSEQ
 };
 
-unsigned short anubisSeqMap[] = { HB | 0, HB | 8, HB | 16, HB | 24, HB | 32, HB | 8 };
+uint16 anubisSeqMap[] = { HB | 0, HB | 8, HB | 16, HB | 24, HB | 32, HB | 8 };
 
-void anubis_func(Object* _this, int message, int param1, int param2)
+void anubis_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     AnubisObject* this = (AnubisObject*)_this;
-    int collide;
-    int fflags;
+    sint32 collide;
+    sint32 fflags;
     collide = 0;
     fflags = 0;
     switch (message)
@@ -2479,7 +2479,7 @@ void anubis_func(Object* _this, int message, int param1, int param2)
                         {
                             PlotCourseToObject((SpriteObject*)this, (SpriteObject*)this->enemy);
                             assert(this->enemy->class != CLASS_DEAD);
-                            signalObject((Object*)this->enemy, SIGNAL_HURT, 20, (int)this);
+                            signalObject((Object*)this->enemy, SIGNAL_HURT, 20, (sint32)this);
                         }
                         else
                         {
@@ -2513,7 +2513,7 @@ void anubis_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructAnubis(int sector)
+Object* constructAnubis(sint32 sector)
 {
     AnubisObject* this = (AnubisObject*)getFreeObject(anubis_func, OT_ANUBIS, CLASS_MONSTER);
     assert(sizeof(*this) < sizeof(Object));
@@ -2554,7 +2554,7 @@ enum
     AI_SELKIS_NMSEQ
 };
 
-unsigned short selkisSeqMap[] = {
+uint16 selkisSeqMap[] = {
     HB | 0,
     HB | 8,
     HB | 25,
@@ -2570,11 +2570,11 @@ unsigned short selkisSeqMap[] = {
     HB | 8,
 };
 
-void selkis_func(Object* _this, int message, int param1, int param2)
+void selkis_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     SelkisObject* this = (SelkisObject*)_this;
-    int collide;
-    int fflags;
+    sint32 collide;
+    sint32 fflags;
     collide = 0;
     fflags = 0;
     assert(AI_SELKIS_IDLE == 0 && AI_SELKIS_WALK == 1 && AI_SELKIS_CLAW == 2 && AI_SELKIS_THROW == 3 && AI_SELKIS_HIT == 4);
@@ -2643,7 +2643,7 @@ void selkis_func(Object* _this, int message, int param1, int param2)
                         {
                             PlotCourseToObject((SpriteObject*)this, (SpriteObject*)this->enemy);
                             assert(this->enemy->class != CLASS_DEAD);
-                            signalObject((Object*)this->enemy, SIGNAL_HURT, 20, (int)this);
+                            signalObject((Object*)this->enemy, SIGNAL_HURT, 20, (sint32)this);
                         }
                         else
                         {
@@ -2733,9 +2733,9 @@ void selkis_func(Object* _this, int message, int param1, int param2)
                         {
                             MthXyz pos;
                             pos = this->sprite->pos;
-                            pos.x += ((short)getNextRand()) << 5;
-                            pos.z += ((short)getNextRand()) << 5;
-                            pos.y += (((short)getNextRand()) << 6) + F(60);
+                            pos.x += ((sint16)getNextRand()) << 5;
+                            pos.z += ((sint16)getNextRand()) << 5;
+                            pos.y += (((sint16)getNextRand()) << 6) + F(60);
                             constructOneShot(this->sprite->s, pos.x, pos.y, pos.z, OT_GRENPOW, F(2), 0, 0);
                         }
                         {
@@ -2767,7 +2767,7 @@ void selkis_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructSelkis(int sector)
+Object* constructSelkis(sint32 sector)
 {
     SelkisObject* this;
     if (currentState.gameFlags & GAMEFLAG_KILLEDSELKIS)
@@ -2818,13 +2818,13 @@ enum
     AI_SET_NMSEQ
 };
 
-unsigned short setSeqMap[] = { HB | 0, HB | 0, HB | 8, HB | 40, HB | 48, HB | 0, 56, 57, HB | 16, HB | 24, HB | 32 };
+uint16 setSeqMap[] = { HB | 0, HB | 0, HB | 8, HB | 40, HB | 48, HB | 0, 56, 57, HB | 16, HB | 24, HB | 32 };
 
-void set_func(Object* _this, int message, int param1, int param2)
+void set_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     SetObject* this = (SetObject*)_this;
-    int collide;
-    int fflags;
+    sint32 collide;
+    sint32 fflags;
     collide = 0;
     fflags = 0;
     switch (message)
@@ -2883,7 +2883,7 @@ void set_func(Object* _this, int message, int param1, int param2)
                         {
                             PlotCourseToObject((SpriteObject*)this, (SpriteObject*)this->enemy);
                             assert(this->enemy->class != CLASS_DEAD);
-                            signalObject((Object*)this->enemy, SIGNAL_HURT, 40, (int)this);
+                            signalObject((Object*)this->enemy, SIGNAL_HURT, 40, (sint32)this);
                         }
                         else
                         {
@@ -2963,7 +2963,7 @@ void set_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructSet(int sector)
+Object* constructSet(sint32 sector)
 {
     SetObject* this;
     if (currentState.gameFlags & GAMEFLAG_KILLEDSET)
@@ -2996,10 +2996,10 @@ Object* constructSet(int sector)
  *          SENTRY BALL         *
 \********************************/
 
-void sball_func(Object* _this, int msg, int param1, int param2)
+void sball_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     ProjectileObject* this = (ProjectileObject*)_this;
-    int collide;
+    sint32 collide;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -3020,7 +3020,7 @@ void sball_func(Object* _this, int msg, int param1, int param2)
                     if (sprites[collide & 0xffff].owner == this->owner)
                         break;
                     assert(sprites[collide & 0xffff].owner->class != CLASS_DEAD);
-                    signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, 30, (int)this);
+                    signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, 30, (sint32)this);
                 }
                 delayKill(_this);
                 constructOneShot(this->sprite->s, this->sprite->pos.x, this->sprite->pos.y, this->sprite->pos.z, OT_POOF, F(1), RGB(20, 20, 0), 0);
@@ -3029,9 +3029,9 @@ void sball_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-unsigned short sballSequenceMap[] = { 24 };
+uint16 sballSequenceMap[] = { 24 };
 
-Object* constructSball(int sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner, int heading, int seq, int scale)
+Object* constructSball(sint32 sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner, sint32 heading, sint32 seq, sint32 scale)
 {
     ProjectileObject* this = (ProjectileObject*)getFreeObject(sball_func, OT_SBALL, CLASS_PROJECTILE);
     assert(sizeof(*this) < sizeof(Object));
@@ -3068,13 +3068,13 @@ enum
     AI_SENTRY_NMSEQ
 };
 
-unsigned short sentrySeqMap[] = { HB | 0, HB | 0, HB | 0, HB | 0, HB | 8, HB | 0, HB | 16, HB | 0 };
+uint16 sentrySeqMap[] = { HB | 0, HB | 0, HB | 0, HB | 0, HB | 8, HB | 0, HB | 16, HB | 0 };
 
-void sentry_func(Object* _this, int message, int param1, int param2)
+void sentry_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     SentryObject* this = (SentryObject*)_this;
-    int collide;
-    int fflags;
+    sint32 collide;
+    sint32 fflags;
     collide = 0;
     fflags = 0;
     switch (message)
@@ -3137,7 +3137,7 @@ void sentry_func(Object* _this, int message, int param1, int param2)
                     if (fflags & FRAMEFLAG_ENDOFSEQUENCE)
                     {
                         setState((SpriteObject*)this, AI_SENTRY_SPRINT);
-                        this->sprite->angle = ((short)getNextRand()) * 360;
+                        this->sprite->angle = ((sint16)getNextRand()) * 360;
                         this->sprite->vel.x = MTH_Cos(this->sprite->angle) << 4;
                         this->sprite->vel.z = MTH_Sin(this->sprite->angle) << 4;
                         this->sprintCounter = 20;
@@ -3168,14 +3168,14 @@ void sentry_func(Object* _this, int message, int param1, int param2)
                 case AI_SENTRY_WALK:
                     if (AISLOT(0xf) || this->decideNow)
                     {
-                        int choice = decideWhatToDo((MonsterObject*)this, 1, 0);
+                        sint32 choice = decideWhatToDo((MonsterObject*)this, 1, 0);
                         this->decideNow = 0;
                         switch (choice)
                         {
                             case DO_RANDOMWANDER:
                                 if (AISLOT(0xf))
                                 {
-                                    this->sprite->angle = ((short)getNextRand()) * 360;
+                                    this->sprite->angle = ((sint16)getNextRand()) * 360;
                                     this->sprite->vel.x = MTH_Cos(this->sprite->angle) << 2;
                                     this->sprite->vel.z = MTH_Sin(this->sprite->angle) << 2;
                                 }
@@ -3207,7 +3207,7 @@ void sentry_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructSentry(int sector)
+Object* constructSentry(sint32 sector)
 {
     SentryObject* this = (SentryObject*)getFreeObject(sentry_func, OT_SENTRY, CLASS_MONSTER);
     assert(sizeof(*this) < sizeof(Object));
@@ -3242,13 +3242,13 @@ enum
     AI_MUMMY_NMSEQ
 };
 
-unsigned short mummySeqMap[] = { HB | 8, HB | 0, HB | 20, HB | 28, HB | 8, HB | 0 };
+uint16 mummySeqMap[] = { HB | 8, HB | 0, HB | 20, HB | 28, HB | 8, HB | 0 };
 
-void mummy_func(Object* _this, int message, int param1, int param2)
+void mummy_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     MummyObject* this = (MummyObject*)_this;
-    int collide;
-    int fflags;
+    sint32 collide;
+    sint32 fflags;
     collide = 0;
     fflags = 0;
     switch (message)
@@ -3305,7 +3305,7 @@ void mummy_func(Object* _this, int message, int param1, int param2)
                         {
                             PlotCourseToObject((SpriteObject*)this, (SpriteObject*)this->enemy);
                             assert(this->enemy->class != CLASS_DEAD);
-                            signalObject((Object*)this->enemy, SIGNAL_HURT, 20, (int)this);
+                            signalObject((Object*)this->enemy, SIGNAL_HURT, 20, (sint32)this);
                         }
                         else
                             setState((SpriteObject*)this, AI_MUMMY_WALK);
@@ -3337,7 +3337,7 @@ void mummy_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructMummy(int sector)
+Object* constructMummy(sint32 sector)
 {
     MummyObject* this = (MummyObject*)getFreeObject(mummy_func, OT_MUMMY, CLASS_MONSTER);
     assert(sizeof(*this) < sizeof(Object));
@@ -3372,13 +3372,13 @@ enum
     AI_BASTET_NMSEQ
 };
 
-unsigned short bastetSeqMap[] = { 31, HB | 0, HB | 10, HB | 18, HB | 0, 8, 31, 9 };
+uint16 bastetSeqMap[] = { 31, HB | 0, HB | 10, HB | 18, HB | 0, 8, 31, 9 };
 
-void bastet_func(Object* _this, int message, int param1, int param2)
+void bastet_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     BastetObject* this = (BastetObject*)_this;
-    int collide;
-    int fflags;
+    sint32 collide;
+    sint32 fflags;
     collide = 0;
     fflags = 0;
     switch (message)
@@ -3444,7 +3444,7 @@ void bastet_func(Object* _this, int message, int param1, int param2)
                         {
                             PlotCourseToObject((SpriteObject*)this, (SpriteObject*)this->enemy);
                             assert(this->enemy->class != CLASS_DEAD);
-                            signalObject((Object*)this->enemy, SIGNAL_HURT, 10, (int)this);
+                            signalObject((Object*)this->enemy, SIGNAL_HURT, 10, (sint32)this);
                         }
                         else
                             setState((SpriteObject*)this, AI_BASTET_WALK);
@@ -3553,7 +3553,7 @@ void bastet_func(Object* _this, int message, int param1, int param2)
                                 break;
                             case DO_RANDOMWANDER:
                                 if (AISLOT(0x1f))
-                                    this->sprite->angle = ((short)getNextRand()) * 360;
+                                    this->sprite->angle = ((sint16)getNextRand()) * 360;
                                 this->sprite->vel.x = MTH_Cos(this->sprite->angle) << 3;
                                 this->sprite->vel.z = MTH_Sin(this->sprite->angle) << 3;
                                 break;
@@ -3573,7 +3573,7 @@ void bastet_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructBastet(int sector)
+Object* constructBastet(sint32 sector)
 {
     BastetObject* this = (BastetObject*)getFreeObject(bastet_func, OT_BASTET, CLASS_MONSTER);
     assert(sizeof(*this) < sizeof(Object));
@@ -3597,12 +3597,12 @@ Object* constructBastet(int sector)
  *          KAPOW   STUFF       *
 \********************************/
 
-unsigned short kapowSequenceMap[] = { 0 };
+uint16 kapowSequenceMap[] = { 0 };
 
-void kapow_func(Object* _this, int msg, int param1, int param2)
+void kapow_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     SpriteObject* this = (SpriteObject*)_this;
-    int fflags;
+    sint32 fflags;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -3622,7 +3622,7 @@ void kapow_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructKapow(int sector, int x, int y, int z)
+Object* constructKapow(sint32 sector, sint32 x, sint32 y, sint32 z)
 {
     SpriteObject* this = (SpriteObject*)getFreeObject(kapow_func, OT_KAPOW, CLASS_SPRITE);
     assert(sizeof(*this) < sizeof(Object));
@@ -3646,16 +3646,16 @@ Object* constructKapow(int sector, int x, int y, int z)
 \********************************/
 
 #define BEATLEN 12
-static int beatScale[] = { 255, 230, 190, 180, 190, 200, 210, 220, 230, 240, 250, 256 };
+static sint32 beatScale[] = { 255, 230, 190, 180, 190, 200, 210, 220, 230, 240, 250, 256 };
 
-unsigned short thingSequenceMap[] = { 0 };
+uint16 thingSequenceMap[] = { 0 };
 
-void thing_func(Object* _this, int msg, int param1, int param2)
+void thing_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     ThingObject* this = (ThingObject*)_this;
-    int collide;
-    int fflags;
-    int s, beep;
+    sint32 collide;
+    sint32 fflags;
+    sint32 s, beep;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -3691,13 +3691,13 @@ void thing_func(Object* _this, int msg, int param1, int param2)
                 this->sprite->pos.y = this->baseY + 6 * s;
             if (this->flags & THINGFLAG_PULSE)
             {
-                int c = (s >> 13) + 16;
+                sint32 c = (s >> 13) + 16;
                 this->sprite->color = RGB(c, c, c);
             }
 
             if (this->flags & THINGFLAG_THROB)
             {
-                int c;
+                sint32 c;
                 this->frame++;
                 if (this->frame >= 32)
                     this->frame = 0;
@@ -3710,7 +3710,7 @@ void thing_func(Object* _this, int msg, int param1, int param2)
             }
             if (this->flags & THINGFLAG_BLUEMYSTICAL)
             {
-                int d = approxDist(this->sprite->pos.x - camera->pos.x, this->sprite->pos.y - camera->pos.y, this->sprite->pos.z - camera->pos.z);
+                sint32 d = approxDist(this->sprite->pos.x - camera->pos.x, this->sprite->pos.y - camera->pos.y, this->sprite->pos.z - camera->pos.z);
                 if (this->light == 1)
                     removeLight(this->sprite);
                 this->light--;
@@ -3734,7 +3734,7 @@ void thing_func(Object* _this, int msg, int param1, int param2)
             }
             if (this->flags & THINGFLAG_MYSTICAL)
             {
-                int d = approxDist(this->sprite->pos.x - camera->pos.x, this->sprite->pos.y - camera->pos.y, this->sprite->pos.z - camera->pos.z);
+                sint32 d = approxDist(this->sprite->pos.x - camera->pos.x, this->sprite->pos.y - camera->pos.y, this->sprite->pos.z - camera->pos.z);
                 if (d < F(512))
                 {
                     if (!this->light)
@@ -3790,7 +3790,7 @@ void thing_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructSpecialArtifact(int sector, int x, int y, int z, int thingType)
+Object* constructSpecialArtifact(sint32 sector, sint32 x, sint32 y, sint32 z, sint32 thingType)
 {
     ThingObject* this;
     this = (ThingObject*)getFreeObject(thing_func, thingType, CLASS_SPRITE);
@@ -3813,7 +3813,7 @@ Object* constructSpecialArtifact(int sector, int x, int y, int z, int thingType)
     return (Object*)this;
 }
 
-Object* constructThing(int sector, int x, int y, int z, int thingType)
+Object* constructThing(sint32 sector, sint32 x, sint32 y, sint32 z, sint32 thingType)
 {
     ThingObject* this;
     /* decide if we should not place this thing */
@@ -3833,13 +3833,13 @@ Object* constructThing(int sector, int x, int y, int z, int thingType)
         }
 #if 0
  if (thingType==OT_PYRAMID)
-    if (currentState.levFlags[(int)currentState.currentLevel] &
+    if (currentState.levFlags[(sint32)currentState.currentLevel] &
 	LEVFLAG_GOTPYRAMID)
        return NULL;
 #endif
 
     if (thingType == OT_BLOODBOWL)
-        if (currentState.levFlags[(int)currentState.currentLevel] & LEVFLAG_GOTVESSEL)
+        if (currentState.levFlags[(sint32)currentState.currentLevel] & LEVFLAG_GOTVESSEL)
             return NULL;
     if (thingType >= OT_COMM_BATTERY && thingType <= OT_COMM_TOP)
         if (currentState.inventory & (0x10000 << (thingType - OT_COMM_BATTERY)))
@@ -3851,7 +3851,7 @@ Object* constructThing(int sector, int x, int y, int z, int thingType)
     if (!this)
         return NULL;
     {
-        int rad;
+        sint32 rad;
         rad = F(16);
         if (thingType == OT_CHOPPER || thingType == OT_RAMMUMMY)
             rad = F(64);
@@ -3913,9 +3913,9 @@ Object* constructThing(int sector, int x, int y, int z, int thingType)
  *          TORCH STUFF         *
 \********************************/
 
-unsigned short torchSequenceMap[] = { 0, 0 };
+uint16 torchSequenceMap[] = { 0, 0 };
 
-void torch_func(Object* _this, int msg, int param1, int param2)
+void torch_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     TorchObject* this = (TorchObject*)_this;
     switch (msg)
@@ -3946,7 +3946,7 @@ void torch_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructTorch(int sector, int torchType)
+Object* constructTorch(sint32 sector, sint32 torchType)
 {
     TorchObject* this;
     this = (TorchObject*)getFreeObject(torch_func, torchType, CLASS_SPRITE);
@@ -3972,12 +3972,12 @@ enum
     AI_BLOB_RILED,
     AI_BLOB_EXPLODE
 };
-unsigned short blobSequenceMap[] = { 0, 1, 2 };
+uint16 blobSequenceMap[] = { 0, 1, 2 };
 
-void blob_func(Object* _this, int msg, int param1, int param2)
+void blob_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     BlobObject* this = (BlobObject*)_this;
-    int fflags;
+    sint32 fflags;
     switch (msg)
     {
         case SIGNAL_HURT:
@@ -4027,7 +4027,7 @@ void blob_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructBlob(int sector)
+Object* constructBlob(sint32 sector)
 {
     BlobObject* this;
     this = (BlobObject*)getFreeObject(blob_func, OT_BLOB, CLASS_MONSTER);
@@ -4048,12 +4048,12 @@ Object* constructBlob(int sector)
 /********************************\
  *           LIGHT STUFF        *
 \********************************/
-unsigned short lightSequenceMap[] = { 0 };
+uint16 lightSequenceMap[] = { 0 };
 
-void light_func(Object* _this, int msg, int param1, int param2)
+void light_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     LightObject* this = (LightObject*)_this;
-    int r, g, b;
+    sint32 r, g, b;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -4084,7 +4084,7 @@ void light_func(Object* _this, int msg, int param1, int param2)
 
 /* parameters are start level, end level, start slope, end slope for
    each of red, green and blue */
-Object* constructLight(int sector, int x, int y, int z, int* parameters, Fixed32 ageInc)
+Object* constructLight(sint32 sector, sint32 x, sint32 y, sint32 z, sint32* parameters, fix32 ageInc)
 {
     LightObject* this = (LightObject*)getFreeObject(light_func, OT_LIGHT, CLASS_SPRITE);
     assert(sizeof(*this) < sizeof(Object));
@@ -4110,12 +4110,12 @@ Object* constructLight(int sector, int x, int y, int z, int* parameters, Fixed32
  *          ONESHOT STUFF       *
 \********************************/
 
-unsigned short oneShotSequenceMap[] = { 0 };
+uint16 oneShotSequenceMap[] = { 0 };
 
-void oneshot_func(Object* _this, int msg, int param1, int param2)
+void oneshot_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     OneShotObject* this = (OneShotObject*)_this;
-    int fflags;
+    sint32 fflags;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -4142,7 +4142,7 @@ void oneshot_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructOneShot(int sector, int x, int y, int z, int oneShotType, int scale, unsigned short colored, int waitTime)
+Object* constructOneShot(sint32 sector, sint32 x, sint32 y, sint32 z, sint32 oneShotType, sint32 scale, uint16 colored, sint32 waitTime)
 {
     OneShotObject* this = (OneShotObject*)getFreeObject(oneshot_func, oneShotType, CLASS_SPRITE);
     assert(sizeof(*this) < sizeof(Object));
@@ -4173,12 +4173,12 @@ Object* constructOneShot(int sector, int x, int y, int z, int oneShotType, int s
  *          RACLOUD STUFF       *
 \********************************/
 
-unsigned short cloudSequenceMap[] = { 1 };
+uint16 cloudSequenceMap[] = { 1 };
 
-void cloud_func(Object* _this, int msg, int param1, int param2)
+void cloud_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     CloudObject* this = (CloudObject*)_this;
-    int fflags;
+    sint32 fflags;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -4199,7 +4199,7 @@ void cloud_func(Object* _this, int msg, int param1, int param2)
                 if (this->target)
                 {
                     assert(this->target->class != CLASS_DEAD);
-                    signalObject((Object*)this->target, SIGNAL_HURT, this->damage, (int)this);
+                    signalObject((Object*)this->target, SIGNAL_HURT, this->damage, (sint32)this);
                 }
                 delayKill(_this);
             }
@@ -4207,7 +4207,7 @@ void cloud_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructCloud(MonsterObject* target, int damage)
+Object* constructCloud(MonsterObject* target, sint32 damage)
 {
     CloudObject* this = (CloudObject*)getFreeObject(cloud_func, OT_RACLOUD, CLASS_PROJECTILE);
     assert(sizeof(*this) < sizeof(Object));
@@ -4235,7 +4235,7 @@ Object* constructCloud(MonsterObject* target, int damage)
 \********************************/
 static void setDoorBlockBits(PushBlockObject* this)
 {
-    int i, w;
+    sint32 i, w;
     for (i = level_pushBlock[this->pbNum].startWall; i <= level_pushBlock[this->pbNum].endWall; i++)
     {
         w = level_PBWall[i];
@@ -4257,7 +4257,7 @@ enum
     AI_DOOR_DOWN
 };
 #define DOORSPEED 2
-void door_func(Object* _this, int msg, int param1, int param2)
+void door_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     DoorObject* this = (DoorObject*)_this;
     switch (msg)
@@ -4295,7 +4295,7 @@ void door_func(Object* _this, int msg, int param1, int param2)
                     }
                     else
                     {
-                        stopAllSound((int)this);
+                        stopAllSound((sint32)this);
                         this->state = AI_DOOR_WAIT;
                         this->waitCounter = 0;
                         if (this->type==OT_STUCKUPDOOR /* ||
@@ -4319,7 +4319,7 @@ void door_func(Object* _this, int msg, int param1, int param2)
                     {
                         pbObject_moveTo((PushBlockObject*)this, 0);
                         this->state = AI_DOOR_IDLE;
-                        stopAllSound((int)this);
+                        stopAllSound((sint32)this);
                         pushBlockMakeSound((PushBlockObject*)this, level_staticSoundMap[ST_PUSHBLOCK] + 1);
                         delay_moveObject((Object*)this, objectIdleList);
                         if (this->channel != -1)
@@ -4331,7 +4331,7 @@ void door_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructDoor(int type, int pb)
+Object* constructDoor(sint32 type, sint32 pb)
 {
     DoorObject* this = (DoorObject*)getFreeObject(door_func, type, CLASS_PUSHBLOCK);
     assert(sizeof(*this) < sizeof(Object));
@@ -4359,7 +4359,7 @@ enum
     AI_DOWNDOOR_STUCK
 };
 
-void downDoor_func(Object* _this, int msg, int param1, int param2)
+void downDoor_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     DoorObject* this = (DoorObject*)_this;
     switch (msg)
@@ -4381,7 +4381,7 @@ void downDoor_func(Object* _this, int msg, int param1, int param2)
             {
                 pbObject_moveTo((PushBlockObject*)this, 0);
                 this->state = AI_DOWNDOOR_STUCK;
-                stopAllSound((int)this);
+                stopAllSound((sint32)this);
                 pushBlockMakeSound((PushBlockObject*)this, level_staticSoundMap[ST_PUSHBLOCK] + 1);
                 delay_moveObject((Object*)this, objectIdleList);
             }
@@ -4389,7 +4389,7 @@ void downDoor_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructDownDoor(int pb)
+Object* constructDownDoor(sint32 pb)
 {
     DoorObject* this = (DoorObject*)getFreeObject(downDoor_func, OT_STUCKDOWNDOOR, CLASS_PUSHBLOCK);
     assert(sizeof(*this) < sizeof(Object));
@@ -4409,7 +4409,7 @@ Object* constructDownDoor(int pb)
  *         BOBBLOCK STUFF       *
 \********************************/
 
-void bobBlock_func(Object* _this, int msg, int param1, int param2)
+void bobBlock_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     BobBlockObject* this = (BobBlockObject*)_this;
     switch (msg)
@@ -4421,9 +4421,9 @@ void bobBlock_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructBobBlock(int pb)
+Object* constructBobBlock(sint32 pb)
 {
-    int phase, i;
+    sint32 phase, i;
     BobBlockObject* this = (BobBlockObject*)getFreeObject(bobBlock_func, OT_BOBBINGBLOCK, CLASS_PUSHBLOCK);
     assert(sizeof(*this) < sizeof(Object));
     assert(this);
@@ -4454,7 +4454,7 @@ enum
     AI_SINKBLOCK_RESET
 };
 
-void sinkBlock_func(Object* _this, int msg, int param1, int param2)
+void sinkBlock_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     SinkBlockObject* this = (SinkBlockObject*)_this;
     switch (msg)
@@ -4500,7 +4500,7 @@ void sinkBlock_func(Object* _this, int msg, int param1, int param2)
                     break;
                 case AI_SINKBLOCK_RESET:
                 {
-                    int dist;
+                    sint32 dist;
                     dist = -this->offset >> 5;
                     if (dist > F(10))
                         dist = F(10);
@@ -4522,7 +4522,7 @@ void sinkBlock_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructSinkBlock(int pb)
+Object* constructSinkBlock(sint32 pb)
 {
     SinkBlockObject* this = (SinkBlockObject*)getFreeObject(sinkBlock_func, OT_SINKINGBLOCK, CLASS_PUSHBLOCK);
     assert(sizeof(*this) < sizeof(Object));
@@ -4552,7 +4552,7 @@ enum
     AI_ELEVATOR_GO
 };
 
-void elevator_func(Object* _this, int msg, int param1, int param2)
+void elevator_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     ElevatorObject* this = (ElevatorObject*)_this;
     switch (msg)
@@ -4597,8 +4597,8 @@ void elevator_func(Object* _this, int msg, int param1, int param2)
             {
                 case AI_ELEVATOR_WAIT:
                 {
-                    int goIdle = 0;
-                    int gogogo = 0;
+                    sint32 goIdle = 0;
+                    sint32 gogogo = 0;
                     if (this->stepEnable < 0)
                         this->stepEnable++;
                     this->counter++;
@@ -4628,7 +4628,7 @@ void elevator_func(Object* _this, int msg, int param1, int param2)
                 }
                 case AI_ELEVATOR_GO:
                 {
-                    int wait = 0;
+                    sint32 wait = 0;
                     pushBlockAdjustSound((PushBlockObject*)this);
                     pbObject_move((PushBlockObject*)this, this->direction * F(5));
                     if (this->direction == -1 && this->offset <= -F(this->throw))
@@ -4646,7 +4646,7 @@ void elevator_func(Object* _this, int msg, int param1, int param2)
                     if (wait)
                     {
                         this->state = AI_ELEVATOR_WAIT;
-                        stopAllSound((int)this);
+                        stopAllSound((sint32)this);
                         pushBlockMakeSound((PushBlockObject*)this, level_staticSoundMap[ST_PUSHBLOCK] + 1);
                         this->counter = 0;
                         this->stepEnable = -5;
@@ -4658,7 +4658,7 @@ void elevator_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructElevator(int pb, int type, short lowerLevel, short upperLevel)
+Object* constructElevator(sint32 pb, sint32 type, sint16 lowerLevel, sint16 upperLevel)
 {
     ElevatorObject* this = (ElevatorObject*)getFreeObject(elevator_func, type, CLASS_PUSHBLOCK);
     assert(sizeof(*this) < sizeof(Object));
@@ -4692,7 +4692,7 @@ enum
     AI_UPDOWNELEVATOR_GO
 };
 
-void upDownElevator_func(Object* _this, int msg, int param1, int param2)
+void upDownElevator_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     UpDownElevatorObject* this = (UpDownElevatorObject*)_this;
     switch (msg)
@@ -4724,7 +4724,7 @@ void upDownElevator_func(Object* _this, int msg, int param1, int param2)
             {
                 case AI_UPDOWNELEVATOR_GO:
                 {
-                    int wait = 0;
+                    sint32 wait = 0;
                     pushBlockAdjustSound((PushBlockObject*)this);
                     pbObject_move((PushBlockObject*)this, this->direction * F(5));
                     if (this->direction == -1 && this->offset <= -F(this->throw))
@@ -4740,7 +4740,7 @@ void upDownElevator_func(Object* _this, int msg, int param1, int param2)
                     if (wait)
                     {
                         this->state = AI_UPDOWNELEVATOR_SLEEP;
-                        stopAllSound((int)this);
+                        stopAllSound((sint32)this);
                         pushBlockMakeSound((PushBlockObject*)this, level_staticSoundMap[ST_PUSHBLOCK] + 1);
                         this->counter = 0;
                         delay_moveObject((Object*)this, objectIdleList);
@@ -4751,7 +4751,7 @@ void upDownElevator_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructUpDownElevator(int pb, int type, short lowerLevel, short upperLevel)
+Object* constructUpDownElevator(sint32 pb, sint32 type, sint16 lowerLevel, sint16 upperLevel)
 {
     UpDownElevatorObject* this = (UpDownElevatorObject*)getFreeObject(upDownElevator_func, type, CLASS_PUSHBLOCK);
     assert(sizeof(*this) < sizeof(Object));
@@ -4782,7 +4782,7 @@ enum
     AI_FLOORSWITCH_GOUP
 };
 
-void floorSwitch_func(Object* _this, int msg, int param1, int param2)
+void floorSwitch_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     FloorSwitchObject* this = (FloorSwitchObject*)_this;
     switch (msg)
@@ -4831,7 +4831,7 @@ void floorSwitch_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructFloorSwitch(int pb)
+Object* constructFloorSwitch(sint32 pb)
 {
     FloorSwitchObject* this = (FloorSwitchObject*)getFreeObject(floorSwitch_func, OT_FLOORSWITCH, CLASS_PUSHBLOCK);
     assert(sizeof(*this) < sizeof(Object));
@@ -4856,7 +4856,7 @@ enum
     AI_FFIELD_OFF
 };
 
-void ffield_func(Object* _this, int msg, int param1, int param2)
+void ffield_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     FFieldObject* this = (FFieldObject*)_this;
     switch (msg)
@@ -4874,9 +4874,9 @@ void ffield_func(Object* _this, int msg, int param1, int param2)
                         {
                             this->state = AI_FFIELD_OFF;
                             {
-                                int vol, pan;
+                                sint32 vol, pan;
                                 posGetSoundParams(&this->center, &vol, &pan);
-                                playSoundE((int)this, level_objectSoundMap[OT_FORCEFIELD], vol, pan);
+                                playSoundE((sint32)this, level_objectSoundMap[OT_FORCEFIELD], vol, pan);
                             }
                             w->flags |= WALLFLAG_INVISIBLE;
                             w->flags &= ~WALLFLAG_BLOCKED;
@@ -4891,9 +4891,9 @@ void ffield_func(Object* _this, int msg, int param1, int param2)
                         {
                             this->state = AI_FFIELD_ON;
                             {
-                                int vol, pan;
+                                sint32 vol, pan;
                                 posGetSoundParams(&this->center, &vol, &pan);
-                                playSoundE((int)this, level_objectSoundMap[OT_FORCEFIELD] + 1, vol, pan);
+                                playSoundE((sint32)this, level_objectSoundMap[OT_FORCEFIELD] + 1, vol, pan);
                             }
                             w->flags &= ~WALLFLAG_INVISIBLE;
                             w->flags |= WALLFLAG_BLOCKED;
@@ -4904,10 +4904,10 @@ void ffield_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructForceField(int wallNm)
+Object* constructForceField(sint32 wallNm)
 {
     MthXyz center, v;
-    int i;
+    sint32 i;
     FFieldObject* this = (FFieldObject*)getFreeObject(ffield_func, OT_FORCEFIELD, CLASS_WALL);
     assert(sizeof(*this) < sizeof(Object));
     assert(this);
@@ -4937,9 +4937,9 @@ Object* constructForceField(int wallNm)
  * BUBBLES STUFF  *
 \******************/
 
-unsigned short bubbleSequenceMap[] = { 0, 1, 2 };
+uint16 bubbleSequenceMap[] = { 0, 1, 2 };
 
-void bubble_func(Object* _this, int msg, int param1, int param2)
+void bubble_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     BubbleObject* this = (BubbleObject*)_this;
     switch (msg)
@@ -4963,8 +4963,8 @@ void bubble_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructBubble(int sector, MthXyz* pos, int distToCiel)
-{ /* static int type=0; */
+Object* constructBubble(sint32 sector, MthXyz* pos, sint32 distToCiel)
+{ /* static sint32 type=0; */
     BubbleObject* this = (BubbleObject*)getFreeObject(bubble_func, OT_BUBBLES, CLASS_SPRITE);
 
     level_sequenceMap[OT_BUBBLES] = level_sequenceMap[OT_1BUBBLE];
@@ -4976,7 +4976,7 @@ Object* constructBubble(int sector, MthXyz* pos, int distToCiel)
     this->sprite = newSprite(sector, F(16), F(1), 0, 0, SPRITEFLAG_IMATERIAL | SPRITEFLAG_IMMOBILE, (Object*)this);
     if (!this->sprite)
         return NULL;
-    this->sprite->scale = 30000 + (unsigned short)getNextRand();
+    this->sprite->scale = 30000 + (uint16)getNextRand();
 
     moveObject((Object*)this, objectRunList);
     this->sprite->pos = *pos;
@@ -4997,9 +4997,9 @@ Object* constructBubble(int sector, MthXyz* pos, int distToCiel)
  * DROPLET STUFF  *
 \******************/
 
-unsigned short oneBubbleSequenceMap[] = { 0 };
+uint16 oneBubbleSequenceMap[] = { 0 };
 
-void oneBubble_func(Object* _this, int msg, int param1, int param2)
+void oneBubble_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     OneBubbleObject* this = (OneBubbleObject*)_this;
     switch (msg)
@@ -5028,7 +5028,7 @@ void oneBubble_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructOneBubble(int sector, MthXyz* pos, MthXyz* vel)
+Object* constructOneBubble(sint32 sector, MthXyz* pos, MthXyz* vel)
 {
     OneBubbleObject* this = (OneBubbleObject*)getFreeObject(oneBubble_func, OT_1BUBBLE, CLASS_SPRITE);
     assert(sizeof(*this) < sizeof(Object));
@@ -5051,13 +5051,13 @@ Object* constructOneBubble(int sector, MthXyz* pos, MthXyz* vel)
  *   CAMEL STUFF  *
 \******************/
 
-unsigned short camelSequenceMap[] = { 0 };
+uint16 camelSequenceMap[] = { 0 };
 
-void camel_func(Object* _this, int msg, int param1, int param2)
+void camel_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     CamelObject* this = (CamelObject*)_this;
-    int collide;
-    int fflags;
+    sint32 collide;
+    sint32 fflags;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -5082,7 +5082,7 @@ void camel_func(Object* _this, int msg, int param1, int param2)
             {
                 if (&(sprites[collide & 0xffff]) == camera)
                 { /* player picked us up */
-                    playSound((int)this, level_objectSoundMap[OT_CAMEL]);
+                    playSound((sint32)this, level_objectSoundMap[OT_CAMEL]);
                     currentState.gameFlags &= ~GAMEFLAG_FIRSTLEVEL;
                     kilmaatPuzzleNumber = 0;
                     playerGetCamel(this->toLevel);
@@ -5094,9 +5094,9 @@ void camel_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructCamel(int sector)
+Object* constructCamel(sint32 sector)
 {
-    short a, t;
+    sint16 a, t;
     CamelObject* this = (CamelObject*)getFreeObject(camel_func, OT_CAMEL, CLASS_SPRITE);
     assert(sizeof(*this) < sizeof(Object));
     assert(this);
@@ -5133,7 +5133,7 @@ Object* constructCamel(int sector)
 /********************************\
  *           QEGG STUFF         *
 \********************************/
-static int nmQeggs = 0;
+static sint32 nmQeggs = 0;
 
 enum
 {
@@ -5143,12 +5143,12 @@ enum
     AI_QEGG_BITE
 };
 
-unsigned short qeggSeqMap[] = { 17, 16, HB | 0, HB | 8 };
+uint16 qeggSeqMap[] = { 17, 16, HB | 0, HB | 8 };
 
-void qegg_func(Object* _this, int message, int param1, int param2)
+void qegg_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     QeggObject* this = (QeggObject*)_this;
-    int collide = 0, fflags = 0;
+    sint32 collide = 0, fflags = 0;
     switch (message)
     {
         case SIGNAL_HURT:
@@ -5226,7 +5226,7 @@ void qegg_func(Object* _this, int message, int param1, int param2)
                             PlotCourseToObject((SpriteObject*)this, (SpriteObject*)this->enemy);
                             assert(this->enemy->class != CLASS_DEAD);
                             spriteObject_makeSound((SpriteObject*)this, 0);
-                            signalObject((Object*)this->enemy, SIGNAL_HURT, 10, (int)this);
+                            signalObject((Object*)this->enemy, SIGNAL_HURT, 10, (sint32)this);
                         }
                         setState((SpriteObject*)this, AI_QEGG_ATTACK);
                     }
@@ -5236,7 +5236,7 @@ void qegg_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructQEgg(int sector, MthXyz* pos, MthXyz* vel)
+Object* constructQEgg(sint32 sector, MthXyz* pos, MthXyz* vel)
 {
     QeggObject* this = (QeggObject*)getFreeObject(qegg_func, OT_QUEENEGG, CLASS_MONSTER);
     assert(sizeof(*this) < sizeof(Object));
@@ -5280,7 +5280,7 @@ enum
     AI_QUEEN_NMSEQ
 };
 
-unsigned short queenSeqMap[] = {
+uint16 queenSeqMap[] = {
     HB | 0,
     HB | 0,
     HB | 18,
@@ -5299,13 +5299,13 @@ unsigned short queenSeqMap[] = {
 #else
 #define LOSETAIL 1500
 #endif
-void queen_func(Object* _this, int message, int param1, int param2)
+void queen_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     QueenObject* this = (QueenObject*)_this;
-    int collide, i;
-    static int lastSound = 0;
-    static int alternate = 0;
-    int fflags;
+    sint32 collide, i;
+    static sint32 lastSound = 0;
+    static sint32 alternate = 0;
+    sint32 fflags;
     collide = 0;
     fflags = 0;
 
@@ -5321,7 +5321,7 @@ void queen_func(Object* _this, int message, int param1, int param2)
                 this->sprite->vel.x = 0;
                 this->sprite->vel.z = 0;
                 {
-                    int x, z, angle;
+                    sint32 x, z, angle;
                     angle = normalizeAngle(this->sprite->angle + F(180));
                     x = this->sprite->pos.x + (MTH_Cos(angle) << 4);
                     z = this->sprite->pos.z + (MTH_Sin(angle) << 4);
@@ -5330,7 +5330,7 @@ void queen_func(Object* _this, int message, int param1, int param2)
             }
             if (aicount - lastSound > 80)
             {
-                playSound((int)this, level_objectSoundMap[OT_QUEEN] + (alternate ? 3 : 4));
+                playSound((sint32)this, level_objectSoundMap[OT_QUEEN] + (alternate ? 3 : 4));
                 lastSound = aicount;
                 alternate = !alternate;
             }
@@ -5425,7 +5425,7 @@ void queen_func(Object* _this, int message, int param1, int param2)
                         this->enemy->sprite->vel.z += MTH_Sin(this->sprite->angle) << 4;
                         this->sprite->vel.x = 0;
                         this->sprite->vel.y = 0;
-                        playSound((int)this, level_objectSoundMap[OT_QUEEN] + 2);
+                        playSound((sint32)this, level_objectSoundMap[OT_QUEEN] + 2);
                         setState((SpriteObject*)this, AI_QUEEN_WALK);
                         break;
                     }
@@ -5488,7 +5488,7 @@ void queen_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructQueen(int sector)
+Object* constructQueen(sint32 sector)
 {
     QueenObject* this = (QueenObject*)getFreeObject(queen_func, OT_QUEEN, CLASS_MONSTER);
     assert(sizeof(*this) < sizeof(Object));
@@ -5524,13 +5524,13 @@ enum
     AI_QHEAD_ATTACK
 };
 
-unsigned short qheadSeqMap[] = { HB | 65, HB | 65, HB | 65 };
+uint16 qheadSeqMap[] = { HB | 65, HB | 65, HB | 65 };
 
-void qhead_func(Object* _this, int message, int param1, int param2)
+void qhead_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
 {
     QheadObject* this = (QheadObject*)_this;
-    int collide, fflags, i;
-    int c, s, wave;
+    sint32 collide, fflags, i;
+    sint32 c, s, wave;
     switch (message)
     {
         case SIGNAL_HURT:
@@ -5636,7 +5636,7 @@ void qhead_func(Object* _this, int message, int param1, int param2)
                         this->sprite->vel.y = 0;
                     if ((collide & COLLIDE_SPRITE) && (sprites[collide & 0xffff].owner == (Object*)player))
                     {
-                        signalObject((Object*)player, SIGNAL_HURT, 10, (int)this);
+                        signalObject((Object*)player, SIGNAL_HURT, 10, (sint32)this);
                         PlotCourseToObject((SpriteObject*)this, (SpriteObject*)player);
                         this->sprite->angle += F(180 - 32) + F(getNextRand() & 0x3f);
                         setState((SpriteObject*)this, AI_QHEAD_RUN);
@@ -5656,9 +5656,9 @@ void qhead_func(Object* _this, int message, int param1, int param2)
     }
 }
 
-Object* constructQhead(int sector, MthXyz* pos)
+Object* constructQhead(sint32 sector, MthXyz* pos)
 {
-    int i;
+    sint32 i;
     QheadObject* this = (QheadObject*)getFreeObject(qhead_func, OT_QHEAD, CLASS_MONSTER);
     assert(sizeof(*this) < sizeof(Object));
     assert(this);
@@ -5708,7 +5708,7 @@ enum
     AI_TELEPORT_ON
 };
 
-void teleport_func(Object* _this, int msg, int param1, int param2)
+void teleport_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     TeleportObject* this = (TeleportObject*)_this;
     switch (msg)
@@ -5797,7 +5797,7 @@ Object* constructTeleporter(void)
 enum  {AI_TELEPORTRETURN_WAIT,AI_TELEPORTRETURN_TAKEOBJECT,
 	 AI_TELEPORTRETURN_SPRINGDOOR};
 
-void teleportReturn_func(Object *_this,int msg,int param1,int param2)
+void teleportReturn_func(Object *_this,sint32 msg,sint32 param1,sint32 param2)
 {TeleportReturnObject *this=(TeleportReturnObject *)_this;
  switch (msg)
     {case SIGNAL_MOVE:
@@ -5811,7 +5811,7 @@ void teleportReturn_func(Object *_this,int msg,int param1,int param2)
 		  }
 	       if (this->age<0)
 		  break;
-	       {int a=this->age;
+	       (sint32 a=this->age;
 		changeLightColor(this->artifact->sprite,a,a,a);
 		a=31-(a>>1);
 		this->artifact->sprite->color=RGB(a,a,a);
@@ -5837,7 +5837,7 @@ void teleportReturn_func(Object *_this,int msg,int param1,int param2)
 }
 
 Object *constructTeleportReturn(void)
-{int playerSec,fromLevel,artifactPlace,artifact;
+(sint32 playerSec,fromLevel,artifactPlace,artifact;
  TeleportReturnObject *this=(TeleportReturnObject *)
     getFreeObject(teleportReturn_func,OT_TELEPRETURN,CLASS_SECTOR);
  assert(sizeof(*this)<sizeof(Object));
@@ -5916,7 +5916,7 @@ enum
     AI_TELEPORTRETURN_ALIGNPLAYER
 };
 
-void teleportReturn_func(Object* _this, int msg, int param1, int param2)
+void teleportReturn_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     TeleportReturnObject* this = (TeleportReturnObject*)_this;
     switch (msg)
@@ -5976,7 +5976,7 @@ void teleportReturn_func(Object* _this, int msg, int param1, int param2)
                     if (this->age < 0)
                         break;
                     {
-                        int a = this->age;
+                        sint32 a = this->age;
                         changeLightColor(this->artifact->sprite, a, a, a);
                         a = 31 - (a >> 1);
                         this->artifact->sprite->color = RGB(a, a, a);
@@ -6004,7 +6004,7 @@ void teleportReturn_func(Object* _this, int msg, int param1, int param2)
 
 Object* constructTeleportReturn(void)
 {
-    int fromLevel, artifactPlace, artifact, w;
+    sint32 fromLevel, artifactPlace, artifact, w;
     MthXyz pos;
     TeleportReturnObject* this = (TeleportReturnObject*)getFreeObject(teleportReturn_func, OT_TELEPRETURN, CLASS_SECTOR);
     assert(sizeof(*this) < sizeof(Object));
@@ -6054,7 +6054,7 @@ enum
 
 static void laserSetVisib(ShooterObject* this)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < this->nmLines; i++)
     {
         if (this->state == AI_SHOOTER_ON)
@@ -6064,7 +6064,7 @@ static void laserSetVisib(ShooterObject* this)
     }
 }
 
-void shooter_func(Object* _this, int msg, int param1, int param2)
+void shooter_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     ShooterObject* this = (ShooterObject*)_this;
     switch (msg)
@@ -6147,9 +6147,9 @@ void shooter_func(Object* _this, int msg, int param1, int param2)
                                     vel.z = this->normal.z << 4;
                                     constructGenproj(this->sectorNm, &pos, &vel, NULL, getAngle(vel.x, vel.z), 1, OT_MAGBALL, 100, RGB(10, 10, 10), 0, 0, 0, 5);
                                     {
-                                        int vol, pan;
+                                        sint32 vol, pan;
                                         posGetSoundParams(&pos, &vol, &pan);
-                                        playSoundE((int)this, level_objectSoundMap[OT_SHOOTER1], vol, pan);
+                                        playSoundE((sint32)this, level_objectSoundMap[OT_SHOOTER1], vol, pan);
                                     }
                                 }
                                 else
@@ -6166,7 +6166,7 @@ void shooter_func(Object* _this, int msg, int param1, int param2)
                             /* if (AISLOT(0x3)) */
                             if (level_sector[camera->s].flags & SECFLAG_LASERSECTOR)
                             {
-                                int i, collide, outSec;
+                                sint32 i, collide, outSec;
                                 MthXyz outPos;
                                 for (i = 0; i < this->nmLines; i++)
                                     if (camera->s == this->beam[i]->s)
@@ -6176,7 +6176,7 @@ void shooter_func(Object* _this, int msg, int param1, int param2)
                                     collide = hitScan(NULL, &this->normal, &this->orficePos, this->sectorNm, &outPos, &outSec);
                                     if (collide & COLLIDE_SPRITE)
                                     {
-                                        signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, 1000, (int)this);
+                                        signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, 1000, (sint32)this);
                                     }
                                 }
                             }
@@ -6188,7 +6188,7 @@ void shooter_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructShooter(int type)
+Object* constructShooter(sint32 type)
 {
     ShooterObject* this = (ShooterObject*)getFreeObject(shooter_func, type, CLASS_WALL);
     assert(sizeof(*this) < sizeof(Object));
@@ -6221,9 +6221,9 @@ Object* constructShooter(int type)
     {
         MthXyz hitPos;
         MthXyz lastPos;
-        int s, lastSec;
-        int collide;
-        int nmLines;
+        sint32 s, lastSec;
+        sint32 collide;
+        sint32 nmLines;
         lastPos = this->orficePos;
         lastSec = this->sectorNm;
         nmLines = 0;
@@ -6256,12 +6256,12 @@ Object* constructShooter(int type)
 /********************************\
  *        BOINGROCK STUFF       *
 \********************************/
-unsigned short rockSeqList[] = { 0 };
+uint16 rockSeqList[] = { 0 };
 
-void boingRock_func(Object* _this, int msg, int param1, int param2)
+void boingRock_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     BoingRockObject* this = (BoingRockObject*)_this;
-    int collide;
+    sint32 collide;
     switch (msg)
     {
         case SIGNAL_OBJECTDESTROYED:
@@ -6277,7 +6277,7 @@ void boingRock_func(Object* _this, int msg, int param1, int param2)
             collide = moveSprite(this->sprite);
             if (collide & COLLIDE_SPRITE)
             {
-                signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, 50, (int)this);
+                signalObject(sprites[collide & 0xffff].owner, SIGNAL_HURT, 50, (sint32)this);
             }
             else
             {
@@ -6286,16 +6286,16 @@ void boingRock_func(Object* _this, int msg, int param1, int param2)
             }
             if (collide & (COLLIDE_FLOOR | COLLIDE_WALL | COLLIDE_CEILING))
             {
-                int vol, pan;
+                sint32 vol, pan;
                 this->age++;
                 spriteAdvanceFrame(this->sprite);
                 posGetSoundParams(&this->sprite->pos, &vol, &pan);
                 vol += 20;
-                playSoundE((int)this, level_objectSoundMap[OT_SHOOTER2], vol, pan);
+                playSoundE((sint32)this, level_objectSoundMap[OT_SHOOTER2], vol, pan);
             }
             if ((collide & COLLIDE_SPRITE) || this->age > 10)
             {
-                int i;
+                sint32 i;
                 constructOneShot(this->sprite->s, this->sprite->pos.x, this->sprite->pos.y + F(20), this->sprite->pos.z, OT_POOF, F(1), RGB(28, 5, 5), 0);
                 for (i = 0; i < 3; i++)
                     constructBouncyBit(this->sprite->s, &this->sprite->pos, this->sprite->sequence + 1, 0, 0);
@@ -6305,7 +6305,7 @@ void boingRock_func(Object* _this, int msg, int param1, int param2)
     }
 }
 
-Object* constructBoingRock(int sector, MthXyz* pos, MthXyz* vel)
+Object* constructBoingRock(sint32 sector, MthXyz* pos, MthXyz* vel)
 {
     BoingRockObject* this;
     this = (BoingRockObject*)getFreeObject(boingRock_func, OT_BOINGROCK, CLASS_PROJECTILE);

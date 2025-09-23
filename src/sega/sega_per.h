@@ -25,11 +25,11 @@
 #define PER_SIZE_DGT    2
 
 typedef struct  {
-    Uint8   cc;
-    Uint8   ac;
-    Uint16  ss;
-    Uint32  sm;
-    Uint8   stat;
+    uint8   cc;
+    uint8   ac;
+    uint16  ss;
+    uint32  sm;
+    uint8   stat;
 } PerGetSys;
 
 #define PER_SIZE_NCON_15    0x0f
@@ -38,8 +38,8 @@ typedef struct  {
 
 #define PER_KD_PERTIM       2
 
-typedef Uint8   PerMulId;
-typedef Uint8   PerMulCon;
+typedef uint8   PerMulId;
+typedef uint8   PerMulCon;
 
 typedef struct  {
     PerMulId    id;
@@ -49,8 +49,8 @@ typedef struct  {
 typedef void PerGetPer;
 
 #if 0
-Uint32 PER_LInit(Sint32, Sint32, Sint32, Uint8*, Uint8);
-Uint32 PER_LGetPer(PerGetPer **, PerMulInfo **);
+uint32 PER_LInit(sint32, sint32, sint32, uint8*, uint8);
+uint32 PER_LGetPer(PerGetPer **, PerMulInfo **);
 #else
 #define PER_LInit(a, b, c, d, e) 0
 #define PER_LGetPer(a, b) 0

@@ -1,4 +1,4 @@
-unsigned char jasonPallete[] = {
+uint8 jasonPallete[] = {
     222,
     247,
     218,

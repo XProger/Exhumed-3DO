@@ -6,36 +6,36 @@ sVertexType* level_vertex;
 sFaceType* level_face;
 sWallType* level_wall;
 sSectorType* level_sector;
-unsigned char* level_texture;
-unsigned char* level_vertexLight;
+uint8* level_texture;
+uint8* level_vertexLight;
 sObjectType* level_object;
-unsigned char* level_objectParams;
+uint8* level_objectParams;
 sPBType* level_pushBlock;
 sPBVertex* level_PBVert;
-short* level_PBWall;
+sint16* level_PBWall;
 WaveVert* level_waveVert;
 WaveFace* level_waveFace;
-unsigned char (*level_cutPlane)[][MAXCUTSECTORS];
+uint8 (*level_cutPlane)[][MAXCUTSECTORS];
 
-int level_nmSectors;
-int level_nmWalls;
-int level_nmObjects;
-int level_nmPushBlocks;
-int level_nmWaveVert;
-int level_nmVertex;
+sint32 level_nmSectors;
+sint32 level_nmWalls;
+sint32 level_nmObjects;
+sint32 level_nmPushBlocks;
+sint32 level_nmWaveVert;
+sint32 level_nmVertex;
 
 #define LOADPART(array, type, number)   \
     size = number * sizeof(type);       \
     array = (type*)mem_malloc(1, size); \
-    fs_read(fd, (char*)array, size);
+    fs_read(fd, (sint8*)array, size);
 
-int loadLevel(int fd, int tileBase)
+sint32 loadLevel(sint32 fd, sint32 tileBase)
 {
-    int size;
-    int i;
+    sint32 size;
+    sint32 i;
     struct sLevelHeader* head;
     assert(fd >= 0);
-    fs_read(fd, (char*)&size, 4);
+    fs_read(fd, (sint8*)&size, 4);
 
     size = FS_INT(&size);
 
@@ -44,7 +44,7 @@ int loadLevel(int fd, int tileBase)
     assert(size > 0);
     assert(size < 900000);
     head = (struct sLevelHeader*)mem_malloc(1, sizeof(struct sLevelHeader));
-    fs_read(fd, (char*)head, sizeof(struct sLevelHeader));
+    fs_read(fd, (sint8*)head, sizeof(struct sLevelHeader));
 
     head->nmSectors = FS_INT(&head->nmSectors);
     head->nmWalls = FS_INT(&head->nmWalls);
@@ -77,11 +77,11 @@ int loadLevel(int fd, int tileBase)
     LOADPART(level_PBVert, sPBVertex, head->nmPBVert);
     LOADPART(level_waveVert, WaveVert, head->nmWaveVert);
     LOADPART(level_waveFace, WaveFace, head->nmWaveFace);
-    LOADPART(level_PBWall, short, head->nmPBWalls);
-    LOADPART(level_objectParams, unsigned char, head->nmObjectParams);
-    LOADPART(level_texture, unsigned char, head->nmTextureIndexes);
-    LOADPART(level_vertexLight, char, head->nmLightValues);
-    LOADPART(((char*)level_cutPlane), char, (head->nmCutSectors * MAXCUTSECTORS));
+    LOADPART(level_PBWall, sint16, head->nmPBWalls);
+    LOADPART(level_objectParams, uint8, head->nmObjectParams);
+    LOADPART(level_texture, uint8, head->nmTextureIndexes);
+    LOADPART(level_vertexLight, sint8, head->nmLightValues);
+    LOADPART(((sint8*)level_cutPlane), sint8, (head->nmCutSectors * MAXCUTSECTORS));
 
     for (i = 0; i < head->nmSectors; i++)
     {
@@ -194,7 +194,7 @@ int loadLevel(int fd, int tileBase)
 
     for (i = 0; i < head->nmPBWalls; i++)
     {
-        short *v = level_PBWall + i;
+        sint16 *v = level_PBWall + i;
 
         *v = FS_SHORT(v);
     }
@@ -205,11 +205,11 @@ int loadLevel(int fd, int tileBase)
         level_face[i].tile += tileBase;
 
     /* paranoia checks */
-    assert(!(((int)level_sector) & 3));
-    assert(!(((int)level_wall) & 3));
-    assert(!(((int)level_vertex) & 3));
-    assert(!(((int)level_face) & 3));
-    assert(!(((int)level_object) & 3));
+    assert(!(((sint32)level_sector) & 3));
+    assert(!(((sint32)level_wall) & 3));
+    assert(!(((sint32)level_vertex) & 3));
+    assert(!(((sint32)level_face) & 3));
+    assert(!(((sint32)level_object) & 3));
 
     return 1;
 }

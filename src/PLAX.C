@@ -22,9 +22,9 @@
 #include "plax.h"
 
 #define PLAXPERSCREEN 128
-void movePlax(Fixed32 yaw, Fixed32 pitch)
+void movePlax(fix32 yaw, fix32 pitch)
 {
-    int x, y;
+    sint32 x, y;
     extern SclRotreg* SclRotregBuff;
     x = -(yaw * PLAXPERSCREEN) / F(45);
     while (x < 0)
@@ -54,7 +54,7 @@ void movePlax(Fixed32 yaw, Fixed32 pitch)
         SclProcess = 1;
 }
 
-void enablePlax(int setting)
+void enablePlax(sint32 setting)
 {
     if (setting)
         Scl_s_reg.dispenbl |= 0x10;
@@ -62,11 +62,11 @@ void enablePlax(int setting)
         Scl_s_reg.dispenbl &= ~0x10;
 }
 
-static unsigned short plaxPal[256];
+static uint16 plaxPal[256];
 
 void retryPlaxPal(void)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < 256; i++)
         POKE_W(SCL_COLRAM_ADDR + ((256 * 7 + i) << 1), plaxPal[i]);
     /* SCL_SetColRam(0,256*7,256,plaxPal); */
@@ -83,28 +83,28 @@ void plaxOff(void)
        SCL_SetConfig(SCL_RBG0, &scfg); */
 }
 
-void initPlax(int fd)
+void initPlax(sint32 fd)
 {
     SclConfig scfg;
-    int x;//, i;
-    fs_read(fd, (char*)(plaxPal), 256 * 2);
+    sint32 x;//, i;
+    fs_read(fd, (sint8*)(plaxPal), 256 * 2);
 #ifdef TODO // PLAX pal
     for (i = 0; i < 256; i++)
         POKE_W(SCL_COLRAM_ADDR + ((256 * 7 + i) << 1), plaxPal[i]);
 #endif
     /* SCL_SetColRam(0,256*7,256,plaxPal); */
 
-    fs_read(fd, (char*)&x, 4);
+    fs_read(fd, (sint8*)&x, 4);
 
     x = FS_INT(&x);
 
     assert(x == 512);
-    fs_read(fd, (char*)&x, 4);
+    fs_read(fd, (sint8*)&x, 4);
 
     x = FS_INT(&x);
 
     assert(x == 256);
-    fs_read(fd, (char*)SCL_VDP2_VRAM_A1, 512 * 256);
+    fs_read(fd, (sint8*)SCL_VDP2_VRAM_A1, 512 * 256);
 
     SCL_InitRotateTable(SCL_VDP2_VRAM_A0 + 0x500, 1, SCL_RBG0, SCL_NON);
 
@@ -125,10 +125,10 @@ void initPlax(int fd)
     if (SclProcess == 0)
         SclProcess = 1;
 
-    fs_read(fd, (char*)SCL_VDP2_VRAM_A0, 320 * 4);
+    fs_read(fd, (sint8*)SCL_VDP2_VRAM_A0, 320 * 4);
 
 #if 0
- {int x,d;
+ (sint32 x,d;
   double f;
   for (x=0;x<320;x++)
      {f=atan((x-160.0)/160.0)*((double)PLAXPERSCREEN)/0.785398;
@@ -166,7 +166,7 @@ void initPlax(int fd)
   POKE(SCL_VDP2_VRAM_A0+0x500+0x5c,(1)<<16); /* dot increment */
 
 
-  {static int rotMat[6]={0,-1,0,
+  {static sint32 rotMat[6]={0,-1,0,
 			    1, 0,0};
    for (i=0;i<6;i++)
       POKE(SCL_VDP2_VRAM_A0+0x500+0x1c+i*4,F(rotMat[i]));

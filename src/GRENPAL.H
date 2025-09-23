@@ -1,4 +1,4 @@
-unsigned char grenadePal[] = {
+uint8 grenadePal[] = {
     247,
     254,
     251,

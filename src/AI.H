@@ -12,324 +12,324 @@ typedef SpriteObject OneBubbleObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
 
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, seeCounter;
+    uint16* sequenceMap;
+    sint16 state, seeCounter;
 } TorchObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
 
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, toLevel, disableTime;
+    uint16* sequenceMap;
+    sint16 state, toLevel, disableTime;
 } CamelObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    short pbNum, state;
-    int counter, waitCounter;
-    Fixed32 offset;
+    sint16 pbNum, state;
+    sint32 counter, waitCounter;
+    fix32 offset;
 
-    short speedDiv;
+    sint16 speedDiv;
 } BobBlockObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    short pbNum, state;
-    int counter, waitCounter;
-    Fixed32 offset;
+    sint16 pbNum, state;
+    sint32 counter, waitCounter;
+    fix32 offset;
 
-    int vel, distanceToFall, fallAccum;
-    int channel, switchChannel;
+    sint32 vel, distanceToFall, fallAccum;
+    sint32 channel, switchChannel;
 } SinkBlockObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    short pbNum, state;
-    int counter, waitCounter;
-    Fixed32 offset;
+    sint16 pbNum, state;
+    sint32 counter, waitCounter;
+    fix32 offset;
 
-    int vel;
+    sint32 vel;
 } EarthQuakeBlockObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    short pbNum, state;
-    int counter, waitCounter;
-    Fixed32 offset;
+    sint16 pbNum, state;
+    sint32 counter, waitCounter;
+    fix32 offset;
 
-    int distanceToRise, vel;
+    sint32 distanceToRise, vel;
 } RamsesLidObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
 
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad;
-    int distLeft;
+    uint16* sequenceMap;
+    sint16 state, pad;
+    sint32 distLeft;
 } BubbleObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
 
-    short health, aiSlot;
+    sint16 health, aiSlot;
     struct __monster* enemy;
-    short route[ROUTESIZE + 1];
-    short routePos;
-    int anger;
+    sint16 route[ROUTESIZE + 1];
+    sint16 routePos;
+    sint32 anger;
 } BlobObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
 
-    short health, aiSlot;
+    sint16 health, aiSlot;
     struct __monster* enemy;
-    short route[ROUTESIZE + 1];
-    short routePos;
-    int age;
+    sint16 route[ROUTESIZE + 1];
+    sint16 routePos;
+    sint32 age;
 } QeggObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    short sectorNm, state, aiSlot;
+    sint16 sectorNm, state, aiSlot;
 
-    int timer, disabled;
+    sint32 timer, disabled;
     struct __sprite* ramses;
-    int baseY;
-    int homeSector;
-    int fd, soundRingBase, soundRingHead;
+    sint32 baseY;
+    sint32 homeSector;
+    sint32 fd, soundRingBase, soundRingHead;
 #ifdef JAPAN
-    int soundRingBase2;
+    sint32 soundRingBase2;
 #endif
-    int nmFrames, framePos;
-    char* frames;
-    char sndSlot, lastSndPos;
+    sint32 nmFrames, framePos;
+    sint8* frames;
+    sint8 sndSlot, lastSndPos;
 } RamsesTriggerObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    short sectorNm, state, aiSlot;
+    sint16 sectorNm, state, aiSlot;
 
-    int toLevel, powerLevel, angle, countDown, enable, endOfPuzzle;
+    sint32 toLevel, powerLevel, angle, countDown, enable, endOfPuzzle;
     sSectorType* pSector;
 } TeleportObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    short sectorNm, state, aiSlot;
+    sint16 sectorNm, state, aiSlot;
 
     SpriteObject* artifact;
-    int age, artifactNm, playerSec, playerAngle, artifactPlace;
+    sint32 age, artifactNm, playerSec, playerAngle, artifactPlace;
     MthXyz apos;
 } TeleportReturnObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    short wallNm, state, aiSlot;
+    sint16 wallNm, state, aiSlot;
 
     MthXyz center;
 } FFieldObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
 
     Object* owner;
-    int age;
-    short damage;
-    unsigned short explosionColor;
-    char light;
-    int armTime;
+    sint32 age;
+    sint16 damage;
+    uint16 explosionColor;
+    sint8 light;
+    sint32 armTime;
 } GenericProjectileObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
-    short health, aiSlot;
+    uint16* sequenceMap;
+    sint16 state, pad1;
+    sint16 health, aiSlot;
     struct __monster* enemy;
-    short route[ROUTESIZE + 1];
-    short routePos;
+    sint16 route[ROUTESIZE + 1];
+    sint16 routePos;
 
-    int jinkTimer;
-    short diveTimer;
+    sint32 jinkTimer;
+    sint16 diveTimer;
 } HawkObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
-    short health, aiSlot;
+    uint16* sequenceMap;
+    sint16 state, pad1;
+    sint16 health, aiSlot;
     struct __monster* enemy;
-    short route[ROUTESIZE + 1];
-    short routePos;
+    sint16 route[ROUTESIZE + 1];
+    sint16 routePos;
 
-    int boomTimer, iAmMapHolder;
+    sint32 boomTimer, iAmMapHolder;
 } BlowPotObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
-    short health, aiSlot;
+    uint16* sequenceMap;
+    sint16 state, pad1;
+    sint16 health, aiSlot;
     struct __monster* enemy;
-    short route[ROUTESIZE + 1];
-    short routePos;
+    sint16 route[ROUTESIZE + 1];
+    sint16 routePos;
 
-    short hoverCounter, dartCounter;
+    sint16 hoverCounter, dartCounter;
 } WaspObject;
 
 #define NMCOBRABALLS 5
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
     Object* owner;
-    int age;
+    sint32 age;
 
     Sprite* balls[NMCOBRABALLS];
-    int wave;
+    sint32 wave;
     MonsterObject* enemy;
-    int aiSlot, glow;
+    sint32 aiSlot, glow;
 } CobraObject;
 
 #define NMQHEADBALLS 5
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
-    short health, aiSlot;
+    uint16* sequenceMap;
+    sint16 state, pad1;
+    sint16 health, aiSlot;
     struct __monster* enemy;
-    short route[ROUTESIZE + 1];
-    short routePos;
+    sint16 route[ROUTESIZE + 1];
+    sint16 routePos;
 
     Sprite* balls[NMQHEADBALLS];
-    int wave, waitTime, nmBalls;
+    sint32 wave, waitTime, nmBalls;
 } QheadObject;
 
 #define NMZAPBALLS 5
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
     Object* owner;
-    int age;
+    sint32 age;
 
     Sprite* balls[NMZAPBALLS];
-    int wave;
+    sint32 wave;
     MonsterObject* enemy;
-    int aiSlot, red;
+    sint32 aiSlot, red;
     MthXyz hitPos;
 } ZapObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
-    short health, aiSlot;
+    uint16* sequenceMap;
+    sint16 state, pad1;
+    sint16 health, aiSlot;
     struct __monster* enemy;
-    short route[ROUTESIZE + 1];
-    short routePos;
+    sint16 route[ROUTESIZE + 1];
+    sint16 routePos;
 
-    short stunCounter;
+    sint16 stunCounter;
 } AnubisObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
-    short health, aiSlot;
+    uint16* sequenceMap;
+    sint16 state, pad1;
+    sint16 health, aiSlot;
     struct __monster* enemy;
-    short route[ROUTESIZE + 1];
-    short routePos;
+    sint16 route[ROUTESIZE + 1];
+    sint16 routePos;
 
-    int tailInhibit;
-    short rarCount, angry;
+    sint32 tailInhibit;
+    sint16 rarCount, angry;
 } MagmantisObject;
 
 typedef AnubisObject MummyObject;
@@ -337,111 +337,111 @@ typedef AnubisObject SetObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
-    short health, aiSlot;
+    uint16* sequenceMap;
+    sint16 state, pad1;
+    sint16 health, aiSlot;
     struct __monster* enemy;
-    short route[ROUTESIZE + 1];
-    short routePos;
+    sint16 route[ROUTESIZE + 1];
+    sint16 routePos;
 
-    short stunCounter;
-    short aimCounter, sprintCounter, decideNow;
+    sint16 stunCounter;
+    sint16 aimCounter, sprintCounter, decideNow;
 } SentryObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
-    short health, aiSlot;
+    uint16* sequenceMap;
+    sint16 state, pad1;
+    sint16 health, aiSlot;
     struct __monster* enemy;
-    short route[ROUTESIZE + 1];
-    short routePos;
+    sint16 route[ROUTESIZE + 1];
+    sint16 routePos;
 
-    short stunCounter;
-    short chargeCounter;
-    int sparkTimer;
+    sint16 stunCounter;
+    sint16 chargeCounter;
+    sint32 sparkTimer;
 } SelkisObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
-    short health, aiSlot;
+    uint16* sequenceMap;
+    sint16 state, pad1;
+    sint16 health, aiSlot;
     struct __monster* enemy;
-    short route[ROUTESIZE + 1];
-    short routePos;
+    sint16 route[ROUTESIZE + 1];
+    sint16 routePos;
 
-    short fireCount;
-    short chargeCounter;
-    short multiCharge;
+    sint16 fireCount;
+    sint16 chargeCounter;
+    sint16 multiCharge;
 } QueenObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
-    short health, aiSlot;
+    uint16* sequenceMap;
+    sint16 state, pad1;
+    sint16 health, aiSlot;
     struct __monster* enemy;
-    short route[ROUTESIZE + 1];
-    short routePos;
+    sint16 route[ROUTESIZE + 1];
+    sint16 routePos;
 
-    short stunCounter;
-    short portTimer;
-    short hasLight;
+    sint16 stunCounter;
+    sint16 portTimer;
+    sint16 hasLight;
 } BastetObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
 
-    unsigned short sequence;
-    int age, soft;
+    uint16 sequence;
+    sint32 age, soft;
 } BitObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
 
-    unsigned short sequence;
-    int stuck;
+    uint16 sequence;
+    sint32 stuck;
 } HardBitObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
 
-    int age, big;
+    sint32 age, big;
 } ZorchObject;
 
 #define THINGFLAG_WAVE 1
@@ -453,241 +453,241 @@ typedef struct
 #define THINGFLAG_NOISY 64
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
 
-    int baseY, sin, frame;
-    int flags, light;
+    sint32 baseY, sin, frame;
+    sint32 flags, light;
 } ThingObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
 
-    int* parameters;
-    int ageInc;
-    int age;
+    sint32* parameters;
+    sint32 ageInc;
+    sint32 age;
 } LightObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
 
-    int waitTime;
+    sint32 waitTime;
 } OneShotObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    int wallNm;
-    short aiSlot, state;
+    sint32 wallNm;
+    sint16 aiSlot, state;
 
-    int firstTile, lastTile, speed;
+    sint32 firstTile, lastTile, speed;
 } AnimWallObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
     Object* owner;
-    int age;
+    sint32 age;
 
     MonsterObject* target;
-    int damage;
+    sint32 damage;
 } CloudObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    short pbNum, state;
-    int counter, waitCounter;
-    Fixed32 offset;
+    sint16 pbNum, state;
+    sint32 counter, waitCounter;
+    fix32 offset;
 
-    short throw;
-    short stepEnable;
-    short channel;
-    short direction;
+    sint16 throw;
+    sint16 stepEnable;
+    sint16 channel;
+    sint16 direction;
 } ElevatorObject;
 
 typedef ElevatorObject UpDownElevatorObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    short pbNum, state;
-    int counter, waitCounter;
-    Fixed32 offset;
+    sint16 pbNum, state;
+    sint32 counter, waitCounter;
+    fix32 offset;
 
-    short channel;
-    short doorHeight;
+    sint16 channel;
+    sint16 doorHeight;
 } DoorObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    short pbNum, state;
-    int counter, waitCounter;
-    Fixed32 offset;
+    sint16 pbNum, state;
+    sint32 counter, waitCounter;
+    fix32 offset;
 
-    int channel, upperLevel, lowerLevel;
+    sint32 channel, upperLevel, lowerLevel;
 } FloorSwitchObject;
 
 #define NMSHOOTERBEAMS 16
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    short wallNm, state, aiSlot;
+    sint16 wallNm, state, aiSlot;
 
-    short sectorNm;
-    char nmLines;
-    int pulse;
+    sint16 sectorNm;
+    sint8 nmLines;
+    sint32 pulse;
     MthXyz normal;
     MthXyz orficePos;
     Sprite* beam[NMSHOOTERBEAMS];
-    short switchType, channel, counter;
+    sint16 switchType, channel, counter;
 } ShooterObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    short wallNm, state, aiSlot;
+    sint16 wallNm, state, aiSlot;
 
-    char* tilePos;
-    short frame, sequence;
-    short channel, sectorNm;
+    sint8* tilePos;
+    sint16 frame, sequence;
+    sint16 channel, sectorNm;
     MthXyz orficePos;
 } SwitchObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
-    short sectorNm, state, aiSlot;
+    sint16 sectorNm, state, aiSlot;
 
-    int channel;
+    sint32 channel;
 } SectorSwitchObject;
 
 typedef struct
 {
-    short type, class;
+    sint16 type, class;
     struct __object *next, *prev;
     messHandler func;
     struct __sprite* sprite;
-    unsigned short* sequenceMap;
-    short state, pad1;
+    uint16* sequenceMap;
+    sint16 state, pad1;
 
     Object* owner;
-    int age;
+    sint32 age;
 } BoingRockObject;
 
-void item_func(Object* this, int message, int param1, int param2);
-void spider_func(Object* this, int message, int param1, int param2);
-void hawk_func(Object* this, int message, int param1, int param2);
-void anubis_func(Object* this, int message, int param1, int param2);
-void torch_func(Object* this, int message, int param1, int param2);
-void player_func(Object* this, int message, int param1, int param2);
+void item_func(Object* this, sint32 message, sint32 param1, sint32 param2);
+void spider_func(Object* this, sint32 message, sint32 param1, sint32 param2);
+void hawk_func(Object* this, sint32 message, sint32 param1, sint32 param2);
+void anubis_func(Object* this, sint32 message, sint32 param1, sint32 param2);
+void torch_func(Object* this, sint32 message, sint32 param1, sint32 param2);
+void player_func(Object* this, sint32 message, sint32 param1, sint32 param2);
 
-Object* constructSpider(int sector, int suckParams, MthXyz* pos, MthXyz* vel);
-PlayerObject* constructPlayer(int sector, int suckParams);
-Object* constructAnubis(int sector);
-Object* constructSelkis(int sector);
-Object* constructSet(int sector);
-Object* constructSentry(int sector);
-Object* constructMummy(int sector);
-Object* constructKapow(int sector, int x, int y, int z);
-Object* constructWasp(int sector);
-Object* constructFish(int sector);
-Object* constructThing(int sector, int x, int y, int z, int thingType);
-Object* constructOneShot(int sector, int x, int y, int z, int oneShotType, int scale, unsigned short colored, int waitTime);
-Object* constructZorch(int sector, int x, int y, int z, int zorchType);
-Object* constructFlameball(int sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner, int heading, int frame);
-Object* constructGrenade(int sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner);
-Object* constructLight(int sector, int x, int y, int z, int* parameters, Fixed32 ageInc);
-Object* constructCobra(int sector, int x, int y, int z, int heading, Fixed32 yvel, SpriteObject* owner, int type, int glow);
-Object* constructRingo(int sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner);
-Object* constructDoor(int type, int pb);
-Object* constructBobBlock(int pb);
-Object* constructSinkBlock(int pb);
+Object* constructSpider(sint32 sector, sint32 suckParams, MthXyz* pos, MthXyz* vel);
+PlayerObject* constructPlayer(sint32 sector, sint32 suckParams);
+Object* constructAnubis(sint32 sector);
+Object* constructSelkis(sint32 sector);
+Object* constructSet(sint32 sector);
+Object* constructSentry(sint32 sector);
+Object* constructMummy(sint32 sector);
+Object* constructKapow(sint32 sector, sint32 x, sint32 y, sint32 z);
+Object* constructWasp(sint32 sector);
+Object* constructFish(sint32 sector);
+Object* constructThing(sint32 sector, sint32 x, sint32 y, sint32 z, sint32 thingType);
+Object* constructOneShot(sint32 sector, sint32 x, sint32 y, sint32 z, sint32 oneShotType, sint32 scale, uint16 colored, sint32 waitTime);
+Object* constructZorch(sint32 sector, sint32 x, sint32 y, sint32 z, sint32 zorchType);
+Object* constructFlameball(sint32 sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner, sint32 heading, sint32 frame);
+Object* constructGrenade(sint32 sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner);
+Object* constructLight(sint32 sector, sint32 x, sint32 y, sint32 z, sint32* parameters, fix32 ageInc);
+Object* constructCobra(sint32 sector, sint32 x, sint32 y, sint32 z, sint32 heading, fix32 yvel, SpriteObject* owner, sint32 type, sint32 glow);
+Object* constructRingo(sint32 sector, MthXyz* pos, MthXyz* vel, SpriteObject* owner);
+Object* constructDoor(sint32 type, sint32 pb);
+Object* constructBobBlock(sint32 pb);
+Object* constructSinkBlock(sint32 pb);
 
-Object* constructCloud(MonsterObject* target, int damage);
+Object* constructCloud(MonsterObject* target, sint32 damage);
 
-Object* constructHawk(int sector);
+Object* constructHawk(sint32 sector);
 
-Object* constructElevator(int pb, int type, short lowerLevel, short upperLevel);
-Object* constructUpDownElevator(int pb, int type, short lowerLevel, short upperLevel);
-Object* constructFloorSwitch(int pb);
+Object* constructElevator(sint32 pb, sint32 type, sint16 lowerLevel, sint16 upperLevel);
+Object* constructUpDownElevator(sint32 pb, sint32 type, sint16 lowerLevel, sint16 upperLevel);
+Object* constructFloorSwitch(sint32 pb);
 
-Object* constructBastet(int sector);
+Object* constructBastet(sint32 sector);
 
-Object* constructForceField(int wallNm);
+Object* constructForceField(sint32 wallNm);
 
-Object* constructRamsesTrigger(int triggerSec, int homeSector);
+Object* constructRamsesTrigger(sint32 triggerSec, sint32 homeSector);
 
-Object* constructCamel(int sector);
+Object* constructCamel(sint32 sector);
 
-Object* constructMagmantis(int sector);
-Object* constructBubble(int sector, MthXyz* pos, int distToCiel);
-Object* constructOneBubble(int sector, MthXyz* pos, MthXyz* vel);
-Object* constructBlob(int sector);
-Object* constructZap(int sector, MthXyz* pos, SpriteObject* owner, MonsterObject* enemy, int red);
-Object* constructQueen(int sector);
-Object* constructQhead(int sector, MthXyz* pos);
+Object* constructMagmantis(sint32 sector);
+Object* constructBubble(sint32 sector, MthXyz* pos, sint32 distToCiel);
+Object* constructOneBubble(sint32 sector, MthXyz* pos, MthXyz* vel);
+Object* constructBlob(sint32 sector);
+Object* constructZap(sint32 sector, MthXyz* pos, SpriteObject* owner, MonsterObject* enemy, sint32 red);
+Object* constructQueen(sint32 sector);
+Object* constructQhead(sint32 sector, MthXyz* pos);
 
-Object* constructTorch(int sector, int type);
-Object* constructBlowPot(int sector, int type);
+Object* constructTorch(sint32 sector, sint32 type);
+Object* constructBlowPot(sint32 sector, sint32 type);
 
 Object* constructTeleportReturn(void);
 Object* constructTeleporter(void);
 
-Object* constructShooter(int type);
-Object* constructRamsesLid(int pb);
-Object* constructSwitch(int type);
+Object* constructShooter(sint32 type);
+Object* constructRamsesLid(sint32 pb);
+Object* constructSwitch(sint32 type);
 
 void runObjects(void);
 
-void rotateFlames(int angle, int cx, int cz);
-void translateFlames(int dx, int dy, int dz);
+void rotateFlames(sint32 angle, sint32 cx, sint32 cz);
+void translateFlames(sint32 dx, sint32 dy, sint32 dz);
 void initFlames(void);
 
-Object* constructDownDoor(int pb);
+Object* constructDownDoor(sint32 pb);
 Object* constructSectorSwitch(void);
-Object* constructBouncyBit(int sector, MthXyz* pos, int sequence, int frame, int soft);
+Object* constructBouncyBit(sint32 sector, MthXyz* pos, sint32 sequence, sint32 frame, sint32 soft);
 
-Object* constructHardBit(int sector, MthXyz* pos, int sequence, int onFloor, int frame);
+Object* constructHardBit(sint32 sector, MthXyz* pos, sint32 sequence, sint32 onFloor, sint32 frame);
 
-Object* constructBoingRock(int sector, MthXyz* pos, MthXyz* vel);
-Object* constructEarthQuakeBlock(int pb);
+Object* constructBoingRock(sint32 sector, MthXyz* pos, MthXyz* vel);
+Object* constructEarthQuakeBlock(sint32 pb);
 
 void resetLimitCounters(void);
 

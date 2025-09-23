@@ -18,7 +18,7 @@ static BupConfig config[3];
 typedef struct
 {
     SaveState state;
-    short valid;
+    sint16 valid;
 } SaveRec;
 
 #define NMSAVEGAMES 6
@@ -41,10 +41,10 @@ typedef struct
 #define SPACENEEDED ((NMSAVEGAMES * sizeof(SaveRec) + 63) / 64)
 
 SaveRec saveGames[NMSAVEGAMES + 4 /* extra space to absorb block fragment */];
-static int saveDevice;
-static int openGame = -1;
+static sint32 saveDevice;
+static sint32 openGame = -1;
 
-SaveState* bup_getGameData(int slot)
+SaveState* bup_getGameData(sint32 slot)
 {
     if (saveDevice == -1)
         return NULL;
@@ -82,22 +82,22 @@ static void unloadBup(void)
 
 static void checkForCheatKey(void)
 {
-    int ret;
-    ret = BUP_Read(0, CHEATKEY, (Uint8*)saveGames);
+    sint32 ret;
+    ret = BUP_Read(0, CHEATKEY, (uint8*)saveGames);
     if (ret == 0)
         cheatsEnabled = 1;
     else
         cheatsEnabled = 0;
 }
 
-static int loadGameFile(void)
+static sint32 loadGameFile(void)
 {
 #ifdef TODO // savegame
-    int device, i, j;
+    sint32 device, i, j;
     device = -1;
     for (i = 0; i < 2; i++)
     {
-        j = BUP_Read(i, FILENAME, (Uint8*)saveGames);
+        j = BUP_Read(i, FILENAME, (uint8*)saveGames);
         if (j == BUP_BROKEN)
         {
             if (dlg_runYesNo(getText(LB_BUP, 12), 200))
@@ -116,9 +116,9 @@ static int loadGameFile(void)
     return -1;
 }
 
-static int saveGameFile(int device, int savingGame)
+static sint32 saveGameFile(sint32 device, sint32 savingGame)
 {
-    int ret;
+    sint32 ret;
     BupDir writetb;
     BupDate datetb;
     assert(device >= 0);
@@ -126,7 +126,7 @@ static int saveGameFile(int device, int savingGame)
     strcpy((char*)writetb.comment, "save games");
     writetb.language = BUP_ENGLISH;
     {
-        int year, month, day, hour, min;
+        sint32 year, month, day, hour, min;
         getDateTime(&year, &month, &day, &hour, &min);
         datetb.year = year;
         datetb.month = month;
@@ -150,14 +150,14 @@ static int saveGameFile(int device, int savingGame)
 #endif
 
     resetDisable();
-    ret = BUP_Write(device, &writetb, (Uint8*)saveGames, OFF);
+    ret = BUP_Write(device, &writetb, (uint8*)saveGames, OFF);
     resetEnable();
     return ret;
 }
 
-int bup_canLoadGame(void)
+sint32 bup_canLoadGame(void)
 {
-    int i;
+    sint32 i;
     if (saveDevice < 0)
         return 0;
     for (i = 0; i < NMSAVEGAMES; i++)
@@ -166,12 +166,12 @@ int bup_canLoadGame(void)
     return 0;
 }
 
-int bup_canSaveGame(void)
+sint32 bup_canSaveGame(void)
 {
     return saveDevice >= 0;
 }
 
-int bup_loadGame(int slot)
+sint32 bup_loadGame(sint32 slot)
 {
     assert(slot >= 0 && slot < NMSAVEGAMES);
     currentState = saveGames[slot].state;
@@ -186,7 +186,7 @@ void bup_saveGame(void)
     assert(openGame >= 0);
     loadBUP();
     {
-        int year, month, day, hour, min;
+        sint32 year, month, day, hour, min;
         getDateTime(&year, &month, &day, &hour, &min);
         currentState.year = year;
         currentState.month = month;
@@ -202,7 +202,7 @@ void bup_saveGame(void)
 
 void bup_initCurrentGame(void)
 {
-    int i;
+    sint32 i;
     /* initialize game state variables */
     currentState.inventory = INV_SWORD;
     currentState.gameFlags = /*GAMEFLAG_JUSTTELEPORTED*/ GAMEFLAG_FIRSTLEVEL;
@@ -217,7 +217,7 @@ void bup_initCurrentGame(void)
     currentState.levFlags[3] = LEVFLAG_CANENTER;
     currentState.desiredWeapon = 0;
     {
-        int year, month, day, hour, min;
+        sint32 year, month, day, hour, min;
         getDateTime(&year, &month, &day, &hour, &min);
         currentState.year = year;
         currentState.month = month;
@@ -228,7 +228,7 @@ void bup_initCurrentGame(void)
     }
 }
 
-int bup_newGame(int slot)
+sint32 bup_newGame(sint32 slot)
 {
     assert(slot >= 0 && slot < NMSAVEGAMES);
     bup_initCurrentGame();
@@ -253,8 +253,8 @@ void bup_initialProc(void)
 {
 #ifdef TODO // save game
     BupStat sttb;
-    int i;
-    int device; /* = backup device of save file or -1 if not found */
+    sint32 i;
+    sint32 device; /* = backup device of save file or -1 if not found */
 
     loadBUP();
     /* check to make sure all backup devices are formatted */

@@ -19,35 +19,35 @@ enum Class
 //#define DUMP_PICS
 
 #ifdef DUMP_PICS
-void save_tga(Sint32 id, Uint8 *data, Uint16 *pal16, Sint32 pic_class);
+void save_tga(sint32 id, uint8 *data, uint16 *pal16, sint32 pic_class);
 #endif
 
-int initPicSystem(int _picNmBase, int* classSizes);
+sint32 initPicSystem(sint32 _picNmBase, sint32* classSizes);
 
-int addPic(enum Class bpp, void* data, void* pal, int lock);
+sint32 addPic(enum Class bpp, void* data, void* pal, sint32 lock);
 /* if a pic is locked, its memory may be free'd after this call */
 
-int mapPic(int picNm);
+sint32 mapPic(sint32 picNm);
 
-void pic_nextFrame(int* swaps, int* used);
+void pic_nextFrame(sint32* swaps, sint32* used);
 
-void loadTiles(int fd);
-int loadWeaponTiles(int fd);
+void loadTiles(sint32 fd);
+sint32 loadWeaponTiles(sint32 fd);
 
-int getPicClass(int p);
-void displayVDP2Pic(int picNm, int xo, int yo);
+sint32 getPicClass(sint32 p);
+void displayVDP2Pic(sint32 picNm, sint32 xo, sint32 yo);
 void updateVDP2Pic(void);
 void dontDisplayVDP2Pic(void);
 void delay_dontDisplayVDP2Pic(void);
 void resetPics(void);
 
-void setDrawModeBit(int class, int bit, int onOff);
+void setDrawModeBit(sint32 class, sint32 bit, sint32 onOff);
 
 void markAnimTiles(void);
 void advanceWallAnimations(void);
 
-int loadPicSetAsPics(int fd, int class);
+sint32 loadPicSetAsPics(sint32 fd, sint32 class);
 
-int createMippedPics(void);
+sint32 createMippedPics(void);
 
 #endif

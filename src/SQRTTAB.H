@@ -1,4 +1,4 @@
-static unsigned int sqrtTable[SQRTTABLESIZE] = {
+static uint32 sqrtTable[SQRTTABLESIZE] = {
     0U,
     134217728U,
     189812531U,

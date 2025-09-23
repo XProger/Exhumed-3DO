@@ -19,9 +19,9 @@
 
 void startSlave(void* slaveMain);
 
-static int progressTotalSize, progressTotalRead;
-static int progressOn = 0; /* 1 if on, 2 if swirly */
-static Uint32 progressNextUpdate;
+static sint32 progressTotalSize, progressTotalRead;
+static sint32 progressOn = 0; /* 1 if on, 2 if swirly */
+static uint32 progressNextUpdate;
 
 #ifdef PSYQ
 #define PSYQBASEPATH "c:\\sr3\\data\\"
@@ -31,10 +31,10 @@ void psyq_init(void)
     PCinit();
 }
 
-int psyq_open(char* filename)
+sint32 psyq_open(char* filename)
 {
     char buff[160];
-    int retVal;
+    sint32 retVal;
     strcpy(buff, PSYQBASEPATH);
     strcat(buff, filename);
     retVal = PCopen(buff, 0, 0);
@@ -42,9 +42,9 @@ int psyq_open(char* filename)
     return retVal;
 }
 
-int psyq_read(int fd, char* buf, int n)
+sint32 psyq_read(sint32 fd, sint8* buf, sint32 n)
 {
-    int v;
+    sint32 v;
     if (n == 0)
         return 0;
     v = PCread(fd, buf, n);
@@ -52,21 +52,21 @@ int psyq_read(int fd, char* buf, int n)
     return v;
 }
 
-int psyq_getFileSize(int fd)
+sint32 psyq_getFileSize(sint32 fd)
 {
-    int size = PClseek(fd, 0, 2);
+    sint32 size = PClseek(fd, 0, 2);
     PClseek(fd, 0, 0);
     return size;
 }
 
-int psyq_close(int fd)
+sint32 psyq_close(sint32 fd)
 {
     return PCclose(fd);
 }
 
 #endif
 
-void errorFunc(void* null, Sint32 errorCode)
+void errorFunc(void* null, sint32 errorCode)
 {
     if (errorCode == GFS_ERR_CDOPEN)
         SYS_EXECDMP();
@@ -75,9 +75,9 @@ void errorFunc(void* null, Sint32 errorCode)
 
 static void whackCD(void)
 {
-    int ret;
+    sint32 ret;
     CdcStat stat;
-    int startTime;
+    sint32 startTime;
     CdcPos pos;
     CDC_POS_PTYPE(&pos) = CDC_PTYPE_NOCHG;
     ret = CDC_CdSeek(&pos);
@@ -99,19 +99,19 @@ static void whackCD(void)
 
 #define OPENMAX 1
 #define DIRMAX 100
-static int cdWork[(GFS_WORK_SIZE(OPENMAX) + 3) / 4];
+static sint32 cdWork[(GFS_WORK_SIZE(OPENMAX) + 3) / 4];
 static GfsDirName dir[DIRMAX];
 static GfsDirTbl dirtbl;
 
-static char sectorBuff[2048];
-static char* sectorBuffPos;
+static sint8 sectorBuff[2048];
+static sint8* sectorBuffPos;
 static FILE* openCDFile; /* only one cd file may be open at a time */
 #define CDHANDLE 8000
 
 #ifdef FLASH
-static void changeDir(char* dirNm)
+static void changeDir(sint8* dirNm)
 {
-    Sint32 fid;
+    sint32 fid;
     fid = GFS_NameToId(dirNm);
     GFS_DIRTBL_TYPE(&dirtbl) = GFS_DIR_NAME;
     GFS_DIRTBL_NDIR(&dirtbl) = DIRMAX;
@@ -124,7 +124,7 @@ static void changeDir(char* dirNm)
 void fs_init(void)
 {
 #ifdef TODO // file system
-    int tryCount, ret;
+    sint32 tryCount, ret;
     progressOn = 0;
 #ifdef PSYQ
     psyq_init();
@@ -158,7 +158,7 @@ void fs_init(void)
 #endif
 }
 
-int fs_open(char* filename)
+sint32 fs_open(sint8* filename)
 {
     if (filename[0] == '+')
         filename++;
@@ -180,7 +180,7 @@ int fs_open(char* filename)
     return CDHANDLE;
 }
 
-void fs_close(int handle)
+void fs_close(sint32 handle)
 {
     assert(handle == CDHANDLE);
     assert(openCDFile);
@@ -188,9 +188,9 @@ void fs_close(int handle)
     openCDFile = NULL;
 }
 
-int fs_getFileSize(int fd)
+sint32 fs_getFileSize(sint32 fd)
 {
-    Sint32 pos, size;
+    sint32 pos, size;
     assert(fd == CDHANDLE);
     assert(openCDFile);
     pos = ftell(openCDFile);
@@ -204,7 +204,7 @@ int fs_getFileSize(int fd)
 #endif
 }
 
-void fs_read(int fd, char* buf, int n)
+void fs_read(sint32 fd, sint8* buf, sint32 n)
 {
     assert(fd == CDHANDLE);
     assert(openCDFile);
@@ -225,7 +225,7 @@ void fs_read(int fd, char* buf, int n)
                 if (progressOn == 1 && vtimer > progressNextUpdate)
                 {
                     XyInt parms[4];
-                    int p;
+                    sint32 p;
                     progressNextUpdate = vtimer + 2;
                     EZ_openCommand();
                     EZ_localCoord(320 / 2, 240 / 2);
@@ -292,7 +292,7 @@ void playWholeCD(void)
     CDC_CdPlay(&cp);
 }
 
-void playCDTrack(int track, int repeat)
+void playCDTrack(sint32 track, sint32 repeat)
 {
     CdcPly cp;
 #ifdef FLASH
@@ -308,21 +308,21 @@ void playCDTrack(int track, int repeat)
     CDC_CdPlay(&cp);
 }
 
-int getTrackStartFAD(int track)
+sint32 getTrackStartFAD(sint32 track)
 {
-    Uint32 toc[102];
+    uint32 toc[102];
     CDC_TgetToc(toc);
     return (toc[track - 1] & 0x00ffffff);
 }
 
-int getCurrentFAD(void)
+sint32 getCurrentFAD(void)
 {
     CdcStat ret;
     CDC_GetPeriStat(&ret);
     return CDC_STAT_FAD(&ret);
 }
 
-int getCurrentStatus(void)
+sint32 getCurrentStatus(void)
 {
     CdcStat ret;
     CDC_GetPeriStat(&ret);
@@ -344,7 +344,7 @@ void fs_execOne(void)
     GFS_NwExecOne(openCDFile);
 }
 
-void fs_startProgress(int swirly)
+void fs_startProgress(sint32 swirly)
 {
     progressTotalSize = 1; /* prevent div by 0 */
     progressTotalRead = 0;
@@ -352,11 +352,11 @@ void fs_startProgress(int swirly)
     progressNextUpdate = vtimer;
 }
 
-void fs_addToProgress(char* filename)
+void fs_addToProgress(sint8* filename)
 {
-    int id;
+    sint32 id;
     GfsHn hn;
-    Sint32 nsct;
+    sint32 nsct;
 #ifdef PSYQ
     if (filename[0] == '+')
         return;
@@ -376,7 +376,7 @@ void fs_closeProgress(void)
     progressOn = 0;
 }
 
-void executeLink(void* data, int size)
+void executeLink(void* data, sint32 size)
 {
 #ifdef TODO
 #endif
@@ -384,10 +384,10 @@ void executeLink(void* data, int size)
 
 void link(char* filename)
 {
-    char* data;
-    void (*code)(void* data, int size);
-    int fd;
-    int size;
+    sint8* data;
+    void (*code)(void* data, sint32 size);
+    sint32 fd;
+    sint32 size;
     mem_init();
     fd = fs_open(filename);
     size = fs_getFileSize(fd);

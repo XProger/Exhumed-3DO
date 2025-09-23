@@ -8,27 +8,27 @@ extern PlayerObject* player;
 #endif
 
 extern Sprite* camera;
-extern int quitRequest;
-extern int invisibleCounter;
-extern int weaponPowerUpCounter;
+extern sint32 quitRequest;
+extern sint32 invisibleCounter;
+extern sint32 weaponPowerUpCounter;
 
-void playerHurt(int hpLost);
-void playerLongHurt(int lava);
-void playerDYChange(Fixed32 dvel);
+void playerHurt(sint32 hpLost);
+void playerLongHurt(sint32 lava);
+void playerDYChange(fix32 dvel);
 /* returns 1 if object accepted, 0 otherwise */
-int playerGetObject(int objectType);
-void playerGetCamel(int toLevel);
-void playerHitTeleport(int toLevel);
-void switchPlayerMotion(int state);
-void setEarthQuake(int richter);
-void stunPlayer(int ticks);
-void changeColorOffset(int r, int g, int b, int rate);
-void addColorOffset(int r, int g, int b);
+sint32 playerGetObject(sint32 objectType);
+void playerGetCamel(sint32 toLevel);
+void playerHitTeleport(sint32 toLevel);
+void switchPlayerMotion(sint32 state);
+void setEarthQuake(sint32 richter);
+void stunPlayer(sint32 ticks);
+void changeColorOffset(sint32 r, sint32 g, sint32 b, sint32 rate);
+void addColorOffset(sint32 r, sint32 g, sint32 b);
 void redrawBowlDots(void);
-int getKeyMask(void);
+sint32 getKeyMask(void);
 void changeMessage(char* message);
 void playerGotEntombedWithRamses(void);
-int getEarthQuake(void);
+sint32 getEarthQuake(void);
 
 extern Orient playerAngle;
 #endif

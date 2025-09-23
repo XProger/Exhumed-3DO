@@ -33,10 +33,10 @@
 
 typedef struct
 {
-    int from, to, size;
+    sint32 from, to, size;
 } QType;
 QType dmaQ[DMAQSIZE];
-static volatile int qHead, qTail;
+static sint32 qHead, qTail;
 
 void initDMA(void)
 {
@@ -44,11 +44,11 @@ void initDMA(void)
     qTail = 0;
 }
 
-void qDMA(void* from, void* to, int size)
+void qDMA(void* from, void* to, sint32 size)
 {
     DISABLE;
-    dmaQ[qHead].from = (int)from;
-    dmaQ[qHead].to = (int)to;
+    dmaQ[qHead].from = (sint32)from;
+    dmaQ[qHead].to = (sint32)to;
     dmaQ[qHead].size = size;
     qHead = (qHead + 1) & (DMAQSIZE - 1);
     assert(qHead != qTail);
@@ -82,7 +82,7 @@ void startNextDma(void)
     qTail = (qTail + 1) & (DMAQSIZE - 1);
 }
 
-void dmaMemCpy(void* from, void* to, int size)
+void dmaMemCpy(void* from, void* to, sint32 size)
 {
     if (!size)
         return;
@@ -108,7 +108,7 @@ void dmaMemCpy(void* from, void* to, int size)
     }
 }
 
-int dmaActive(void)
+sint32 dmaActive(void)
 {
 #if DISABLEDMA
     return 0;

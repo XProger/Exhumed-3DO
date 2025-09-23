@@ -46,28 +46,28 @@ enum
 #define VRAMSTART (VRAM_ADDR)
 DlgItem dlgItem[MAXDLGSIZE];
 
-unsigned short lastUsedSelButton;
-static int nmItems;
-static int currentButton;
+uint16 lastUsedSelButton;
+static sint32 nmItems;
+static sint32 currentButton;
 
 #define MAXNMPICS 48
 
-static unsigned short* picPals[MAXNMPICS];
-static unsigned int* picDatas[MAXNMPICS];
-static int picVram[MAXNMPICS];
-static int vramUsed;
+static uint16* picPals[MAXNMPICS];
+static uint32* picDatas[MAXNMPICS];
+static sint32 picVram[MAXNMPICS];
+static sint32 vramUsed;
 
-static int texHeight, texWidth, texVramPos, texX, texY;
-static int fontHeight;
+static sint32 texHeight, texWidth, texVramPos, texX, texY;
+static sint32 fontHeight;
 
-void dlg_selectButton(int b)
+void dlg_selectButton(sint32 b)
 {
     currentButton = b;
 }
 
 void dlg_centerStuff(void)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < nmItems; i++)
     {
         switch (dlgItem[i].type)
@@ -93,18 +93,18 @@ void initOverPics(void)
 #endif
 }
 
-int decompressOverPic(int picNm, unsigned short* outData)
+sint32 decompressOverPic(sint32 picNm, uint16* outData)
 {
-    unsigned char* picData = (unsigned char*)picDatas[picNm];
-    unsigned short* pallete = picPals[picNm];
-    int xsize, ysize;
-    xsize = *(int*)picData;
-    ysize = *(((int*)picData) + 1);
+    uint8* picData = (uint8*)picDatas[picNm];
+    uint16* pallete = picPals[picNm];
+    sint32 xsize, ysize;
+    xsize = *(sint32*)picData;
+    ysize = *(((sint32*)picData) + 1);
     picData += 8;
     {
-        register int outSize = 0, i;
-        register int nmPixels = xsize * ysize;
-        register unsigned char* inPos = picData;
+        register sint32 outSize = 0, i;
+        register sint32 nmPixels = xsize * ysize;
+        register uint8* inPos = picData;
         while (outSize < nmPixels)
         { /* decode blank space */
             i = *(inPos++);
@@ -118,7 +118,7 @@ int decompressOverPic(int picNm, unsigned short* outData)
             i = *(inPos++);
             for (; i; i--)
             {
-                *outData = pallete[(int)*(inPos++)];
+                *outData = pallete[(sint32)*(inPos++)];
                 outSize++;
                 outData++;
             }
@@ -127,31 +127,31 @@ int decompressOverPic(int picNm, unsigned short* outData)
     return xsize * ysize * 2;
 }
 
-void loadOverPic(int picNm)
+void loadOverPic(sint32 picNm)
 {
-    Sint32 *pic = (Sint32*)(VRAMSTART + vramUsed);
+    sint32 *pic = (sint32*)(VRAMSTART + vramUsed);
     pic[0] = FS_INT(pic + 0);
     pic[1] = FS_INT(pic + 1);
 
     picVram[picNm] = vramUsed;
-    vramUsed += decompressOverPic(picNm, (unsigned short*)pic);
+    vramUsed += decompressOverPic(picNm, (uint16*)pic);
     assert(vramUsed < 512 * 1024);
 }
 
 typedef struct
 {
-    int x1, y1, x2, y2, width, type;
+    sint32 x1, y1, x2, y2, width, type;
 } BevelData;
 
-int loadOverBase(unsigned char* picData, unsigned short* pallete, int xsize, int ysize, BevelData* bevels, int nmBevels)
+sint32 loadOverBase(uint8* picData, uint16* pallete, sint32 xsize, sint32 ysize, BevelData* bevels, sint32 nmBevels)
 {
-    int txstart, tx, ty, x1, y1, width, height;
-    int vramBase = vramUsed;
-    extern unsigned short doorwayCache;
-    unsigned short* tempData = &doorwayCache;
+    sint32 txstart, tx, ty, x1, y1, width, height;
+    sint32 vramBase = vramUsed;
+    extern uint16 doorwayCache;
+    uint16* tempData = &doorwayCache;
     checkStack();
-    width = *(int*)picData;
-    height = *(((int*)picData) + 1);
+    width = *(sint32*)picData;
+    height = *(((sint32*)picData) + 1);
     assert(width * height <= 1024 * 4);
     decompressOverPic(0, tempData);
     txstart = MTH_GetRand() % (width - 1);
@@ -163,10 +163,10 @@ int loadOverBase(unsigned char* picData, unsigned short* pallete, int xsize, int
         tx = txstart;
         for (x1 = 0; x1 < xsize; x1++)
         {
-            int bevel = 0;
-            int lineSide[4];
-            int b;
-            unsigned short c;
+            sint32 bevel = 0;
+            sint32 lineSide[4];
+            sint32 b;
+            uint16 c;
             for (b = 0; b < nmBevels; b++)
             {
                 if (x1 < bevels[b].x1 || x1 >= bevels[b].x2 || y1 < bevels[b].y1 || y1 >= bevels[b].y2)
@@ -200,7 +200,7 @@ int loadOverBase(unsigned char* picData, unsigned short* pallete, int xsize, int
             /* pallete[picData[tx+ty*width+8]]; */
             if (bevel)
             {
-                int r, g, b, off;
+                sint32 r, g, b, off;
 
                 r = c & 0x1f;
                 g = (c >> 5) & 0x1f;
@@ -247,9 +247,9 @@ int loadOverBase(unsigned char* picData, unsigned short* pallete, int xsize, int
     return vramBase;
 }
 
-void plotOverPicW(int x, int y, int w, int h, int vram, int drawWord)
+void plotOverPicW(sint32 x, sint32 y, sint32 w, sint32 h, sint32 vram, sint32 drawWord)
 {
-    unsigned short cmd[16];
+    uint16 cmd[16];
     cmd[0] = 0;
     cmd[1] = 0;
     cmd[2] = drawWord;
@@ -271,19 +271,19 @@ void plotOverPicW(int x, int y, int w, int h, int vram, int drawWord)
     EZ_cmd((struct cmdTable*)cmd);
 }
 
-void plotOverPic(int x, int y, int picNm)
+void plotOverPic(sint32 x, sint32 y, sint32 picNm)
 {
-    plotOverPicW(x, y, *(int*)picDatas[picNm], *(((int*)picDatas[picNm]) + 1), picVram[picNm], COLOR_5 | ECD_DISABLE);
+    plotOverPicW(x, y, *(sint32*)picDatas[picNm], *(((sint32*)picDatas[picNm]) + 1), picVram[picNm], COLOR_5 | ECD_DISABLE);
 }
 
-void plotOverPicShadow(int x, int y, int picNm)
+void plotOverPicShadow(sint32 x, sint32 y, sint32 picNm)
 {
-    plotOverPicW(x, y, *(int*)picDatas[picNm], *(((int*)picDatas[picNm]) + 1), picVram[picNm], COLOR_5 | ECD_DISABLE | COMPO_SHADOW);
+    plotOverPicW(x, y, *(sint32*)picDatas[picNm], *(((sint32*)picDatas[picNm]) + 1), picVram[picNm], COLOR_5 | ECD_DISABLE | COMPO_SHADOW);
 }
 
-void plotOverPicHarf(int x, int y, int picNm)
+void plotOverPicHarf(sint32 x, sint32 y, sint32 picNm)
 {
-    plotOverPicW(x, y, *(int*)picDatas[picNm], *(((int*)picDatas[picNm]) + 1), picVram[picNm], COLOR_5 | ECD_DISABLE | COMPO_TRANS);
+    plotOverPicW(x, y, *(sint32*)picDatas[picNm], *(((sint32*)picDatas[picNm]) + 1), picVram[picNm], COLOR_5 | ECD_DISABLE | COMPO_TRANS);
 }
 
 void dlg_clear(void)
@@ -294,23 +294,23 @@ void dlg_clear(void)
     fontHeight = getFontHeight(DLGFONT);
 }
 
-void dlg_init(int fd)
+void dlg_init(sint32 fd)
 {
     loadPicSet(fd, picPals, picDatas, MAXNMPICS);
     mem_lock();
     dlg_clear();
 }
 
-void dlg_addBase(int x, int y, int w, int h, BevelData* bevel, int nmBevels)
+void dlg_addBase(sint32 x, sint32 y, sint32 w, sint32 h, BevelData* bevel, sint32 nmBevels)
 {
     texX = x;
     texY = y;
     texWidth = w;
     texHeight = h;
-    texVramPos = loadOverBase((char*)(picDatas[0]), picPals[0], w, h, bevel, nmBevels);
+    texVramPos = loadOverBase((sint8*)(picDatas[0]), picPals[0], w, h, bevel, nmBevels);
 }
 
-void dlg_addRect(int x, int y, int w, int h, int color)
+void dlg_addRect(sint32 x, sint32 y, sint32 w, sint32 h, sint32 color)
 {
     dlgItem[nmItems].xp = F(x);
     dlgItem[nmItems].yp = F(y);
@@ -322,7 +322,7 @@ void dlg_addRect(int x, int y, int w, int h, int color)
     assert(nmItems < MAXDLGSIZE);
 }
 
-void dlg_addGameButton(int x, int y, int gameNm)
+void dlg_addGameButton(sint32 x, sint32 y, sint32 gameNm)
 {
     dlgItem[nmItems].xp = F(x);
     dlgItem[nmItems].yp = F(y);
@@ -335,7 +335,7 @@ void dlg_addGameButton(int x, int y, int gameNm)
     assert(nmItems < MAXDLGSIZE);
 }
 
-void dlg_addFontText(int x, int y, int w, int font, char* text)
+void dlg_addFontText(sint32 x, sint32 y, sint32 w, sint32 font, char* text)
 {
     dlgItem[nmItems].xp = F(x);
     dlgItem[nmItems].yp = F(y);
@@ -347,7 +347,7 @@ void dlg_addFontText(int x, int y, int w, int font, char* text)
     assert(nmItems < MAXDLGSIZE);
 }
 
-void dlg_addFontString(int x, int y, int font, char* text)
+void dlg_addFontString(sint32 x, sint32 y, sint32 font, char* text)
 {
     dlgItem[nmItems].xp = F(x);
     dlgItem[nmItems].yp = F(y);
@@ -358,7 +358,7 @@ void dlg_addFontString(int x, int y, int font, char* text)
     assert(nmItems < MAXDLGSIZE);
 }
 
-void dlg_addText(int x, int y, int w, char* text)
+void dlg_addText(sint32 x, sint32 y, sint32 w, char* text)
 {
     dlgItem[nmItems].xp = F(x);
     dlgItem[nmItems].yp = F(y);
@@ -369,12 +369,12 @@ void dlg_addText(int x, int y, int w, char* text)
     assert(nmItems < MAXDLGSIZE);
 }
 
-void dlg_addCenteredText(int x, int y, int w, char* text)
+void dlg_addCenteredText(sint32 x, sint32 y, sint32 w, char* text)
 {
     dlg_addText(x + (w - getStringWidth(DLGFONT, text)) / 2, y, w, text);
 }
 
-void dlg_addButton(int pressCode, int x, int y, int w, int h, char* text)
+void dlg_addButton(sint32 pressCode, sint32 x, sint32 y, sint32 w, sint32 h, char* text)
 {
     dlgItem[nmItems].xp = F(x);
     dlgItem[nmItems].yp = F(y);
@@ -391,7 +391,7 @@ void dlg_addButton(int pressCode, int x, int y, int w, int h, char* text)
 }
 
 #ifdef JAPAN
-void dlg_addBigWavyJapaneseButton(int pressCode, int x, int y, char* text)
+void dlg_addBigWavyJapaneseButton(sint32 pressCode, sint32 x, sint32 y, char* text)
 {
     dlgItem[nmItems].xp = F(x);
     dlgItem[nmItems].yp = F(y);
@@ -408,7 +408,7 @@ void dlg_addBigWavyJapaneseButton(int pressCode, int x, int y, char* text)
 }
 #endif
 
-void dlg_addBigWavyButton(int pressCode, int x, int y, char* text)
+void dlg_addBigWavyButton(sint32 pressCode, sint32 x, sint32 y, char* text)
 {
     dlgItem[nmItems].xp = F(x);
     dlgItem[nmItems].yp = F(y);
@@ -431,9 +431,9 @@ enum drawMode
     DM_SHADOW,
     DM_NODRAW
 };
-static int drawCenteredText(int x, int y, int width, char* text, int drawMode, int dlgFont)
+static sint32 drawCenteredText(sint32 x, sint32 y, sint32 width, char* text, sint32 drawMode, sint32 dlgFont)
 {
-    int x1, y1, lineWidth, j;
+    sint32 x1, y1, lineWidth, j;
     char *lstart, *lend, *p, *c;
     lstart = text;
     lend = text - 1;
@@ -498,10 +498,10 @@ static int drawCenteredText(int x, int y, int width, char* text, int drawMode, i
     }
 }
 
-static void drawText(int x, int y, int width, char* text, int shadow, int dlgFont)
+static void drawText(sint32 x, sint32 y, sint32 width, char* text, sint32 shadow, sint32 dlgFont)
 {
-    int rside = x + width;
-    int x1, y1, j;
+    sint32 rside = x + width;
+    sint32 x1, y1, j;
     char *w, *p, *chr;
     /* w points to beginning of next word */
     x1 = x;
@@ -538,9 +538,9 @@ static void drawText(int x, int y, int width, char* text, int shadow, int dlgFon
     }
 }
 
-static void dlg_draw(int currentButton, int pressed)
+static void dlg_draw(sint32 currentButton, sint32 pressed)
 {
-    int i;
+    sint32 i;
     XyInt p[5];
     for (i = 0; i < nmItems; i++)
     {
@@ -548,7 +548,7 @@ static void dlg_draw(int currentButton, int pressed)
         {
 #if 0
       case IT_PICTURE:
-	    {unsigned short cmd[16];
+	    {uint16 cmd[16];
 	     cmd[0]=0;
 	     cmd[1]=0;
 	     cmd[2]=COLOR_5|ECD_DISABLE|SPD_DISABLE;
@@ -567,8 +567,8 @@ static void dlg_draw(int currentButton, int pressed)
 #endif
             case IT_RECT:
             {
-                int x = f(dlgItem[i].xp);
-                int y = f(dlgItem[i].yp);
+                sint32 x = f(dlgItem[i].xp);
+                sint32 y = f(dlgItem[i].yp);
                 p[0].x = x;
                 p[0].y = y;
                 p[1].x = x + dlgItem[i].w;
@@ -582,9 +582,9 @@ static void dlg_draw(int currentButton, int pressed)
             }
             case IT_BUTTON:
             {
-                int drawWord = COMPO_REP | ECD_DISABLE | SPD_DISABLE;
-                int x = f(dlgItem[i].xp);
-                int y = f(dlgItem[i].yp);
+                sint32 drawWord = COMPO_REP | ECD_DISABLE | SPD_DISABLE;
+                sint32 x = f(dlgItem[i].xp);
+                sint32 y = f(dlgItem[i].yp);
                 if (i != currentButton)
                     drawWord |= COMPO_HARF;
                 p[0].x = x;
@@ -636,8 +636,8 @@ static void dlg_draw(int currentButton, int pressed)
             }
             case IT_TEXT:
             {
-                int x = f(dlgItem[i].xp);
-                int y = f(dlgItem[i].yp);
+                sint32 x = f(dlgItem[i].xp);
+                sint32 y = f(dlgItem[i].yp);
                 drawCenteredText(x + 1, y + 1, dlgItem[i].w, dlgItem[i].text, DM_SHADOW, DLGFONT);
                 drawCenteredText(x + 1, y + 1, dlgItem[i].w, dlgItem[i].text, DM_SHADOW, DLGFONT);
                 drawCenteredText(x, y, dlgItem[i].w, dlgItem[i].text, DM_NORM, DLGFONT);
@@ -645,8 +645,8 @@ static void dlg_draw(int currentButton, int pressed)
             }
             case IT_FONTTEXT:
             {
-                int x = f(dlgItem[i].xp);
-                int y = f(dlgItem[i].yp);
+                sint32 x = f(dlgItem[i].xp);
+                sint32 y = f(dlgItem[i].yp);
                 drawText(x + 1, y + 1, dlgItem[i].w, dlgItem[i].text, 1, dlgItem[i].color);
                 drawText(x + 1, y + 1, dlgItem[i].w, dlgItem[i].text, 1, dlgItem[i].color);
                 drawText(x, y, dlgItem[i].w, dlgItem[i].text, 0, dlgItem[i].color);
@@ -654,17 +654,17 @@ static void dlg_draw(int currentButton, int pressed)
             }
             case IT_FONTSTRING:
             {
-                int x = f(dlgItem[i].xp);
-                int y = f(dlgItem[i].yp);
+                sint32 x = f(dlgItem[i].xp);
+                sint32 y = f(dlgItem[i].yp);
                 drawString(x, y, dlgItem[i].color, dlgItem[i].text);
                 break;
             }
             case IT_WAVYBUTTON:
             {
-                static Fixed32 waveCycle = 0;
+                static fix32 waveCycle = 0;
                 if (i == currentButton)
                 {
-                    int color = MTH_Sin(waveCycle) >> 12;
+                    sint32 color = MTH_Sin(waveCycle) >> 12;
                     waveCycle += F(8);
                     if (waveCycle > F(180))
                         waveCycle -= F(360);
@@ -677,10 +677,10 @@ static void dlg_draw(int currentButton, int pressed)
 #ifdef JAPAN
             case IT_WAVYJBUTTON:
             {
-                static Fixed32 waveCycle = 0;
+                static fix32 waveCycle = 0;
                 if (i == currentButton)
                 {
-                    int color = MTH_Sin(waveCycle) >> 12;
+                    sint32 color = MTH_Sin(waveCycle) >> 12;
                     waveCycle += F(8);
                     if (waveCycle > F(180))
                         waveCycle -= F(360);
@@ -694,9 +694,9 @@ static void dlg_draw(int currentButton, int pressed)
             case IT_GAMEBUTTON:
             {
                 char buff1[80], buff2[80];
-                int a;
+                sint32 a;
                 XyInt pos;
-                static Fixed32 waveCycle = 0;
+                static fix32 waveCycle = 0;
                 SaveState* stat;
                 stat = bup_getGameData(dlgItem[i].color);
                 assert(stat);
@@ -709,7 +709,7 @@ static void dlg_draw(int currentButton, int pressed)
 #endif
                 if (i == currentButton)
                 {
-                    int color = MTH_Sin(waveCycle) >> 12;
+                    sint32 color = MTH_Sin(waveCycle) >> 12;
 #if 1
                     XyInt ppos[4];
                     ppos[0].x = f(dlgItem[i].xp) - 4;
@@ -736,8 +736,8 @@ static void dlg_draw(int currentButton, int pressed)
                 pos.y = f(dlgItem[i].yp);
                 pos.x = f(dlgItem[i].xp) + 135;
                 {
-                    static char xw[6] = { 40, 20, 15, 40, 20, 20 };
-                    static char yo[6] = { 2, 0, 0, 0, 0, 0 };
+                    static sint8 xw[6] = { 40, 20, 15, 40, 20, 20 };
+                    static sint8 yo[6] = { 2, 0, 0, 0, 0, 0 };
 
                     for (a = 0; a < 6; a++)
                     {
@@ -754,12 +754,12 @@ static void dlg_draw(int currentButton, int pressed)
     }
 }
 
-static int moveSel(int cb, int dx, int dy, int movement)
+static sint32 moveSel(sint32 cb, sint32 dx, sint32 dy, sint32 movement)
 {
-    int nowx, nowy;
-    int d, i;
-    int bestButton, bestDist;
-    int ccx, ccy, icx, icy;
+    sint32 nowx, nowy;
+    sint32 d, i;
+    sint32 bestButton, bestDist;
+    sint32 ccx, ccy, icx, icy;
     nowx = f(dlgItem[cb].xp);
     nowy = f(dlgItem[cb].yp);
     bestButton = -1;
@@ -812,14 +812,14 @@ static int moveSel(int cb, int dx, int dy, int movement)
 
 #define SELKEYS (PER_DGT_A | PER_DGT_B | PER_DGT_C | PER_DGT_X | PER_DGT_Y | PER_DGT_Z | PER_DGT_S | PER_DGT_TL | PER_DGT_TR)
 
-int dlg_run(int selSound, int pushSound, int movement)
+sint32 dlg_run(sint32 selSound, sint32 pushSound, sint32 movement)
 {
-    int data, lastData, changeData, i;
+    sint32 data, lastData, changeData, i;
 #if 0
- int first=2;
+ sint32 first=2;
 #endif
-    int pressed = 0;
-    int returnTime = 0;
+    sint32 pressed = 0;
+    sint32 returnTime = 0;
 
     fontHeight = getFontHeight(DLGFONT);
     data = lastInputSample;
@@ -906,7 +906,7 @@ int dlg_run(int selSound, int pushSound, int movement)
     }
 }
 
-void dlg_flashMessage(char* message1, char* message2, int w, int h)
+void dlg_flashMessage(char* message1, char* message2, sint32 w, sint32 h)
 {
     BevelData bevel;
     w = (w + 7) & (~7);
@@ -927,11 +927,11 @@ void dlg_flashMessage(char* message1, char* message2, int w, int h)
 #endif
 }
 
-void dlg_runMessage(char* message, int w)
+void dlg_runMessage(char* message, sint32 w)
 {
-    int bw = 80;
-    int bh = 20;
-    int h, textHeight;
+    sint32 bw = 80;
+    sint32 bh = 20;
+    sint32 h, textHeight;
     static BevelData bevel[2] = { { 0, 0, 0, 0, 5, 0 }, { 9, 9, 0, 0, 2, 1 } };
     dlg_clear();
     w = (w + 7) & (~7);
@@ -956,13 +956,13 @@ void dlg_runMessage(char* message, int w)
 #endif
 }
 
-int dlg_runYesNo(char* message, int w)
+sint32 dlg_runYesNo(char* message, sint32 w)
 {
-    int bw = 80;
-    int bh = 20;
-    int space = 20;
-    int textHeight;
-    int h, ret;
+    sint32 bw = 80;
+    sint32 bh = 20;
+    sint32 space = 20;
+    sint32 textHeight;
+    sint32 h, ret;
     static BevelData bevel[2] = { { 0, 0, 0, 0, 5, 0 }, { 9, 9, 0, 0, 2, 1 } };
 
     dlg_clear();
@@ -994,7 +994,7 @@ int dlg_runYesNo(char* message, int w)
     return ret;
 }
 
-int runTravelQuestion(char* destination)
+sint32 runTravelQuestion(char* destination)
 {
     char buff[160];
     POKE_W(SCL_VDP2_VRAM + 0x180114, -255); /* reset color offsets */
@@ -1034,34 +1034,34 @@ static BevelData inventoryBevel[] = { { WINX, WINY, WINX + 115, WINY + 74, 3, 1 
 #endif
 #define NMINVBUTTONS 5
 
-/* static int inventoryNum[NMINVBUTTONS]={2,8,6,0,1};*/
-static int inventoryPicStart[NMINVBUTTONS] = { 29, 14, 22, 31, 40 };
-static int textStart[NMINVBUTTONS] = { 0, 2, 10, 17, 18 };
+/* static sint32 inventoryNum[NMINVBUTTONS]={2,8,6,0,1};*/
+static sint32 inventoryPicStart[NMINVBUTTONS] = { 29, 14, 22, 31, 40 };
+static sint32 textStart[NMINVBUTTONS] = { 0, 2, 10, 17, 18 };
 
 #define NMDUSTMOTES 128
 
-char endUserCheatsEnabled = 0;
+sint8 endUserCheatsEnabled = 0;
 /* returns 1 if quit requested */
-void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeButton, int fadeSelection)
+void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fade, sint32 fadeButton, sint32 fadeSelection)
 {
     XyInt p;
-    int i, canGoUp, canGoDown;
-    int selectedButton;
-    int data, lastData, changeData;
-    int slidePos[MAXNMPICS];
-    int quitEnable = 0;
-    int frameCount;
-    int commScreenSize, staticCount = 0;
+    sint32 i, canGoUp, canGoDown;
+    sint32 selectedButton;
+    sint32 data, lastData, changeData;
+    sint32 slidePos[MAXNMPICS];
+    sint32 quitEnable = 0;
+    sint32 frameCount;
+    sint32 commScreenSize, staticCount = 0;
     struct soundSlotRegister* tinkleSound;
-    extern unsigned short doorwayCache;
-    unsigned short* tempData = &doorwayCache;
+    extern uint16 doorwayCache;
+    uint16* tempData = &doorwayCache;
 
     XyInt dust[NMDUSTMOTES];
-    int dustAge[NMDUSTMOTES];
-    int dustHead = 0, dustTail = 0;
+    sint32 dustAge[NMDUSTMOTES];
+    sint32 dustHead = 0, dustTail = 0;
 
-    int fadeReg = 0, fadeWidth = 0, fadeHeight = 0, fadeSize = 0, fadePic = 0, fadeCount = 0;
-    int gotScreenPic = 0;
+    sint32 fadeReg = 0, fadeWidth = 0, fadeHeight = 0, fadeSize = 0, fadePic = 0, fadeCount = 0;
+    sint32 gotScreenPic = 0;
 
     checkStack();
 
@@ -1089,7 +1089,7 @@ void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeB
     dlg_addBase(-INVWIDTH / 2, -INVHEIGHT / 2, INVWIDTH, INVHEIGHT, inventoryBevel, 3);
     selectedButton = 0;
 
-    commScreenSize = (*(int*)picDatas[39]) * *(((int*)picDatas[39]) + 1);
+    commScreenSize = (*(sint32*)picDatas[39]) * *(((sint32*)picDatas[39]) + 1);
     if (fade)
     {
         selectedButton = fadeButton;
@@ -1097,8 +1097,8 @@ void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeB
             slidePos[selectedButton] = fadeSelection;
         fadePic = inventoryPicStart[selectedButton] + fadeSelection;
         fadeReg = 1;
-        fadeWidth = *(int*)picDatas[fadePic];
-        fadeHeight = *(((int*)picDatas[fadePic]) + 1);
+        fadeWidth = *(sint32*)picDatas[fadePic];
+        fadeHeight = *(((sint32*)picDatas[fadePic]) + 1);
         fadeSize = fadeWidth * fadeHeight;
         fadeCount = 0;
         dustHead = dustTail = 0;
@@ -1151,7 +1151,7 @@ void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeB
 
         for (i = 0; i < NMINVBUTTONS; i++)
         {
-            int x, y;
+            sint32 x, y;
 #ifndef JAPAN
             x = -62 - getStringWidth(1, getText(LB_INVBUTTONS, i)) / 2;
             y = -68 + i * 20 - getFontHeight(1) / 2;
@@ -1225,21 +1225,21 @@ void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeB
         /* picture window */
         if (slidePos[selectedButton] != -1 /* && inventoryNum[selectedButton]*/)
         {
-            int p, px = 0, py = 0;
+            sint32 p, px = 0, py = 0;
             if (selectedButton != 3)
             { /* do normal pictures */
                 p = inventoryPicStart[selectedButton] + slidePos[selectedButton];
-                px = PICX - ((*(int*)picDatas[p]) >> 1);
-                py = PICY - ((*(((int*)picDatas[p]) + 1)) >> 1);
+                px = PICX - ((*(sint32*)picDatas[p]) >> 1);
+                py = PICY - ((*(((sint32*)picDatas[p]) + 1)) >> 1);
                 if (selectedButton != 4)
                     plotOverPicShadow(px + 2, py + 2, p);
                 plotOverPic(px, py, p);
             }
             else
             { /* do tranmitter picture */
-                int inv = (currentState.inventory & INV_TRANSMITTER) >> 16;
-                int i, picStart;
-                static char offsets[][2] = { { 20, 23 }, { -30, -0 }, { -40, -30 }, { -50, -10 }, { -14, 2 }, { -16, 12 }, { 5, -27 }, { -1, -35 } };
+                sint32 inv = (currentState.inventory & INV_TRANSMITTER) >> 16;
+                sint32 i, picStart;
+                static sint8 offsets[][2] = { { 20, 23 }, { -30, -0 }, { -40, -30 }, { -50, -10 }, { -14, 2 }, { -16, 12 }, { 5, -27 }, { -1, -35 } };
                 picStart = inventoryPicStart[selectedButton];
                 for (i = 0; i < 8; i++)
                 {
@@ -1254,7 +1254,7 @@ void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeB
                     inv >>= 1;
                 }
                 if (!fade && (currentState.inventory & INV_TRANSMITTER) == 0xff0000)
-                { /* unsigned short *pallete=picPals[38]; */
+                { /* uint16 *pallete=picPals[38]; */
                     if (!gotScreenPic)
                     {
                         decompressOverPic(39, tempData);
@@ -1265,7 +1265,7 @@ void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeB
                         staticCount--;
                         for (i = 0; i < commScreenSize; i++)
                         {
-                            unsigned short color = tempData[i];
+                            uint16 color = tempData[i];
                             if (color)
                                 POKE_W(VRAMSTART + picVram[39] + (i << 1), greyTable[getNextRand() & 0x0f]);
                         }
@@ -1278,7 +1278,7 @@ void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeB
                             staticCount = 29;
                         for (i = 0; i < commScreenSize; i++)
                         {
-                            unsigned short color = tempData[i];
+                            uint16 color = tempData[i];
                             POKE_W(VRAMSTART + picVram[39] + (i << 1), color);
                         }
                     }
@@ -1291,7 +1291,7 @@ void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeB
                 }
             }
             if (fade)
-            { /* unsigned short *pallete=picPals[fadePic]; */
+            { /* uint16 *pallete=picPals[fadePic]; */
                 XyInt line[2];
                 if (fadeCount > 8196 / 64 + 40)
                     fade = 0;
@@ -1305,14 +1305,14 @@ void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeB
                             fadeReg = fadeReg >> 1;
                         if (fadeReg < fadeSize)
                         {
-                            unsigned short color = tempData[fadeReg];
-                            /*pallete[((unsigned char *)(picDatas[fadePic]))
+                            uint16 color = tempData[fadeReg];
+                            /*pallete[((uint8 *)(picDatas[fadePic]))
                                        [fadeReg+8]]; */
                             POKE_W(VRAMSTART + picVram[fadePic] + (fadeReg << 1), color);
 
                             if (color && !(i & 7))
                             {
-                                int x, y;
+                                sint32 x, y;
                                 for (x = fadeReg, y = 0; x >= fadeWidth; x -= fadeWidth, y++)
                                     ;
                                 dust[dustHead].x = x + px;
@@ -1349,17 +1349,17 @@ void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeB
         /* text window */
         if (slidePos[selectedButton] != -1 /* && inventoryNum[selectedButton]*/)
         {
-            int nmLines = 1;
+            sint32 nmLines = 1;
             char* c;
             char* string;
             char buffer[80];
-            char buff2[80];
-            int bpos;
+            sint8 buff2[80];
+            char bpos;
             string = getText(LB_INVTEXT, slidePos[selectedButton] + textStart[selectedButton]);
 
             if (selectedButton == 3)
             {
-                int cnt, q;
+                sint32 cnt, q;
                 q = (currentState.inventory & INV_TRANSMITTER) >> 16;
                 for (cnt = 0; q;)
                 {
@@ -1375,7 +1375,7 @@ void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeB
 
             if (selectedButton == 2 && slidePos[selectedButton] == 6)
             {
-                int cnt, q;
+                sint32 cnt, q;
                 q = currentState.dolls;
                 for (cnt = 0; q;)
                 {
@@ -1456,7 +1456,7 @@ void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeB
                 }
             if ((selectedButton == 4 || !(data & PER_DGT_S)) && !(data & (PER_DGT_A | PER_DGT_B | PER_DGT_C)))
             {
-                extern int quitRequest;
+                extern sint32 quitRequest;
                 quitRequest = 1;
                 stopAllSound(54);
                 return;
@@ -1480,7 +1480,7 @@ void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeB
                     for (i = 0; i < WP_NMWEAPONS; i++)
                         currentState.weaponAmmo[i] = weaponMaxAmmo[i];
                     {
-                        extern int keyMask;
+                        extern sint32 keyMask;
                         keyMask = 0xf;
                     }
                 }
@@ -1516,7 +1516,7 @@ void runInventory(int inventory, int keyMask, int* mapState, int fade, int fadeB
 
 void dlg_setupSlideIn(void)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < nmItems; i++)
     {
         dlgItem[i].x2 = f(dlgItem[i].xp);
@@ -1534,7 +1534,7 @@ void dlg_setupSlideIn(void)
 
 void dlg_setupSlideUp(void)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < nmItems; i++)
     {
         dlgItem[i].x2 = f(dlgItem[i].xp);
@@ -1552,7 +1552,7 @@ void dlg_setupSlideUp(void)
 
 void dlg_setupSlideOut(void)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < nmItems; i++)
     {
         dlgItem[i].x1 = f(dlgItem[i].xp);
@@ -1570,7 +1570,7 @@ void dlg_setupSlideOut(void)
 
 void dlg_setupNoSlide(void)
 {
-    int i;
+    sint32 i;
     for (i = 0; i < nmItems; i++)
     {
         dlgItem[i].x1 = f(dlgItem[i].xp);
@@ -1584,8 +1584,8 @@ void dlg_setupNoSlide(void)
 
 void dlg_runSlideIn(void)
 {
-    Fixed32 f;
-    int i;
+    fix32 f;
+    sint32 i;
     for (f = 0; f < F(1); f += (F(1) / 32))
     {
         for (i = 0; i < nmItems; i++)

@@ -18,12 +18,12 @@ Sprite* freeList;
 
 Sprite* sectorSpriteList[MAXNMSECTORS];
 
-Fixed32 closestSectorBoundry;
-int newSector;
+fix32 closestSectorBoundry;
+sint32 newSector;
 
 void initSpriteSystem(void)
 {
-    int i;
+    sint32 i;
     /* initialize free list */
     freeList = sprites;
     for (i = 0; i < MAXNMSPRITES - 1; i++)
@@ -34,11 +34,11 @@ void initSpriteSystem(void)
         sectorSpriteList[i] = NULL;
 
     {
-        int s, w;
+        sint32 s, w;
         MthXyz v;
         for (w = 0; w < level_nmWalls; w++)
         {
-            if (level_wall[w].normal[1] >= ((int)(0.75 * 65536.0)) || level_wall[w].normal[1] < 0)
+            if (level_wall[w].normal[1] >= ((sint32)(0.75 * 65536.0)) || level_wall[w].normal[1] < 0)
                 level_wall[w].flags |= WALLFLAG_COLLIDEASFLOOR;
         }
         for (s = 0; s < level_nmSectors; s++)
@@ -61,14 +61,14 @@ void initSpriteSystem(void)
 
 void shiftSprites(void)
 {
-    int s;
+    sint32 s;
     Sprite* o;
     for (s = 0; s < MAXNMSECTORS; s++)
         for (o = sectorSpriteList[s]; o; o = o->next)
             o->pos.y += o->radius;
 }
 
-Sprite* newSprite(int sector, Fixed32 radius, Fixed32 friction, Fixed32 gravity, int sequence, int flags, Object* owner)
+Sprite* newSprite(sint32 sector, fix32 radius, fix32 friction, fix32 gravity, sint32 sequence, sint32 flags, Object* owner)
 {
     Sprite* o;
     /* assert(freeList); */
@@ -128,10 +128,10 @@ void freeSprite(Sprite* o)
 }
 
 static sWallType* behindWall;
-int bumpWall(sWallType* wall, Sprite* o, int sector)
+sint32 bumpWall(sWallType* wall, Sprite* o, sint32 sector)
 { /* find signed distance from player to wall */
-    Fixed32 planeDist, crossDist, yDist;
-    Fixed32 pushDistance, velPush = 0;
+    fix32 planeDist, crossDist, yDist;
+    fix32 pushDistance, velPush = 0;
     MthXyz wallP;
     MthXyz collidePoint;
 
@@ -166,12 +166,12 @@ int bumpWall(sWallType* wall, Sprite* o, int sector)
 
     if (wall->normal[1] == 0)
     { /* its a wall */
-        int edge = 0;
-        Fixed32 crossCoord;
-        Fixed32 realDist;
-        Fixed32 len;
-        Fixed32 wallTop;
-        Fixed32 wallBottom;
+        sint32 edge = 0;
+        fix32 crossCoord;
+        fix32 realDist;
+        fix32 len;
+        fix32 wallTop;
+        fix32 wallBottom;
 
         if (planeDist < F(-1) && wall->nextSector == -1)
             behindWall = wall;
@@ -255,7 +255,7 @@ int bumpWall(sWallType* wall, Sprite* o, int sector)
             o->pos.z += MTH_Mul(collidePoint.z, pushDistance);
 
             /* cancel velocity in direction of normal */
-            pushDistance = MTH_Product((Fixed32*)&(o->vel), (Fixed32*)&collidePoint);
+            pushDistance = MTH_Product((fix32*)&(o->vel), (fix32*)&collidePoint);
             if (pushDistance > 0)
                 return 0;
             if (o->flags & SPRITEFLAG_BOUNCY)
@@ -287,7 +287,7 @@ int bumpWall(sWallType* wall, Sprite* o, int sector)
         return 1;
     }
 
-    velPush = MTH_Product((Fixed32*)&(o->vel), (Fixed32*)wall->normal);
+    velPush = MTH_Product((fix32*)&(o->vel), (fix32*)wall->normal);
     /*if (velPush>0)
       return 0;*/
     /* this was bad for when sprites pushed you thru the walls */
@@ -323,28 +323,28 @@ int bumpWall(sWallType* wall, Sprite* o, int sector)
     return 1;
 }
 
-short wallCollideNm;
+sint16 wallCollideNm;
 
 sWallType *bestFloor, *bestCeil;
-int bestFloorHeight;
-int bestCeilingHeight;
-int ourSectorFloorHeight;
-int floorValid;
-int ourSectorCeilingHeight;
-int ceilValid;
-int floorSector;
+sint32 bestFloorHeight;
+sint32 bestCeilingHeight;
+sint32 ourSectorFloorHeight;
+sint32 floorValid;
+sint32 ourSectorCeilingHeight;
+sint32 ceilValid;
+sint32 floorSector;
 MthXyz* floorNormal; /* or null if best floor is not a slope */
 
-static int STEPHEIGHT;
+static sint32 STEPHEIGHT;
 
-void bumpFloor(sWallType* floor, Sprite* o, int sector)
+void bumpFloor(sWallType* floor, Sprite* o, sint32 sector)
 {
-    Fixed32 floorHeight;
+    fix32 floorHeight;
     if (floor->normal[1] == F(1) || floor->normal[1] == F(-1))
         floorHeight = F(level_vertex[floor->v[0]].y);
     else
     {
-        Fixed32 planeDist;
+        fix32 planeDist;
         MthXyz wallP;
         getVertex(floor->v[0], &wallP);
         planeDist = (f(o->pos.x - wallP.x)) * floor->normal[0] + (f(o->pos.z - wallP.z)) * floor->normal[2];
@@ -410,10 +410,10 @@ void bumpFloor(sWallType* floor, Sprite* o, int sector)
 
 /* if a sector is in the penetrate list then it means we are penetrating
    that sector.  */
-void bumpSectorBoundries(int s, Sprite* o, short* penetrate, int* nmPenetrate)
+void bumpSectorBoundries(sint32 s, Sprite* o, sint16* penetrate, sint32* nmPenetrate)
 {
     sSectorType* sec = level_sector + s;
-    int w, i;
+    sint32 w, i;
     pushProfile("SectorBndry");
     for (w = sec->firstWall; w <= sec->lastWall; w++)
     {
@@ -435,22 +435,22 @@ void bumpSectorBoundries(int s, Sprite* o, short* penetrate, int* nmPenetrate)
     popProfile();
 }
 
-void bumpWalls(int s, Sprite* o)
+void bumpWalls(sint32 s, Sprite* o)
 {
     sSectorType* sec = level_sector + s;
-    int w;
+    sint32 w;
     pushProfile("Walls");
     for (w = sec->firstWall; w <= sec->lastWall; w++)
     {
         if (!((level_wall[w].flags & o->flags) & WALLFLAG_BLOCKBITS))
             continue;
-        /*     if (abs(level_wall[w].normal[1])<((int)(0.75*65536.0)))*/
+        /*     if (abs(level_wall[w].normal[1])<((sint32)(0.75*65536.0)))*/
         if (level_wall[w].flags & WALLFLAG_COLLIDEASFLOOR)
             bumpFloor(&level_wall[w], o, s);
         else if (bumpWall(&level_wall[w], o, s))
             wallCollideNm = w;
 #if 0
-     if (level_wall[w].normal[1]<((int)(0.75*65536.0)) &&
+     if (level_wall[w].normal[1]<((sint32)(0.75*65536.0)) &&
 	 level_wall[w].normal[1]>=0) /* cause all ceilings to collide as
 					non-walls */
 	{
@@ -499,11 +499,11 @@ inline void doFriction(Sprite* o)
     }
 }
 
-short spriteCollideNm;
+sint16 spriteCollideNm;
 void collideSpriteSprite(Sprite* mobile, Sprite* stat)
 {
-    Fixed32 distance2, pushDistance;
-    Fixed32 len;
+    fix32 distance2, pushDistance;
+    fix32 len;
     MthXyz dp;
     if (stat->flags & SPRITEFLAG_NOSPRCOLLISION)
         return;
@@ -540,7 +540,7 @@ void collideSpriteSprite(Sprite* mobile, Sprite* stat)
 
 #if 1
     /* cancel velocity in direction of normal */
-    pushDistance = MTH_Product((Fixed32*)&(mobile->vel), (Fixed32*)&dp);
+    pushDistance = MTH_Product((fix32*)&(mobile->vel), (fix32*)&dp);
     if (pushDistance > 0)
         return;
     mobile->vel.x -= MTH_Mul(dp.x, pushDistance);
@@ -551,7 +551,7 @@ void collideSpriteSprite(Sprite* mobile, Sprite* stat)
 
 void splash(Sprite* o)
 {
-    int s, i, vol, pan;
+    sint32 s, i, vol, pan;
     MthXyz vel, pos;
     if (o->radius <= F(1))
         return;
@@ -578,14 +578,14 @@ void splash(Sprite* o)
     playSoundE(0, level_staticSoundMap[ST_JOHN] + 2, vol, pan);
 }
 
-int collideSprite(Sprite* o)
+sint32 collideSprite(Sprite* o)
 {
-    int i;
-    int wasUnderWater;
-    int retVal;
-    short sectorPenetrate[25];
-    int nmPenetrate;
-    int floorCollideNm, ceilCollideNm;
+    sint32 i;
+    sint32 wasUnderWater;
+    sint32 retVal;
+    sint16 sectorPenetrate[25];
+    sint32 nmPenetrate;
+    sint32 floorCollideNm, ceilCollideNm;
 
     pushProfile("Collide Sprite");
     closestSectorBoundry = F(-3000);
@@ -656,7 +656,7 @@ int collideSprite(Sprite* o)
 
     if (floorValid)
     {
-        int floorDistance = o->radius + bestFloorHeight - o->pos.y;
+        sint32 floorDistance = o->radius + bestFloorHeight - o->pos.y;
         if (o == camera)
             floorDistance += F(8);
         if (floorDistance > 0 ||
@@ -677,7 +677,7 @@ int collideSprite(Sprite* o)
             assert(floorCollideNm >= 0 && floorCollideNm < level_nmWalls);
             if (0 /*floorNormal*/)
             { /* is a slippery floor */
-                Fixed32 velPush = MTH_Product((Fixed32*)(&o->vel), (Fixed32*)floorNormal);
+                fix32 velPush = MTH_Product((fix32*)(&o->vel), (fix32*)floorNormal);
                 if (velPush < 0)
                 {
                     o->vel.x -= MTH_Mul(floorNormal->x, velPush);
@@ -795,9 +795,9 @@ skipWallCollision:
     return retVal;
 }
 
-int spriteAdvanceFrame(Sprite* o)
+sint32 spriteAdvanceFrame(Sprite* o)
 {
-    int flags, frame;
+    sint32 flags, frame;
     assert(o);
     assert(o->sequence != -2);
     if (o->sequence < 0)
@@ -817,7 +817,7 @@ int spriteAdvanceFrame(Sprite* o)
 
 void spriteRandomizeFrame(Sprite* o)
 {
-    int nmFrames;
+    sint32 nmFrames;
     assert(o);
     nmFrames = level_sequence[o->sequence + 1] - level_sequence[o->sequence];
     assert(nmFrames);
@@ -829,10 +829,10 @@ void spriteRandomizeFrame(Sprite* o)
     o->frame = getNextRand() % nmFrames;
 }
 
-static int pbMoved = 0;
+static sint32 pbMoved = 0;
 #if 0
 void updatePushBlockPositions(void)
-{int block,v,vt,fs;
+(sint32 block,v,vt,fs;
  sPBType *pb;
  Sprite *o;
  if (!pbMoved)
@@ -878,7 +878,7 @@ void updatePushBlockPositions(void)
 #else
 void updatePushBlockPositions(void)
 {
-    int block, v, vt, fs;
+    sint32 block, v, vt, fs;
     sPBType* pb;
     Sprite* o;
 
@@ -920,7 +920,7 @@ void updatePushBlockPositions(void)
 }
 #endif
 
-void movePushBlock(int block, int dx, int dy, int dz)
+void movePushBlock(sint32 block, sint32 dx, sint32 dy, sint32 dz)
 {
     assert(block >= 0);
     assert(block < level_nmPushBlocks);
@@ -937,7 +937,7 @@ void moveCamera(void)
     collideSprite(camera);
 }
 
-int moveSprite(Sprite* sprite)
+sint32 moveSprite(Sprite* sprite)
 {
     if (!(sprite->flags & SPRITEFLAG_IMMOBILE))
     {
@@ -947,7 +947,7 @@ int moveSprite(Sprite* sprite)
     return collideSprite(sprite);
 }
 
-void moveSpriteTo(Sprite* o, int newSector, MthXyz* newPos)
+void moveSpriteTo(Sprite* o, sint32 newSector, MthXyz* newPos)
 {
     Sprite *t, *prev;
     assert(o);
@@ -973,13 +973,13 @@ void moveSpriteTo(Sprite* o, int newSector, MthXyz* newPos)
     o->pos = *newPos;
 }
 
-int pointInSectorP(MthXyz* pos, int sector)
+sint32 pointInSectorP(MthXyz* pos, sint32 sector)
 {
-    int w;
+    sint32 w;
     sSectorType* sec = level_sector + sector;
     sWallType* wall;
     MthXyz wallP;
-    int planeDist;
+    sint32 planeDist;
     for (w = sec->firstWall; w <= sec->lastWall; w++)
     {
         wall = level_wall + w;
@@ -991,12 +991,12 @@ int pointInSectorP(MthXyz* pos, int sector)
     return 1;
 }
 
-int findSectorContaining(MthXyz* pos, int guessSector)
+sint32 findSectorContaining(MthXyz* pos, sint32 guessSector)
 {
-    int w, i, s;
+    sint32 w, i, s;
     sSectorType* sec;
-    short penetrate[MAXNMSECTORS];
-    int nmPenetrate;
+    sint16 penetrate[MAXNMSECTORS];
+    sint32 nmPenetrate;
 
     checkStack();
     penetrate[0] = guessSector;

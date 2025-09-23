@@ -14,31 +14,31 @@
 #define MAXNMFONTS 3
 #endif
 
-static unsigned char* fontList[] = { brianFont, brianFont, bigFont, NULL };
+static uint8* fontList[] = { brianFont, brianFont, bigFont, NULL };
 
-static short charMap[MAXNMFONTS][256];
-static char widths[MAXNMFONTS][256];
-static char heights[MAXNMFONTS];
+static sint16 charMap[MAXNMFONTS][256];
+static sint8 widths[MAXNMFONTS][256];
+static sint8 heights[MAXNMFONTS];
 
 #ifdef JAPAN
 #include "file.h"
 #include "pic.h"
 
 #define MAXNMJCHARS 240
-static unsigned int* charData[MAXNMJCHARS];
-static int nmJChars;
+static uint32* charData[MAXNMJCHARS];
+static sint32 nmJChars;
 
-void loadJapanFontData(int fd)
+void loadJapanFontData(sint32 fd)
 {
-    unsigned short* palData[MAXNMJCHARS];
+    uint16* palData[MAXNMJCHARS];
     nmJChars = loadPicSet(fd, palData, charData, MAXNMJCHARS);
 }
 
-#define PICDATA(d) (((unsigned char*)d) + 8)
-static int firstJFontPic;
+#define PICDATA(d) (((uint8*)d) + 8)
+static sint32 firstJFontPic;
 void loadJapanFontPics(void)
 {
-    int i, res;
+    sint32 i, res;
     for (i = 0; i < nmJChars; i++)
     {
         res = addPic(TILEJCHAR, PICDATA(charData[i]), NULL, 4);
@@ -51,10 +51,10 @@ void loadJapanFontPics(void)
 }
 #endif
 
-int initFonts(int spriteNm, int fontMask)
+sint32 initFonts(sint32 spriteNm, sint32 fontMask)
 {
-    int f, i, x, y, c, fontc, fontHeight, widthBy8;
-    unsigned char buffer[32 * 32];
+    sint32 f, i, x, y, c, fontc, fontHeight, widthBy8;
+    uint8 buffer[32 * 32];
 
     fontMask &= ~1;
 
@@ -64,7 +64,7 @@ int initFonts(int spriteNm, int fontMask)
         fontMask = fontMask >> 1;
         if (!i)
             continue;
-        heights[f] = (char)*(short*)fontList[f];
+        heights[f] = (sint8)*(sint16*)fontList[f];
         fontHeight = heights[f];
         EZ_setLookupTbl(f, (struct sprLookupTbl*)(fontList[f] + 2));
         for (i = 0; i < 256; i++)
@@ -99,11 +99,11 @@ int initFonts(int spriteNm, int fontMask)
             }
         /* map accented chars */
         {
-            static unsigned char* charEquiv[] = { "\355\315", "\372\332", "\351\311", NULL };
+            static uint8* charEquiv[] = { "\355\315", "\372\332", "\351\311", NULL };
             for (i = 0; charEquiv[i]; i++)
             {
-                int one = charEquiv[i][0];
-                int two = charEquiv[i][1];
+                sint32 one = charEquiv[i][0];
+                sint32 two = charEquiv[i][1];
                 if (charMap[f][one] == -1 && charMap[f][two] != -1)
                 {
                     charMap[f][one] = charMap[f][two];
@@ -128,14 +128,14 @@ int initFonts(int spriteNm, int fontMask)
     return spriteNm;
 }
 
-void drawString(int x, int y, int font, unsigned char* text)
+void drawString(sint32 x, sint32 y, sint32 font, uint8* text)
 {
     XyInt pos;
     pos.x = x;
     pos.y = y;
     for (; *text; text++)
     {
-        if (!widths[font][(int)*text])
+        if (!widths[font][(sint32)*text])
         { /* assert(0); */
             continue;
         }
@@ -146,56 +146,56 @@ void drawString(int x, int y, int font, unsigned char* text)
         }
         else
 #endif
-            EZ_normSpr(DIR_NOREV, ECD_DISABLE | COLOR_1 | COMPO_REP, font, charMap[font][(int)*text], &pos, NULL);
-        pos.x += widths[font][(int)*text] + 1;
+            EZ_normSpr(DIR_NOREV, ECD_DISABLE | COLOR_1 | COMPO_REP, font, charMap[font][(sint32)*text], &pos, NULL);
+        pos.x += widths[font][(sint32)*text] + 1;
     }
 }
 
-void drawStringN(int x, int y, int font, unsigned char* text, int n)
+void drawStringN(sint32 x, sint32 y, sint32 font, uint8* text, sint32 n)
 {
     XyInt pos;
     pos.x = x;
     pos.y = y;
     for (; n; n--, text++)
     {
-        if (!widths[font][(int)*text])
+        if (!widths[font][(sint32)*text])
         {
-            dPrint("unknown character %d\n", (int)*text);
+            dPrint("unknown character %d\n", (sint32)*text);
             assert(0);
             continue;
         }
-        EZ_normSpr(DIR_NOREV, UCLPIN_ENABLE | ECD_DISABLE | COLOR_1 | COMPO_REP, font, charMap[font][(int)*text], &pos, NULL);
-        pos.x += widths[font][(int)*text] + 1;
+        EZ_normSpr(DIR_NOREV, UCLPIN_ENABLE | ECD_DISABLE | COLOR_1 | COMPO_REP, font, charMap[font][(sint32)*text], &pos, NULL);
+        pos.x += widths[font][(sint32)*text] + 1;
     }
 }
 
-void drawStringFixedPitch(int x, int y, int font, unsigned char* text, int pitch)
+void drawStringFixedPitch(sint32 x, sint32 y, sint32 font, uint8* text, sint32 pitch)
 {
     XyInt pos;
     pos.x = x;
     pos.y = y;
     for (; *text; text++)
     {
-        if (!widths[font][(int)*text])
+        if (!widths[font][(sint32)*text])
         {
             assert(0);
             continue;
         }
-        EZ_normSpr(DIR_NOREV, ECD_DISABLE | COLOR_1 | COMPO_REP, font, charMap[font][(int)*text], &pos, NULL);
+        EZ_normSpr(DIR_NOREV, ECD_DISABLE | COLOR_1 | COMPO_REP, font, charMap[font][(sint32)*text], &pos, NULL);
         pos.x += pitch + 1;
     }
 }
 
-void drawStringBulge(int x, int y, int font, int buldgeCenter, unsigned char* text)
+void drawStringBulge(sint32 x, sint32 y, sint32 font, sint32 buldgeCenter, uint8* text)
 {
     XyInt pos;
-    int cnm, bright;
+    sint32 cnm, bright;
     struct gourTable gtable;
     pos.x = x;
     pos.y = y;
     for (cnm = 0; *text; text++, cnm++)
     {
-        if (!widths[font][(int)*text])
+        if (!widths[font][(sint32)*text])
         {
             assert(0);
             continue;
@@ -207,12 +207,12 @@ void drawStringBulge(int x, int y, int font, int buldgeCenter, unsigned char* te
         gtable.entry[1] = greyTable[bright];
         gtable.entry[2] = greyTable[bright];
         gtable.entry[3] = greyTable[bright];
-        EZ_normSpr(DIR_NOREV, DRAW_GOURAU | ECD_DISABLE | COLOR_1 | COMPO_REP, font, charMap[font][(int)*text], &pos, &gtable);
-        pos.x += widths[font][(int)*text] + 1;
+        EZ_normSpr(DIR_NOREV, DRAW_GOURAU | ECD_DISABLE | COLOR_1 | COMPO_REP, font, charMap[font][(sint32)*text], &pos, &gtable);
+        pos.x += widths[font][(sint32)*text] + 1;
     }
 }
 
-void drawStringGouro(int x, int y, int font, unsigned short gourTop, unsigned short gourBot, unsigned char* text)
+void drawStringGouro(sint32 x, sint32 y, sint32 font, uint16 gourTop, uint16 gourBot, uint8* text)
 {
     XyInt pos;
     struct gourTable gtable;
@@ -224,7 +224,7 @@ void drawStringGouro(int x, int y, int font, unsigned short gourTop, unsigned sh
     pos.y = y;
     for (; *text; text++)
     {
-        if (!widths[font][(int)*text])
+        if (!widths[font][(sint32)*text])
         { /*assert(0);*/
             continue;
         }
@@ -235,17 +235,17 @@ void drawStringGouro(int x, int y, int font, unsigned short gourTop, unsigned sh
         }
         else
 #endif
-            EZ_normSpr(DIR_NOREV, DRAW_GOURAU | ECD_DISABLE | COLOR_1 | COMPO_REP, font, charMap[font][(int)*text], &pos, &gtable);
-        pos.x += widths[font][(int)*text] + 1;
+            EZ_normSpr(DIR_NOREV, DRAW_GOURAU | ECD_DISABLE | COLOR_1 | COMPO_REP, font, charMap[font][(sint32)*text], &pos, &gtable);
+        pos.x += widths[font][(sint32)*text] + 1;
     }
 }
 
-void drawChar(int x, int y, int font, unsigned char text)
+void drawChar(sint32 x, sint32 y, sint32 font, uint8 text)
 {
     XyInt pos;
     pos.x = x;
     pos.y = y;
-    if (!widths[font][(int)text])
+    if (!widths[font][(sint32)text])
     { /*assert(0);*/
         return;
     }
@@ -256,15 +256,15 @@ void drawChar(int x, int y, int font, unsigned char text)
     }
     else
 #endif
-        EZ_normSpr(DIR_NOREV, ECD_DISABLE | COLOR_1 | COMPO_REP, font, charMap[font][(int)text], &pos, NULL);
+        EZ_normSpr(DIR_NOREV, ECD_DISABLE | COLOR_1 | COMPO_REP, font, charMap[font][(sint32)text], &pos, NULL);
 }
 
-void drawCharShadow(int x, int y, int font, unsigned char text)
+void drawCharShadow(sint32 x, sint32 y, sint32 font, uint8 text)
 {
     XyInt pos;
     pos.x = x;
     pos.y = y;
-    if (!widths[font][(int)text])
+    if (!widths[font][(sint32)text])
     { /*assert(0);*/
         return;
     }
@@ -275,23 +275,23 @@ void drawCharShadow(int x, int y, int font, unsigned char text)
     }
     else
 #endif
-        EZ_normSpr(DIR_NOREV, ECD_DISABLE | COLOR_1 | COMPO_SHADOW, font, charMap[font][(int)text], &pos, NULL);
+        EZ_normSpr(DIR_NOREV, ECD_DISABLE | COLOR_1 | COMPO_SHADOW, font, charMap[font][(sint32)text], &pos, NULL);
 }
 
-int getStringWidth(int font, const unsigned char* c)
+sint32 getStringWidth(sint32 font, const uint8* c)
 {
-    int tot;
+    sint32 tot;
     for (tot = 0; *c; c++)
-        tot += widths[font][(int)*c] + 1;
+        tot += widths[font][(sint32)*c] + 1;
     return tot - 1;
 }
 
-int getCharWidth(int font, unsigned char c)
+sint32 getCharWidth(sint32 font, uint8 c)
 {
-    return widths[font][(int)c];
+    return widths[font][(sint32)c];
 }
 
-int getFontHeight(int font)
+sint32 getFontHeight(sint32 font)
 {
     return heights[font];
 }

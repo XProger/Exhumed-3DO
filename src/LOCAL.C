@@ -2,11 +2,11 @@
 #include <sega_per.h>
 #include "file.h"
 
-static int* textData;
+static sint32* textData;
 
-int getLanguageNumber(void)
+sint32 getLanguageNumber(void)
 {
-    int skip;
+    sint32 skip;
 #ifdef JAPAN
     return 0;
 #endif
@@ -29,30 +29,26 @@ int getLanguageNumber(void)
     return skip;
 }
 
-void loadLocalText(int fd)
+void loadLocalText(sint32 fd)
 {
-    int size, skip;
+    sint32 size, skip;
     textData = mem_malloc(0, 7 * 1024);
     mem_lock();
     skip = getLanguageNumber();
     for (; skip >= 0; skip--)
     {
-        fs_read(fd, (char*)&size, 4);
+        fs_read(fd, (sint8*)&size, 4);
 
         size = FS_INT(&size);
 
         assert(size < 7 * 1024);
-        fs_read(fd, (char*)textData, size);
+        fs_read(fd, (sint8*)textData, size);
     }
 }
 
-char* getText(int block, int string)
+char* getText(sint32 block, sint32 string)
 {
-    char* addr;
-
     block = FS_INT(textData + block);
     block = FS_INT(textData + ((block >> 2) + string));
-
-    addr = ((char*)textData) + block;
-    return addr;
+    return ((char*)textData) + block;
 }

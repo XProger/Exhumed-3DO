@@ -62,16 +62,16 @@ enum Weapon
 
 typedef struct
 {
-    int inventory;
+    sint32 inventory;
 #define ALLDOLLS 0x7fffff
-    int dolls;
-    int nmBowls;
-    int health;
-    int gameFlags;
-    int weaponAmmo[WP_NMWEAPONS];
-    char levFlags[NMLEVELS];
-    char currentLevel, desiredWeapon;
-    short year, month, day, hour, min;
+    sint32 dolls;
+    sint32 nmBowls;
+    sint32 health;
+    sint32 gameFlags;
+    sint32 weaponAmmo[WP_NMWEAPONS];
+    sint8 levFlags[NMLEVELS];
+    sint8 currentLevel, desiredWeapon;
+    sint16 year, month, day, hour, min;
 } SaveState;
 
 extern SaveState currentState;
