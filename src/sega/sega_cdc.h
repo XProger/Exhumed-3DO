@@ -58,7 +58,7 @@ enum CdcPosType {
 };
 
 enum CdcErrCode {
-    CDC_ERR_OK = OK,
+    CDC_ERR_OK = 0,
 
     CDC_ERR_CMDBUSY=-1,
     CDC_ERR_CMDNG  =-2,

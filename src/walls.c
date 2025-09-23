@@ -181,17 +181,17 @@ sint32 clip_visible(XyInt* poly, SectorDrawRecord* s)
 #else
     /*top side clip*/
     if (poly[0].y < s->ymin && poly[1].y < s->ymin && poly[2].y < s->ymin && poly[3].y < s->ymin)
-        return (FALSE);
+        return (0);
     /*bottom side clip*/
     if (poly[0].y > s->ymax && poly[1].y > s->ymax && poly[2].y > s->ymax && poly[3].y > s->ymax)
-        return (FALSE);
+        return (0);
     /*left side clip*/
     if (poly[0].x < s->xmin && poly[1].x < s->xmin && poly[2].x < s->xmin && poly[3].x < s->xmin)
-        return (FALSE);
+        return (0);
     /*right side clip*/
     if (poly[0].x > s->xmax && poly[1].x > s->xmax && poly[2].x > s->xmax && poly[3].x > s->xmax)
-        return (FALSE);
-    return (TRUE); /*polygon is visible*/
+        return (0);
+    return (1); /*polygon is visible*/
 #endif
 }
 #endif

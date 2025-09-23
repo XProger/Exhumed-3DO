@@ -206,7 +206,8 @@ void assertFail(char* file, sint32 line)
 
         EZ_closeCommand();
         SCL_DisplayFrame();
-        pollhost();
+
+        app_poll();
     }
 }
 
@@ -232,7 +233,8 @@ void message(char* message)
 
         EZ_closeCommand();
         SCL_DisplayFrame();
-        pollhost();
+
+        app_poll();
 
         data = lastInputSample;
         if ((sw && !(data & PER_DGT_A)) || (!sw && !(data & PER_DGT_B)))

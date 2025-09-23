@@ -423,6 +423,11 @@ sint32 runMap(sint32 currentLevel)
         SCL_DisplayFrame();
         pic_nextFrame(NULL, NULL);
 
+        vid_blit();
+        vid_clear();
+
+        app_poll();
+
         lastInput = input;
         input = lastInputSample;
         changeInput = lastInput ^ input;

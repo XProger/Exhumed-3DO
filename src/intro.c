@@ -39,8 +39,8 @@ static void setupVDP2(void)
     SclConfig scfg;
     SclVramConfig vcfg;
     SCL_InitVramConfigTb(&vcfg);
-    vcfg.vramModeA = OFF;
-    vcfg.vramModeB = OFF;
+    vcfg.vramModeA = 0;
+    vcfg.vramModeB = 0;
     vcfg.vramA0 = SCL_NON;
     vcfg.vramB0 = SCL_NON;
     SCL_SetVramConfig(&vcfg);
@@ -48,7 +48,7 @@ static void setupVDP2(void)
 
     /* setup VDP2Sprite screen */
     SCL_InitConfigTb(&scfg);
-    scfg.dispenbl = ON;
+    scfg.dispenbl = 1;
     scfg.bmpsize = SCL_BMP_SIZE_512X256;
     scfg.coltype = SCL_COL_TYPE_256;
     scfg.datatype = SCL_BITMAP;

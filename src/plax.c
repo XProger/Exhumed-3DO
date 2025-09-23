@@ -109,7 +109,7 @@ void initPlax(sint32 fd)
     SCL_InitRotateTable(SCL_VDP2_VRAM_A0 + 0x500, 1, SCL_RBG0, SCL_NON);
 
     SCL_InitConfigTb(&scfg);
-    scfg.dispenbl = ON;
+    scfg.dispenbl = 1;
     scfg.bmpsize = SCL_BMP_SIZE_512X256;
     scfg.coltype = SCL_COL_TYPE_256;
     scfg.datatype = SCL_BITMAP;

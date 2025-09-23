@@ -1119,6 +1119,8 @@ void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fad
     frameCount = 0;
     while (1)
     {
+        app_poll();
+
         EZ_openCommand();
         EZ_sysClip();
         EZ_localCoord(320 / 2, 240 / 2);

@@ -92,6 +92,8 @@
     <ClInclude Include="..\wallasm.h" />
     <ClInclude Include="..\walls.h" />
     <ClInclude Include="..\weapon.h" />
+    <ClInclude Include="..\app.h" />
+    <ClInclude Include="..\vid.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sega">
@@ -136,8 +138,7 @@
     <ClCompile Include="..\v_blank.c" />
     <ClCompile Include="..\walls.c" />
     <ClCompile Include="..\weapon.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\rename.sh" />
+    <ClCompile Include="app_win.c" />
+    <ClCompile Include="..\vid_gl.c" />
   </ItemGroup>
 </Project>

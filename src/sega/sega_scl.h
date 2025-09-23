@@ -16,7 +16,6 @@ extern uint32 VRAM_ADDR;
 #define SCL_SetFrameInterval(unk)
 #define SCL_SetColOffset(offset,unk,a,b,c)
 #define SCL_DisplayFrame()
-#define pollhost()
 #define	SCL_VblankStart()
 #define SCL_VblankEnd()
 

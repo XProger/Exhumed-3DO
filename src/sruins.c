@@ -1262,7 +1262,7 @@ void loadVDP2Sprites(sint32 fd)
     fs_read(fd, vram + 1024 * 256, 1024 * 256);
     /* setup VDP2Sprite screen */
     SCL_InitConfigTb(&scfg);
-    scfg.dispenbl = ON;
+    scfg.dispenbl = 1;
     scfg.bmpsize = SCL_BMP_SIZE_512X512;
     scfg.coltype = SCL_COL_TYPE_256;
     scfg.datatype = SCL_BITMAP;
@@ -2612,9 +2612,8 @@ sint32 runLevel(char* filename, sint32 levelNm)
 
         if (quitRequest)
             return 2;
-#ifdef PSYQ
-        pollhost();
-#endif
+
+        app_poll();
     }
 }
 
@@ -2657,6 +2656,8 @@ void main(void)
     POKE_W(SCL_VDP2_VRAM + 0x180116, (-255) & 0x1ff);
     POKE_W(SCL_VDP2_VRAM + 0x180118, (-255) & 0x1ff);
 #endif
+
+    app_init();
 
     megaInit();
     dPrint("Start...\n");
