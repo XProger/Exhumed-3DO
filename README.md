@@ -1,4 +1,4 @@
-exhumed-3do
+Exhumed-3DO
 ==================================================
 The source port of the original Sega Saturn version of SlaveDriver Engine for the 3DO Interactive Multiplayer console.
 
