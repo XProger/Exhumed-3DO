@@ -492,13 +492,21 @@ uint16 getNextRand(void)
 
 void getDateTime(sint32* year, sint32* month, sint32* day, sint32* hour, sint32* min)
 {
-    uint8* time;
+#ifdef TODO
+    uint8 time;
     time = PER_GET_TIM();
     *year = (uint8)((uint16)(time[6] >> 4) * 1000 + (uint16)(time[6] & 0x0f) * 100 + (uint16)(time[5] >> 4) * 10 + (uint16)(time[5] & 0x0f) - 1980);
     *month = time[4] & 0x0f;
     *day = (time[3] >> 4) * 10 + (time[3] & 0x0f);
     *hour = (time[2] >> 4) * 10 + (time[2] & 0x0f);
     *min = (time[1] >> 4) * 10 + (time[1] & 0x0f);
+#else
+    *year = 1996;
+    *month = 9;
+    *day = 19;
+    *hour = 0;
+    *min = 0;
+#endif
 }
 
 sint32 findWallsSector(sint32 wallNm)

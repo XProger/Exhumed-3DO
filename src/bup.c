@@ -226,6 +226,12 @@ void bup_initCurrentGame(void)
         currentState.min = min;
         dPrint("game date=%d/%d/%d\n", year, month, day);
     }
+
+#ifndef TODO // cheating
+    cheatsEnabled = 1; // ?
+    currentState.inventory |= INV_PISTOL | INV_M60;
+    currentState.desiredWeapon = WP_PISTOL;
+#endif
 }
 
 sint32 bup_newGame(sint32 slot)

@@ -2109,6 +2109,8 @@ uint8 stat_reddot[] = {
     0,
     0,
 };
+
+#ifdef TODO // unused
 uint8 stat_gem[] = {
     0,
     0,
@@ -2159,6 +2161,8 @@ uint8 stat_gem[] = {
     0,
     0,
 };
+#endif
+
 uint8 stat_bar[] = {
     0,
     0,

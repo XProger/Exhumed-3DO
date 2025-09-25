@@ -183,7 +183,7 @@ uint8* getPicData(sint32 p)
     return pics[p].data;
 }
 
-static uint8* rleBuffer;
+static uint8 rleBuffer[4096];
 
 /* returns new pic num */
 sint32 initPicSystem(sint32 _picNmBase, sint32* classSizes)
@@ -194,7 +194,6 @@ sint32 initPicSystem(sint32 _picNmBase, sint32* classSizes)
     frameCount = 0;
     palletes = NULL;
     nmVDP2Pics = 0;
-    rleBuffer = (uint8*)0x6001000; /*mem_malloc(1,4096);*/
     for (c = 0; c < NMCLASSES; c++)
     {
         classType[c].nmSlots = *(classSizes++);

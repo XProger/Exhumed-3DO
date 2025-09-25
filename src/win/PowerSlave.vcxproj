@@ -205,7 +205,6 @@
     <ClInclude Include="..\util.h" />
     <ClInclude Include="..\vid.h" />
     <ClInclude Include="..\v_blank.h" />
-    <ClInclude Include="..\wallasm.h" />
     <ClInclude Include="..\walls.h" />
     <ClInclude Include="..\weapon.h" />
   </ItemGroup>
@@ -230,6 +229,7 @@
     <ClCompile Include="..\megainit.c" />
     <ClCompile Include="..\menu.c" />
     <ClCompile Include="..\mov.c" />
+    <ClCompile Include="..\mth.c" />
     <ClCompile Include="..\object.c" />
     <ClCompile Include="..\pic.c" />
     <ClCompile Include="..\picset.c" />

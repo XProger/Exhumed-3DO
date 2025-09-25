@@ -57,6 +57,7 @@ void processInput(void)
     analogControlerPresent = 0;
     analogIndexButtonsPresent = 0;
 
+#ifdef TODO
     if (!Pad)
         return;
 
@@ -85,6 +86,9 @@ void processInput(void)
         }
         pos += 15;
     }
+#endif
+    accum = app_input();
+
     if (!(accum & (PER_DGT_A | PER_DGT_B | PER_DGT_C | PER_DGT_S)))
     {
         if (abcResetEnable && !abcResetDisable)

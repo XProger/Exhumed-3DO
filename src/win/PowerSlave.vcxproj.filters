@@ -89,7 +89,6 @@
     <ClInclude Include="..\sruins.h" />
     <ClInclude Include="..\util.h" />
     <ClInclude Include="..\v_blank.h" />
-    <ClInclude Include="..\wallasm.h" />
     <ClInclude Include="..\walls.h" />
     <ClInclude Include="..\weapon.h" />
     <ClInclude Include="..\app.h" />
@@ -140,5 +139,6 @@
     <ClCompile Include="..\weapon.c" />
     <ClCompile Include="app_win.c" />
     <ClCompile Include="..\vid_gl.c" />
+    <ClCompile Include="..\mth.c" />
   </ItemGroup>
 </Project>

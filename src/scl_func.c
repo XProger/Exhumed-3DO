@@ -23,6 +23,7 @@
 
 #include <sega_scl.h>
 #include <sega_dma.h>
+#include <sega_mth.h>
 // #include	<sgl_work.h>
 // #include	<sgl.h>
 

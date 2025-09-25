@@ -1305,55 +1305,77 @@ void loadLoadingScreen(sint32 fd)
 
 static void plotBowl(uint8* pos)
 {
+#ifdef TODO // plotBowl (VRAM access)
     sint32 y, x;
     uint8 c;
-    for (y = 0; y < *(((sint32*)stat_bowl) + 1); y++)
+    sint32 w = FS_INT(((sint32*)stat_bowl));
+    sint32 h = FS_INT(((sint32*)stat_bowl) + 1);
+    uint8 *data = stat_bowl + 8;
+
+    for (y = 0; y < h; y++)
     {
-        for (x = 0; x < *(((sint32*)stat_bowl)); x++)
+        for (x = 0; x < w; x++)
         {
-            c = stat_bowl[y * (*(sint32*)stat_bowl) + x + 8];
+            c = data[y * w + x];
             if (c != 0)
                 *(pos + x) = c;
         }
         pos += 320;
     }
+#endif
 }
 
 static void plotDot(uint8* pos, sint32 blue)
 {
+#ifdef TODO // plotDot (VRAM access)
     sint32 y, x;
     uint8* art;
     uint8 c;
+    sint32 w, h;
+    uint8 *data;
+
     if (blue)
         art = stat_bluedot;
     else
         art = stat_reddot;
-    for (y = 0; y < *(((sint32*)art) + 1); y++)
+
+    w = FS_INT(((sint32*)art));
+    h = FS_INT(((sint32*)art) + 1);
+    data = art + 8;
+
+    for (y = 0; y < h; y++)
     {
-        for (x = 0; x < *(((sint32*)art)); x++)
+        for (x = 0; x < w; x++)
         {
-            c = art[y * (*(sint32*)art) + x + 8];
+            c = art[y * w + x];
             if (c != 0)
                 *(pos + x) = c;
         }
         pos += 320;
     }
+#endif
 }
 
 static void plotNoDot(uint8* pos)
 {
+#ifdef TODO // plotNoDot (VRAM access)
     sint32 y, x;
     uint8 c;
-    for (y = 0; y < *(((sint32*)stat_bluedot) + 1); y++)
+    sint32 w = FS_INT(((sint32*)stat_bluedot));
+    sint32 h = FS_INT(((sint32*)stat_bluedot) + 1);
+    uint8 *data = stat_bluedot + 8;
+
+    for (y = 0; y < h; y++)
     {
-        for (x = 0; x < *(((sint32*)stat_bluedot)); x++)
+        for (x = 0; x < w; x++)
         {
-            c = stat_bluedot[y * (*(sint32*)stat_bluedot) + x + 8];
+            c = data[y * w + x];
             if (c != 0)
                 *(pos + x) = 96; /* black in ruins pallete */
         }
         pos += 320;
     }
+#endif
 }
 
 void redrawBowlDots(void)
@@ -1393,7 +1415,7 @@ void redrawBowlDots(void)
 
 void redrawStatBar(void)
 {
-    EZ_setChar(0, COLOR_4, *(sint32*)stat_bar, *(sint32*)(stat_bar + 4), (uint8*)stat_bar + 8);
+    EZ_setChar(0, COLOR_4, FS_INT((sint32*)stat_bar), FS_INT((sint32*)(stat_bar + 4)), (uint8*)stat_bar + 8);
     redrawBowlDots();
 }
 
@@ -2179,10 +2201,10 @@ sint32 runLevel(char* filename, sint32 levelNm)
         EZ_closeCommand();
         SCL_DisplayFrame();
     }
-    EZ_setChar(0, COLOR_4, *(sint32*)stat_bar, *(sint32*)(stat_bar + 4), (uint8*)stat_bar + 8);
-    EZ_setChar(1, COLOR_4, *(sint32*)stat_compass0, *(sint32*)(stat_compass0 + 4), (uint8*)stat_compass0 + 8);
-    EZ_setChar(2, COLOR_4, *(sint32*)stat_compass1, *(sint32*)(stat_compass1 + 4), (uint8*)stat_compass1 + 8);
-    EZ_setChar(3, COLOR_4, *(sint32*)stat_compass2, *(sint32*)(stat_compass2 + 4), (uint8*)stat_compass2 + 8);
+    EZ_setChar(0, COLOR_4, FS_INT((sint32*)stat_bar), FS_INT((sint32*)(stat_bar + 4)), (uint8*)stat_bar + 8);
+    EZ_setChar(1, COLOR_4, FS_INT((sint32*)stat_compass0), FS_INT((sint32*)(stat_compass0 + 4)), (uint8*)stat_compass0 + 8);
+    EZ_setChar(2, COLOR_4, FS_INT((sint32*)stat_compass1), FS_INT((sint32*)(stat_compass1 + 4)), (uint8*)stat_compass1 + 8);
+    EZ_setChar(3, COLOR_4, FS_INT((sint32*)stat_compass2), FS_INT((sint32*)(stat_compass2 + 4)), (uint8*)stat_compass2 + 8);
 
 #ifdef JAPAN
     initPicSystem(4, ((sint32[]) { 28, 30, 1, 10, 12, 30, -1 }));
@@ -2220,6 +2242,11 @@ sint32 runLevel(char* filename, sint32 levelNm)
         loadWeaponSequences(fd);
         fs_close(fd);
     }
+
+#ifdef TODO // bup_NewGame ?
+#endif
+    bup_initCurrentGame();
+
     /* load level file */
     debugPrint("Loaded static\n");
     {
@@ -2359,11 +2386,6 @@ sint32 runLevel(char* filename, sint32 levelNm)
 
     while (1)
     {
-    #ifndef TODO // vblank handler (UsrVblankEnd)
-        extern void processInput(void);
-        vtimer++;
-        processInput();
-    #endif
         htimer = 0;
         /* ok */
         if (framesElapsed > 8)
@@ -2381,6 +2403,7 @@ sint32 runLevel(char* filename, sint32 levelNm)
             earthQuake--;
         }
         MTH_MoveMatrix(&viewTransform, -camera->pos.x, -camera->pos.y + playerHeightOffset, -camera->pos.z);
+
         /* ok */
         EZ_openCommand();
         /* ok */
@@ -2562,6 +2585,10 @@ sint32 runLevel(char* filename, sint32 levelNm)
         /* sometimes a vtimer switch can occur in here */
         SCL_DisplayFrame();
 
+        vid_blit();
+        vid_clear();
+        app_poll();
+
         DISABLE;
         if (vtimer - 1 > smoothVTime)
         {
@@ -2612,8 +2639,6 @@ sint32 runLevel(char* filename, sint32 levelNm)
 
         if (quitRequest)
             return 2;
-
-        app_poll();
     }
 }
 

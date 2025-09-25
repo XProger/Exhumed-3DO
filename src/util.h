@@ -104,8 +104,6 @@ extern inline fix32 fixMul(fix32 a, fix32 b)
                      : "mach", "macl", "r11");
     return c;
 }
-#else
-#define MTH_Mul(a, b) (((a) * (b)) >> 16)
 #endif
 
 extern fix32 getStackPointer(void);
@@ -221,9 +219,9 @@ void resetDisable(void);
 #else
 static fix32 div_ret;
 
-#define Set_Hardware_Divide(x, y) div_ret = DIV_FIXED(x, y)
+#define Set_Hardware_Divide(x, y) div_ret = (x) / (y)
 #define Get_Hardware_Divide() div_ret
-#define Set_Hardware_DivideFixed Set_Hardware_Divide
+#define Set_Hardware_DivideFixed(x, y) div_ret = MTH_Div(x, y)
 
 #endif
 

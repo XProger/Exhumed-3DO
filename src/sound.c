@@ -50,8 +50,10 @@ static sint32 qHead, qTail;
 
 void setMasterVolume(sint32 vol)
 {
+#ifdef TODO // sound
     POKE_W(SNDBASE + 0x100400, 0x0200 + (vol & 0xf));
     /* set dac18, mem4mb & master volume */
+#endif
 }
 
 sint32 getSoundTop(void)
@@ -105,13 +107,17 @@ void stopAllSound(sint32 source)
     {
         if (slotOwner[i] == source)
         {
+#ifdef TODO // sound
             POKE_W(0x20 * i + SNDBASE + 0x100000, PEEK_W(0x20 * i + SNDBASE + 0x100000) & 0x7ff);
+#endif
             /* set key off on all voices without disturbing other settings */
             slotOwner[i] = -1;
         }
     }
     /* konex */
+#ifdef TODO // sound
     POKE_W(SNDBASE + 0x100000 + 0, PEEK_W(0x20 * i + SNDBASE + 0x100000) | 0x1000);
+#endif
 }
 
 void stopSound(sint32 source, sint32 sNm)

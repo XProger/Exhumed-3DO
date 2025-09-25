@@ -19,7 +19,6 @@
 #include "sequence.h"
 #include "sruins.h"
 #include "profile.h"
-#include "wallasm.h"
 #include "gamestat.h"
 
 #define WATER 1
@@ -91,6 +90,7 @@ static sint32 bestAutoAimRating;
 
 void project_point(MthXyz* v, XyInt* p);
 
+#if 0
 void project_point(MthXyz* v, XyInt* p)
 {
     uint32 newZ;
@@ -112,6 +112,15 @@ void project_point(MthXyz* v, XyInt* p)
 /* p->y = -PROJECT(v->y,newZ); */
 #endif
 }
+#else
+void project_point(MthXyz *v, XyInt *p)
+{
+    fix32 z_clamped = (v->z > (1 << 16)) ? v->z : (1 << 16);
+    fix32 divide_result = MTH_Div(F(80 << 1), z_clamped);
+    p->x = f(MTH_Mul(v->x, divide_result));
+    p->y = -f(MTH_Mul(v->y, divide_result));
+}
+#endif
 
 #define XMIN -160
 #define YMIN -110
@@ -395,18 +404,6 @@ void clipZSub(sint32 clipAxis, fix32 clipLine, sint32 greater, MthXyz* pointsIn,
         shadeIn += 4;
         assert(*nmOutQuads < 12);
     }
-}
-
-void rectTransform(fix32 wx, fix32 wy, fix32 wz, sint32 light, sint32 h, sint32 w, fix32 px, fix32 py, fix32 pz, fix32 hx, fix32 hy, fix32 hz, void* output, uint16 (*lightFunc)(sint8 vLightIndex, MthXyz* pos))
-{
-#ifdef TODO
-#endif
-}
-
-void normTransform(sVertexType* firstVertex, MthMatrix* viewMatrix, sint32 nmVert, void* output, uint16 (*lightFunc)(sint8 vLightIndex, MthXyz* pos))
-{
-#ifdef TODO
-#endif
 }
 
 #define WATERCOLOR (RGB(4, 4, 8))
@@ -982,14 +979,113 @@ void drawPlax(sWallType *theWall,MthXyz *coords)
 #endif
 
 #define MAXVPERWALL 700
-struct vCalc
+typedef struct 
 {
     sint16 x, y;
     uint16 light;
     /* sint8 clip;  clipped if (light&0x8000) */
-};
+} VCALC;
 
 static sint8 pattern[][4] = { { 0, 1, 2, 3 }, { 1, 2, 3, 0 }, { 2, 3, 0, 1 }, { 3, 0, 1, 2 }, { 0, 3, 2, 1 }, { 1, 0, 3, 2 }, { 2, 1, 0, 3 }, { 3, 2, 1, 0 } };
+
+void rectTransform(fix32 wx, fix32 wy, fix32 wz, sint32 light, sint32 h, sint32 w, fix32 px, fix32 py, fix32 pz, fix32 hx, fix32 hy, fix32 hz, VCALC *output, uint16 (*lightFunc)(sint8 vLightIndex, MthXyz *pos))
+{
+    sint32 i, divide_result, clip_bit, light_val, depth;
+    fix32 z_clamped;
+    uint8 *light_array = (uint8*)(level_vertexLight + light);
+    uint16 light_result;
+
+    while (h > 0)
+    {
+        fix32 curr_x = px, curr_y = py, curr_z = pz;
+        for (i = w; i > 0; i--)
+        {
+            z_clamped = (curr_z > (33 << 16)) ? curr_z : (33 << 16);
+            clip_bit = (curr_z > (33 << 16)) ? 0 : 1;
+
+            divide_result = MTH_Div(F(80 << 1), z_clamped);
+
+            light_val = *light_array++;
+            depth = z_clamped >> 24;
+            light_val = (depth > light_val) ? 0 : light_val - depth;
+
+            if (lightFunc)
+            {
+                MthXyz pos = {curr_x, curr_y, curr_z};
+                light_result = lightFunc(light_val, &pos);
+            }
+            else
+            {
+                light_result = greyTable[light_val << 1];
+            }
+
+            light_result &= clip_bit << 15;
+
+            output->x = (sint16)(f(MTH_Mul(curr_x, divide_result)));
+            output->y = (sint16)(-f(MTH_Mul(curr_y, divide_result)));
+            output->light = light_result;
+            output++;
+
+            curr_x += wx;
+            curr_y += wy;
+            curr_z += wz;
+        }
+
+        px += hx;
+        py += hy;
+        pz += hz;
+        h--;
+    }
+}
+
+void normTransform(sVertexType *vertex, MthMatrix *viewMatrix, sint32 nmVert, VCALC *output, uint16 (*lightFunc)(sint8 vLightIndex, MthXyz *pos))
+{
+    MthXyz src, dst;
+    sint32 z, x, y, depth, light, z_clamped, divide_result;
+    uint16 light_value;
+    sVertexType *end = vertex + nmVert;
+
+    while (vertex < end)
+    {
+        src.x = F(vertex->x);
+        src.y = F(vertex->y);
+        src.z = F(vertex->z);
+        light = vertex->light;
+        vertex++;
+
+        MTH_CoordTrans(viewMatrix, &src, &dst);
+
+        x = dst.x;
+        y = dst.y;
+        z = dst.z;
+
+        z_clamped = (z > (33 << 16)) ? z : (33 << 16);
+
+        divide_result = MTH_Div(F(80 << 1), z_clamped);
+
+        depth = z_clamped >> 24;
+        if (depth > light) {
+            light = 0;
+        } else {
+            light -= depth;
+        }
+
+        if (lightFunc) {
+            dst.z = z_clamped;
+            light_value = lightFunc(light, &dst);
+        } else {
+            light_value = greyTable[light << 1];
+        }
+
+        light_value &= ((z > (33 << 16)) ? 0 : 1) << 15;
+
+        output->x = (sint16)(f(MTH_Mul(x, divide_result)));
+        output->y = (sint16)(-f(MTH_Mul(y, divide_result)));
+        output->light = light_value;
+
+        output++;
+    }
+}
 
 void EZ_specialDistSpr2(sint16 charNm, XyInt* xy, struct gourTable* gTable);
 void drawRectWall(sWallType* theWall, MthXyz* coords, SectorDrawRecord* s)
@@ -1003,7 +1099,7 @@ void drawRectWall(sWallType* theWall, MthXyz* coords, SectorDrawRecord* s)
     sint32 width = theWall->tileLength;
     sint32 height = theWall->tileHeight;
     struct gourTable gtable;
-    struct vCalc vCalc[MAXVPERWALL];
+    VCALC vCalc[MAXVPERWALL];
 #if MIPMAP
     sint32 tileBias;
 #endif
@@ -1012,7 +1108,9 @@ void drawRectWall(sWallType* theWall, MthXyz* coords, SectorDrawRecord* s)
     assert(width * height < MAXVPERWALL);
 
 #if MIPMAP
-    if (currentState.desiredWeapon && coords[0].z > MIPDIST && coords[1].z > MIPDIST && coords[2].z > MIPDIST && coords[3].z > MIPDIST)
+#ifdef TODO // added width > 1 && height > 1 check
+#endif
+    if (width > 1 && height > 1 && currentState.desiredWeapon && coords[0].z > MIPDIST && coords[1].z > MIPDIST && coords[2].z > MIPDIST && coords[3].z > MIPDIST)
     {
         width >>= 1;
         height >>= 1;
@@ -1107,7 +1205,7 @@ void drawWall(sWallType* wall, MthMatrix* view, SectorDrawRecord* s)
     sint32 f, i, v, clip;
     XyInt poly[4];
     struct gourTable gtable;
-    struct vCalc vCalc[MAXVPERWALL];
+    VCALC vCalc[MAXVPERWALL];
 #ifndef NDEBUG
     sint32 maxV;
 #endif
@@ -1163,7 +1261,7 @@ void drawWaterSurface(sWallType* wall, MthMatrix* view, SectorDrawRecord* s)
     XyInt poly[4];
     MthXyz tformed;
     struct gourTable gtable;
-    struct vCalc vCalc[MAXVPERWALL];
+    VCALC vCalc[MAXVPERWALL];
 #ifndef NDEBUG
     sint32 maxV;
 #endif
@@ -1258,8 +1356,8 @@ struct slaveDrawResult
 static struct slaveDrawResult* slaveResult = (struct slaveDrawResult*)doorwayCache;
 sint32 nmSlavePolys;
 
-/*struct vCalc slave_vCalc[MAXVPERWALL]; */
-static struct vCalc* slave_vCalc = (struct vCalc*)(((sint8*)doorwayCache) + MAXNMSLAVEPOLYS * sizeof(struct slaveDrawResult));
+static VCALC slave_vCalc[MAXVPERWALL];
+//static struct VCALC* slave_vCalc = (VCALC*)(((sint8*)doorwayCache) + MAXNMSLAVEPOLYS * sizeof(struct slaveDrawResult));
 
 void slave_drawWater(sWallType* theWall)
 {
@@ -1279,7 +1377,7 @@ void slave_drawRectWall(sWallType* theWall, MthXyz* coords, SectorDrawRecord* s)
     sint32 height = theWall->tileHeight;
     struct gourTable gtable;
     sint8* ppattern;
-    struct slaveDrawResult* cacheThruResult = (struct slaveDrawResult*)(((sint32)slaveResult) + 0x20000000);
+    struct slaveDrawResult* cacheThruResult = slaveResult;
 #if MIPMAP
     sint32 tileBias;
 #endif
@@ -1379,7 +1477,7 @@ void slave_drawWall(sWallType* wall, MthMatrix* view, SectorDrawRecord* s)
     sint32 f, i, v, clip;
     XyInt poly[4];
     struct gourTable gtable;
-    struct slaveDrawResult* cacheThruResult = (struct slaveDrawResult*)(((sint32)slaveResult) + 0x20000000);
+    struct slaveDrawResult* cacheThruResult = slaveResult;
 
     if (wall->lastFace - wall->firstFace + 1 + nmSlavePolys + 50 > MAXNMSLAVEPOLYS)
         return;
@@ -2267,12 +2365,12 @@ void drawWalls(MthMatrix* view)
 
     if (slaveSize > updateListSize - 1)
         slaveSize = updateListSize - 1;
-    slaveDrawStart = slaveSize;
+    slaveDrawStart = -1;// slaveSize;
     /* start slave */
 #ifdef TODO // slave
     *(uint16 volatile*)0x21000000 = 0xffff;
 #else
-    slaveDraw(); // we don't have 2nd SH-2, so we call it directly on the main CPU
+    //slaveDraw(); // we don't have 2nd SH-2, so we call it directly on the main CPU
 #endif
     for (i = updateListSize - 1; i > slaveDrawStart; i--)
     {
