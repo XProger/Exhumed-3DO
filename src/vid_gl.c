@@ -412,47 +412,60 @@ void vid_center(sint32 x, sint32 y)
     (vert)->v = (float)(_v);\
     (vert)->color = _color;
 
-static const uint32 colors[] = {
-    0xFF0000FF,
-    0xFF00A5FF,
-    0xFF00FFFF,
-    0xFF00FF00,
-    0xFFFF0000,
-    0xFFFF0066,
-    0xFFFF008B,
-    0xFF00FFFF
-};
+static uint32 conv_rgba(uint32 rgb)
+{
+    uint8 r = ((31 & (rgb)) << 3);
+    uint8 g = ((31 & (rgb >> 5)) << 3);
+    uint8 b = ((31 & (rgb >> 10)) << 3);
 
-void vid_spr(sint32 *a, sint32 *c)
+    return r | (g << 8) | (b << 16) | 0xFF000000;
+}
+
+void vid_spr(sint32 *a, sint32 *c, uint16 color)
 {
     sint32 ax = a[0];
     sint32 ay = a[1];
     sint32 cx = ax + c[0];
     sint32 cy = ay + c[1];
     VERTEX *v = vertices + num_quads * 4;
-    uint32 color = colors[num_quads & 7];
+    uint32 color32 = conv_rgba(0xFFFF - color);
 
     assert(num_quads < MAX_QUADS);
     num_quads++;
 
-    SET_VERTEX(v + 0, ax, ay, 0.0f, 0.0f, color);
-    SET_VERTEX(v + 1, cx, ay, 0.0f, 0.0f, color);
-    SET_VERTEX(v + 2, cx, cy, 0.0f, 0.0f, color);
-    SET_VERTEX(v + 3, ax, cy, 0.0f, 0.0f, color);
+    SET_VERTEX(v + 0, ax, ay, 0.0f, 0.0f, color32);
+    SET_VERTEX(v + 1, cx, ay, 0.0f, 0.0f, color32);
+    SET_VERTEX(v + 2, cx, cy, 0.0f, 0.0f, color32);
+    SET_VERTEX(v + 3, ax, cy, 0.0f, 0.0f, color32);
 }
 
-void vid_poly(sint32 *p)
+void vid_poly(sint32 *points, uint16 *colors)
 {
     VERTEX *v = vertices + num_quads * 4;
-    uint32 color = colors[num_quads & 7];
+    uint32 colors32[4];
+    
+    if (colors)
+    {
+        colors32[0] = conv_rgba(colors[0]);
+        colors32[1] = conv_rgba(colors[1]);
+        colors32[2] = conv_rgba(colors[2]);
+        colors32[3] = conv_rgba(colors[3]);
+    }
+    else
+    {
+        colors32[0] =
+        colors32[1] =
+        colors32[2] =
+        colors32[3] = 0xFFFFFFFF;
+    }
 
     assert(num_quads < MAX_QUADS);
     num_quads++;
 
-    SET_VERTEX(v + 0, p[0], p[1], 0.0f, 0.0f, color);
-    SET_VERTEX(v + 1, p[2], p[3], 0.0f, 0.0f, color);
-    SET_VERTEX(v + 2, p[4], p[5], 0.0f, 0.0f, color);
-    SET_VERTEX(v + 3, p[6], p[7], 0.0f, 0.0f, color);
+    SET_VERTEX(v + 0, points[0], points[1], 0.0f, 0.0f, colors32[0]);
+    SET_VERTEX(v + 1, points[2], points[3], 0.0f, 0.0f, colors32[1]);
+    SET_VERTEX(v + 2, points[4], points[5], 0.0f, 0.0f, colors32[2]);
+    SET_VERTEX(v + 3, points[6], points[7], 0.0f, 0.0f, colors32[3]);
 }
 
 #endif // GAPI_GL

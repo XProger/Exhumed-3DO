@@ -246,7 +246,7 @@ void EZ_normSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt*
         sint32 xysize = chars[charNm].xysize;
         c[0] = (xysize >> 8) << 3;
         c[1] = (xysize & 0xFF);
-        vid_spr((sint32*)pos, c);
+        vid_spr((sint32*)pos, c, color);
     }
 }
 
@@ -273,7 +273,7 @@ void EZ_specialDistSpr(struct slaveDrawResult* sdr, sint32 charNm)
     }
     setGourPara(cmd, &sdr->gtable);
 
-    vid_poly((sint32*)sdr->poly);
+    vid_poly((sint32*)sdr->poly, (uint16*)&sdr->gtable);
 }
 
 void EZ_specialDistSpr2(sint16 charNm, XyInt* xy, struct gourTable* gTable)
@@ -292,7 +292,7 @@ void EZ_specialDistSpr2(sint16 charNm, XyInt* xy, struct gourTable* gTable)
     }
     setGourPara(cmd, gTable);
 
-    vid_poly((sint32*)xy);
+    vid_poly((sint32*)xy, (uint16*)gTable);
 }
 #endif
 
@@ -312,7 +312,7 @@ void EZ_distSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt*
     }
     setGourPara(cmd, gTable);
 
-    vid_poly((sint32*)xy);
+    vid_poly((sint32*)xy, (uint16*)gTable);
 }
 
 void EZ_cmd(struct cmdTable* inCmd)
@@ -339,7 +339,7 @@ void EZ_scaleSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt
         cmd->bx = pos[1].x;
         cmd->by = pos[1].y;
 
-        vid_spr((sint32*)(pos + 0), (sint32*)(pos + 1));
+        vid_spr((sint32*)(pos + 0), (sint32*)(pos + 1), color);
     }
     else // x0, y0, x1, y1
     {
@@ -352,7 +352,7 @@ void EZ_scaleSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt
             XyInt p;
             p.x = pos[1].x - pos[0].x;
             p.y = pos[1].y - pos[0].y;
-            vid_spr((sint32*)(pos + 0), (sint32*)&p);
+            vid_spr((sint32*)(pos + 0), (sint32*)&p, color);
         }
     }
 
@@ -406,7 +406,7 @@ void EZ_polygon(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTab
     }
     setGourPara(cmd, gTable);
 
-    vid_poly((sint32*)xy);
+    vid_poly((sint32*)xy, (uint16*)gTable);
 }
 
 void EZ_polyLine(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable)

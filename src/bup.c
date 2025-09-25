@@ -229,8 +229,8 @@ void bup_initCurrentGame(void)
 
 #ifndef TODO // cheating
     cheatsEnabled = 1; // ?
-    currentState.inventory |= INV_PISTOL | INV_M60;
-    currentState.desiredWeapon = WP_PISTOL;
+    currentState.inventory |= INV_M60;
+    currentState.desiredWeapon = WP_M60;
 #endif
 }
 

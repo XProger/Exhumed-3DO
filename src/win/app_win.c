@@ -166,7 +166,7 @@ void app_init(void)
     wcex.lpfnWndProc    = &WndProc;
     RegisterClassEx(&wcex);
 
-    hWnd = CreateWindow(wcex.lpszClassName, L"exhumed-3do (DBG)", WS_OVERLAPPEDWINDOW, x, y, w, h, 0, 0, wcex.hInstance, 0);
+    hWnd = CreateWindow(wcex.lpszClassName, L"Exhumed-3DO (DBG)", WS_OVERLAPPEDWINDOW, x, y, w, h, 0, 0, wcex.hInstance, 0);
     ShowWindow(hWnd, SW_SHOWDEFAULT);
 
     vid_init();

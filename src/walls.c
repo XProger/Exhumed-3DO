@@ -988,42 +988,44 @@ typedef struct
 
 static sint8 pattern[][4] = { { 0, 1, 2, 3 }, { 1, 2, 3, 0 }, { 2, 3, 0, 1 }, { 3, 0, 1, 2 }, { 0, 3, 2, 1 }, { 1, 0, 3, 2 }, { 2, 1, 0, 3 }, { 3, 2, 1, 0 } };
 
-void rectTransform(fix32 wx, fix32 wy, fix32 wz, sint32 light, sint32 h, sint32 w, fix32 px, fix32 py, fix32 pz, fix32 hx, fix32 hy, fix32 hz, VCALC *output, uint16 (*lightFunc)(sint8 vLightIndex, MthXyz *pos))
+void rectTransform(fix32 wx, fix32 wy, fix32 wz, sint32 light_idx, sint32 h, sint32 w, fix32 px, fix32 py, fix32 pz, fix32 hx, fix32 hy, fix32 hz, VCALC *output, uint16 (*lightFunc)(sint8 vLightIndex, MthXyz *pos))
 {
-    sint32 i, divide_result, clip_bit, light_val, depth;
+    sint32 i, divide_result, light, depth;
     fix32 z_clamped;
-    uint8 *light_array = (uint8*)(level_vertexLight + light);
-    uint16 light_result;
+    uint8 *light_array = (uint8*)(level_vertexLight + light_idx);
+    uint16 light_value;
 
     while (h > 0)
     {
         fix32 curr_x = px, curr_y = py, curr_z = pz;
         for (i = w; i > 0; i--)
         {
-            z_clamped = (curr_z > (33 << 16)) ? curr_z : (33 << 16);
-            clip_bit = (curr_z > (33 << 16)) ? 0 : 1;
+            z_clamped = (curr_z > F(33)) ? curr_z : F(33);
 
             divide_result = MTH_Div(F(80 << 1), z_clamped);
 
-            light_val = *light_array++;
+            light = *light_array++;
             depth = z_clamped >> 24;
-            light_val = (depth > light_val) ? 0 : light_val - depth;
+            //light_val = (depth > light_val) ? 0 : light_val - depth;
 
             if (lightFunc)
             {
                 MthXyz pos = {curr_x, curr_y, curr_z};
-                light_result = lightFunc(light_val, &pos);
+                light_value = lightFunc(light, &pos);
             }
             else
             {
-                light_result = greyTable[light_val << 1];
+                light_value = greyTable[light << 1];
             }
 
-            light_result &= clip_bit << 15;
+            if (curr_z > F(33))
+            {
+                light_value &= ~0x8000;
+            }
 
             output->x = (sint16)(f(MTH_Mul(curr_x, divide_result)));
             output->y = (sint16)(-f(MTH_Mul(curr_y, divide_result)));
-            output->light = light_result;
+            output->light = light_value;
             output++;
 
             curr_x += wx;
@@ -1064,11 +1066,11 @@ void normTransform(sVertexType *vertex, MthMatrix *viewMatrix, sint32 nmVert, VC
         divide_result = MTH_Div(F(80 << 1), z_clamped);
 
         depth = z_clamped >> 24;
-        if (depth > light) {
-            light = 0;
-        } else {
-            light -= depth;
-        }
+        //if (depth > light) {
+        //    light = 0;
+        //} else {
+        //    light -= depth;
+        //}
 
         if (lightFunc) {
             dst.z = z_clamped;
@@ -1077,7 +1079,10 @@ void normTransform(sVertexType *vertex, MthMatrix *viewMatrix, sint32 nmVert, VC
             light_value = greyTable[light << 1];
         }
 
-        light_value &= ((z > (33 << 16)) ? 0 : 1) << 15;
+        if (z > (33 << 16))
+        {
+            light_value &= ~0x8000;
+        }
 
         output->x = (sint16)(f(MTH_Mul(x, divide_result)));
         output->y = (sint16)(-f(MTH_Mul(y, divide_result)));
