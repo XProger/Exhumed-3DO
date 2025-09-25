@@ -22,7 +22,7 @@
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{bd8f1891-04c0-47de-9a90-6b682f5c8101}</ProjectGuid>
-    <RootNamespace>PowerSlave</RootNamespace>
+    <RootNamespace>exhumed-3do</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

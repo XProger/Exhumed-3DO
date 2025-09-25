@@ -161,12 +161,12 @@ void app_init(void)
     wcex.hIcon          = LoadIcon(wcex.hInstance, IDI_APPLICATION);
     wcex.hCursor        = LoadCursor(NULL, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)GetStockObject(BLACK_BRUSH);
-    wcex.lpszClassName  = L"SLAVE_WND";
+    wcex.lpszClassName  = L"EXHUMED_WND";
     wcex.hIconSm        = wcex.hIcon;
     wcex.lpfnWndProc    = &WndProc;
     RegisterClassEx(&wcex);
 
-    hWnd = CreateWindow(wcex.lpszClassName, L"PowerSlave (DBG)", WS_OVERLAPPEDWINDOW, x, y, w, h, 0, 0, wcex.hInstance, 0);
+    hWnd = CreateWindow(wcex.lpszClassName, L"exhumed-3do (DBG)", WS_OVERLAPPEDWINDOW, x, y, w, h, 0, 0, wcex.hInstance, 0);
     ShowWindow(hWnd, SW_SHOWDEFAULT);
 
     vid_init();
