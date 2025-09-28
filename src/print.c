@@ -4,7 +4,6 @@
 #include "spr.h"
 #include "print.h"
 
-/* #include "font0.h" */
 #include "font1.h"
 #include "font2.h"
 
@@ -14,7 +13,7 @@
 #define MAXNMFONTS 3
 #endif
 
-static uint8* fontList[] = { brianFont, brianFont, bigFont, NULL };
+static const uint8* fontList[] = { brianFont, brianFont, bigFont, NULL };
 
 static sint16 charMap[MAXNMFONTS][256];
 static sint8 widths[MAXNMFONTS][256];
@@ -64,7 +63,7 @@ sint32 initFonts(sint32 spriteNm, sint32 fontMask)
         fontMask = fontMask >> 1;
         if (!i)
             continue;
-        heights[f] = (sint8)*(sint16*)fontList[f];
+        heights[f] = (sint8)FS_SHORT((sint16*)fontList[f]);
         fontHeight = heights[f];
         EZ_setLookupTbl(f, (struct sprLookupTbl*)(fontList[f] + 2));
         for (i = 0; i < 256; i++)
