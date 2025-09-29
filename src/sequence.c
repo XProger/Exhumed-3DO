@@ -338,7 +338,10 @@ sint32 advanceWeaponSequence(sint32 xbase, sint32 ybase, sint32 hack)
     VDP2PicOn = 0;
     overlay = 0;
     if (sequence >= 50)
+    {
         overlay = 0x4000;
+    }
+
     {
         XyInt pos[2];
         pos[0].x = 0;
@@ -347,6 +350,7 @@ sint32 advanceWeaponSequence(sint32 xbase, sint32 ybase, sint32 hack)
         pos[1].y = 210;
         EZ_userClip(pos);
     }
+
     while (1)
     {
         gframe = frame + level_wSequence[sequence];

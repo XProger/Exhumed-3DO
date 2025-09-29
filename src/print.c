@@ -13,6 +13,8 @@
 #define MAXNMFONTS 3
 #endif
 
+#ifdef TODO // font, no need 0 font, no need a dedicated widths and heights array
+#endif
 static const uint8* fontList[] = { brianFont, brianFont, bigFont, NULL };
 
 static sint16 charMap[MAXNMFONTS][256];

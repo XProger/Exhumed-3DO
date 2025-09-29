@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "app.h"
+#include "vid.h"
 
 #ifdef AP_WIN
     #include <windows.h>
@@ -31,19 +32,24 @@ typedef struct {
 typedef struct {
     float x, y, u, v;
     uint32 color;
-} VERTEX;
+} VID_VERTEX;
+
+typedef struct {
+    GLuint tex_index;
+    sint32 count;
+} VID_RANGE;
 
 enum {
     aCoord,
     aColor
 };
 
-typedef uint16 INDEX;
+typedef uint16 VID_INDEX;
 
 #define MAX_QUADS   1024
 
-static VERTEX vertices[MAX_QUADS * 4];
-static INDEX  indices[MAX_QUADS * 6];
+static VID_VERTEX vertices[MAX_QUADS * 4];
+static VID_INDEX  indices[MAX_QUADS * 6];
 static sint32 num_quads;
 
 static GLuint vao;
@@ -54,9 +60,22 @@ static GLint shader_uProj;
 static mat4 mProj;
 static sint32 vid_cx, vid_cy;
 
+#define MAX_TEX     512 // == MAXNMCHARS
+#define MAX_CLUT    256
+
+static GLuint tex[MAX_TEX];
+static VID_RANGE ranges[MAX_TEX];
+static VID_RANGE *cur_range;
+
+static GLuint clut_tex;
+static uint32 cluts[MAX_CLUT][256];
+static sint32 clut_updated;
+
 //#define GetProcOGL(x) x=(decltype(x))GetProc(#x)
 #define GetProcOGL(x) x=(void*)wglGetProcAddress(#x)
 
+// texture
+PFNGLACTIVETEXTUREPROC              glActiveTexture;
 // shader
 PFNGLCREATEPROGRAMPROC              glCreateProgram;
 PFNGLDELETEPROGRAMPROC              glDeleteProgram;
@@ -109,7 +128,6 @@ static void mat4_ortho(mat4 *m, float l, float r, float b, float t, float znear,
     m->e23 = (znear + zfar) / (znear - zfar);
 }
 
-
 static void shader_compile(void)
 {
     static char* GLSL_HEADER_VERT_GL3 = 
@@ -144,11 +162,15 @@ static void shader_compile(void)
 
         "#else\n"
 
-            "//uniform sampler2D sDiffuse;\n"
+            "uniform sampler2D sTEX;\n"
+            "uniform sampler2D sCLUT;\n"
 
             "void main() {\n"
-                "//fragColor = texture2D(sDiffuse, vTexCoord);\n"
-                "fragColor = vColor;\n"
+                "vec4 color = texture2D(sTEX, vTexCoord);\n"
+                "vec4 clut = texture2D(sCLUT, vec2(color.r, vColor.a));\n"
+                "color = mix(color, clut, float(vColor.a < 1.0));\n"
+                "if (color.a == 0.0) discard;\n"
+                "fragColor = color * vec4(vColor.xyz, 1.0);\n"
             "}\n"
 
         "#endif\n";
@@ -194,11 +216,38 @@ static void shader_compile(void)
         assert(0);
     }
 
-    i = 0;
     glUseProgram(shader);
-    glUniform1iv(glGetUniformLocation(shader, "sDiffuse"), 1, &i);
+    i = 0;
+    glUniform1iv(glGetUniformLocation(shader, "sTEX"), 1, &i);
+    i = 1;
+    glUniform1iv(glGetUniformLocation(shader, "sCLUT"), 1, &i);
     shader_uProj = glGetUniformLocation(shader, "uProj");
     glUseProgram(0);
+}
+
+static void clut_init(void)
+{
+    glGenTextures(1, &clut_tex);
+    glBindTexture(GL_TEXTURE_2D, clut_tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 16, MAX_CLUT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    memset(&cluts[VID_NO_CLUT][0], 0xFF, 256 * sizeof(uint32));
+    clut_updated = 1;
+}
+
+static void clut_validate(void)
+{
+    if (!clut_updated)
+        return;
+    clut_updated = 0;
+
+    glActiveTexture(GL_TEXTURE1); // sCLUT
+    glBindTexture(GL_TEXTURE_2D, clut_tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 256, MAX_CLUT, 0, GL_RGBA, GL_UNSIGNED_BYTE, &cluts[0][0]);
 }
 
 static void vb_init(void)
@@ -216,6 +265,9 @@ static void vb_init(void)
     }
 
     num_quads = 0;
+    cur_range = ranges;
+    cur_range->tex_index = 0;
+    cur_range->count = 0;
 
     glGenVertexArrays(1, &vao);
 
@@ -232,7 +284,11 @@ static void vb_init(void)
 
 static void vb_flush(void)
 {
-    VERTEX *v = NULL;
+    VID_VERTEX *v = NULL;
+    VID_RANGE *range = ranges;
+    uint16 *base_index = NULL;
+
+    clut_validate();
 
     mat4_ortho(&mProj, 0, 320, 240, 0, 0, 1);
 
@@ -244,7 +300,7 @@ static void vb_flush(void)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[0]);
     glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
 
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(VERTEX) * num_quads * 4, vertices);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(VID_VERTEX) * num_quads * 4, vertices);
 
     glEnableVertexAttribArray(aCoord);
     glEnableVertexAttribArray(aColor);
@@ -252,12 +308,28 @@ static void vb_flush(void)
     glVertexAttribPointer(aCoord, 4, GL_FLOAT, GL_FALSE, sizeof(*v), &v->x);
     glVertexAttribPointer(aColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(*v), &v->color);
 
-    glDrawElements(GL_TRIANGLES, num_quads * 6, GL_UNSIGNED_SHORT, NULL);
+    glActiveTexture(GL_TEXTURE0); // sTEX
+    while (range <= cur_range)
+    {
+        glBindTexture(GL_TEXTURE_2D, tex[range->tex_index]);
+
+        if (range->count) // TODO make it nice!
+        {
+            glDrawElements(GL_TRIANGLES, range->count * 6, GL_UNSIGNED_SHORT, base_index);
+            base_index += range->count * 6;
+        }
+
+        range++;
+    }
+
     glBindVertexArray(0);
 
     glUseProgram(0);
 
     num_quads = 0;
+    cur_range = ranges;
+    cur_range->tex_index = 0;
+    cur_range->count = 0;
 }
 
 void vid_init(void)
@@ -336,6 +408,7 @@ void vid_init(void)
     wglMakeCurrent(hDC, hRC);
 #endif
 
+    GetProcOGL(glActiveTexture);
     GetProcOGL(glCreateProgram);
     GetProcOGL(glDeleteProgram);
     GetProcOGL(glLinkProgram);
@@ -375,6 +448,12 @@ void vid_init(void)
 
     glDisable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
+
+    glGenTextures(MAX_TEX, tex);
+
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    clut_init();
 }
 
 void vid_resize(sint32 width, sint32 height)
@@ -399,18 +478,18 @@ void vid_blit(void)
 #endif
 }
 
-void vid_center(sint32 x, sint32 y)
+void vid_origin(sint32 x, sint32 y)
 {
     vid_cx = x;
     vid_cy = y;
 }
 
-#define SET_VERTEX(vert,_x,_y,_u,_v,_color)\
+#define SET_VERTEX(vert,_x,_y,_u,_v,_clut,_color)\
     (vert)->x = (float)((_x) + vid_cx);\
     (vert)->y = (float)((_y) + vid_cy);\
     (vert)->u = (float)(_u);\
     (vert)->v = (float)(_v);\
-    (vert)->color = _color;
+    (vert)->color = (_color & 0x00FFFFFF) | (_clut << 24);
 
 static uint32 conv_rgba(uint32 rgb)
 {
@@ -418,32 +497,137 @@ static uint32 conv_rgba(uint32 rgb)
     uint8 g = ((31 & (rgb >> 5)) << 3);
     uint8 b = ((31 & (rgb >> 10)) << 3);
 
-    return r | (g << 8) | (b << 16) | 0xFF000000;
+    return r | (g << 8) | (b << 16) | (rgb & 0x8000 ? 0xFF000000 : 0);
 }
 
-void vid_spr(sint32 *a, sint32 *c, uint16 color)
+static void add_range(sint32 tex_index)
+{
+    if (cur_range->tex_index != tex_index)
+    {
+        cur_range++;
+        cur_range->tex_index = tex_index;
+        cur_range->count = 1;
+    }
+    else
+    {
+        cur_range->count++;
+    }
+}
+
+static uint32 tmp_img[256 * 256];
+
+#define VID_FMT_4   0x0008  // == COLOR_1
+#define VID_FMT_8   0x0020  // == COLOR_4
+#define VID_FMT_16  0x0028  // == COLOR_5
+
+void vid_tex_reset(void)
+{
+    //
+}
+
+void vid_tex_set(sint32 tex_index, sint32 format, const void *data, sint32 width, sint32 height)
+{
+    sint32 i;
+
+    assert(width < 256 && height < 256);
+
+    if (format == VID_FMT_4)
+    {
+        for (i = 0; i < width * height; i += 2)
+        {
+            // store CLUT indices to R
+            uint8 n = ((uint8*)data)[i >> 1];
+            tmp_img[i + 0] = n >> 4;
+            tmp_img[i + 1] = n & 15;
+        }
+    }
+    else if (format == VID_FMT_8)
+    {
+        for (i = 0; i < width * height; i++)
+        {
+            // store CLUT indices to R
+            tmp_img[i] = ((uint8*)data)[i];
+        }
+    }
+    else if (format == VID_FMT_16)
+    {
+        for (i = 0; i < width * height; i++)
+        {
+            tmp_img[i] = conv_rgba(FS_SHORT((uint16*)data + i));
+        }
+    }
+    else
+    {
+        assert(0);
+    }
+
+    glBindTexture(GL_TEXTURE_2D, tex[tex_index]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, tmp_img);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
+void vid_clut_set(sint32 clut_index, const uint16 *data, sint32 length)
+{
+    sint32 i;
+
+    for (i = 0; i < length; i++)
+    {
+        cluts[clut_index][i] = conv_rgba(FS_SHORT(data + i));
+    }
+
+    // not necessary
+    for (i = length; i < 256; i++)
+    {
+        cluts[clut_index][i] = 0;
+    }
+
+    clut_updated = 1;
+}
+
+void vid_sprite(sint32 *a, sint32 *c, uint16 color, sint32 dir, sint32 tex_index, sint32 clut_index)
 {
     sint32 ax = a[0];
     sint32 ay = a[1];
     sint32 cx = ax + c[0];
     sint32 cy = ay + c[1];
-    VERTEX *v = vertices + num_quads * 4;
+    VID_VERTEX *v = vertices + num_quads * 4;
     uint32 color32 = conv_rgba(0xFFFF - color);
+
+    add_range(tex_index);
+
+    if (dir & SPR_FLIP_V)
+    {
+        sint32 t = ay;
+        ay = cy;
+        cy = t;
+    }
+
+    if (dir & SPR_FLIP_H)
+    {
+        sint32 t = ax;
+        ax = cx;
+        cx = t;
+    }
 
     assert(num_quads < MAX_QUADS);
     num_quads++;
 
-    SET_VERTEX(v + 0, ax, ay, 0.0f, 0.0f, color32);
-    SET_VERTEX(v + 1, cx, ay, 0.0f, 0.0f, color32);
-    SET_VERTEX(v + 2, cx, cy, 0.0f, 0.0f, color32);
-    SET_VERTEX(v + 3, ax, cy, 0.0f, 0.0f, color32);
+    SET_VERTEX(v + 0, ax, ay, 0.0f, 0.0f, clut_index, color32);
+    SET_VERTEX(v + 1, cx, ay, 1.0f, 0.0f, clut_index, color32);
+    SET_VERTEX(v + 2, cx, cy, 1.0f, 1.0f, clut_index, color32);
+    SET_VERTEX(v + 3, ax, cy, 0.0f, 1.0f, clut_index, color32);
 }
 
-void vid_poly(sint32 *points, uint16 *colors)
+void vid_poly(sint32 *points, uint16 *colors, sint32 tex_index, sint32 clut_index)
 {
-    VERTEX *v = vertices + num_quads * 4;
+    VID_VERTEX *v = vertices + num_quads * 4;
     uint32 colors32[4];
-    
+
+    add_range(tex_index);
+
     if (colors)
     {
         colors32[0] = conv_rgba(colors[0]);
@@ -462,10 +646,10 @@ void vid_poly(sint32 *points, uint16 *colors)
     assert(num_quads < MAX_QUADS);
     num_quads++;
 
-    SET_VERTEX(v + 0, points[0], points[1], 0.0f, 0.0f, colors32[0]);
-    SET_VERTEX(v + 1, points[2], points[3], 0.0f, 0.0f, colors32[1]);
-    SET_VERTEX(v + 2, points[4], points[5], 0.0f, 0.0f, colors32[2]);
-    SET_VERTEX(v + 3, points[6], points[7], 0.0f, 0.0f, colors32[3]);
+    SET_VERTEX(v + 0, points[0], points[1], 0.0f, 0.0f, clut_index, colors32[0]);
+    SET_VERTEX(v + 1, points[2], points[3], 1.0f, 0.0f, clut_index, colors32[1]);
+    SET_VERTEX(v + 2, points[4], points[5], 1.0f, 1.0f, clut_index, colors32[2]);
+    SET_VERTEX(v + 3, points[6], points[7], 0.0f, 1.0f, clut_index, colors32[3]);
 }
 
 #endif // GAPI_GL

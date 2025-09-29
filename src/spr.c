@@ -36,6 +36,13 @@ static struct gourTable gourBuffer[GOURBUFFERSIZE];
 static struct cmdTable cmdBuffer[CMDBUFFERSIZE];
 #endif
 
+static sint32 get_clut_index(sint16 drawMode, uint16 color)
+{
+    if ((drawMode & DRAW_COLOR) != COLOR_5)
+        return color;
+    return VID_NO_CLUT;
+}
+
 #define ERASEWRITESTARTLINE 110
 
 void EZ_setErase(sint32 eraseWriteEndLine, uint16 eraseWriteColor)
@@ -98,14 +105,22 @@ void EZ_initSprSystem(sint32 nmCommands, sint32 nmCluts, sint32 nmGour, sint32 e
         memset(end, 0, 32);
         end->control = CTRL_END;
     }
+
+    vid_tex_reset();
 }
 
 void EZ_setChar(sint32 charNm, sint32 colorMode, sint32 width, sint32 height, uint8* data)
 {
-    sint32 size = width * height;
     assert(charNm >= 0);
     assert(charNm < MAXNMCHARS);
     assert(!(width & 3));
+
+    if (data)
+    {
+        vid_tex_set(charNm, colorMode, data, width, height);
+    }
+
+    sint32 size = width * height;
     /* character is not allocated, allocate it */
     if (colorMode >= COLOR_5)
         size <<= 1;
@@ -133,6 +148,7 @@ void EZ_setLookupTbl(sint32 tblNm, struct sprLookupTbl* tbl)
     assert(tblNm <= 10);
     validPtr(tbl);
     dmaMemCpy(tbl, (uint8*)(VRAM_ADDR + clutStart + (tblNm << 5)), 1 << 5);
+    vid_clut_set(tblNm, (uint16*)tbl, 16);
 }
 
 void EZ_openCommand(void)
@@ -246,7 +262,7 @@ void EZ_normSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt*
         sint32 xysize = chars[charNm].xysize;
         c[0] = (xysize >> 8) << 3;
         c[1] = (xysize & 0xFF);
-        vid_spr((sint32*)pos, c, color);
+        vid_sprite((sint32*)pos, c, color, dir, charNm, get_clut_index(drawMode, color));
     }
 }
 
@@ -273,7 +289,7 @@ void EZ_specialDistSpr(struct slaveDrawResult* sdr, sint32 charNm)
     }
     setGourPara(cmd, &sdr->gtable);
 
-    vid_poly((sint32*)sdr->poly, (uint16*)&sdr->gtable);
+    vid_poly((sint32*)sdr->poly, (uint16*)&sdr->gtable, charNm, VID_NO_CLUT);
 }
 
 void EZ_specialDistSpr2(sint16 charNm, XyInt* xy, struct gourTable* gTable)
@@ -292,7 +308,7 @@ void EZ_specialDistSpr2(sint16 charNm, XyInt* xy, struct gourTable* gTable)
     }
     setGourPara(cmd, gTable);
 
-    vid_poly((sint32*)xy, (uint16*)gTable);
+    vid_poly((sint32*)xy, (uint16*)gTable, charNm, VID_NO_CLUT);
 }
 #endif
 
@@ -312,7 +328,7 @@ void EZ_distSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt*
     }
     setGourPara(cmd, gTable);
 
-    vid_poly((sint32*)xy, (uint16*)gTable);
+    vid_poly((sint32*)xy, (uint16*)gTable, charNm, get_clut_index(drawMode, color));
 }
 
 void EZ_cmd(struct cmdTable* inCmd)
@@ -339,7 +355,7 @@ void EZ_scaleSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt
         cmd->bx = pos[1].x;
         cmd->by = pos[1].y;
 
-        vid_spr((sint32*)(pos + 0), (sint32*)(pos + 1), color);
+        vid_sprite((sint32*)(pos + 0), (sint32*)(pos + 1), color, dir, charNm, get_clut_index(drawMode, color));
     }
     else // x0, y0, x1, y1
     {
@@ -352,7 +368,7 @@ void EZ_scaleSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt
             XyInt p;
             p.x = pos[1].x - pos[0].x;
             p.y = pos[1].y - pos[0].y;
-            vid_spr((sint32*)(pos + 0), (sint32*)&p, color);
+            vid_sprite((sint32*)(pos + 0), (sint32*)&p, color, dir, charNm, get_clut_index(drawMode, color));
         }
     }
 
@@ -367,7 +383,7 @@ void EZ_localCoord(sint16 x, sint16 y)
     cmd->ax = x;
     cmd->ay = y;
 
-    vid_center(x, y);
+    vid_origin(x, y);
 }
 
 void EZ_userClip(XyInt* xy)
@@ -406,7 +422,7 @@ void EZ_polygon(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTab
     }
     setGourPara(cmd, gTable);
 
-    vid_poly((sint32*)xy, (uint16*)gTable);
+    vid_poly((sint32*)xy, (uint16*)gTable, 0, VID_NO_CLUT);
 }
 
 void EZ_polyLine(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable)
@@ -443,6 +459,7 @@ void EZ_line(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable)
 
 sint32 EZ_charNoToVram(sint32 charNm)
 {
+    assert(0);
     return chars[charNm].addr;
 }
 

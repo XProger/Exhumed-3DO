@@ -21,7 +21,4 @@ sint32 getCurrentStatus(void);
 
 void link(char* filename);
 
-#define FS_INT(p)   (sint32)( ((uint8*)(p))[3] | (((uint8*)(p))[2] << 8) | (((uint8*)(p))[1] << 16) | (((uint8*)(p))[0] << 24) )
-#define FS_SHORT(p) (sint32)( ((uint8*)(p))[1] | (((uint8*)(p))[0] << 8) )
-
 #endif

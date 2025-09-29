@@ -155,7 +155,6 @@
     <ClInclude Include="..\bup.h" />
     <ClInclude Include="..\dma.h" />
     <ClInclude Include="..\file.h" />
-    <ClInclude Include="..\font0.h" />
     <ClInclude Include="..\font1.h" />
     <ClInclude Include="..\font2.h" />
     <ClInclude Include="..\gamestat.h" />

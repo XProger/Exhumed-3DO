@@ -363,7 +363,15 @@ static void map(Pic* p)
                 uint16 temp2 = ssrc[src + 1];
                 uint16 temp3 = ssrc[src + 64];
                 uint16 temp4 = ssrc[src + 64 + 1];
+
+                temp1 = FS_SHORT(&temp1);
+                temp2 = FS_SHORT(&temp2);
+                temp3 = FS_SHORT(&temp3);
+                temp4 = FS_SHORT(&temp4);
+
                 uint16 avg = (((temp1 & 0x001f) + (temp2 & 0x001f) + (temp3 & 0x001f) + (temp4 & 0x001f)) >> 2) | ((((temp1 & 0x03e0) + (temp2 & 0x03e0) + (temp3 & 0x03e0) + (temp4 & 0x03e0)) >> 2) & 0x03e0) | ((((temp1 & 0x7c00) + (temp2 & 0x7c00) + (temp3 & 0x7c00) + (temp4 & 0x7c00)) >> 2) & 0x7c00) | 0x8000;
+
+                avg = FS_SHORT(&avg);
 
                 mipbuff[p] = avg;
                 mipbuff[p + 32] = avg;
@@ -385,6 +393,8 @@ static void map(Pic* p)
         /*  qmemcpy(pos,srcData,classType[(sint32)p->class].dataSize); */
 #endif
     }
+
+    vid_tex_set(p->charNm, classType[(sint32)p->class].colorMode, srcData, classType[(sint32)p->class].width, classType[(sint32)p->class].height);
 }
 
 /* if a pic is locked, its memory may be free'd after this call */
@@ -702,6 +712,14 @@ void loadPalletes(sint32 fd)
             colorRam[NMOBJECTPALLETES * 256 + j] = tempSpace[j];
         /* SCL_SetColRam(0,NMOBJECTPALLETES*256,256,tempSpace); */
     }
+
+    for (i = 0; i < size / 512; i++)
+    {
+        vid_clut_set(i, palletes + i * 256 + 1, 512);
+    }
+
+#ifdef TODO // flash palette
+#endif
 }
 
 /* return # of tiles loaded */

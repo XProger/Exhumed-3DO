@@ -331,11 +331,15 @@ void ramsesTrigger_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
                     {
                         sint16 s;
                         fs_read(this->fd, (sint8*)&s, 2);
+
+                        s = FS_SHORT(&s);
+
                         this->nmFrames = s;
                     }
                     this->frames = mem_malloc(0, this->nmFrames);
                     this->framePos = 0;
                     fs_read(this->fd, this->frames, this->nmFrames);
+#ifdef TODO // sound
                     for (i = 0; i < 16; i++)
                         loadRamsesBlock(this);
                     {
@@ -373,6 +377,7 @@ void ramsesTrigger_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
                     }
                     POKE_W(SNDBASE + 0x100408, this->sndSlot << 11);
                     this->lastSndPos = 0;
+#endif
                     /* set slot to monitor */
                     break;
                 case AI_RTRIGGER_DROPMUMMY:

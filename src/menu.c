@@ -836,6 +836,11 @@ sint32 dlg_run(sint32 selSound, sint32 pushSound, sint32 movement)
         dlg_draw(currentButton, pressed);
         SPR_WaitDrawEnd();
         EZ_closeCommand();
+
+        vid_blit();
+        vid_clear();
+
+        app_poll();
 #if 0
      if (first>=0)
 	{if (!first)
@@ -997,9 +1002,11 @@ sint32 dlg_runYesNo(char* message, sint32 w)
 sint32 runTravelQuestion(char* destination)
 {
     char buff[160];
+#ifdef TODO // travel
     POKE_W(SCL_VDP2_VRAM + 0x180114, -255); /* reset color offsets */
     POKE_W(SCL_VDP2_VRAM + 0x180116, -255);
     POKE_W(SCL_VDP2_VRAM + 0x180118, -255);
+#endif
     SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0 | SCL_NBG0 | SCL_RBG0, -255, -255, -255);
     dontDisplayVDP2Pic();
     EZ_openCommand();

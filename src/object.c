@@ -565,7 +565,7 @@ void radialDamage(Object* this, MthXyz* center, sint32 sector, sint32 damage, fi
                     sp = list[nmToHurt]->sprite;
                     if (!sp)
                         continue;
-                    dist = approxDist(center->x - sp->pos.x, center->y - sp->pos.y, center->z - sp->pos.z);
+                    dist = approxDist(center->x - sp->pos.x, center->y - sp->pos.y, center->z - sp->pos.z) + 1; // TODO div by 0
                     if (dist > radius)
                         continue;
                     dam = MTH_Mul(damage, F(1) - MTH_Div(dist, radius));
