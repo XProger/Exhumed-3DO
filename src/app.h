@@ -1,6 +1,27 @@
 #ifndef APP_H
 #define APP_H
 
+#ifdef AP_3DO
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#include <displayutils.h>
+#include <operamath.h>
+#include <io.h>
+#include <mem.h>
+#include <event.h>
+#include <graphics.h>
+//#include <filestream.h>
+//#include <filestreamfunctions.h>
+#else
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <math.h>
+
 typedef signed char sint8;
 typedef signed short sint16;
 typedef signed int sint32;
@@ -8,6 +29,7 @@ typedef signed int sint32;
 typedef unsigned char uint8;
 typedef unsigned short uint16;
 typedef unsigned int uint32;
+#endif
 
 typedef sint32 fix32;
 

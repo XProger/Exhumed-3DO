@@ -1,7 +1,6 @@
 #include <machine.h>
 #include <sega_spr.h>
 #include <sega_scl.h>
-#include <string.h>
 
 #include "menu.h"
 #include "print.h"
@@ -188,10 +187,12 @@ sint32 loadOverBase(uint8* picData, uint16* pallete, sint32 xsize, sint32 ysize,
                 if (x1 < bevels[b].x1 + bevels[b].width && lineSide[3] && !lineSide[0])
                     bevel = 4;
                 if (bevels[b].type == 1)
+                {
                     if (bevel)
                         bevel = ((bevel + 1) & 3) + 1;
                     else
                         bevel = 5;
+                }
                 if (bevel)
                     break;
             }
@@ -307,7 +308,7 @@ void dlg_addBase(sint32 x, sint32 y, sint32 w, sint32 h, BevelData* bevel, sint3
     texY = y;
     texWidth = w;
     texHeight = h;
-    texVramPos = loadOverBase((sint8*)(picDatas[0]), picPals[0], w, h, bevel, nmBevels);
+    texVramPos = loadOverBase((uint8*)(picDatas[0]), picPals[0], w, h, bevel, nmBevels);
 }
 
 void dlg_addRect(sint32 x, sint32 y, sint32 w, sint32 h, sint32 color)
@@ -839,7 +840,6 @@ sint32 dlg_run(sint32 selSound, sint32 pushSound, sint32 movement)
 
         vid_blit();
         vid_clear();
-
         app_poll();
 #if 0
      if (first>=0)
@@ -1362,7 +1362,7 @@ void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fad
             char* c;
             char* string;
             char buffer[80];
-            sint8 buff2[80];
+            char buff2[80];
             char bpos;
             string = getText(LB_INVTEXT, slidePos[selectedButton] + textStart[selectedButton]);
 
@@ -1612,6 +1612,10 @@ void dlg_runSlideIn(void)
         EZ_closeCommand();
         SPR_WaitDrawEnd();
         SCL_DisplayFrame();
+
+        vid_blit();
+        vid_clear();
+        app_poll();
 #ifdef JAPAN
         pic_nextFrame(NULL, NULL);
 #endif

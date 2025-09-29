@@ -15,7 +15,7 @@ sPBVertex* level_PBVert;
 sint16* level_PBWall;
 WaveVert* level_waveVert;
 WaveFace* level_waveFace;
-uint8 (*level_cutPlane)[][MAXCUTSECTORS];
+uint8* level_cutPlane;
 
 sint32 level_nmSectors;
 sint32 level_nmWalls;
@@ -24,27 +24,37 @@ sint32 level_nmPushBlocks;
 sint32 level_nmWaveVert;
 sint32 level_nmVertex;
 
+static uint8 level_data[512 * 1024];
+
+#if 0
 #define LOADPART(array, type, number)   \
     size = number * sizeof(type);       \
     array = (type*)mem_malloc(1, size); \
     fs_read(fd, (sint8*)array, size);
+#endif
+
+#define LOADPART(array, type, number)   \
+    array = (type*)ptr;                \
+    ptr += number * sizeof(type);
 
 sint32 loadLevel(sint32 fd, sint32 tileBase)
 {
     sint32 size;
     sint32 i;
     struct sLevelHeader* head;
+    uint8 *ptr = level_data;
+
     assert(fd >= 0);
     fs_read(fd, (sint8*)&size, 4);
 
     size = FS_INT(&size);
 
     dPrint("level size=%d\n", size);
-    dPrint("coreleft=%d\n", mem_coreleft(1));
-    assert(size > 0);
-    assert(size < 900000);
-    head = (struct sLevelHeader*)mem_malloc(1, sizeof(struct sLevelHeader));
-    fs_read(fd, (sint8*)head, sizeof(struct sLevelHeader));
+    assert(size < sizeof(level_data));
+
+    fs_read(fd, ptr, size);
+
+    LOADPART(head, struct sLevelHeader, 1);
 
     head->nmSectors = FS_INT(&head->nmSectors);
     head->nmWalls = FS_INT(&head->nmWalls);
@@ -80,8 +90,8 @@ sint32 loadLevel(sint32 fd, sint32 tileBase)
     LOADPART(level_PBWall, sint16, head->nmPBWalls);
     LOADPART(level_objectParams, uint8, head->nmObjectParams);
     LOADPART(level_texture, uint8, head->nmTextureIndexes);
-    LOADPART(level_vertexLight, sint8, head->nmLightValues);
-    LOADPART(((sint8*)level_cutPlane), sint8, (head->nmCutSectors * MAXCUTSECTORS));
+    LOADPART(level_vertexLight, uint8, head->nmLightValues);
+    LOADPART(level_cutPlane, uint8, head->nmCutSectors);
 
     for (i = 0; i < head->nmSectors; i++)
     {
@@ -201,6 +211,7 @@ sint32 loadLevel(sint32 fd, sint32 tileBase)
 
     for (i = 1; i < head->nmTextureIndexes; i += 2)
         level_texture[i] += tileBase;
+
     for (i = 0; i < head->nmFaces; i++)
         level_face[i].tile += tileBase;
 

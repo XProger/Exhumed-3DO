@@ -2,9 +2,6 @@
 
 #include <libsn.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "sega_spr.h"
 #include "sega_scl.h"
 #include "sega_int.h"
@@ -27,7 +24,6 @@
 #include "menu.h"
 #include "bup.h"
 #include "spr.h"
-#include "mov.h"
 
 #define MAXNMPICS 20
 static uint16* picPals[MAXNMPICS];
@@ -35,6 +31,7 @@ static uint32* picDatas[MAXNMPICS];
 
 static void setupVDP2(void)
 {
+#ifdef TODO // VDP2 intro
     static uint16 cycle[] = { 0x44ee, 0xeeee, 0x44ee, 0xeeee, 0x55ee, 0xeeee, 0x55ee, 0xeeee };
     SclConfig scfg;
     SclVramConfig vcfg;
@@ -63,10 +60,12 @@ static void setupVDP2(void)
     SCL_SetPriority(SCL_NBG0, 2);
     SCL_SetPriority(SCL_NBG1, 1);
     SCL_SET_N0CCEN(1);
+#endif
 }
 
 static void loadVDPPic(sint32 picNm, sint32 bankNm)
 {
+#ifdef TODO // VDP pic
     sint32 i, width, height, x, y, yoffs;
 
     for (i = 0; i < 256; i++)
@@ -88,6 +87,7 @@ static void loadVDPPic(sint32 picNm, sint32 bankNm)
     for (y = height + yoffs; y < 240; y++)
         for (x = 0; x < (width >> 2); x++)
             POKE(SCL_VDP2_VRAM + (y << 9) + (x << 2) + (bankNm ? 1024 * 256 : 0), 0);
+#endif
 }
 
 static void fadeUp(void)
@@ -399,6 +399,14 @@ bigReset:
     return 0;
 }
 
+static sint32 class_sizes[] = {
+#ifndef JAPAN
+    50, 0, 0, 0, 0, -1
+#else
+    40, 0, 0, 0, 0, 70, -1
+#endif
+};
+
 void playIntro(void)
 {
     sint32 i;
@@ -409,11 +417,10 @@ void playIntro(void)
     EZ_initSprSystem(500, 8, 500, 240, 0x0000);
 #ifndef JAPAN
     i = initFonts(0, 7);
-    initPicSystem(i, ((sint32[]) { 50, 0, 0, 0, 0, -1 }));
 #else
     i = initFonts(0, 4);
-    initPicSystem(i, ((sint32[]) { 40, 0, 0, 0, 0, 70, -1 }));
 #endif
+    initPicSystem(i, class_sizes);
     stopCD();
     {
 #ifndef JAPAN

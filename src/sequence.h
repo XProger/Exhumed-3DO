@@ -29,5 +29,5 @@ void queueWeaponSequence(sint32 seqNm, sint32 cx, sint32 cy);
 sint32 advanceWeaponSequence(sint32 xbase, sint32 ybase, sint32 hack);
 sint32 getWeaponSequenceQSize(void);
 void addWeaponSequence(sint32 seqNm);
-void clearWeaponQ();
+void clearWeaponQ(void);
 #endif

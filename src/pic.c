@@ -8,7 +8,6 @@
 #include <sega_dbg.h>
 #include <sega_per.h>
 #include <sega_dma.h>
-#include <string.h>
 
 #include "pic.h"
 #include "util.h"
@@ -189,7 +188,7 @@ static uint8 rleBuffer[4096];
 sint32 initPicSystem(sint32 _picNmBase, sint32* classSizes)
 {
     sint32 i;
-    enum Class c;
+    sint32 c;
     nmPics = 0;
     frameCount = 0;
     palletes = NULL;
@@ -357,19 +356,21 @@ static void map(Pic* p)
         sint32 p, src;
         uint16* ssrc = (uint16*)srcData;
         for (y = 0, p = 0, src = 0; y < 32; y++, p += 32, src += 64)
+        {
             for (x = 0; x < 32; x++, p++, src += 2)
             {
                 uint16 temp1 = ssrc[src];
                 uint16 temp2 = ssrc[src + 1];
                 uint16 temp3 = ssrc[src + 64];
                 uint16 temp4 = ssrc[src + 64 + 1];
+                uint16 avg;
 
                 temp1 = FS_SHORT(&temp1);
                 temp2 = FS_SHORT(&temp2);
                 temp3 = FS_SHORT(&temp3);
                 temp4 = FS_SHORT(&temp4);
 
-                uint16 avg = (((temp1 & 0x001f) + (temp2 & 0x001f) + (temp3 & 0x001f) + (temp4 & 0x001f)) >> 2) | ((((temp1 & 0x03e0) + (temp2 & 0x03e0) + (temp3 & 0x03e0) + (temp4 & 0x03e0)) >> 2) & 0x03e0) | ((((temp1 & 0x7c00) + (temp2 & 0x7c00) + (temp3 & 0x7c00) + (temp4 & 0x7c00)) >> 2) & 0x7c00) | 0x8000;
+                avg = (((temp1 & 0x001f) + (temp2 & 0x001f) + (temp3 & 0x001f) + (temp4 & 0x001f)) >> 2) | ((((temp1 & 0x03e0) + (temp2 & 0x03e0) + (temp3 & 0x03e0) + (temp4 & 0x03e0)) >> 2) & 0x03e0) | ((((temp1 & 0x7c00) + (temp2 & 0x7c00) + (temp3 & 0x7c00) + (temp4 & 0x7c00)) >> 2) & 0x7c00) | 0x8000;
 
                 avg = FS_SHORT(&avg);
 
@@ -378,7 +379,8 @@ static void map(Pic* p)
                 mipbuff[p + 32 * 64] = avg;
                 mipbuff[p + 32 * 64 + 32] = avg;
             }
-        srcData = (sint8*)mipbuff;
+        }
+        srcData = (uint8*)mipbuff;
     }
 #endif
 
@@ -521,7 +523,7 @@ static void load16BPPTile(sint32 fd, sint32 lock)
 #endif
     uint8* buffer;
     uint8* b;
-    sint16* pal;
+    uint16* pal;
     width = 64;
     height = 64;
 #if !COMPRESS16BPP
@@ -560,7 +562,7 @@ static void loadSmall16BPPTile(sint32 fd, sint32 lock)
 #endif
     uint8* buffer;
     uint8* b;
-    sint16* pal;
+    uint16* pal;
     width = 32;
     height = 32;
 #if !COMPRESS16BPP
@@ -602,7 +604,7 @@ static void load8BPPRLETile(sint32 fd, sint32 lock)
     size = FS_SHORT(&size);
 
     assert(size);
-    buffer = (sint8*)mem_malloc(0, size);
+    buffer = (uint8*)mem_malloc(0, size);
     assert(buffer);
     fs_read(fd, buffer, size);
     addPic(TILE8BPP, buffer, NULL, (lock ? PICFLAG_LOCKED : 0) | PICFLAG_RLE);
@@ -621,7 +623,7 @@ static void loadSmall8BPPRLETile(sint32 fd, sint32 lock)
     size = FS_SHORT(&size);
 
     assert(size);
-    buffer = (sint8*)mem_malloc(0, size);
+    buffer = (uint8*)mem_malloc(0, size);
     assert(buffer);
     fs_read(fd, buffer, size);
     addPic(TILESMALL8BPP, buffer, NULL, (lock ? PICFLAG_LOCKED : 0) | PICFLAG_RLE);
@@ -629,11 +631,11 @@ static void loadSmall8BPPRLETile(sint32 fd, sint32 lock)
         mem_free(buffer);
 }
 
-static void load16BPPRLETile(fd, lock)
+static void load16BPPRLETile(sint32 fd, sint32 lock)
 {
     uint8* buffer;
     sint16 size, palNm;
-    sint16* pal;
+    uint16* pal;
     fs_read(fd, (sint8*)&palNm, 2);
     fs_read(fd, (sint8*)&size, 2);
 
@@ -641,7 +643,7 @@ static void load16BPPRLETile(fd, lock)
     size = FS_SHORT(&size);
 
     assert(size);
-    buffer = (sint8*)mem_malloc(0, size);
+    buffer = (uint8*)mem_malloc(0, size);
     fs_read(fd, buffer, size);
     pal = palletes + 256 * palNm + 1;
     addPic(TILE16BPP, buffer, pal, (lock ? PICFLAG_LOCKED : 0) | PICFLAG_RLE);

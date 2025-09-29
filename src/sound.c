@@ -122,6 +122,7 @@ void stopAllSound(sint32 source)
 
 void stopSound(sint32 source, sint32 sNm)
 {
+#ifdef TODO // sound
     sint32 i;
     for (i = 0; i < 32; i++)
     {
@@ -133,6 +134,7 @@ void stopSound(sint32 source, sint32 sNm)
         }
     }
     POKE_W(SNDBASE + 0x100000, PEEK_W(0x20 * i + SNDBASE + 0x100000) | 0x1000);
+#endif
 }
 
 static sint32 deQVoice(void)
@@ -145,6 +147,7 @@ static sint32 deQVoice(void)
     return retVal;
 }
 
+#ifdef TODO // sound
 static void initSlot(sint32 i)
 {
     POKE_W(0x20 * i + SNDBASE + 0x100000 + 2, 0x0000); /* start address */
@@ -159,6 +162,7 @@ static void initSlot(sint32 i)
     POKE_W(0x20 * i + SNDBASE + 0x100000 + 0x14, 0x0000);
     POKE_W(0x20 * i + SNDBASE + 0x100000 + 0x16, 0xe000);
 }
+#endif
 
 void initSound(void)
 {

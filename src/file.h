@@ -2,11 +2,11 @@
 #define __INCLUDEDfileh
 
 void fs_startProgress(sint32 swirly);
-void fs_addToProgress(char* filename);
+void fs_addToProgress(const char* filename);
 void fs_closeProgress(void);
 
 void fs_init(void);
-sint32 fs_open(char* filename);
+sint32 fs_open(const char* filename);
 void fs_read(sint32 fd, void* buf, sint32 n);
 void fs_close(sint32 fd);
 void fs_execOne(void);

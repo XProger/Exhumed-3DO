@@ -2,7 +2,6 @@
 #define SEGA_MTH_H
 
 #include <sega_xpt.h>
-#include <math.h>
 
 typedef struct {
     fix32 x, y, z;

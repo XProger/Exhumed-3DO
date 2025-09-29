@@ -260,7 +260,7 @@ enum ObjectType
     OT_DOLL23,
 
     OT_NMTYPES,
-    OT_DEAD = 8196,
+    OT_DEAD = 8196
 };
 
 typedef struct

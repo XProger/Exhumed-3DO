@@ -23,19 +23,7 @@ extern sint32 extraStuff;
 #define DISABLE INT_ChgMsk(INT_MSK_NULL, INT_MSK_DMA0 | INT_MSK_SPR)
 #define ENABLE INT_ChgMsk(INT_MSK_DMA0 | INT_MSK_SPR, INT_MSK_NULL)
 
-void* qmemcpy(void* dst, const void* src, uint32 len);
-#ifndef NDEBUG
-#define qmemcpy(d, s, l)            \
-    {                               \
-        assert(((sint32)d) > 0x10000); \
-        assert(((sint32)s) > 0x10000); \
-        qmemcpy(d, s, l);           \
-    }
-#endif
-
-extern void _builtin_set_imask(sint32);
-extern sint32 _builtin_get_imask(void);
-extern sint32 sprintf(char*, const char*, ...);
+#define qmemcpy memcpy
 
 extern uint32 systemMemory;
 
@@ -92,7 +80,7 @@ void assertFail(char* file, sint32 line);
 
 #ifdef TODO
 #define MTH_Mul(a, b) fixMul(a, b)
-extern inline fix32 fixMul(fix32 a, fix32 b)
+extern fix32 fixMul(fix32 a, fix32 b)
 {
     fix32 c;
     __asm__ volatile("dmuls.l %1,%2\n"
@@ -117,7 +105,7 @@ extern void _checkStack(char* file, sint32 line);
 
 #if 0
 #define MTH_Product(a, b) fixProduct(a, b)
-extern inline fix32 fixProduct(fix32 *a,fix32 *b)
+extern fix32 fixProduct(fix32 *a,fix32 *b)
 {fix32 c;
  __asm__ ("clrmac\n"
 		   "mac.l @%1+,@%2+\n"
@@ -150,8 +138,8 @@ void debugPrint(char* message);
     }
 #else
 #include <stdio.h>
-#define debugPrint(x)   printf(x)
-#define dPrint(...)     printf(__VA_ARGS__)
+#define debugPrint      printf
+#define dPrint          printf
 #endif
 
 #ifndef NDEBUG
@@ -217,7 +205,7 @@ void resetDisable(void);
         __result;                                                                 \
     });
 #else
-static fix32 div_ret;
+extern fix32 div_ret;
 
 #define Set_Hardware_Divide(x, y) div_ret = (x) / (y)
 #define Get_Hardware_Divide() div_ret
@@ -237,7 +225,7 @@ enum
     ACTION_STRAFE,
     ACTION_RUN
 };
-extern sint8 controllerConfig[];
+extern sint8 controllerConfig[8];
 #define IMASK(action) (buttonMasks[(sint32)controllerConfig[(sint32)(action)]])
 
 uint16 getNextRand(void);

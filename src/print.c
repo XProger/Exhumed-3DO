@@ -1,5 +1,6 @@
 #include <sega_spr.h>
 #include <sega_scl.h>
+
 #include "util.h"
 #include "spr.h"
 #include "print.h"
@@ -100,7 +101,7 @@ sint32 initFonts(sint32 spriteNm, sint32 fontMask)
             }
         /* map accented chars */
         {
-            static uint8* charEquiv[] = { "\355\315", "\372\332", "\351\311", NULL };
+            static char* charEquiv[] = { "\355\315", "\372\332", "\351\311", NULL };
             for (i = 0; charEquiv[i]; i++)
             {
                 sint32 one = charEquiv[i][0];
@@ -129,7 +130,7 @@ sint32 initFonts(sint32 spriteNm, sint32 fontMask)
     return spriteNm;
 }
 
-void drawString(sint32 x, sint32 y, sint32 font, uint8* text)
+void drawString(sint32 x, sint32 y, sint32 font, const char* text)
 {
     XyInt pos;
     pos.x = x;
@@ -152,7 +153,7 @@ void drawString(sint32 x, sint32 y, sint32 font, uint8* text)
     }
 }
 
-void drawStringN(sint32 x, sint32 y, sint32 font, uint8* text, sint32 n)
+void drawStringN(sint32 x, sint32 y, sint32 font, const char* text, sint32 n)
 {
     XyInt pos;
     pos.x = x;
@@ -170,7 +171,7 @@ void drawStringN(sint32 x, sint32 y, sint32 font, uint8* text, sint32 n)
     }
 }
 
-void drawStringFixedPitch(sint32 x, sint32 y, sint32 font, uint8* text, sint32 pitch)
+void drawStringFixedPitch(sint32 x, sint32 y, sint32 font, const char* text, sint32 pitch)
 {
     XyInt pos;
     pos.x = x;
@@ -187,7 +188,7 @@ void drawStringFixedPitch(sint32 x, sint32 y, sint32 font, uint8* text, sint32 p
     }
 }
 
-void drawStringBulge(sint32 x, sint32 y, sint32 font, sint32 buldgeCenter, uint8* text)
+void drawStringBulge(sint32 x, sint32 y, sint32 font, sint32 buldgeCenter, const char* text)
 {
     XyInt pos;
     sint32 cnm, bright;
@@ -213,7 +214,7 @@ void drawStringBulge(sint32 x, sint32 y, sint32 font, sint32 buldgeCenter, uint8
     }
 }
 
-void drawStringGouro(sint32 x, sint32 y, sint32 font, uint16 gourTop, uint16 gourBot, uint8* text)
+void drawStringGouro(sint32 x, sint32 y, sint32 font, uint16 gourTop, uint16 gourBot, const char* text)
 {
     XyInt pos;
     struct gourTable gtable;
@@ -241,7 +242,7 @@ void drawStringGouro(sint32 x, sint32 y, sint32 font, uint16 gourTop, uint16 gou
     }
 }
 
-void drawChar(sint32 x, sint32 y, sint32 font, uint8 text)
+void drawChar(sint32 x, sint32 y, sint32 font, char text)
 {
     XyInt pos;
     pos.x = x;
@@ -260,7 +261,7 @@ void drawChar(sint32 x, sint32 y, sint32 font, uint8 text)
         EZ_normSpr(DIR_NOREV, ECD_DISABLE | COLOR_1 | COMPO_REP, font, charMap[font][(sint32)text], &pos, NULL);
 }
 
-void drawCharShadow(sint32 x, sint32 y, sint32 font, uint8 text)
+void drawCharShadow(sint32 x, sint32 y, sint32 font, char text)
 {
     XyInt pos;
     pos.x = x;
@@ -279,7 +280,7 @@ void drawCharShadow(sint32 x, sint32 y, sint32 font, uint8 text)
         EZ_normSpr(DIR_NOREV, ECD_DISABLE | COLOR_1 | COMPO_SHADOW, font, charMap[font][(sint32)text], &pos, NULL);
 }
 
-sint32 getStringWidth(sint32 font, const uint8* c)
+sint32 getStringWidth(sint32 font, const char* c)
 {
     sint32 tot;
     for (tot = 0; *c; c++)
@@ -287,7 +288,7 @@ sint32 getStringWidth(sint32 font, const uint8* c)
     return tot - 1;
 }
 
-sint32 getCharWidth(sint32 font, uint8 c)
+sint32 getCharWidth(sint32 font, char c)
 {
     return widths[font][(sint32)c];
 }

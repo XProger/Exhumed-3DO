@@ -73,6 +73,7 @@ void errorFunc(void* null, sint32 errorCode)
     assert(0);
 }
 
+#ifdef TODO // unused
 static void whackCD(void)
 {
     sint32 ret;
@@ -105,7 +106,10 @@ static GfsDirTbl dirtbl;
 
 static sint8 sectorBuff[2048];
 static sint8* sectorBuffPos;
+#endif
+
 static FILE* openCDFile; /* only one cd file may be open at a time */
+
 #define CDHANDLE 8000
 
 #ifdef FLASH
@@ -158,7 +162,7 @@ void fs_init(void)
 #endif
 }
 
-sint32 fs_open(sint8* filename)
+sint32 fs_open(const char* filename)
 {
     if (filename[0] == '+')
         filename++;
@@ -204,7 +208,7 @@ sint32 fs_getFileSize(sint32 fd)
 #endif
 }
 
-void fs_read(sint32 fd, sint8* buf, sint32 n)
+void fs_read(sint32 fd, void* buf, sint32 n)
 {
     assert(fd == CDHANDLE);
     assert(openCDFile);
@@ -352,7 +356,7 @@ void fs_startProgress(sint32 swirly)
     progressNextUpdate = vtimer;
 }
 
-void fs_addToProgress(sint8* filename)
+void fs_addToProgress(const char* filename)
 {
     sint32 id;
     GfsHn hn;
@@ -384,6 +388,7 @@ void executeLink(void* data, sint32 size)
 
 void link(char* filename)
 {
+#ifdef TODO // overlays
     sint8* data;
     void (*code)(void* data, sint32 size);
     sint32 fd;
@@ -405,4 +410,5 @@ void link(char* filename)
     INT_SetScuFunc(INT_SCU_VBLK_OUT, NULL);
     /* set_imask(0xffffffff); */
     (*code)(data, size >> 2);
+#endif
 }

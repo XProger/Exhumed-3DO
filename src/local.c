@@ -2,7 +2,7 @@
 #include <sega_per.h>
 #include "file.h"
 
-static sint32* textData;
+static sint32 textData[7 * 1024 / 4];
 
 sint32 getLanguageNumber(void)
 {
@@ -32,7 +32,6 @@ sint32 getLanguageNumber(void)
 void loadLocalText(sint32 fd)
 {
     sint32 size, skip;
-    textData = mem_malloc(0, 7 * 1024);
     mem_lock();
     skip = getLanguageNumber();
     for (; skip >= 0; skip--)

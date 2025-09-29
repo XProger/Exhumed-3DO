@@ -2,9 +2,6 @@
 
 #include <libsn.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "sega_spr.h"
 #include "sega_scl.h"
 #include "sega_int.h"
@@ -174,6 +171,15 @@ static char* codez[NMCODEZ] = {
 };
 #define MAPTILEWIDTH 10
 #define MAPTILEHEIGHT 8
+
+static sint32 class_sizes[] = {
+#ifndef JAPAN
+    40, 0, 0, 36, 0, -1
+#else
+    40, 0, 0, 36, 0, 30, -1
+#endif
+};
+
 /* returns next level to load */
 sint32 runMap(sint32 currentLevel)
 {
@@ -220,10 +226,11 @@ sint32 runMap(sint32 currentLevel)
 
 #ifndef JAPAN
         i = initFonts(0, 7);
-        initPicSystem(i, ((sint32[]) { 40, 0, 0, 36, 0, -1 }));
 #else
-        initPicSystem(0, ((sint32[]) { 40, 0, 0, 36, 0, 30, -1 }));
+        i = 0;
 #endif
+        initPicSystem(i, class_sizes);
+
         loadPicSetAsPics(fd, TILESMALL16BPP);
         loadSound(fd);
         loadSound(fd);

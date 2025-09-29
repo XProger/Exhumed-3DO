@@ -582,7 +582,7 @@ typedef struct
     messHandler func;
     sint16 wallNm, state, aiSlot;
 
-    sint8* tilePos;
+    uint8* tilePos;
     sint16 frame, sequence;
     sint16 channel, sectorNm;
     MthXyz orficePos;

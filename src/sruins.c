@@ -20,10 +20,6 @@
 
 #include <libsn.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
 #include <sega_spr.h>
 #include <sega_scl.h>
 #include <sega_int.h>
@@ -54,7 +50,6 @@
 #include "route.h"
 #include "menu.h"
 #include "bup.h"
-#include "megainit.h"
 #include "weapon.h"
 #include "dma.h"
 #include "local.h"
@@ -62,15 +57,17 @@
 #include "profile.h"
 #include "gamestat.h"
 #include "intro.h"
-#include "mov.h"
 #include "plax.h"
 #include "art.h"
-#include "initmain.h"
 #include "aicommon.h"
 
 #ifdef JAPAN
 #undef STATUSTEXT
 #endif
+
+#define GOODEND 329084902
+#define BADEND 928473932
+#define SUPERGOODEND 184748923
 
 sint32 end;
 
@@ -434,10 +431,12 @@ void underWaterControl(uint16 input)
         if (!turningLeft)
         {
             if (yavel > 0)
+            {
                 if (yavel >= RTURNFRICTION)
                     yavel -= RTURNFRICTION;
                 else
                     yavel = 0;
+            }
         }
     }
 
@@ -711,10 +710,12 @@ void controlInput(uint16 input, uint16 changeInput)
         if (!turningLeft)
         {
             if (yavel > 0)
+            {
                 if (yavel >= RTURNFRICTION)
                     yavel -= RTURNFRICTION;
                 else
                     yavel = 0;
+            }
         }
     }
 
@@ -722,6 +723,7 @@ void controlInput(uint16 input, uint16 changeInput)
     {
         camera->vel.y += 3 << 12;
         if (changeInput & IMASK(ACTION_JUMP))
+        {
             if (camera->floorSector != -1)
             {
                 if (currentState.inventory & INV_SANDALS)
@@ -739,6 +741,7 @@ void controlInput(uint16 input, uint16 changeInput)
                     hoverTime = 0;
                 }
             }
+        }
     }
     else
         shawlActive = 0;
@@ -945,10 +948,12 @@ void dollPowerControlInput(uint16 input, uint16 changeInput)
         if (!turningLeft)
         {
             if (yavel > 0)
+            {
                 if (yavel >= RTURNFRICTION)
                     yavel -= RTURNFRICTION;
                 else
                     yavel = 0;
+            }
         }
     }
 
@@ -999,7 +1004,7 @@ static void push(void)
 
     if ((hscan & COLLIDE_WALL) && approxDist(camera->pos.x - collidePos.x, camera->pos.y - collidePos.y, camera->pos.z - collidePos.z) < F(120))
     { /* we hit a wall */
-        dPrint("hit wall %d\n", hscan & 0xffff);
+        dPrint("hit wall %d\n", (int)(hscan & 0xffff));
         if (level_wall[hscan & 0xffff].object)
         {
             signalObject((Object*)(level_wall[hscan & 0xffff].object), SIGNAL_PRESS, (sint32)(&collidePos), 0);
@@ -1230,7 +1235,7 @@ void movePlayer(sint32 inputEnd, sint32 nmFrames)
 
 void setVDP2(void)
 {
-#if TODO // VDP2
+#ifdef TODO // VDP2
     static uint16 cycle[] = { 0xeeee, 0xeeee, 0xeeee, 0xeeee, 0x44ee, 0xeeee, 0x44ee, 0xeeee };
 
     SclVramConfig vcfg;
@@ -1290,7 +1295,7 @@ void loadLoadingScreen(sint32 fd)
     data = mem_malloc(1, 320 * 240);
     fs_read(fd, (sint8*)data, 320 * 240);
     EZ_setErase(0, 0x0000);
-#if TODO // render loading screen
+#ifdef TODO // render loading screen
     for (y = 0; y < 240; y++)
         for (x = 0; x < 320; x++)
             POKE_W(FBUF_ADDR + y * 1024 + x * 2, colorRam[data[y * 320 + x]]);
@@ -2157,6 +2162,14 @@ void stunPlayer(sint32 ticks)
     colorOffset[2] = 128;
 }
 
+static sint32 class_sizes[] = {
+#ifndef JAPAN
+    28, 30, 1, 10, 12, 30, -1
+#else
+    28, 31, 1, 10, 12, -1
+#endif
+};
+
 sint32 runLevel(char* filename, sint32 levelNm)
 {
     XyInt parms;
@@ -2207,11 +2220,12 @@ sint32 runLevel(char* filename, sint32 levelNm)
     EZ_setChar(3, COLOR_4, FS_INT((sint32*)stat_compass2), FS_INT((sint32*)(stat_compass2 + 4)), (uint8*)stat_compass2 + 8);
 
 #ifdef JAPAN
-    initPicSystem(4, ((sint32[]) { 28, 30, 1, 10, 12, 30, -1 }));
+    i = 0;
 #else
     i = initFonts(4, 3);
-    initPicSystem(i, ((sint32[]) { 28, 31, 1, 10, 12, -1 }));
 #endif
+    initPicSystem(i, class_sizes);
+
     dPrint("ert!\n");
     redrawStatBar();
 
@@ -2242,10 +2256,6 @@ sint32 runLevel(char* filename, sint32 levelNm)
         loadWeaponSequences(fd);
         fs_close(fd);
     }
-
-#ifdef TODO // bup_NewGame ?
-#endif
-    bup_initCurrentGame();
 
     /* load level file */
     debugPrint("Loaded static\n");
@@ -2461,8 +2471,10 @@ sint32 runLevel(char* filename, sint32 levelNm)
                 rev = INVISIBLEDOSE - invisibleCounter;
                 if (rev > 16 && rev < 16 + 20)
                 {
+                #ifdef TODO // invisibility
                     sint32 c = rev - 16;
                     SCL_SetColMixRate(SCL_NBG0, c);
+                #endif
                 }
                 if (rev < 32)
                 {
@@ -2664,10 +2676,9 @@ static void fadeSegaLogo(void)
 }
 #endif
 
-uint8 VRAM[VRAM_SIZE];
-uint32 VRAM_ADDR = (uint32)VRAM;
+uint8 VRAM_ADDR[VRAM_SIZE];
 
-void main(void)
+int main(int argc, char *argv[])
 {
     char* levelFile;
     sint32 level;
@@ -2684,7 +2695,6 @@ void main(void)
 
     app_init();
 
-    megaInit();
     dPrint("Start...\n");
     fs_init();
 
@@ -2791,9 +2801,7 @@ void main(void)
 intro:
 #ifndef TESTCODE
     abcResetEnable = 1;
-#ifdef TODO // intro
     playIntro();
-#endif
 #else
     bup_initCurrentGame();
     currentState.inventory = 0x00ffff;
@@ -2890,16 +2898,20 @@ intro:
                 }
                 case 4: /* good end */
                 {
+                #ifdef TODO // overlay
                     POKE(0x02ffffc, GOODEND);
                     if (currentState.dolls == ALLDOLLS)
                         POKE(0x02ffffc, SUPERGOODEND);
                     link("0");
+                #endif
                     break;
                 }
                 case 5: /* bad end */
                 {
+                #ifdef TODO // overlay
                     POKE(0x02ffffc, BADEND);
                     link("0");
+                #endif
                     break;
                 }
                 case 6: /* got mummy */

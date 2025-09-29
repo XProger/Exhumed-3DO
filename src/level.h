@@ -8,7 +8,7 @@ extern sFaceType* level_face;
 extern sWallType* level_wall;
 extern sSectorType* level_sector;
 extern uint8* level_texture;
-extern uint8 (*level_cutPlane)[][MAXCUTSECTORS];
+extern uint8* level_cutPlane;
 extern uint8* level_vertexLight;
 extern uint8* level_objectParams;
 extern sObjectType* level_object;

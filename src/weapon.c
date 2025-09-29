@@ -2,9 +2,6 @@
 
 #include <libsn.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sega_spr.h>
 #include <sega_scl.h>
 #include <sega_int.h>
@@ -782,6 +779,7 @@ void runWeapon(sint32 nmFrames, sint32 invisible, sint32 boost)
         }
 
         if (currentWeapon == WP_RAVOLT && getCurrentWeaponSequence() == weaponMap[WP_RAVOLT] + 3 && getWeaponSequenceQSize() == 0)
+        {
             if (lastInputSample & IMASK(ACTION_FIRE))
             {
                 queueWeaponSequence(weaponMap[WP_RAVOLT] + 4, weaponCenter[WP_RAVOLT].x, weaponCenter[WP_RAVOLT].y);
@@ -791,12 +789,18 @@ void runWeapon(sint32 nmFrames, sint32 invisible, sint32 boost)
                 sint32 snd, grunch;
                 static struct soundSlotRegister* afterTouch;
                 struct soundSlotRegister ssr;
+
                 initSoundRegs(level_staticSoundMap[ST_MANACLE], 32, 0, &ssr);
+
                 if (grenadeHoldTime > (5 << 6) + 10)
+                {
                     grenadeHoldTime = (5 << 6) + 10;
+                }
+
                 snd = 256 + (grenadeHoldTime << 4);
                 grunch = (snd & 0x3ff) | ((snd & 0x3c00) << 1);
                 ssr.reg[8] = grunch;
+
                 if ((grenadeHoldTime & 0x3f) == 0)
                 {
                     sint32 step = grenadeHoldTime >> 6;
@@ -809,11 +813,16 @@ void runWeapon(sint32 nmFrames, sint32 invisible, sint32 boost)
                     }
                 }
                 else
+                {
                     afterTouch->reg[8] = grunch;
+                }
+
                 grenadeHoldTime += 2;
             }
+        }
 
         if (currentWeapon == WP_GRENADE && getCurrentWeaponSequence() == -1)
+        {
             if (lastInputSample & IMASK(ACTION_FIRE))
             {
                 queueWeaponSequence(weaponMap[WP_GRENADE] + 4, weaponCenter[WP_GRENADE].x, weaponCenter[WP_GRENADE].y - 17);
@@ -823,10 +832,15 @@ void runWeapon(sint32 nmFrames, sint32 invisible, sint32 boost)
                     queueWeaponSequence(weaponMap[WP_GRENADE] + 2, weaponCenter[WP_GRENADE].x, weaponCenter[WP_GRENADE].y);
                 }
                 else
+                {
                     queueWeaponSequence(-2, 0, 0);
+                }
             }
             else
+            {
                 grenadeHoldTime++;
+            }
+        }
 
         if (flags)
             weaponFire();

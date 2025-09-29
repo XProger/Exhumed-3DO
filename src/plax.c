@@ -1,9 +1,6 @@
 #include <machine.h>
 #include <libsn.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sega_spr.h>
 #include <sega_scl.h>
 #include <sega_int.h>

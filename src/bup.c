@@ -11,8 +11,10 @@
 #include "gamestat.h"
 #include "weapon.h"
 
-void* bupSpace = NULL;
-void* bupWork = NULL;
+#ifdef TODO // use a global temporary buffer
+#endif
+uint8 bupSpace[16 * 1024];
+uint8 bupWork[8 * 1024];
 
 static BupConfig config[3];
 typedef struct
@@ -58,12 +60,6 @@ SaveState* bup_getGameData(sint32 slot)
 
 static void loadBUP(void)
 {
-    assert(!bupSpace);
-    assert(!bupWork);
-    bupSpace = mem_malloc(0, 16 * 1024);
-    assert(bupSpace);
-    bupWork = mem_malloc(0, 8 * 1024);
-    assert(bupWork);
     assert(config);
     resetDisable();
     BUP_Init(bupSpace, bupWork, config);
@@ -72,12 +68,6 @@ static void loadBUP(void)
 
 static void unloadBup(void)
 {
-    assert(bupWork);
-    assert(bupSpace);
-    mem_free(bupWork);
-    mem_free(bupSpace);
-    bupWork = NULL;
-    bupSpace = NULL;
 }
 
 static void checkForCheatKey(void)
@@ -227,7 +217,7 @@ void bup_initCurrentGame(void)
         dPrint("game date=%d/%d/%d\n", year, month, day);
     }
 
-#ifndef TODO // cheating
+#ifndef TODO // weapon cheating
     cheatsEnabled = 1; // ?
     currentState.inventory |= INV_M60;
     currentState.desiredWeapon = WP_M60;

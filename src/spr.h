@@ -108,9 +108,9 @@ void EZ_cmd(struct cmdTable* inCmd);
 void EZ_scaleSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt* pos, struct gourTable* gTable);
 void EZ_localCoord(sint16 x, sint16 y);
 void EZ_sysClip(void);
-void EZ_polygon(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable);
-void EZ_polyLine(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable);
-void EZ_line(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable);
+void EZ_polygon(sint16 drawMode, uint16 color, XyInt* xy, struct gourTable* gTable);
+void EZ_polyLine(sint16 drawMode, uint16 color, XyInt* xy, struct gourTable* gTable);
+void EZ_line(sint16 drawMode, uint16 color, XyInt* xy, struct gourTable* gTable);
 sint32 EZ_charNoToVram(sint32 charNm);
 void EZ_userClip(XyInt* xy);
 

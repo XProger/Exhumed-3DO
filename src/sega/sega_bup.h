@@ -1,4 +1,4 @@
-#ifndef SEBA_BUP_H
+#ifndef SEGA_BUP_H
 #define SEGA_BUP_H
 
 #ifdef TODO

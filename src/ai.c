@@ -1,6 +1,5 @@
 #include <sega_mth.h>
 #include <sega_scl.h>
-#include <limits.h>
 
 #include "slevel.h"
 #include "level.h"
@@ -38,13 +37,13 @@ void player_func(Object* o, sint32 message, sint32 param1, sint32 param2)
     }
 }
 
-uint16 playerSeqList[] = { -1 };
+uint16 playerSeqList[] = { 0xFFFF };
 PlayerObject* constructPlayer(sint32 sector, sint32 suckParams)
 {
     PlayerObject* this = (PlayerObject*)getFreeObject(player_func, OT_PLAYER, CLASS_MONSTER);
     assert(sizeof(*this) < sizeof(Object));
     moveObject((Object*)this, objectIdleList);
-    dPrint("player in sector %d\n", sector);
+    dPrint("player in sector %d\n", (int)sector);
     this->sprite = newSprite(sector, F(47), F(9) / 10, GRAVITY, -1, SPRITEFLAG_BSHORT, (Object*)this);
     if (suckParams)
     {
@@ -634,6 +633,7 @@ void fish_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
                     setState((SpriteObject*)this, AI_FISH_IDLE);
             }
             if (this->state == AI_FISH_WALK && this->routePos == -1 && (this->aiSlot & 0x07) == (aicount & 0x07))
+            {
                 if (this->enemy)
                 {
                     if (this->sprite->pos.y < this->enemy->sprite->pos.y - F(10))
@@ -644,7 +644,11 @@ void fish_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
                         this->sprite->vel.y = 0;
                 }
                 else
+                {
                     this->sprite->vel.y = 0;
+                }
+            }
+
             switch (this->state)
             {
                 case (AI_FISH_IDLE):
@@ -845,6 +849,7 @@ void cobra_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
                         for (list = o = objectRunList;; o = o->next)
                         {
                             if (!o)
+                            {
                                 if (list == objectRunList)
                                 {
                                     list = objectIdleList;
@@ -852,7 +857,11 @@ void cobra_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
                                     continue;
                                 }
                                 else
+                                {
                                     break;
+                                }
+                            }
+
                             if (o->class != CLASS_MONSTER || o == this->owner)
                                 continue;
                             m = (MonsterObject*)o;
@@ -1637,10 +1646,12 @@ void wasp_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
                     setState((SpriteObject*)this, AI_WASP_IDLE);
             }
             if (this->enemy && this->state != AI_WASP_SEEK && (this->aiSlot & 0x07) == (aicount & 0x07))
+            {
                 if (this->sprite->pos.y < this->enemy->sprite->pos.y)
                     this->sprite->vel.y += (1 << 16) - (this->sprite->vel.y >> 4);
                 else
                     this->sprite->vel.y += (-1 << 16) - (this->sprite->vel.y >> 4);
+            }
 
             switch (this->state)
             {
@@ -1900,8 +1911,10 @@ Object* constructRingo(sint32 sector, MthXyz* pos, MthXyz* vel, SpriteObject* ow
     moveObject((Object*)this, objectRunList);
     this->sprite->pos = *pos;
     this->sprite->vel = *vel;
+#ifdef TODO // speed hack?
 #if SPEEDOPTIMIZE
     this->sprite->maxSpeed = 10;
+#endif
 #endif
     if (weaponPowerUpCounter && owner == (SpriteObject*)player)
         this->sprite->scale = 80000;
@@ -5172,13 +5185,23 @@ void qegg_func(Object* _this, sint32 message, sint32 param1, sint32 param2)
         case SIGNAL_MOVE:
             collide = moveSprite(this->sprite);
             fflags = spriteAdvanceFrame(this->sprite);
+
             if (this->state == AI_QEGG_ATTACK && AISLOT(0x7))
+            {
                 if (this->sprite->pos.y < this->enemy->sprite->pos.y - F(10))
+                {
                     this->sprite->vel.y = F(1);
+                }
                 else if (this->sprite->pos.y > this->enemy->sprite->pos.y + F(10))
+                {
                     this->sprite->vel.y = -F(1);
+                }
                 else
+                {
                     this->sprite->vel.y = 0;
+                }
+            }
+
             switch (this->state)
             {
                 case AI_QEGG_INCUBATE:
@@ -6031,7 +6054,7 @@ Object* constructTeleportReturn(void)
     this->age = -128;
     this->playerAngle = getAngle(pos.x - F(level_sector[this->playerSec].center[0]), pos.z - F(level_sector[this->playerSec].center[2]));
     this->playerAngle = normalizeAngle(this->playerAngle - F(90));
-    dPrint("playerAngle=%d\n", this->playerAngle);
+    dPrint("playerAngle=%d\n", (int)this->playerAngle);
     if (!(currentState.inventory & (INV_SANDALS << artifact)))
     { /* player does not have artifact, so it must be on the pad */
         this->artifact = (SpriteObject*)constructSpecialArtifact(artifactPlace, pos.x, pos.y, pos.z, OT_SANDALS + artifact);
@@ -6072,7 +6095,7 @@ void shooter_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
         case SIGNAL_SWITCH:
             if (param1 != this->channel && (this->switchType != 2 || this->channel + 1 != param1))
                 break;
-            dPrint("switch channel %d (sw=%d)\n", param1, this->switchType);
+            dPrint("switch channel %d (sw=%d)\n", (int)param1, (int)this->switchType);
             this->counter = 300;
             switch (this->switchType)
             {

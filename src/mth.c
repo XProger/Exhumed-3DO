@@ -1,9 +1,6 @@
 #ifndef MTH_H
 #define MTH_H
 
-#include <stdint.h>
-#include <string.h>
-#include <math.h>
 #include <sega_mth.h>
 
 #define PI          3.14159265358979323846f
@@ -25,12 +22,12 @@ uint32 MTH_GetRand(void)
 
 fix32 MTH_Mul(fix32 a, fix32 b)
 {
-    return (fix32)((int64_t)a * b >> 16);
+    return (fix32)((long long)a * b >> 16);
 }
 
 fix32 MTH_Div(fix32 a, fix32 b)
 {
-    return (fix32)(((int64_t)a << 16) / b);
+    return (fix32)(((long long)a << 16) / b);
 }
 
 fix32 MTH_Product(fix32 *a, fix32 *b)

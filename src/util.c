@@ -1,7 +1,4 @@
 #include <libsn.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <sega_mem.h>
 #include "sega_spr.h"
 #include "sega_scl.h"
@@ -27,6 +24,8 @@ uint32 systemMemory;
 #define STICKSIZE 5096
 sint32 mystack[STICKSIZE];
 void* _stackinit = &mystack[STICKSIZE];
+
+fix32 div_ret;
 
 MthXyz* getVertex(sint32 vindex, MthXyz* out)
 {
@@ -198,10 +197,12 @@ void assertFail(char* file, sint32 line)
             pos[i].x += vel[i].x;
             pos[i].y += vel[i].y;
             vel[i].y += 0x1000;
+#ifdef TODO // assert
             if (i)
                 drawString(pos[i].x >> 16, pos[i].y >> 16, 1, text[i]);
             else
                 drawStringf(pos[i].x >> 16, pos[i].y >> 16, 1, "%d", line);
+#endif
         }
 
         EZ_closeCommand();
@@ -255,7 +256,7 @@ char* catFixed(char* buffer, sint32 n, sint32 frac)
         strcat(buffer, "-");
         n = -n;
     }
-    sprintf(buff, "%d", n >> frac);
+    sprintf(buff, "%d", (int)(n >> frac));
     strcat(buffer, buff);
     accum = 0;
     for (bit = frac - 1, div = 2; bit >= 0; bit--, div += div)
@@ -264,7 +265,7 @@ char* catFixed(char* buffer, sint32 n, sint32 frac)
             accum += 1000000000 / div;
     }
     strcat(buffer, ".");
-    sprintf(buff, "%d", accum);
+    sprintf(buff, "%d", (int)accum);
     /* print leading zeros */
     for (i = 9 - strlen(buff); i > 0; i--)
         strcat(buffer, "0");
@@ -323,7 +324,9 @@ static uint8 *memStack[NMAREAS][STACKSIZE];
 static sint32 stackPos[NMAREAS];
 static uint8 *areaEnd[NMAREAS];
 
-static uint8 DRAM[2][1024 * 1024];
+#define DRAM_SIZE   (256 * 1024)
+
+static uint8 DRAM[2][DRAM_SIZE];
 
 static uint8 *mem1Start = DRAM[0];
 static uint8 *mem2Start = DRAM[1];
@@ -334,8 +337,8 @@ void mem_init(void)
     memStack[1][0] = mem2Start;
     stackPos[0] = 0;
     stackPos[1] = 0;
-    areaEnd[0] = mem1Start + 1024 * 1024;
-    areaEnd[1] = mem2Start + 1024 * 1024;
+    areaEnd[0] = mem1Start + DRAM_SIZE;
+    areaEnd[1] = mem2Start + DRAM_SIZE;
 }
 
 void mem_lock(void)

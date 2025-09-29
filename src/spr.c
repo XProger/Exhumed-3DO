@@ -9,12 +9,6 @@
 #include "spr.h"
 #include "dma.h"
 
-#define BUFFERWRITES 1
-
-static sint32 bank;
-static uint8 *commandStart[2], *clutStart, *gourStart[2], *charStart;
-static uint8 *ccommand, *cgouraud;
-
 #define MAXNMCHARS 512
 #define CMDBUFFERSIZE 256
 #define GOURBUFFERSIZE 256
@@ -27,14 +21,6 @@ typedef struct
 
 static CharData chars[MAXNMCHARS];
 static sint32 nmChars;
-
-#if BUFFERWRITES
-static sint32 commandAreaSize, gourauAreaSize;
-static sint32 cmdBufferUsed, totCommand;
-static sint32 gourBufferUsed, totGourau;
-static struct gourTable gourBuffer[GOURBUFFERSIZE];
-static struct cmdTable cmdBuffer[CMDBUFFERSIZE];
-#endif
 
 static sint32 get_clut_index(sint16 drawMode, uint16 color)
 {
@@ -81,36 +67,18 @@ void EZ_initSprSystem(sint32 nmCommands, sint32 nmCluts, sint32 nmGour, sint32 e
     uint8* vram;
     SPR_Initial(&vram);
     SPR_SetEosMode(0);
-    commandStart[0] = (uint8*)64;
-    commandStart[1] = commandStart[0] + (nmCommands << 5);
-    clutStart = commandStart[1] + (nmCommands << 5);
-    gourStart[0] = clutStart + (nmCluts << 5);
-    gourStart[1] = gourStart[0] + (nmGour << 3);
-    charStart = gourStart[1] + (nmGour << 3);
     nmChars = 0;
     for (i = 0; i < MAXNMCHARS; i++)
         chars[i].addr = 0;
-    bank = 0;
 
     EZ_setErase(eraseWriteEndLine, eraseWriteColor);
-#if BUFFERWRITES
-    cmdBufferUsed = 0;
-    gourBufferUsed = 0;
-    commandAreaSize = nmCommands;
-    gourauAreaSize = nmGour;
-#endif
-
-    {
-        struct cmdTable* end = ((struct cmdTable*)VRAM_ADDR) + 1;
-        memset(end, 0, 32);
-        end->control = CTRL_END;
-    }
-
     vid_tex_reset();
 }
 
 void EZ_setChar(sint32 charNm, sint32 colorMode, sint32 width, sint32 height, uint8* data)
 {
+    sint32 size;
+
     assert(charNm >= 0);
     assert(charNm < MAXNMCHARS);
     assert(!(width & 3));
@@ -120,7 +88,7 @@ void EZ_setChar(sint32 charNm, sint32 colorMode, sint32 width, sint32 height, ui
         vid_tex_set(charNm, colorMode, data, width, height);
     }
 
-    sint32 size = width * height;
+    size = width * height;
     /* character is not allocated, allocate it */
     if (colorMode >= COLOR_5)
         size <<= 1;
@@ -129,10 +97,7 @@ void EZ_setChar(sint32 charNm, sint32 colorMode, sint32 width, sint32 height, ui
     assert(!(((sint32)charStart) & 0x1f));
     if (!chars[charNm].addr)
     {
-        chars[charNm].addr = ((sint32)charStart) >> 3;
-        charStart += size;
-        charStart = (uint8*)((((sint32)charStart) + 31) & (~0x1f));
-        assert(((sint32)charStart) < 1024 * 512);
+        chars[charNm].addr = 1;
         chars[charNm].xysize = ((width >> 3) << 8) | height;
     }
     if (data)
@@ -147,106 +112,17 @@ void EZ_setLookupTbl(sint32 tblNm, struct sprLookupTbl* tbl)
     assert(tblNm >= 0);
     assert(tblNm <= 10);
     validPtr(tbl);
-    dmaMemCpy(tbl, (uint8*)(VRAM_ADDR + clutStart + (tblNm << 5)), 1 << 5);
     vid_clut_set(tblNm, (uint16*)tbl, 16);
 }
 
 void EZ_openCommand(void)
 {
-    bank = !bank;
-    ccommand = commandStart[bank];
-    cgouraud = gourStart[bank];
-    totCommand = 0;
-    totGourau = 0;
-#if BUFFERWRITES
-    cmdBufferUsed = 0;
-    gourBufferUsed = 0;
-#endif
-}
-
-#if BUFFERWRITES
-static void flushCmdBuffer(void)
-{
-    if (cmdBufferUsed + totCommand > commandAreaSize)
-        cmdBufferUsed = commandAreaSize - totCommand;
-    dmaMemCpy(cmdBuffer, ccommand + VRAM_ADDR, cmdBufferUsed << 5);
-    ccommand += cmdBufferUsed << 5;
-    totCommand += cmdBufferUsed;
-    cmdBufferUsed = 0;
-}
-
-static void flushGourBuffer(void)
-{
-    if (gourBufferUsed + totGourau > gourauAreaSize)
-        gourBufferUsed = gourauAreaSize - totGourau;
-    dmaMemCpy(gourBuffer, cgouraud + VRAM_ADDR, gourBufferUsed << 3);
-    cgouraud += gourBufferUsed << 3;
-    totGourau += gourBufferUsed;
-    gourBufferUsed = 0;
-}
-
-static inline struct cmdTable* getCmdTable(void)
-{
-    if (cmdBufferUsed == CMDBUFFERSIZE)
-        flushCmdBuffer();
-    return cmdBuffer + (cmdBufferUsed++);
-}
-
-static inline void setGourPara(struct cmdTable* cmd, struct gourTable* gTable)
-{
-    if (!gTable)
-        cmd->grshAddr = 0;
-    else
-    {
-        validPtr(gTable);
-        if (gourBufferUsed == GOURBUFFERSIZE)
-            flushGourBuffer();
-        gourBuffer[gourBufferUsed] = *gTable;
-        cmd->grshAddr = (((sint32)cgouraud) >> 3) + gourBufferUsed++;
-    }
-}
-#else
-static inline struct cmdTable* getCmdTable(void)
-{
-    struct cmdTable* ret = (struct cmdTable*)(ccommand + VRAM_ADDR);
-    ccommand += 32;
-    return ret;
-}
-
-static inline void setGourPara(struct cmdTable* cmd, struct gourTable* gTable)
-{
-    if (!gTable)
-        cmd->grshAddr = 0;
-    else
-    {
-        struct gourTable* g = (struct gourTable*)(cgouraud + VRAM_ADDR);
-        validPtr(gTable);
-        *g = *gTable;
-        cmd->grshAddr = (((sint32)cgouraud) >> 3);
-        cgouraud += 8;
-    }
-}
-#endif
-
-static inline void setCharPara(struct cmdTable* cmd, sint16 charNm)
-{
-    validPtr(cmd);
-    cmd->charAddr = chars[charNm].addr;
-    cmd->charSize = chars[charNm].xysize;
-}
-
-static inline void setDrawPara(struct cmdTable* cmd, sint16 drawMode, sint16 color)
-{
-    validPtr(cmd);
-    cmd->drawMode = drawMode;
-    if ((drawMode & DRAW_COLOR) == COLOR_1)
-        cmd->color = (((sint32)clutStart) + (color << 5)) >> 3;
-    else
-        cmd->color = color;
+    //
 }
 
 void EZ_normSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt* pos, struct gourTable* gTable)
 {
+#if TODO // unused
     struct cmdTable* cmd;
     validPtr(pos);
     cmd = getCmdTable();
@@ -256,7 +132,7 @@ void EZ_normSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt*
     cmd->ax = pos->x;
     cmd->ay = pos->y;
     setGourPara(cmd, gTable);
-
+#endif
     {
         sint32 c[2];
         sint32 xysize = chars[charNm].xysize;
@@ -276,6 +152,7 @@ struct slaveDrawResult
 
 void EZ_specialDistSpr(struct slaveDrawResult* sdr, sint32 charNm)
 {
+#ifdef TODO // unused
     struct cmdTable* cmd;
     cmd = getCmdTable();
     cmd->control = ((ZOOM_NOPOINT | DIR_NOREV | FUNC_DISTORSP) & ~CTRL_DIR);
@@ -288,12 +165,13 @@ void EZ_specialDistSpr(struct slaveDrawResult* sdr, sint32 charNm)
             *(to++) = *(from++);
     }
     setGourPara(cmd, &sdr->gtable);
-
+#endif
     vid_poly((sint32*)sdr->poly, (uint16*)&sdr->gtable, charNm, VID_NO_CLUT);
 }
 
 void EZ_specialDistSpr2(sint16 charNm, XyInt* xy, struct gourTable* gTable)
 {
+#ifdef TODO // unused
     struct cmdTable* cmd;
     validPtr(xy);
     cmd = getCmdTable();
@@ -307,13 +185,14 @@ void EZ_specialDistSpr2(sint16 charNm, XyInt* xy, struct gourTable* gTable)
             *(to++) = *(from++);
     }
     setGourPara(cmd, gTable);
-
+#endif
     vid_poly((sint32*)xy, (uint16*)gTable, charNm, VID_NO_CLUT);
 }
 #endif
 
 void EZ_distSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt* xy, struct gourTable* gTable)
 {
+#ifdef TODO // unused
     struct cmdTable* cmd;
     validPtr(xy);
     cmd = getCmdTable();
@@ -327,20 +206,23 @@ void EZ_distSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt*
             *(to++) = *(from++);
     }
     setGourPara(cmd, gTable);
-
+#endif
     vid_poly((sint32*)xy, (uint16*)gTable, charNm, get_clut_index(drawMode, color));
 }
 
 void EZ_cmd(struct cmdTable* inCmd)
 {
+#ifdef TODO // unused
     struct cmdTable* cmd;
     validPtr(inCmd);
     cmd = getCmdTable();
     qmemcpy(cmd, inCmd, sizeof(struct cmdTable));
+#endif
 }
 
 void EZ_scaleSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt* pos, struct gourTable* gTable)
 {
+#ifdef TODO // unused
     struct cmdTable* cmd;
     validPtr(pos);
     cmd = getCmdTable();
@@ -354,8 +236,6 @@ void EZ_scaleSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt
         cmd->ay = pos[0].y;
         cmd->bx = pos[1].x;
         cmd->by = pos[1].y;
-
-        vid_sprite((sint32*)(pos + 0), (sint32*)(pos + 1), color, dir, charNm, get_clut_index(drawMode, color));
     }
     else // x0, y0, x1, y1
     {
@@ -363,31 +243,38 @@ void EZ_scaleSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt
         cmd->ay = pos[0].y;
         cmd->cx = pos[1].x;
         cmd->cy = pos[1].y;
-
-        {
-            XyInt p;
-            p.x = pos[1].x - pos[0].x;
-            p.y = pos[1].y - pos[0].y;
-            vid_sprite((sint32*)(pos + 0), (sint32*)&p, color, dir, charNm, get_clut_index(drawMode, color));
-        }
     }
 
     setGourPara(cmd, gTable);
+#endif
+    if (dir & CTRL_ZOOM) // x, y, w, h
+    {
+        vid_sprite((sint32*)(pos + 0), (sint32*)(pos + 1), color, dir, charNm, get_clut_index(drawMode, color));
+    }
+    else // x0, y0, x1, y1
+    {
+        XyInt p;
+        p.x = pos[1].x - pos[0].x;
+        p.y = pos[1].y - pos[0].y;
+        vid_sprite((sint32*)(pos + 0), (sint32*)&p, color, dir, charNm, get_clut_index(drawMode, color));
+    }
 }
 
 void EZ_localCoord(sint16 x, sint16 y)
 {
+#ifdef TODO // unused
     struct cmdTable* cmd;
     cmd = getCmdTable();
     cmd->control = FUNC_LCOORD;
     cmd->ax = x;
     cmd->ay = y;
-
+#endif
     vid_origin(x, y);
 }
 
 void EZ_userClip(XyInt* xy)
 {
+#ifdef TODO // clipping
     struct cmdTable* cmd;
     validPtr(xy);
     cmd = getCmdTable();
@@ -396,19 +283,23 @@ void EZ_userClip(XyInt* xy)
     cmd->ay = xy[0].y;
     cmd->cx = xy[1].x;
     cmd->cy = xy[1].y;
+#endif
 }
 
 void EZ_sysClip(void)
 {
+#ifdef TODO // clipping
     struct cmdTable* cmd;
     cmd = getCmdTable();
     cmd->control = FUNC_SCLIP;
     cmd->cx = 319;
     cmd->cy = 239;
+#endif
 }
 
-void EZ_polygon(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable)
+void EZ_polygon(sint16 drawMode, uint16 color, XyInt* xy, struct gourTable* gTable)
 {
+#ifdef TODO // unused
     struct cmdTable* cmd;
     validPtr(xy);
     cmd = getCmdTable();
@@ -421,12 +312,13 @@ void EZ_polygon(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTab
             *(to++) = *(from++);
     }
     setGourPara(cmd, gTable);
-
+#endif
     vid_poly((sint32*)xy, (uint16*)gTable, 0, VID_NO_CLUT);
 }
 
-void EZ_polyLine(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable)
+void EZ_polyLine(sint16 drawMode, uint16 color, XyInt* xy, struct gourTable* gTable)
 {
+#ifdef TODO // polyline
     struct cmdTable* cmd;
     validPtr(xy);
     cmd = getCmdTable();
@@ -439,10 +331,12 @@ void EZ_polyLine(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTa
             *(to++) = *(from++);
     }
     setGourPara(cmd, gTable);
+#endif
 }
 
-void EZ_line(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable)
+void EZ_line(sint16 drawMode, uint16 color, XyInt* xy, struct gourTable* gTable)
 {
+#ifdef TODO // line
     struct cmdTable* cmd;
     validPtr(xy);
     cmd = getCmdTable();
@@ -455,6 +349,7 @@ void EZ_line(sint16 drawMode, sint16 color, XyInt* xy, struct gourTable* gTable)
     cmd->by = xy[1].y;
 
     setGourPara(cmd, gTable);
+#endif
 }
 
 sint32 EZ_charNoToVram(sint32 charNm)
@@ -465,6 +360,7 @@ sint32 EZ_charNoToVram(sint32 charNm)
 
 void EZ_closeCommand(void)
 {
+#ifdef TODO // unused
 #if BUFFERWRITES
     if (cmdBufferUsed > 0)
         flushCmdBuffer();
@@ -490,22 +386,28 @@ void EZ_closeCommand(void)
         last->control |= JUMP_ASSIGN;
         last->link = 32 >> 3;
     }
+#endif
 }
 
 void EZ_executeCommand(void)
 {
+#ifdef TODO // unused
     SPR_WRITE_REG(SPR_W_PTMR, 1);
+#endif
 }
 
 void EZ_clearCommand(void)
 {
+#ifdef TODO // unused
     struct cmdTable* last = ((struct cmdTable*)(VRAM_ADDR + commandStart[bank]));
     last->control |= SKIP_ASSIGN;
     last->link = 32 >> 3;
+#endif
 }
 
 sint32 EZ_getNextCmdNm(void)
 {
+#ifdef TODO // unused
 #if BUFFERWRITES
     sint32 c = (((uint32)ccommand) >> 5) + cmdBufferUsed;
     sint32 maxc = (((uint32)commandStart[bank]) >> 5) + commandAreaSize;
@@ -515,10 +417,13 @@ sint32 EZ_getNextCmdNm(void)
 #else
     return ((uint32)ccommand) >> 5;
 #endif
+#endif
+    return 0;
 }
 
 void EZ_linkCommand(sint32 cmdNm, sint32 mode, sint32 to)
 {
+#ifdef TODO // unused
     struct cmdTable* cmd;
 #if BUFFERWRITES
     /* if command to be linked is still in the command buffer */
@@ -534,10 +439,12 @@ void EZ_linkCommand(sint32 cmdNm, sint32 mode, sint32 to)
     cmd = (struct cmdTable*)(VRAM_ADDR + (cmdNm << 5));
     cmd->control |= mode;
     cmd->link = to << 2;
+#endif
 }
 
 void EZ_clearScreen(void)
 {
+#ifdef TODO // clear screen
     XyInt pos[4];
     pos[0].x = -160;
     pos[0].y = -120;
@@ -559,4 +466,5 @@ void EZ_clearScreen(void)
     EZ_closeCommand();
     SPR_WaitDrawEnd();
     SCL_DisplayFrame();
+#endif
 }

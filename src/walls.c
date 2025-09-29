@@ -303,14 +303,15 @@ void clipZSub(sint32 clipAxis, fix32 clipLine, sint32 greater, MthXyz* pointsIn,
             if (next >= 4)
                 next -= 4;
 
-            if ((i = goodPoint(pointsIn + p)))
+            if ((i = goodPoint(pointsIn + p)) != 0)
             {
                 shadeRing[nmRing] = shadeIn[p];
                 ring[nmRing++] = pointsIn[p];
                 assert(nmRing < 10);
             }
-            if (i != goodPoint(pointsIn + next))
+
             /* add intersection point */
+            if (i != goodPoint(pointsIn + next))
             {
                 fix32 inter[3];
                 fix32 *thisA, *nextA;
@@ -1006,11 +1007,14 @@ void rectTransform(fix32 wx, fix32 wy, fix32 wz, sint32 light_idx, sint32 h, sin
 
             light = *light_array++;
             depth = z_clamped >> 24;
-            //light_val = (depth > light_val) ? 0 : light_val - depth;
+            light = (depth > light) ? 0 : light - depth;
 
             if (lightFunc)
             {
-                MthXyz pos = {curr_x, curr_y, curr_z};
+                MthXyz pos;
+                pos.x = curr_x;
+                pos.y = curr_y;
+                pos.z = curr_z;
                 light_value = lightFunc(light, &pos);
             }
             else
@@ -1066,11 +1070,7 @@ void normTransform(sVertexType *vertex, MthMatrix *viewMatrix, sint32 nmVert, VC
         divide_result = MTH_Div(F(80 << 1), z_clamped);
 
         depth = z_clamped >> 24;
-        //if (depth > light) {
-        //    light = 0;
-        //} else {
-        //    light -= depth;
-        //}
+        light = (depth > light) ? 0 : light - depth;
 
         if (lightFunc) {
             dst.z = z_clamped;
@@ -2141,7 +2141,7 @@ static void sortLeafList(SectorDrawRecord** leafList, sint32 leafListSize)
             if (s1->cutChannel != s2->cutChannel)
                 continue;
             { /* sort via cut planes */
-                sint32 plane = (*level_cutPlane)[s1->cutIndex][s2->cutIndex];
+                sint32 plane = level_cutPlane[s1->cutIndex * MAXCUTSECTORS + s2->cutIndex];
                 sWallType* cutWall;
                 MthXyz testV, p;
                 /* if (debugFlag)

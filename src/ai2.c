@@ -1,6 +1,5 @@
 #include <sega_mth.h>
 #include <sega_scl.h>
-#include <limits.h>
 
 #include "slevel.h"
 #include "level.h"
@@ -141,10 +140,15 @@ enum
 
 static void loadRamsesBlock(RamsesTriggerObject* this)
 {
+#ifdef TODO // sound Ramses
     sint32 amount, s;
+#endif
+
 #ifdef JAPAN
     sint32 saveHead = this->soundRingHead;
 #endif
+
+#ifdef TODO // sound Ramses
     amount = SAMPLESPERFRAME;
     while (amount)
     {
@@ -159,6 +163,8 @@ static void loadRamsesBlock(RamsesTriggerObject* this)
         this->soundRingHead = 0;
         amount -= s;
     }
+#endif
+
 #ifdef JAPAN
     this->soundRingHead = saveHead;
     amount = SAMPLESPERFRAME;

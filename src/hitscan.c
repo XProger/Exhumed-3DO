@@ -2,9 +2,6 @@
 
 #include <libsn.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "sega_int.h"
 #include "sega_mth.h"
 #include "sega_sys.h"
@@ -233,7 +230,9 @@ sint32 hitScan(Sprite* dontHit, MthXyz* ray, MthXyz* pos, sint32 sector, MthXyz*
         {
             if (level_wall[w].normal[1] != 0)
                 continue;
+
             if (hitWallP((fix32*)ray, (fix32*)pos, level_wall + w, (fix32*)&tempPos))
+            {
                 if (level_wall[w].nextSector != -1 && !(level_wall[w].flags & WALLFLAG_BLOCKED))
                 { /* we've gone into a new sector */
                     sector = level_wall[w].nextSector;
@@ -247,13 +246,16 @@ sint32 hitScan(Sprite* dontHit, MthXyz* ray, MthXyz* pos, sint32 sector, MthXyz*
                     *outSector = sector;
                     return COLLIDE_WALL | (w);
                 }
+            }
         }
         /* collide with floors in this sector */
         for (w = s->firstWall; w <= s->lastWall; w++)
         {
             if (level_wall[w].normal[1] == 0)
                 continue;
+
             if (hitWallP((fix32*)ray, (fix32*)pos, level_wall + w, (fix32*)&tempPos))
+            {
                 if (level_wall[w].nextSector != -1 && !(level_wall[w].flags & WALLFLAG_BLOCKED))
                 { /* we've gone into a new sector */
                     sector = level_wall[w].nextSector;
@@ -267,6 +269,7 @@ sint32 hitScan(Sprite* dontHit, MthXyz* ray, MthXyz* pos, sint32 sector, MthXyz*
                     *outSector = sector;
                     return COLLIDE_WALL | (w);
                 }
+            }
         }
         return 0;
     Break:;
@@ -285,9 +288,12 @@ sint32 singleSectorWallHitScan(MthXyz* ray, MthXyz* pos, sint32 sector, MthXyz* 
         {
             if (loop == 0 && level_wall[w].normal[1] != 0)
                 continue;
+
             if (loop == 1 && level_wall[w].normal[1] == 0)
                 continue;
+
             if (hitWallP((fix32*)ray, (fix32*)pos, level_wall + w, (fix32*)&tempPos))
+            {
                 if (level_wall[w].nextSector != -1 && !(level_wall[w].flags & WALLFLAG_BLOCKSSIGHT))
                 { /* we've gone into a new sector */
                     *outSector = level_wall[w].nextSector;
@@ -300,6 +306,7 @@ sint32 singleSectorWallHitScan(MthXyz* ray, MthXyz* pos, sint32 sector, MthXyz* 
                     *outSector = sector;
                     return 1;
                 }
+            }
         }
     return 0;
 }
@@ -321,9 +328,12 @@ static sint32 wallHitScan(MthXyz* ray, MthXyz* pos, sint32 sector, MthXyz* outPo
             {
                 if (loop == 0 && level_wall[w].normal[1] != 0)
                     continue;
+
                 if (loop == 1 && level_wall[w].normal[1] == 0)
                     continue;
+
                 if (hitWallP((fix32*)ray, (fix32*)pos, level_wall + w, (fix32*)&tempPos))
+                {
                     if (level_wall[w].nextSector != -1 && !(level_wall[w].flags & WALLFLAG_BLOCKSSIGHT))
                     { /* we've gone into a new sector */
                         sector = level_wall[w].nextSector;
@@ -335,6 +345,7 @@ static sint32 wallHitScan(MthXyz* ray, MthXyz* pos, sint32 sector, MthXyz* outPo
                         *outSector = sector;
                         return 1;
                     }
+                }
             }
         return 0;
     Break:;

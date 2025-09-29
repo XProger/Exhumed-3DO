@@ -6,10 +6,9 @@
 #ifdef TODO
 #endif
 
-#define VRAM_SIZE   (1024 * 1024 * 1)
+#define VRAM_SIZE   16 * 1024
 
-extern uint8 VRAM[VRAM_SIZE];
-extern uint32 VRAM_ADDR;
+extern uint8 VRAM_ADDR[VRAM_SIZE];
 
 #define FBUF_ADDR 0
 
@@ -101,12 +100,12 @@ typedef struct SclVramConfig{
 
  typedef struct
 {
-    uint32 SclOtherPri:1;
-    uint32 SclSpPriNum:1;
-    uint32 SclBgPriNum:1;
-    uint32 SclSpColMix:1;
-    uint32 SclBgColMix:1;
-    uint32 SclColOffset:1;
+    uint32 SclOtherPri;
+    uint32 SclSpPriNum;
+    uint32 SclBgPriNum;
+    uint32 SclSpColMix;
+    uint32 SclBgColMix;
+    uint32 SclColOffset;
 } SclPriBuffDirtyFlags;
 
  typedef struct  SclXy {
@@ -202,14 +201,14 @@ extern	uint16		SclProcess;
 #define SCL_LNCL	0x00040000
 #define SCL_BACK	0x00080000
 
-#define SCL_VDP2_VRAM		(VRAM + (0x25e00000 - 0x25e00000))
-#define SCL_VDP2_VRAM_A		(VRAM + (0x25e00000 - 0x25e00000))
-#define SCL_VDP2_VRAM_A0	(VRAM + (0x25e00000 - 0x25e00000))
-#define SCL_VDP2_VRAM_A1	(VRAM + (0x25e20000 - 0x25e00000))
-#define SCL_VDP2_VRAM_B		(VRAM + (0x25e40000 - 0x25e00000))
-#define SCL_VDP2_VRAM_B0	(VRAM + (0x25e40000 - 0x25e00000))
-#define SCL_VDP2_VRAM_B1	(VRAM + (0x25e60000 - 0x25e00000))
-#define	SCL_COLRAM_ADDR		(VRAM + (0x25F00000 - 0x25e00000))
+#define SCL_VDP2_VRAM		(VRAM_ADDR + (0x25e00000 - 0x25e00000))
+#define SCL_VDP2_VRAM_A		(VRAM_ADDR + (0x25e00000 - 0x25e00000))
+#define SCL_VDP2_VRAM_A0	(VRAM_ADDR + (0x25e00000 - 0x25e00000))
+#define SCL_VDP2_VRAM_A1	(VRAM_ADDR + (0x25e20000 - 0x25e00000))
+#define SCL_VDP2_VRAM_B		(VRAM_ADDR + (0x25e40000 - 0x25e00000))
+#define SCL_VDP2_VRAM_B0	(VRAM_ADDR + (0x25e40000 - 0x25e00000))
+#define SCL_VDP2_VRAM_B1	(VRAM_ADDR + (0x25e60000 - 0x25e00000))
+#define	SCL_COLRAM_ADDR		(VRAM_ADDR + (0x25F00000 - 0x25e00000))
 
 #define SCL_TYPE0       0
 #define SCL_TYPE1       1

@@ -488,7 +488,7 @@ void internal_moveSprite(Sprite* o)
 }
 #endif
 
-inline void doFriction(Sprite* o)
+void doFriction(Sprite* o)
 {
     if (o->friction != F(1) && !(o->flags & SPRITEFLAG_ONSLIPPERYSLOPE))
     {
@@ -1025,6 +1025,6 @@ sint32 findSectorContaining(MthXyz* pos, sint32 guessSector)
             }
         }
     }
-    dPrint("Doh! %d\n", nmPenetrate);
+    dPrint("Doh! %d\n", (int)nmPenetrate);
     return guessSector;
 }
