@@ -42,7 +42,7 @@ enum
 #define DLGFONT 1
 #endif
 #define MAXDLGSIZE 20
-#define VRAMSTART (VRAM_ADDR)
+
 DlgItem dlgItem[MAXDLGSIZE];
 
 uint16 lastUsedSelButton;
@@ -128,6 +128,7 @@ sint32 decompressOverPic(sint32 picNm, uint16* outData)
 
 void loadOverPic(sint32 picNm)
 {
+#ifdef TODO // over pic
     sint32 *pic = (sint32*)(VRAMSTART + vramUsed);
     pic[0] = FS_INT(pic + 0);
     pic[1] = FS_INT(pic + 1);
@@ -135,6 +136,7 @@ void loadOverPic(sint32 picNm)
     picVram[picNm] = vramUsed;
     vramUsed += decompressOverPic(picNm, (uint16*)pic);
     assert(vramUsed < 512 * 1024);
+#endif
 }
 
 typedef struct
@@ -236,7 +238,9 @@ sint32 loadOverBase(uint8* picData, uint16* pallete, sint32 xsize, sint32 ysize,
                     r = 31;
                 c = RGB(r, g, b);
             }
+#ifdef TODO // over pic
             POKE_W(VRAMSTART + vramUsed, c);
+#endif
             vramUsed += 2;
             assert(vramUsed < 512 * 1024);
             if (++tx >= width)
@@ -1109,10 +1113,12 @@ void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fad
         fadeSize = fadeWidth * fadeHeight;
         fadeCount = 0;
         dustHead = dustTail = 0;
+#ifdef TODO // inventory
         for (i = 0; i < fadeSize * 2; i += 2)
         {
             POKE_W(VRAMSTART + picVram[fadePic] + i, 0);
         }
+#endif
         decompressOverPic(fadePic, tempData);
         {
             struct soundSlotRegister ssr;
@@ -1275,8 +1281,10 @@ void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fad
                         for (i = 0; i < commScreenSize; i++)
                         {
                             uint16 color = tempData[i];
+#ifdef TODO // inventory
                             if (color)
                                 POKE_W(VRAMSTART + picVram[39] + (i << 1), greyTable[getNextRand() & 0x0f]);
+#endif
                         }
                     }
                     else
@@ -1287,8 +1295,10 @@ void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fad
                             staticCount = 29;
                         for (i = 0; i < commScreenSize; i++)
                         {
+#ifdef TODO // inventory
                             uint16 color = tempData[i];
                             POKE_W(VRAMSTART + picVram[39] + (i << 1), color);
+#endif
                         }
                     }
                     plotOverPic(PICX + offsets[6][0], PICY + offsets[6][1], picStart + 8);
@@ -1317,8 +1327,9 @@ void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fad
                             uint16 color = tempData[fadeReg];
                             /*pallete[((uint8 *)(picDatas[fadePic]))
                                        [fadeReg+8]]; */
+#ifdef TODO // inventory
                             POKE_W(VRAMSTART + picVram[fadePic] + (fadeReg << 1), color);
-
+#endif
                             if (color && !(i & 7))
                             {
                                 sint32 x, y;

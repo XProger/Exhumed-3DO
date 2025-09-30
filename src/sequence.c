@@ -15,24 +15,25 @@ sint32 level_nmSequences;
 sint32 level_nmFrames;
 sint32 level_nmChunks;
 
-sint16* level_sequence;
+sint16 *level_sequence;
 sFrameType* level_frame;
 sChunkType* level_chunk;
 sint16* level_sequenceMap;
 
+static sint8 level_seq_data[16 * 1024];
+static sint8 weapon_seq_data[16 * 1024];
+
 sint32 loadSequences(sint32 fd, sint32 tileBase, sint32 soundBase)
 {
     sint32 size, i;
-    sint8* buffer;
+    sint8* buffer = level_seq_data;
     struct seqHeader* head;
     assert(fd >= 0);
     fs_read(fd, (sint8*)&size, 4);
 
     size = FS_INT(&size);
 
-    assert(size > 0 && size < 1024 * 1024);
-    buffer = (sint8*)mem_malloc(0, size);
-    assert(buffer);
+    assert(size > 0 && size < sizeof(level_seq_data));
     fs_read(fd, buffer, size);
 
     head = (struct seqHeader*)buffer;
@@ -129,16 +130,14 @@ sint32 loadWeaponSequences(sint32 fd)
 {
     sint32 size, i;
     sint32 level_nmSequences, level_nmFrames, level_nmChunks;
-    sint8* buffer;
+    sint8* buffer = weapon_seq_data;
     struct seqHeader* head;
     assert(fd >= 0);
     fs_read(fd, (sint8*)&size, 4);
 
     size = FS_INT(&size);
 
-    assert(size > 0 && size < 1024 * 1024);
-    buffer = (sint8*)mem_malloc(0, size);
-    assert(buffer);
+    assert(size > 0 && size < sizeof(weapon_seq_data));
     fs_read(fd, buffer, size);
 
     head = (struct seqHeader*)buffer;
@@ -269,7 +268,7 @@ void setWeaponFrame(sint32 f)
 /* returns cumulative OR of the flags of the new frames passed and displayed */
 sint32 advanceWeaponSequence(sint32 xbase, sint32 ybase, sint32 hack)
 {
-    sint32 j;
+    //sint32 j;
     sint32 gframe, chunk;
     sint32 sequence, flip;
     sint32 VDP2PicOn;
@@ -359,6 +358,7 @@ sint32 advanceWeaponSequence(sint32 xbase, sint32 ybase, sint32 hack)
             sChunkType* c = level_wChunk + chunk;
             if (getPicClass(c->tile) == TILEVDP)
             {
+#ifdef TODO // weapon palette
                 uint16* colorRam = (uint16*)SCL_COLRAM_ADDR;
                 SCL_SET_N0CAOS(0);
                 if (sequence >= 30 && sequence < 35)
@@ -381,7 +381,11 @@ sint32 advanceWeaponSequence(sint32 xbase, sint32 ybase, sint32 hack)
                     }
                     SCL_SET_N0CAOS(6);
                 }
+#endif
+
+#ifdef TODO // weapon draw
                 displayVDP2Pic(c->tile, xo + c->chunkx, yo + c->chunky);
+#endif
                 VDP2PicOn = 1;
                 if (hack)
                     break;

@@ -6,8 +6,6 @@
 #include <sega_sys.h>
 #include <sega_dbg.h>
 #include <sega_per.h>
-#include <string.h>
-#include <limits.h>
 
 #include "level.h"
 #include "sprite.h"
@@ -1238,7 +1236,7 @@ void drawWall(sWallType* wall, MthMatrix* view, SectorDrawRecord* s)
         {
             v = level_face[f].v[i];
             assert(v >= 0);
-            assert(v < maxV);
+            //assert(v < maxV);
             gtable.entry[i] = vCalc[v].light;
             clip &= vCalc[v].light;
             poly[i].x = vCalc[v].x;

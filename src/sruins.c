@@ -1261,6 +1261,7 @@ void setVDP2(void)
 
 void loadVDP2Sprites(sint32 fd)
 {
+#ifdef TODO // VDP2 sprites
     uint8* vram;
     SclConfig scfg;
     vram = (uint8*)SCL_VDP2_VRAM;
@@ -1276,10 +1277,14 @@ void loadVDP2Sprites(sint32 fd)
     scfg.patnamecontrl = 0;
     SCL_SetConfig(SCL_NBG0, &scfg);
     dontDisplayVDP2Pic();
+#else
+    fs_skip(fd, 1024 * 256);
+#endif
 }
 
 void loadLoadingScreen(sint32 fd)
 {
+#ifdef TODO // loading screen
     uint8* data;
     sint32 xsize, ysize;// , y, x;
     uint16 colorRam[256];
@@ -1306,6 +1311,9 @@ void loadLoadingScreen(sint32 fd)
     SCL_DisplayFrame();
 #endif
     mem_free(data);
+#else
+    fs_skip(fd, 512 + 4 + 4 + 320 * 240);
+#endif
 }
 
 static void plotBowl(uint8* pos)
@@ -1385,6 +1393,7 @@ static void plotNoDot(uint8* pos)
 
 void redrawBowlDots(void)
 {
+#ifdef TODO // redrawBowlDots
     uint8 *barPic, *pos;
     sint32 i, w;
     barPic = (uint8*)((EZ_charNoToVram(0) << 3) + 0x5c00000);
@@ -1416,6 +1425,7 @@ void redrawBowlDots(void)
         else
             plotNoDot(barPic + 59 + 320 * 31 + (10 * i));
     }
+#endif
 }
 
 void redrawStatBar(void)
@@ -2164,9 +2174,9 @@ void stunPlayer(sint32 ticks)
 
 static sint32 class_sizes[] = {
 #ifndef JAPAN
-    28, 30, 1, 10, 12, 30, -1
-#else
     28, 31, 1, 10, 12, -1
+#else
+    28, 30, 1, 10, 12, 30, -1
 #endif
 };
 
@@ -2676,12 +2686,11 @@ static void fadeSegaLogo(void)
 }
 #endif
 
-uint8 VRAM_ADDR[VRAM_SIZE];
-
 int main(int argc, char *argv[])
 {
     char* levelFile;
     sint32 level;
+
     enable_stereo = 1;
     enable_music = 1;
     abcResetEnable = 1;

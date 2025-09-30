@@ -153,6 +153,8 @@ sint32 approxDist(sint32 dx, sint32 dy, sint32 dz)
 
 void assertFail(char* file, sint32 line)
 {
+    //__debugbreak();
+#ifdef TODO // remove
     uint16 i, sw;
     MthXyz pos[NMPARTS], vel[NMPARTS];
     char* text[NMPARTS] = { NULL, NULL, "Write", "This", "Down" };
@@ -210,6 +212,7 @@ void assertFail(char* file, sint32 line)
 
         app_poll();
     }
+#endif
 }
 
 void message(char* message)
@@ -292,17 +295,6 @@ sint32 fixSqrt(sint32 n, sint32 frac)
     return result;
 }
 
-#ifdef TODO
-fix32 fixMul(fix32 a, fix32 b)
-{
-    fix32 c;
-    __asm__ volatile("dmuls.l %1,%2\n sts mach,r11\n sts macl,%0\n xtrct r11,%0" : "=r"((fix32)c) : "r"((fix32)a), "r"((fix32)b) : "mach", "macl", "r11");
-    return c;
-}
-#else
-#define fixMul(a, b) (((a) * (b)) >> 16)
-#endif
-
 fix32 evalHermite(fix32 t, fix32 p1, fix32 p2, fix32 d1, fix32 d2)
 {
     fix32 t2 = MTH_Mul(t, t);
@@ -318,27 +310,31 @@ fix32 evalHermiteD(fix32 t, fix32 p1, fix32 p2, fix32 d1, fix32 d2)
     return (MTH_Mul(6 * t2 - 6 * t, p1) + MTH_Mul(-6 * t2 + 6 * t, p2) + MTH_Mul(3 * t2 - 4 * t + F(1), d1) + MTH_Mul(3 * t2 - 2 * t, d2));
 }
 
+#ifdef AP_3DO
+    uint8 *DRAM;
+    uint8 *VRAM;
+#else
+    uint8 DRAM[DRAM_SIZE];
+    uint8 VRAM[VRAM_SIZE];
+#endif
+
 #define NMAREAS 2
 #define STACKSIZE 8 /* must be power of 2 */
 static uint8 *memStack[NMAREAS][STACKSIZE];
 static sint32 stackPos[NMAREAS];
 static uint8 *areaEnd[NMAREAS];
 
-#define DRAM_SIZE   (256 * 1024)
-
-static uint8 DRAM[2][DRAM_SIZE];
-
-static uint8 *mem1Start = DRAM[0];
-static uint8 *mem2Start = DRAM[1];
+static uint8 *mem1Start;
+static uint8 *mem2Start;
 
 void mem_init(void)
 {
-    memStack[0][0] = mem1Start;
-    memStack[1][0] = mem2Start;
+    memStack[0][0] = mem1Start = DRAM;
+    memStack[1][0] = mem2Start = VRAM;
     stackPos[0] = 0;
     stackPos[1] = 0;
     areaEnd[0] = mem1Start + DRAM_SIZE;
-    areaEnd[1] = mem2Start + DRAM_SIZE;
+    areaEnd[1] = mem2Start + VRAM_SIZE;
 }
 
 void mem_lock(void)
@@ -446,10 +442,12 @@ sint32 normalizeAngle(sint32 angle)
 #ifndef NDEBUG
 void _checkStack(char* file, sint32 line)
 {
+#ifdef TODO // remove
     sint32 c;
     __asm__ volatile("mov.l r15,%0\n" : "=r"((sint32)c));
     if (c < ((sint32)mystack) + 0x100)
         assertFail(file, line);
+#endif
 }
 #endif
 

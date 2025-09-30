@@ -111,6 +111,9 @@ static uint16 colors[4] = { 0, 0x8000 | 31 << 10 | 31 << 5 | 31, 0x8000 | 25 << 
 
 void drawMap(sint32 cx, sint32 cy, sint32 cz, sint32 yaw, sint32 currentSector)
 {
+#ifndef NDEBUG
+    sint32 i;
+#endif
     sint32 w, s, color, transp;
     sint16 currentHeight;
     XyInt mapLine[2];

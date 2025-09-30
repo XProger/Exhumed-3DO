@@ -90,7 +90,7 @@ ClassType classType[NMCLASSES] = { { COLOR_5, UCLPIN_ENABLE | COLOR_5 | HSS_ENAB
 
 Pic pics[MAXNMPICS];
 static sint32 nmPics;
-static uint16* palletes;
+static uint16 palletes[256 * 40];
 
 #if MIPMAP
 sint8 mippedSlot[MAXNMPICS];
@@ -191,7 +191,6 @@ sint32 initPicSystem(sint32 _picNmBase, sint32* classSizes)
     sint32 c;
     nmPics = 0;
     frameCount = 0;
-    palletes = NULL;
     nmVDP2Pics = 0;
     for (c = 0; c < NMCLASSES; c++)
     {
@@ -204,7 +203,7 @@ sint32 initPicSystem(sint32 _picNmBase, sint32* classSizes)
             if (classType[c].width == 0)
                 continue;
             EZ_setChar(_picNmBase++, classType[c].colorMode, classType[c].width, classType[c].height, NULL);
-            assert(EZ_charNoToVram(_picNmBase - 1));
+            //assert(EZ_charNoToVram(_picNmBase - 1));
         }
         classType[c].slots[i] = NULL; /* set sentinel */
     }
@@ -257,12 +256,16 @@ static void map(Pic* p)
     for (s = array; *s; s++)
         assert(*s != p);
 #endif
+
     for (s = array; *s; s++)
+    {
         if (!((*s)->flags & PICFLAG_LOCKED) && (*s)->lastUse < oldTime)
         {
             oldTime = (*s)->lastUse;
             oldest = s - array;
         }
+    }
+
     if (s - array < classType[(sint32)p->class].nmSlots)
     { /* we found an empty slot. */
         index = s - array;
@@ -535,7 +538,6 @@ static void load16BPPTile(sint32 fd, sint32 lock)
 
     palNm = FS_SHORT(&palNm);
 
-    assert(palletes);
     pal = palletes + 256 * palNm + 1;
     fs_read(fd, b, width * height);
 #if COMPRESS16BPP
@@ -574,7 +576,6 @@ static void loadSmall16BPPTile(sint32 fd, sint32 lock)
 
     palNm = FS_SHORT(&palNm);
 
-    assert(palletes);
     pal = palletes + 256 * palNm + 1;
     fs_read(fd, b, width * height);
 #if COMPRESS16BPP
@@ -653,31 +654,25 @@ static void load16BPPRLETile(sint32 fd, sint32 lock)
 
 void loadPalletes(sint32 fd)
 {
-    sint32 size, i, j;
-    uint16* colorRam = (uint16*)SCL_COLRAM_ADDR;
+    sint32 size, i;// , j;
+    //uint16* colorRam = (uint16*)SCL_COLRAM_ADDR;
     fs_read(fd, (sint8*)&size, 4);
 
     size = FS_INT(&size);
 
-    assert(size > 0 && size < 1024 * 1024);
-    palletes = (uint16*)mem_malloc(
-#if COMPRESS16BPP
-        1
-#else
-        0
-#endif
-        ,
-        size);
-    assert(palletes);
+    assert(size > 0 && size < sizeof(palletes));
     fs_read(fd, (sint8*)palletes, size);
+
+    *palletes = FS_SHORT(palletes);
+
     /* ... load the object pallete into c-ram */
     {
         uint16* objectPal;
-        uint16 tempSpace[256];
-        sint32 c;
+        //uint16 tempSpace[256];
+        //sint32 c;
         objectPal = palletes + 256 * (*palletes) + 1;
         objectPal[255] = 0xffff;
-
+#ifdef TODO // objects shade & flash
         for (i = 0; i < 256; i++)
             colorRam[i] = objectPal[i];
         /* SCL_SetColRam(0,0,256,objectPal); */
@@ -713,15 +708,13 @@ void loadPalletes(sint32 fd)
         for (j = 0; j < 256; j++)
             colorRam[NMOBJECTPALLETES * 256 + j] = tempSpace[j];
         /* SCL_SetColRam(0,NMOBJECTPALLETES*256,256,tempSpace); */
+#endif
     }
 
     for (i = 0; i < size / 512; i++)
     {
         vid_clut_set(i, palletes + i * 256 + 1, 512);
     }
-
-#ifdef TODO // flash palette
-#endif
 }
 
 /* return # of tiles loaded */
@@ -836,8 +829,6 @@ sint32 loadPicSetAsPics(sint32 fd, sint32 class)
 }
 
 #ifdef DUMP_PICS
-#include <stdio.h>
-
 typedef struct {
     uint8 id_length;
     uint8 color_map_type;

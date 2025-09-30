@@ -129,9 +129,11 @@ void UsrVblankStart(void)
      POKE_W(SCL_VDP2_VRAM+0x180112,0x00);/*use offset reg 0 for all planes*/
 #endif
 
+#ifdef TODO // fade wtf?
         POKE_W(SCL_VDP2_VRAM + 0x180114, fadePos & 0x1ff);
         POKE_W(SCL_VDP2_VRAM + 0x180116, fadePos & 0x1ff);
         POKE_W(SCL_VDP2_VRAM + 0x180118, fadePos & 0x1ff);
+#endif
     }
 }
 
@@ -168,6 +170,7 @@ sint32 errorQSize = 0;
 #pragma interrupt
 void userBreakBlam(void)
 {
+#ifdef TODO // remove
     sint32 dummy[1];
     __asm__ volatile("sts.l pr,%0\n" : "=r"((sint32)dummy[0]));
     errorQ[errorQSize] = dummy[4];
@@ -179,6 +182,7 @@ void userBreakBlam(void)
     fadeEnd = 0;
 
     return;
+#endif
 #if 0
  sint32 i,x,y;
  for (y=0;y<256;y++)

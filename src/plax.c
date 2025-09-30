@@ -63,9 +63,11 @@ static uint16 plaxPal[256];
 
 void retryPlaxPal(void)
 {
+#ifdef TODO // plax
     sint32 i;
     for (i = 0; i < 256; i++)
         POKE_W(SCL_COLRAM_ADDR + ((256 * 7 + i) << 1), plaxPal[i]);
+#endif
     /* SCL_SetColRam(0,256*7,256,plaxPal); */
 }
 
@@ -82,7 +84,7 @@ void plaxOff(void)
 
 void initPlax(sint32 fd)
 {
-    SclConfig scfg;
+    //SclConfig scfg;
     sint32 x;//, i;
     fs_read(fd, (sint8*)(plaxPal), 256 * 2);
 #ifdef TODO // PLAX pal
@@ -101,6 +103,7 @@ void initPlax(sint32 fd)
     x = FS_INT(&x);
 
     assert(x == 256);
+#ifdef TODO // plax
     fs_read(fd, (sint8*)SCL_VDP2_VRAM_A1, 512 * 256);
 
     SCL_InitRotateTable(SCL_VDP2_VRAM_A0 + 0x500, 1, SCL_RBG0, SCL_NON);
@@ -123,6 +126,10 @@ void initPlax(sint32 fd)
         SclProcess = 1;
 
     fs_read(fd, (sint8*)SCL_VDP2_VRAM_A0, 320 * 4);
+#else
+    fs_skip(fd, 512 * 256 + 320 * 4);
+#endif
+
 
 #if 0
  (sint32 x,d;

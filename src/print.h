@@ -10,6 +10,7 @@ sint32 getFontHeight(sint32 font);
 void drawStringBulge(sint32 x, sint32 y, sint32 font, sint32 buldgeCenter, const char* text);
 void drawStringN(sint32 x, sint32 y, sint32 font, const char* text, sint32 n);
 
+#ifdef TODO // remove
 #ifndef NDEBUG
 #define drawStringf(x, y, font, format, args...) \
     {                                            \
@@ -17,6 +18,7 @@ void drawStringN(sint32 x, sint32 y, sint32 font, const char* text, sint32 n);
         sprintf(buff, format, ##args);           \
         drawString(x, y, font, buff);            \
     }
+#endif
 #endif
 
 #ifdef JAPAN

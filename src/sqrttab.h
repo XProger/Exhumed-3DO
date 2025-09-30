@@ -1,4 +1,4 @@
-static uint32 sqrtTable[SQRTTABLESIZE] = {
+static const uint32 sqrtTable[SQRTTABLESIZE] = {
     0U,
     134217728U,
     189812531U,

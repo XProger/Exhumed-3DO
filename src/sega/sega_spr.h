@@ -16,7 +16,7 @@
 
 #define  SPR_W_PTMR          0x00000004
 
-#define SPR_Initial(VRAM)   *(VRAM) = 0
+#define SPR_Initial(VRAM)
 #define SPR_SetEosMode(eosFlag)
 #define SPR_WRITE_REG(reg, val)
 

@@ -5,11 +5,14 @@
 
 Item irqTimer;
 
+extern uint8 *DRAM;
+extern uint8 *VRAM;
+
 static uint16 pad = 0xFFFF;
 
 sint32 app_time(void)
 {
-    return GetMSecTime(irqTimer);
+    return (sint32)GetMSecTime(irqTimer);
 }
 
 uint16 app_input(void)
@@ -41,6 +44,15 @@ sint32 app_poll(void)
     if (mask & ControlRightShift)   pad &= ~PER_DGT_TR;
 }
 
+void memCheck(void)
+{
+    MemInfo memInfoVRAM;
+    availMem(&memInfoVRAM, MEMTYPE_DRAM);
+    printf("DRAM: %d kb\n", (sint32)memInfoVRAM.minfo_SysFree / 1024);
+    availMem(&memInfoVRAM, MEMTYPE_VRAM);
+    printf("VRAM: %d kb\n", (sint32)memInfoVRAM.minfo_SysFree / 1024);
+}
+
 void app_init(void)
 {
     printf("Hello, 3DO!\n");
@@ -48,6 +60,11 @@ void app_init(void)
     InitEventUtility(1, 0, LC_Observer);
 
     vid_init();
+
+    memCheck();
+    DRAM = (uint8*)AllocMem(DRAM_SIZE, MEMTYPE_DRAM);
+    VRAM = (uint8*)AllocMem(VRAM_SIZE, MEMTYPE_VRAM);
+    memCheck();
 
     irqTimer = GetTimerIOReq();
     ScavengeMem();
@@ -60,7 +77,7 @@ float sinf(float x)
 
 float cosf(float x)
 {
-    return 0.0f;
+    return 1.0f;
 }
 
 float atan2f(float y, float x)

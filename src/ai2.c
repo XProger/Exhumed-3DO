@@ -248,7 +248,7 @@ static sint8 droppedMummy = 0;
 void ramsesTrigger_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
 {
     RamsesTriggerObject* this = (RamsesTriggerObject*)_this;
-    sint32 fflag, i;
+    sint32 fflag;// , i;
     switch (msg)
     {
         case SIGNAL_FLOORCONTACT:
@@ -272,9 +272,11 @@ void ramsesTrigger_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
             this->timer = 0;
             this->disabled = 5;
             {
+#ifdef TODO // Ramses palette
                 uint16* colorRam = (uint16*)SCL_COLRAM_ADDR;
                 for (i = 0; i < 256; i++)
                     colorRam[NMOBJECTPALLETES * 256 + i] = ((uint16*)jasonPallete)[i];
+#endif
             }
             break;
         case SIGNAL_VIEW:

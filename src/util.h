@@ -57,20 +57,10 @@ void message(char* message);
 
 void assertFail(char* file, sint32 line);
 
-#define assert(x)                           \
-    do                                      \
-        if (!(x))                           \
-            assertFail(__FILE__, __LINE__); \
-    while (0)
-#define validPtr(x)                                                                                                \
-    do                                                                                                             \
-        if (!((((sint32)x >= 0x200000 && ((sint32)x) <= 0x2fffff)) || (((sint32)x) >= 0x6004000 && ((sint32)x) <= 0x60fffff))) \
-            assertFail(__FILE__, __LINE__);                                                                        \
-    while (0)
+#define validPtr(x)
 
 #else
 
-#define assert(x)
 #define validPtr(x)
 
 #endif
@@ -78,47 +68,11 @@ void assertFail(char* file, sint32 line);
 #define F(a) ((a) << 16)
 #define f(a) ((a) >> 16)
 
-#ifdef TODO
-#define MTH_Mul(a, b) fixMul(a, b)
-extern fix32 fixMul(fix32 a, fix32 b)
-{
-    fix32 c;
-    __asm__ volatile("dmuls.l %1,%2\n"
-                     "sts mach,r11\n"
-                     "sts macl,%0\n"
-                     "xtrct r11,%0"
-                     : "=r"((fix32)c)
-                     : "r"((fix32)a), "r"((fix32)b)
-                     : "mach", "macl", "r11");
-    return c;
-}
-#endif
-
-extern fix32 getStackPointer(void);
-
 #ifndef NDEBUG
 extern void _checkStack(char* file, sint32 line);
 #define checkStack() _checkStack(__FILE__, __LINE__)
 #else
 #define checkStack()
-#endif
-
-#if 0
-#define MTH_Product(a, b) fixProduct(a, b)
-extern fix32 fixProduct(fix32 *a,fix32 *b)
-{fix32 c;
- __asm__ ("clrmac\n"
-		   "mac.l @%1+,@%2+\n"
-		   "mac.l @%1+,@%2+\n"
-		   "mac.l @%1+,@%2+\n"
-		   "sts mach,r11\n"
-		   "sts macl,%0\n"
-		   "xtrct r11,%0"
-                   : "=r" ((fix32)c), "=r" (a), "=r" (b)
-		   : "1" (a), "2" (b)
-                   : "mach","macl","r11");
- return c;
-}
 #endif
 
 void mem_init(void);
@@ -137,7 +91,6 @@ void debugPrint(char* message);
         debugPrint(buff);              \
     }
 #else
-#include <stdio.h>
 #define debugPrint      printf
 #define dPrint          printf
 #endif

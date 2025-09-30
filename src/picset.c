@@ -8,39 +8,10 @@
 #include <sega_dbg.h>
 #include <sega_per.h>
 #include <sega_dma.h>
-#include <string.h>
 
 #include "util.h"
 #include "file.h"
 #include "picset.h"
-
-#ifdef TODO // unused
-uint8* loadPic(sint32 fd, sint32* width, sint32* height)
-{
-    sint16 w, h;
-    sint16 flags;
-    uint8* data;
-    fs_read(fd, (sint8*)&w, 2);
-    fs_read(fd, (sint8*)&h, 2);
-    fs_read(fd, (sint8*)&flags, 2);
-    *width = w;
-    *height = h;
-    data = mem_malloc(0, *width * *height);
-    assert(data);
-    fs_read(fd, data, *width * *height);
-    return data;
-}
-#endif
-
-void skipPicSet(sint32 fd)
-{
-    sint32 size;
-    sint8* data;
-    fs_read(fd, (sint8*)&size, 4);
-    data = mem_malloc(0, size);
-    fs_read(fd, data, size);
-    mem_free(data);
-}
 
 sint32 loadPicSet(sint32 fd, uint16** palletes, uint32** datas, sint32 maxNmPics)
 {

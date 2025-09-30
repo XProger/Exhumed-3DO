@@ -231,8 +231,8 @@ void sound_nextFrame(void)
 void loadSound(sint32 fd)
 {
     sint32 size, rate, bps, loopStart;
-    sint32 i;
-    uint16* buffer;
+    //sint32 i;
+    //uint16* buffer;
     fs_read(fd, (sint8*)&size, 4);
     fs_read(fd, (sint8*)&rate, 4);
     fs_read(fd, (sint8*)&bps, 4);
@@ -242,7 +242,7 @@ void loadSound(sint32 fd)
     rate = FS_INT(&rate);
     bps = FS_INT(&bps);
     loopStart = FS_INT(&loopStart);
-
+#ifdef TODO // sound
     buffer = (uint16*)mem_malloc(0, size);
     assert(buffer);
     fs_read(fd, (sint8*)buffer, size);
@@ -258,14 +258,16 @@ void loadSound(sint32 fd)
     assert(!(soundTop & 1));
     for (i = 0; i < size / 2; i++)
     {
-#ifdef TODO // sound
         POKE_W(SNDBASE + soundTop, buffer[i]);
-#endif
         soundTop += 2;
     }
     mem_free(buffer);
 #ifndef NDEBUG
     extraStuff = (512 * 1024 - soundTop) / 1024;
+#endif
+
+#else
+    fs_skip(fd, size);
 #endif
 }
 

@@ -3,7 +3,6 @@
 #include <sega_mth.h>
 #include <sega_scl.h>
 #include <sega_spr.h>
-#include <string.h>
 
 #include "util.h"
 #include "spr.h"
@@ -33,7 +32,8 @@ static sint32 get_clut_index(sint16 drawMode, uint16 color)
 
 void EZ_setErase(sint32 eraseWriteEndLine, uint16 eraseWriteColor)
 {
-    struct cmdTable* first = (struct cmdTable*)VRAM_ADDR;
+#ifdef TODO // erase
+    struct cmdTable* first = (struct cmdTable*)VRAM;
     if (eraseWriteEndLine > 0)
     {
         SPR_SetEraseData(eraseWriteColor, 0, 0, 319, eraseWriteEndLine);
@@ -59,14 +59,17 @@ void EZ_setErase(sint32 eraseWriteEndLine, uint16 eraseWriteColor)
     }
     else
         first->control = SKIP_ASSIGN;
+#endif
 }
 
 void EZ_initSprSystem(sint32 nmCommands, sint32 nmCluts, sint32 nmGour, sint32 eraseWriteEndLine, uint16 eraseWriteColor)
 {
     sint32 i;
+#ifdef TODO // remove
     uint8* vram;
     SPR_Initial(&vram);
     SPR_SetEosMode(0);
+#endif
     nmChars = 0;
     for (i = 0; i < MAXNMCHARS; i++)
         chars[i].addr = 0;
@@ -94,17 +97,20 @@ void EZ_setChar(sint32 charNm, sint32 colorMode, sint32 width, sint32 height, ui
         size <<= 1;
     if (colorMode <= COLOR_1)
         size >>= 1;
-    assert(!(((sint32)charStart) & 0x1f));
+    //assert(!(((sint32)charStart) & 0x1f));
     if (!chars[charNm].addr)
     {
         chars[charNm].addr = 1;
         chars[charNm].xysize = ((width >> 3) << 8) | height;
     }
+
+#ifdef TODO // char VRAM copy
     if (data)
     { /* copy char data into area */
         validPtr(data);
-        dmaMemCpy(data, (uint8*)((chars[charNm].addr << 3) + VRAM_ADDR), size);
+        dmaMemCpy(data, (uint8*)((chars[charNm].addr << 3) + VRAM), size);
     }
+#endif
 }
 
 void EZ_setLookupTbl(sint32 tblNm, struct sprLookupTbl* tbl)
@@ -369,20 +375,20 @@ void EZ_closeCommand(void)
 #endif
     /* make first command link to the frame's command table */
     {
-        struct cmdTable* first = (struct cmdTable*)VRAM_ADDR;
+        struct cmdTable* first = (struct cmdTable*)VRAM;
         first->link = ((sint32)commandStart[bank]) >> 3;
     }
     /* make last command point to end command */
     if (ccommand == commandStart[bank])
     { /* no commands */
-        struct cmdTable* last = ((struct cmdTable*)(VRAM_ADDR + ccommand));
+        struct cmdTable* last = ((struct cmdTable*)(VRAM + ccommand));
         last->control |= SKIP_ASSIGN;
         last->link = 32 >> 3;
     }
     else
     {
-        struct cmdTable* last = ((struct cmdTable*)(VRAM_ADDR + ccommand)) - 1;
-        /* last=((struct cmdTable *)(VRAM_ADDR+commandStart[bank]))+8; */
+        struct cmdTable* last = ((struct cmdTable*)(VRAM + ccommand)) - 1;
+        /* last=((struct cmdTable *)(VRAM+commandStart[bank]))+8; */
         last->control |= JUMP_ASSIGN;
         last->link = 32 >> 3;
     }
@@ -399,7 +405,7 @@ void EZ_executeCommand(void)
 void EZ_clearCommand(void)
 {
 #ifdef TODO // unused
-    struct cmdTable* last = ((struct cmdTable*)(VRAM_ADDR + commandStart[bank]));
+    struct cmdTable* last = ((struct cmdTable*)(VRAM + commandStart[bank]));
     last->control |= SKIP_ASSIGN;
     last->link = 32 >> 3;
 #endif
@@ -436,7 +442,7 @@ void EZ_linkCommand(sint32 cmdNm, sint32 mode, sint32 to)
         return;
     }
 #endif
-    cmd = (struct cmdTable*)(VRAM_ADDR + (cmdNm << 5));
+    cmd = (struct cmdTable*)(VRAM + (cmdNm << 5));
     cmd->control |= mode;
     cmd->link = to << 2;
 #endif

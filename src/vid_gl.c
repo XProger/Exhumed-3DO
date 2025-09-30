@@ -1,7 +1,5 @@
 #ifdef GAPI_GL
 
-#include <stdio.h>
-#include <assert.h>
 #include "app.h"
 #include "vid.h"
 
@@ -529,7 +527,7 @@ void vid_tex_set(sint32 tex_index, sint32 format, const void *data, sint32 width
 {
     sint32 i;
 
-    assert(width < 256 && height < 256);
+    assert(width <= 320 && height <= 256);
 
     if (format == VID_FMT_4)
     {

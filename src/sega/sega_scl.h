@@ -6,10 +6,6 @@
 #ifdef TODO
 #endif
 
-#define VRAM_SIZE   16 * 1024
-
-extern uint8 VRAM_ADDR[VRAM_SIZE];
-
 #define FBUF_ADDR 0
 
 #define SCL_SetFrameInterval(unk)
@@ -201,14 +197,6 @@ extern	uint16		SclProcess;
 #define SCL_LNCL	0x00040000
 #define SCL_BACK	0x00080000
 
-#define SCL_VDP2_VRAM		(VRAM_ADDR + (0x25e00000 - 0x25e00000))
-#define SCL_VDP2_VRAM_A		(VRAM_ADDR + (0x25e00000 - 0x25e00000))
-#define SCL_VDP2_VRAM_A0	(VRAM_ADDR + (0x25e00000 - 0x25e00000))
-#define SCL_VDP2_VRAM_A1	(VRAM_ADDR + (0x25e20000 - 0x25e00000))
-#define SCL_VDP2_VRAM_B		(VRAM_ADDR + (0x25e40000 - 0x25e00000))
-#define SCL_VDP2_VRAM_B0	(VRAM_ADDR + (0x25e40000 - 0x25e00000))
-#define SCL_VDP2_VRAM_B1	(VRAM_ADDR + (0x25e60000 - 0x25e00000))
-#define	SCL_COLRAM_ADDR		(VRAM_ADDR + (0x25F00000 - 0x25e00000))
 
 #define SCL_TYPE0       0
 #define SCL_TYPE1       1

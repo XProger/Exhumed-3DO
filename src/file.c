@@ -8,8 +8,6 @@
 #include <sega_sys.h>
 #include <sega_int.h>
 
-#include <stdio.h>
-#include <string.h>
 #include "util.h"
 #include "spr.h"
 #include "file.h"
@@ -281,6 +279,11 @@ void fs_read(sint32 fd, void* buf, sint32 n)
     }
     assert(n == 0);
 #endif
+}
+
+void fs_skip(sint32 fd, sint32 n)
+{
+    fseek(openCDFile, n, SEEK_CUR);
 }
 
 void playWholeCD(void)

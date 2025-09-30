@@ -2,7 +2,6 @@
 #include <sega_int.h>
 #include <sega_per.h>
 #include <sega_bup.h>
-#include <stdio.h>
 
 #include "v_blank.h"
 #include "menu.h"

@@ -1,11 +1,12 @@
 #ifndef APP_H
 #define APP_H
 
-#ifdef AP_3DO
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+
+#ifdef AP_3DO
+#include "stdio.h" //
 
 #include <displayutils.h>
 #include <operamath.h>
@@ -15,11 +16,13 @@
 #include <graphics.h>
 //#include <filestream.h>
 //#include <filestreamfunctions.h>
+
+#define SEEK_CUR    1
+#define SEEK_END    2
+#define SEEK_SET    0
+
 #else
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
 #include <math.h>
 
 typedef signed char sint8;
@@ -42,6 +45,15 @@ typedef sint32 fix32;
 
 #define FS_INT(p)   (sint32)( ((uint8*)(p))[3] | (((uint8*)(p))[2] << 8) | (((uint8*)(p))[1] << 16) | (((uint8*)(p))[0] << 24) )
 #define FS_SHORT(p) (sint32)( ((uint8*)(p))[1] | (((uint8*)(p))[0] << 8) )
+
+#define DRAM_SIZE   (768 * 1024)
+#define VRAM_SIZE   (640 * 1024)
+
+#ifdef AP_3DO
+    #define assert(expr)
+#else
+    #define assert(expr) if (!(expr)) { printf("ASSERT:\n  %s:%d\n  %s => %s", __FILE__, __LINE__, __FUNCTION__, #expr); __debugbreak(); }
+#endif
 
 sint32 app_time(void);
 uint16 app_input(void);

@@ -86,7 +86,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AP_WIN=1;GAPI_GL=1;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);NPROFILE;_CRT_SECURE_NO_WARNINGS;NDEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>AP_WIN=1;GAPI_GL=1;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);NPROFILE;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\;..\libs</AdditionalIncludeDirectories>
     </ClCompile>

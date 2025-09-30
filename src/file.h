@@ -8,6 +8,7 @@ void fs_closeProgress(void);
 void fs_init(void);
 sint32 fs_open(const char* filename);
 void fs_read(sint32 fd, void* buf, sint32 n);
+void fs_skip(sint32 fd, sint32 n);
 void fs_close(sint32 fd);
 void fs_execOne(void);
 

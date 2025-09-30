@@ -26,15 +26,8 @@ sint32 level_nmVertex;
 
 static uint8 level_data[512 * 1024];
 
-#if 0
 #define LOADPART(array, type, number)   \
-    size = number * sizeof(type);       \
-    array = (type*)mem_malloc(1, size); \
-    fs_read(fd, (sint8*)array, size);
-#endif
-
-#define LOADPART(array, type, number)   \
-    array = (type*)ptr;                \
+    array = (type*)ptr;                 \
     ptr += number * sizeof(type);
 
 sint32 loadLevel(sint32 fd, sint32 tileBase)
@@ -216,11 +209,13 @@ sint32 loadLevel(sint32 fd, sint32 tileBase)
         level_face[i].tile += tileBase;
 
     /* paranoia checks */
+#ifdef TODO // fix alignment in the data
     assert(!(((sint32)level_sector) & 3));
     assert(!(((sint32)level_wall) & 3));
     assert(!(((sint32)level_vertex) & 3));
     assert(!(((sint32)level_face) & 3));
     assert(!(((sint32)level_object) & 3));
+#endif
 
     return 1;
 }

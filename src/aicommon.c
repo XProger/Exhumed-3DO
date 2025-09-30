@@ -1,6 +1,5 @@
 #include <sega_mth.h>
 #include <sega_scl.h>
-#include <limits.h>
 
 #include "slevel.h"
 #include "level.h"
