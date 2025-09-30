@@ -55,6 +55,22 @@ typedef sint32 fix32;
     #define assert(expr) if (!(expr)) { printf("ASSERT:\n  %s:%d\n  %s => %s", __FILE__, __LINE__, __FUNCTION__, #expr); __debugbreak(); }
 #endif
 
+#define qmemcpy memcpy
+
+#define PER_DGT_A   (1 << 0)
+#define PER_DGT_B   (1 << 1)
+#define PER_DGT_C   (1 << 2)
+#define PER_DGT_X   (1 << 3)
+#define PER_DGT_Y   (1 << 4)
+#define PER_DGT_Z   (1 << 5)
+#define PER_DGT_TL  (1 << 6)
+#define PER_DGT_TR  (1 << 7)
+#define PER_DGT_U   (1 << 8)
+#define PER_DGT_D   (1 << 9)
+#define PER_DGT_L   (1 << 10)
+#define PER_DGT_R   (1 << 11)
+#define PER_DGT_S   (1 << 12)
+
 sint32 app_time(void);
 uint16 app_input(void);
 sint32 app_poll(void);

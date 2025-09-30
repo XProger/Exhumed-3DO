@@ -1,5 +1,4 @@
-#include <sega_mth.h>
-#include <sega_scl.h>
+#include "mth.h"
 
 #include "slevel.h"
 #include "level.h"
@@ -296,7 +295,7 @@ void ramsesTrigger_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
             {
                 case AI_RTRIGGER_ALIGNPLAYER:
                     /* #ifndef PSYQ */
-                    fs_execOne();
+                    //fs_execOne();
                     /* #endif */
                     camera->vel.x += (F(level_sector[this->sectorNm].center[0]) - camera->pos.x) >> 5;
                     camera->vel.z += (F(level_sector[this->sectorNm].center[2]) - camera->pos.z) >> 5;

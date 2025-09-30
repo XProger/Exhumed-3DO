@@ -1,11 +1,4 @@
-#include <machine.h>
-
-#include <libsn.h>
-
-#include "sega_int.h"
-#include "sega_mth.h"
-#include "sega_sys.h"
-
+#include "app.h"
 #include "level.h"
 #include "util.h"
 #include "sprite.h"
@@ -47,19 +40,7 @@ sint32 hitSpriteP(fix32 ray[3], fix32 pos[3], Sprite* sprite, fix32* out_pos, fi
     out_pos[1] = pos[1] + MTH_Mul(v - d, ray[1]);
     out_pos[2] = pos[2] + MTH_Mul(v - d, ray[2]);
     *out_distance = v - d;
-#if 0
-#ifndef NDEBUG
- if (*out_distance<0)
-    {char buff[160];
-     sprintf(buff,"(%d,%d,%d)",ray[0],ray[1],ray[2]);
-     message(buff); message(buff); message(buff);
-     sprintf(buff,"(%d,%d,%d)",EO[0],EO[1],EO[2]);
-     message(buff); message(buff); message(buff);
-     sprintf(buff," %d %d %d ",disc,d,v);
-     message(buff); message(buff); message(buff);
-    }
-#endif
-#endif
+
     assert(*out_distance >= 0);
     if (*out_distance < 0)
         return 0;

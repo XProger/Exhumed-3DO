@@ -1,18 +1,6 @@
-#include <machine.h>
-
-#include <libsn.h>
-
-#include "sega_spr.h"
-#include "sega_scl.h"
-#include "sega_int.h"
-#include "sega_mth.h"
-#include "sega_sys.h"
-#include "sega_dbg.h"
-#include "sega_per.h"
-#include "sega_cdc.h"
-#include "sega_snd.h"
-#include "sega_gfs.h"
-
+#include "app.h"
+#include "vid.h"
+#include "mth.h"
 #include "pic.h"
 #include "file.h"
 #include "util.h"
@@ -92,6 +80,7 @@ static void loadVDPPic(sint32 picNm, sint32 bankNm)
 
 static void fadeUp(void)
 {
+#ifdef TODO // fadeUp
     sint32 f;
     for (f = -255; f <= 0; f += 8)
     {
@@ -99,6 +88,7 @@ static void fadeUp(void)
         SCL_DisplayFrame();
     }
     SCL_SetColOffset(SCL_OFFSET_A, SCL_NBG1 | SCL_NBG0, 0, 0, 0);
+#endif
 }
 
 #define CANCELKEYS (PER_DGT_A | PER_DGT_B | PER_DGT_C | PER_DGT_X | PER_DGT_Y | PER_DGT_Z | PER_DGT_S)
@@ -182,7 +172,9 @@ static void remapMenu(sint32 hx, sint32 hy, sint32 lx, sint32 ly)
 static void optionMenu(sint32 hx, sint32 hy, sint32 lx, sint32 ly)
 {
     sint32 menuSel = -1;
-    enable_stereo = !(systemMemory & PER_MSK_STEREO);
+    enable_stereo = 1;
+#ifdef TODO // remove stereo slider
+#endif
 
 bigReset:
     dlg_clear();
@@ -281,7 +273,6 @@ bigReset:
     fadeEnd = 0;
     fadeDir = 5;
     dlg_runSlideIn();
-    PER_SMPC_SET_SM((systemMemory & ~PER_MSK_STEREO) | (enable_stereo ? 0 : PER_MSK_STEREO));
 }
 
 static sint32 loadMenu(sint32 hx, sint32 hy, sint32 lx, sint32 ly)
@@ -471,14 +462,9 @@ void playIntro(void)
             loadVDPPic(2, 0);
         }
     }
-    SCL_SetColMixRate(SCL_NBG0, 31);
-    SCL_SET_N0CCEN(0);
+
     if (enable_music)
         playCDTrack(titleMusic, 1);
-
-    Scl_s_reg.dispenbl |= 0xf00;
-    if (SclProcess == 0)
-        SclProcess = 1;
 
     displayEnable(1);
 
@@ -488,7 +474,6 @@ void playIntro(void)
         sint32 menuSel = -1;
         sint32 canLoad;
         canLoad = bup_canLoadGame();
-        SCL_SetFrameInterval(0xfffe);
         while (1)
         {
             dlg_clear();
@@ -581,7 +566,9 @@ void playIntro(void)
                             ;
                         fs_init();
                     }
+#ifdef TODO // overlays
                     link("BONUS.BIN");
+#endif
                     break;
             }
         }
@@ -622,7 +609,7 @@ void teleportEffect(void)
             s->spermY[i][j] = s->spermY[i][0];
         }
     }
-    SCL_SetFrameInterval(1);
+
     do
     {
         EZ_openCommand();
@@ -667,6 +654,10 @@ void teleportEffect(void)
             }
         }
         EZ_closeCommand();
-        SCL_DisplayFrame();
+
+        vid_blit();
+        vid_clear();
+        app_poll();
+
     } while (!done);
 }

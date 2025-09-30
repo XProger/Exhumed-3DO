@@ -1,7 +1,5 @@
 #include <windows.h>
 
-#include <sega_per.h>
-
 #include "app.h"
 #include "vid.h"
 

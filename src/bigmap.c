@@ -1,18 +1,6 @@
-#include <machine.h>
-
-#include <libsn.h>
-
-#include "sega_spr.h"
-#include "sega_scl.h"
-#include "sega_int.h"
-#include "sega_mth.h"
-#include "sega_sys.h"
-#include "sega_dbg.h"
-#include "sega_per.h"
-#include "sega_cdc.h"
-#include "sega_snd.h"
-#include "sega_gfs.h"
-
+#include "app.h"
+#include "vid.h"
+#include "mth.h"
 #include "pic.h"
 #include "file.h"
 #include "util.h"
@@ -221,7 +209,6 @@ sint32 runMap(sint32 currentLevel)
         displayEnable(0);
 
         EZ_initSprSystem(1248, 4, 1024, 0, 0x8000);
-        SPR_SetTvMode(SPR_TV_NORMAL, SPR_TV_320X240, OFF);
         displayEnable(0);
 
 #ifndef JAPAN
@@ -243,8 +230,6 @@ sint32 runMap(sint32 currentLevel)
 
     if (enable_music)
         playCDTrack(mapMusic, 1);
-    SCL_SetFrameInterval(0xfffe);
-    SPR_SetTvMode(SPR_TV_NORMAL, SPR_TV_320X240, OFF);
     displayEnable(0);
 
     selectedLevel = currentLevel;
@@ -427,12 +412,10 @@ sint32 runMap(sint32 currentLevel)
 #endif
 
         EZ_closeCommand();
-        SCL_DisplayFrame();
         pic_nextFrame(NULL, NULL);
 
         vid_blit();
         vid_clear();
-
         app_poll();
 
         lastInput = input;
@@ -457,7 +440,7 @@ sint32 runMap(sint32 currentLevel)
                 }
                 setMasterVolume(15 - (fadeCount >> 1));
                 scaleFactor += F(1) >> 4;
-                SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0, -fadeCount << 3, -fadeCount << 3, -fadeCount << 3);
+                //SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0, -fadeCount << 3, -fadeCount << 3, -fadeCount << 3);
             }
             else
             {
@@ -465,12 +448,12 @@ sint32 runMap(sint32 currentLevel)
                 {
                     fadeCount = 0;
                     scaleFactor = F(1);
-                    SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0, 0, 0, 0);
+                    //SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0, 0, 0, 0);
                 }
                 else
                 {
                     scaleFactor -= F(1) >> 4;
-                    SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0, -(31 - fadeCount) << 3, -(31 - fadeCount) << 3, -(31 - fadeCount) << 3);
+                    //SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0, -(31 - fadeCount) << 3, -(31 - fadeCount) << 3, -(31 - fadeCount) << 3);
                 }
             }
         }

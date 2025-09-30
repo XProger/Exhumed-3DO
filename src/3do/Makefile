@@ -19,7 +19,7 @@ OPT      = -O2
 CFLAGS   = $(OPT) -bi -za1 -zas1 -wn -ff -fa -d AP_3DO=1 -d GAPI_CEL=1 -d NDEBUG -cpu ARM6
 CXXFLAGS = $(CFLAGS)
 ASFLAGS	 = -BI -i $(SDK)/include/3do
-INCPATH	 = -I $(SDK)/include/3do -I $(SDK)/include/ttl -I .. -I ../sega
+INCPATH	 = -I $(SDK)/include/3do -I $(SDK)/include/ttl -I ..
 LIBPATH	 = $(SDK)/lib/3do
 LDFLAGS	 = -aif -reloc -ro-base 0 -libpath $(LIBPATH) -nodebug -remove -info Sizes -xref -map
 STARTUP	 = $(LIBPATH)/cstartup.o

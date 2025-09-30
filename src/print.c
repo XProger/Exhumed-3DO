@@ -1,6 +1,3 @@
-#include <sega_spr.h>
-#include <sega_scl.h>
-
 #include "util.h"
 #include "spr.h"
 #include "print.h"

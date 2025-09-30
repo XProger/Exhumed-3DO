@@ -1,10 +1,6 @@
-#include <libsn.h>
-#include <sega_mem.h>
-#include "sega_spr.h"
-#include "sega_scl.h"
-#include "sega_mth.h"
+#include "app.h"
+#include "mth.h"
 #include "print.h"
-#include "sega_per.h"
 #include "util.h"
 #include "spr.h"
 
@@ -147,134 +143,6 @@ sint32 approxDist(sint32 dx, sint32 dy, sint32 dz)
     if (dz < min)
         min = dz;
     return dx + dy + dz - (min >> 1);
-}
-
-#define NMPARTS 5
-
-void assertFail(char* file, sint32 line)
-{
-    //__debugbreak();
-#ifdef TODO // remove
-    uint16 i, sw;
-    MthXyz pos[NMPARTS], vel[NMPARTS];
-    char* text[NMPARTS] = { NULL, NULL, "Write", "This", "Down" };
-
-    text[1] = file;
-    displayEnable(1);
-    /** BEGIN ***************************************************************/
-
-    EZ_initSprSystem(1000, 8, 1000, 240, RGB(0, 0, 0));
-    initFonts(0, 7);
-    SCL_SetFrameInterval(1);
-    SPR_SetEraseData(0x8000, 0, 0, 319, 239);
-    for (i = 0; i < NMPARTS; i++)
-    {
-        pos[i].x = (MTH_GetRand() & 0x000fffff) + (140 << 16);
-        pos[i].y = (MTH_GetRand() & 0x000fffff) + (100 << 16);
-        vel[i].x = (MTH_GetRand() & 0x0007ffff) - 0x3ffff;
-        vel[i].y = (MTH_GetRand() & 0x0007ffff) - 0x3ffff;
-    }
-
-    i = 0;
-    sw = 0;
-    for (;;)
-    {
-        SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0 | SCL_NBG0, 0, 0, 0);
-
-        EZ_openCommand();
-
-        EZ_sysClip();
-        EZ_localCoord(0, 0);
-
-        for (i = 0; i < NMPARTS; i++)
-        {
-            if (pos[i].x < 0 && vel[i].x < 0)
-                vel[i].x = -vel[i].x;
-            if (pos[i].y < 0 && vel[i].y < 0)
-                vel[i].y = -vel[i].y;
-            if (pos[i].x > (300 << 16) && vel[i].x > 0)
-                vel[i].x = (vel[i].x >> 3) - vel[i].x;
-            if (pos[i].y > (200 << 16) && vel[i].y > 0)
-                vel[i].y = (vel[i].y >> 3) - vel[i].y;
-            pos[i].x += vel[i].x;
-            pos[i].y += vel[i].y;
-            vel[i].y += 0x1000;
-#ifdef TODO // assert
-            if (i)
-                drawString(pos[i].x >> 16, pos[i].y >> 16, 1, text[i]);
-            else
-                drawStringf(pos[i].x >> 16, pos[i].y >> 16, 1, "%d", line);
-#endif
-        }
-
-        EZ_closeCommand();
-        SCL_DisplayFrame();
-
-        app_poll();
-    }
-#endif
-}
-
-void message(char* message)
-{
-    uint16 i;
-    sint32 data;
-    static sint32 sw = 0;
-    /** BEGIN ***************************************************************/
-
-    SCL_SetFrameInterval(1);
-    SPR_SetEraseData(0x8000, 0, 0, 319, 239);
-
-    i = 0;
-    for (;;)
-    {
-        EZ_openCommand();
-
-        EZ_sysClip();
-        EZ_localCoord(0, 0);
-
-        drawString(10, 100, 0, message);
-
-        EZ_closeCommand();
-        SCL_DisplayFrame();
-
-        app_poll();
-
-        data = lastInputSample;
-        if ((sw && !(data & PER_DGT_A)) || (!sw && !(data & PER_DGT_B)))
-        {
-            sw = !sw;
-            return;
-        }
-    }
-}
-
-char* catFixed(char* buffer, sint32 n, sint32 frac)
-{
-    char buff[80];
-    sint32 bit, div, i;
-    sint32 accum;
-    if (n < 0)
-    {
-        strcat(buffer, "-");
-        n = -n;
-    }
-    sprintf(buff, "%d", (int)(n >> frac));
-    strcat(buffer, buff);
-    accum = 0;
-    for (bit = frac - 1, div = 2; bit >= 0; bit--, div += div)
-    {
-        if ((n >> bit) & 1)
-            accum += 1000000000 / div;
-    }
-    strcat(buffer, ".");
-    sprintf(buff, "%d", (int)accum);
-    /* print leading zeros */
-    for (i = 9 - strlen(buff); i > 0; i--)
-        strcat(buffer, "0");
-    /* print rest of decimal part */
-    strcat(buffer, buff);
-    return buffer;
 }
 
 /* frac must be even! */
@@ -438,18 +306,6 @@ sint32 normalizeAngle(sint32 angle)
         angle += F(360);
     return angle;
 }
-
-#ifndef NDEBUG
-void _checkStack(char* file, sint32 line)
-{
-#ifdef TODO // remove
-    sint32 c;
-    __asm__ volatile("mov.l r15,%0\n" : "=r"((sint32)c));
-    if (c < ((sint32)mystack) + 0x100)
-        assertFail(file, line);
-#endif
-}
-#endif
 
 sint32 bitScanForward(uint32 i, sint32 start)
 {

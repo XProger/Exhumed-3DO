@@ -98,7 +98,6 @@ Object* getFreeObject(messHandler handler, sint32 type, sint32 class)
 void signalObject(Object* object, sint32 message, sint32 param1, sint32 param2)
 {
 #ifndef NDEBUG
-    checkStack();
     assert(object);
     assert(object != objectRunList);
     assert(object != objectIdleList);
@@ -131,7 +130,6 @@ void delayKill(Object* o)
 {
     sint32 oldClass;
     sint32 oldType;
-    checkStack();
     assert(o->class != CLASS_DEAD);
     assert(o->type != OT_DEAD);
     signalObject(o, SIGNAL_OBJECTDESTROYED, (sint32)o, 0);
@@ -612,7 +610,6 @@ void radialDamage(Object *this,MthXyz *center,sint32 damage,fix32 radius)
  Object *o,*list[MAXOBJECTS];
  Sprite *s;
 
- checkStack();
  nmList=0;
  for (o=objectRunList->next;o;o=o->next)
     if (o->class==CLASS_MONSTER)

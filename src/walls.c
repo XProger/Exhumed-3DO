@@ -1,12 +1,5 @@
-#include <machine.h>
-#include <sega_spr.h>
-#include <sega_scl.h>
-#include <sega_int.h>
-#include <sega_mth.h>
-#include <sega_sys.h>
-#include <sega_dbg.h>
-#include <sega_per.h>
-
+#include "app.h"
+#include "mth.h"
 #include "level.h"
 #include "sprite.h"
 #include "walls.h"
@@ -28,7 +21,6 @@
 #define MIPDIST F(256)
 
 sint16 plaxBBymax, plaxBBxmax, plaxBBymin, plaxBBxmin;
-static sint16 slave_plaxBBymax, slave_plaxBBxmax, slave_plaxBBymin, slave_plaxBBxmin;
 
 #define MIPMAP 1
 
@@ -758,8 +750,6 @@ void drawClippedFace(sFaceType* face, fix32* shades, MthMatrix* view, sint32 wal
     XyInt poly[4];
     struct gourTable gtable;
 
-    checkStack();
-
     for (i = 0; i < 4; i++)
     {
         getVertex(face->v[i] + wallStartVtx, buff1 + i);
@@ -832,7 +822,6 @@ void drawWater(sWallType *theWall,MthXyz *coords)
  XyInt poly[4];
  struct gourTable gtable;
 
- checkStack();
 #if 0
  {static sint32 wave=0;
   static fix32 pos[4]={F(10),F(7),F(4),-F(5)};
@@ -929,8 +918,6 @@ void drawPlax(sWallType *theWall,MthXyz *coords)
  fix32 shade1[MAXSUBS*4];
  fix32 shade2[MAXSUBS*4];
  XyInt poly[4];
-
- checkStack();
 
  clipZSub(2,F(5),1,
 	  coords,shade2,1,
@@ -1090,7 +1077,6 @@ void normTransform(sVertexType *vertex, MthMatrix *viewMatrix, sint32 nmVert, VC
     }
 }
 
-void EZ_specialDistSpr2(sint16 charNm, XyInt* xy, struct gourTable* gTable);
 void drawRectWall(sWallType* theWall, MthXyz* coords, SectorDrawRecord* s)
 {
     MthXyz vWidth, vHeight;
@@ -1107,7 +1093,6 @@ void drawRectWall(sWallType* theWall, MthXyz* coords, SectorDrawRecord* s)
     sint32 tileBias;
 #endif
 
-    checkStack();
     assert(width * height < MAXVPERWALL);
 
 #if MIPMAP
@@ -1213,7 +1198,6 @@ void drawWall(sWallType* wall, MthMatrix* view, SectorDrawRecord* s)
     sint32 maxV;
 #endif
 
-    checkStack();
 #ifdef LIGHT
     buildLightList(wall);
 #endif
@@ -1269,7 +1253,6 @@ void drawWaterSurface(sWallType* wall, MthMatrix* view, SectorDrawRecord* s)
     sint32 maxV;
 #endif
 
-    checkStack();
     sawWater = 5;
     assert(!(wall->flags & WALLFLAG_PARALLELOGRAM));
 
@@ -1356,163 +1339,6 @@ struct slaveDrawResult
     struct gourTable gtable;
     sint16 tile, pad;
 };
-static struct slaveDrawResult* slaveResult = (struct slaveDrawResult*)doorwayCache;
-sint32 nmSlavePolys;
-
-static VCALC slave_vCalc[MAXVPERWALL];
-//static struct VCALC* slave_vCalc = (VCALC*)(((sint8*)doorwayCache) + MAXNMSLAVEPOLYS * sizeof(struct slaveDrawResult));
-
-void slave_drawWater(sWallType* theWall)
-{
-    slaveResult[nmSlavePolys].tile = -2;
-    slaveResult[nmSlavePolys].gtable.entry[0] = theWall - level_wall;
-    nmSlavePolys++;
-}
-
-void slave_drawRectWall(sWallType* theWall, MthXyz* coords, SectorDrawRecord* s)
-{
-    MthXyz vWidth, vHeight;
-    XyInt poly[4];
-    sint32 w, h, v, clip;
-    sint32 light;
-    sint32 tex, row1, row2;
-    sint32 width = theWall->tileLength;
-    sint32 height = theWall->tileHeight;
-    struct gourTable gtable;
-    sint8* ppattern;
-    struct slaveDrawResult* cacheThruResult = slaveResult;
-#if MIPMAP
-    sint32 tileBias;
-#endif
-
-    if (height * width + nmSlavePolys + 50 > MAXNMSLAVEPOLYS)
-        return;
-
-#if MIPMAP
-    if (currentState.desiredWeapon && coords[0].z > MIPDIST && coords[1].z > MIPDIST && coords[2].z > MIPDIST && coords[3].z > MIPDIST)
-    {
-        width >>= 1;
-        height >>= 1;
-        tileBias = mipBase;
-    }
-    else
-        tileBias = 0;
-#endif
-
-    Set_Hardware_Divide(coords[1].x - coords[0].x, width);
-    vWidth.y = (coords[1].y - coords[0].y) / width;
-    vWidth.x = Get_Hardware_Divide();
-
-    Set_Hardware_Divide(coords[1].z - coords[0].z, width);
-    vHeight.x = (coords[2].x - coords[1].x) / height;
-    vWidth.z = Get_Hardware_Divide();
-
-    Set_Hardware_Divide(coords[2].y - coords[1].y, height);
-    vHeight.z = (coords[2].z - coords[1].z) / height;
-    vHeight.y = Get_Hardware_Divide();
-
-#ifdef LIGHT
-    sbuildLightList(theWall);
-#endif
-
-    light = theWall->firstLight;
-
-    rectTransform(vWidth.x, vWidth.y, vWidth.z, light, height + 1, width + 1, coords[0].x, coords[0].y, coords[0].z, vHeight.x, vHeight.y, vHeight.z, slave_vCalc, (snmWallLights || sWavyIndex) ? sgetLight : NULL);
-
-    tex = theWall->textures;
-    row1 = 0;
-    row2 = width + 1;
-    for (h = 0; h < height; h++)
-    {
-        for (w = 0; w < width; w++)
-        {
-            clip = 0x8000;
-
-            ppattern = pattern[(sint32)level_texture[tex++]];
-            gtable.entry[(sint32)*ppattern] = slave_vCalc[row1 + w].light;
-            clip &= slave_vCalc[row1 + w].light;
-            poly[(sint32)*ppattern].x = slave_vCalc[row1 + w].x;
-            poly[(sint32)*ppattern].y = slave_vCalc[row1 + w].y;
-            ppattern++;
-
-            gtable.entry[(sint32)*ppattern] = slave_vCalc[row1 + w + 1].light;
-            clip &= slave_vCalc[row1 + w + 1].light;
-            poly[(sint32)*ppattern].x = slave_vCalc[row1 + w + 1].x;
-            poly[(sint32)*ppattern].y = slave_vCalc[row1 + w + 1].y;
-            ppattern++;
-
-            gtable.entry[(sint32)*ppattern] = slave_vCalc[row2 + w + 1].light;
-            clip &= slave_vCalc[row2 + w + 1].light;
-            poly[(sint32)*ppattern].x = slave_vCalc[row2 + w + 1].x;
-            poly[(sint32)*ppattern].y = slave_vCalc[row2 + w + 1].y;
-            ppattern++;
-
-            gtable.entry[(sint32)*ppattern] = slave_vCalc[row2 + w].light;
-            clip &= slave_vCalc[row2 + w].light;
-            poly[(sint32)*ppattern].x = slave_vCalc[row2 + w].x;
-            poly[(sint32)*ppattern].y = slave_vCalc[row2 + w].y;
-
-            if (clip || !clip_visible(poly, s))
-            {
-                tex++;
-                continue;
-            }
-
-            cacheThruResult[nmSlavePolys].gtable = gtable;
-            for (v = 0; v < 4; v++)
-                cacheThruResult[nmSlavePolys].poly[v] = poly[v];
-            cacheThruResult[nmSlavePolys].tile = level_texture[tex]
-#if MIPMAP
-                + tileBias
-#endif
-                ;
-            nmSlavePolys++;
-            assert(nmSlavePolys < MAXNMSLAVEPOLYS);
-            tex++;
-        }
-        row1 += width + 1;
-        row2 += width + 1;
-    }
-}
-
-void slave_drawWall(sWallType* wall, MthMatrix* view, SectorDrawRecord* s)
-{
-    sint32 f, i, v, clip;
-    XyInt poly[4];
-    struct gourTable gtable;
-    struct slaveDrawResult* cacheThruResult = slaveResult;
-
-    if (wall->lastFace - wall->firstFace + 1 + nmSlavePolys + 50 > MAXNMSLAVEPOLYS)
-        return;
-
-    sbuildLightList(wall);
-
-    assert(wall->lastVertex - wall->firstVertex < MAXVPERWALL);
-
-    normTransform(level_vertex + wall->firstVertex, view, wall->lastVertex - wall->firstVertex + 1, slave_vCalc, (snmWallLights || sWavyIndex) ? &sgetLight : NULL);
-
-    for (f = wall->firstFace; f <= wall->lastFace; f++)
-    {
-        clip = 0x8000;
-        for (i = 0; i < 4; i++)
-        {
-            v = level_face[f].v[i];
-            gtable.entry[i] = slave_vCalc[v].light;
-            clip &= slave_vCalc[v].light;
-            poly[i].x = slave_vCalc[v].x;
-            poly[i].y = slave_vCalc[v].y;
-        }
-        if (clip || !clip_visible(poly, s))
-            continue;
-
-        cacheThruResult[nmSlavePolys].gtable = gtable;
-        for (i = 0; i < 4; i++)
-            cacheThruResult[nmSlavePolys].poly[i] = poly[i];
-        cacheThruResult[nmSlavePolys].tile = level_face[f].tile;
-        nmSlavePolys++;
-        assert(nmSlavePolys < MAXNMSLAVEPOLYS);
-    }
-}
 
 SectorDrawRecord sectorDraw[MAXNMSECTORS];
 SectorDrawRecord* updateList[MAXNMSECTORS];
@@ -1520,7 +1346,7 @@ sint32 updateListSize;
 SectorDrawRecord* drawList[MAXNMSECTORS];
 sint32 drawListSize;
 
-void drawSector(sint32 sectorNm, MthMatrix* view, sint32 slave)
+void drawSector(sint32 sectorNm, MthMatrix* view)
 {
     sSectorType* sec;
     sWallType* theWall;
@@ -1582,70 +1408,36 @@ void drawSector(sint32 sectorNm, MthMatrix* view, sint32 slave)
 #if WATER
         if (theWall->flags & WALLFLAG_WATERSURFACE)
         {
-            if (slave)
-                slave_drawWater(theWall);
-            else
-                drawWaterSurface(theWall, view, sectorDraw + sectorNm);
+            drawWaterSurface(theWall, view, sectorDraw + sectorNm);
             continue;
         }
 #endif
 
         if (theWall->flags & WALLFLAG_PARALLAX)
         {
-            if (slave)
+            for (i = 0; i < 4; i++)
             {
-                for (i = 0; i < 4; i++)
-                {
-                    if (poly[i].x < slave_plaxBBxmin)
-                        slave_plaxBBxmin = poly[i].x;
-                    if (poly[i].y < slave_plaxBBymin)
-                        slave_plaxBBymin = poly[i].y;
-                    if (poly[i].x > slave_plaxBBxmax)
-                        slave_plaxBBxmax = poly[i].x;
-                    if (poly[i].y > slave_plaxBBymax)
-                        slave_plaxBBymax = poly[i].y;
-                }
-            }
-            else
-            {
-                for (i = 0; i < 4; i++)
-                {
-                    if (poly[i].x < plaxBBxmin)
-                        plaxBBxmin = poly[i].x;
-                    if (poly[i].y < plaxBBymin)
-                        plaxBBymin = poly[i].y;
-                    if (poly[i].x > plaxBBxmax)
-                        plaxBBxmax = poly[i].x;
-                    if (poly[i].y > plaxBBymax)
-                        plaxBBymax = poly[i].y;
-                }
+                if (poly[i].x < plaxBBxmin)
+                    plaxBBxmin = poly[i].x;
+                if (poly[i].y < plaxBBymin)
+                    plaxBBymin = poly[i].y;
+                if (poly[i].x > plaxBBxmax)
+                    plaxBBxmax = poly[i].x;
+                if (poly[i].y > plaxBBymax)
+                    plaxBBymax = poly[i].y;
             }
             continue;
         }
 
         /* we're going to draw the wall */
-        if (slave)
-        {
-            if (level_sector[sectorNm].flags & SECFLAG_WATER)
-                sWavyIndex = (w & 0x1f) + 1;
-            else
-                sWavyIndex = 0;
-            if (theWall->flags & WALLFLAG_PARALLELOGRAM)
-                slave_drawRectWall(theWall, tformed, sectorDraw + sectorNm);
-            else
-                slave_drawWall(theWall, view, sectorDraw + sectorNm);
-        }
+        if (level_sector[sectorNm].flags & SECFLAG_WATER)
+            wavyIndex = (w & 0x1f) + 1;
         else
-        {
-            if (level_sector[sectorNm].flags & SECFLAG_WATER)
-                wavyIndex = (w & 0x1f) + 1;
-            else
-                wavyIndex = 0;
-            if (theWall->flags & WALLFLAG_PARALLELOGRAM)
-                drawRectWall(theWall, tformed, sectorDraw + sectorNm);
-            else
-                drawWall(theWall, view, sectorDraw + sectorNm);
-        }
+            wavyIndex = 0;
+        if (theWall->flags & WALLFLAG_PARALLELOGRAM)
+            drawRectWall(theWall, tformed, sectorDraw + sectorNm);
+        else
+            drawWall(theWall, view, sectorDraw + sectorNm);
     }
 }
 
@@ -1899,177 +1691,6 @@ void findDoorways(sint32 sectorNm, MthMatrix* view)
     }
 }
 
-#define IPRA (uint16 volatile*)0xfffffee2
-#define IPRB (uint16 volatile*)0xfffffe60
-#define TIER (uint8 volatile*)0xfffffe10
-#define FTCSR (uint8 volatile*)0xfffffe11
-#define CACHECNTRL (uint8 volatile*)0xfffffe92
-
-sint32 slaveDrawStart;
-/* index in the update list at which to start drawing */
-MthMatrix* slaveView;
-void slaveDraw(void)
-{
-    sint32 i;
-    /* flush cache */
-#ifdef TODO // cache
-    *CACHECNTRL = 0x10;
-    *CACHECNTRL = 0x01;
-#endif
-    nmSlavePolys = 0;
-    for (i = slaveDrawStart; i >= 0; i--)
-    {
-        drawSector(updateList[i] - sectorDraw, slaveView, 1);
-        /* mark end of sector */
-        slaveResult[nmSlavePolys].tile = -1;
-        slaveResult[nmSlavePolys].gtable.entry[0] = updateList[i] - sectorDraw;
-        nmSlavePolys++;
-    }
-}
-
-void EZ_specialDistSpr(struct slaveDrawResult* sdr, sint32 charNm);
-void drawSlaveWalls(void)
-{
-    sint32 i;
-    sint32 s;
-    XyInt parms[2];
-#ifdef TODO // cache
-    /* flush cache */
-    *CACHECNTRL = 0x10;
-    *CACHECNTRL = 0x01;
-#endif
-    s = slaveDrawStart;
-    assert(nmSlavePolys < MAXNMSLAVEPOLYS);
-    assert(nmSlavePolys >= 0);
-    if (nmSlavePolys == 0)
-        return;
-#if RECTCLIP
-    parms[0].x = updateList[s]->xmin + 160;
-    parms[0].y = updateList[s]->ymin + 120;
-    parms[1].x = updateList[s]->xmax + 160;
-    parms[1].y = updateList[s]->ymax + 120;
-    EZ_userClip(parms);
-#endif
-
-    for (i = 0; i < nmSlavePolys; i++)
-    {
-        if (slaveResult[i].tile < 0)
-        {
-            switch (slaveResult[i].tile)
-            {
-#if 0
-	     case -4:
-		EZ_polygon(DRAW_GOURAU|DRAW_MESH|ECD_DISABLE|SPD_DISABLE,
-			   WATERCOLOR,slaveResult[i].poly,
-			   &slaveResult[i].gtable);
-		continue;
-#endif
-#if 0
-	     case -3:
-		{/* its a plax wall */
-		 sWallType *w;
-		 MthXyz wallV;
-		 sint32 j;
-		 MthXyz tformed[4];
-		 w=level_wall+slaveResult[i].gtable.entry[0];
-		 for (j=0;j<4;j++)
-		    {getVertex(w->v[j],&wallV);
-		     MTH_CoordTrans(slaveView,&wallV,tformed+j);
-		    }
-		 drawPlax(w,tformed);
-		 continue;
-		}
-#endif
-                case -2:
-                { /* its a water surface */
-                    sWallType* w;
-                    /* MthXyz wallV;
-                       sint32 j;
-                       MthXyz tformed[4];*/
-                    w = level_wall + slaveResult[i].gtable.entry[0];
-                    /* for (j=0;j<4;j++)
-                       {getVertex(w->v[j],&wallV);
-                       MTH_CoordTrans(slaveView,&wallV,tformed+j);
-                       }
-                       drawWater(w,tformed); */
-                    drawWaterSurface(w, slaveView, updateList[s]);
-                    continue;
-                }
-                case -1:
-                { /* its an end of sector marker */
-                    slaveDrawStart--;
-                    /* drawSprites(&(camera->pos),slaveView,
-                       slaveResult[i].gtable.entry[0]); */
-                    if (updateList[s]->spriteCommandStart)
-                        EZ_linkCommand(EZ_getNextCmdNm() - 1, JUMP_CALL, updateList[s]->spriteCommandStart);
-
-                    assert(updateList[s] - sectorDraw == slaveResult[i].gtable.entry[0]);
-                    s--;
-#if RECTCLIP
-                    if (s >= 0)
-                    {
-                        parms[0].x = updateList[s]->xmin + 160;
-                        parms[0].y = updateList[s]->ymin + 120;
-                        parms[1].x = updateList[s]->xmax + 160;
-                        parms[1].y = updateList[s]->ymax + 120;
-                        EZ_userClip(parms);
-                    }
-#endif
-                    continue;
-                }
-            }
-            assert(0);
-        }
-        assert(getPicClass(slaveResult[i].tile) == TILE16BPP);
-        EZ_specialDistSpr(slaveResult + i, mapPic(slaveResult[i].tile));
-
-#if 0
-     EZ_distSpr(DIR_NOREV,
-		UCLPIN_ENABLE|COLOR_5|HSS_ENABLE|ECD_DISABLE|DRAW_GOURAU,
-		0,mapPic(slaveResult[i].tile),
-		slaveResult[i].poly,&slaveResult[i].gtable);
-#endif
-    }
-    assert(s == -1);
-}
-
-void wallRenderSlaveMain(void)
-{
-    set_imask(0xf);
-    *IPRA = 0x0000;
-    *IPRB = 0x0000;
-    *TIER = 0x01;
-    while (1)
-    { /* wait for sync signal */
-        while (!(*FTCSR & 0x80))
-            ;
-        /* sync */
-        *FTCSR = 0x0;
-        slaveDraw();
-        *(uint16 volatile*)0x21800000 = 0xffff;
-    }
-}
-
-void startSlave(void* slaveMain)
-{
-    uint8* SMPC_SF = (uint8*)0x20100063;
-    uint8* SMPC_COM = (uint8*)0x2010001f;
-    const uint8 SMPC_SSHON = 0x02;
-    const uint8 SMPC_SSHOFF = 0x03;
-    *TIER = 0x01; /* disable master's frt interrupt */
-    while ((*SMPC_SF & 0x01) == 0x01)
-        ;
-    *SMPC_SF = 1;
-    *SMPC_COM = SMPC_SSHOFF;
-    while ((*SMPC_SF & 0x01) == 0x01)
-        ;
-    SYS_SETSINT(0x94, slaveMain);
-    *SMPC_SF = 1;
-    *SMPC_COM = SMPC_SSHON;
-    while ((*SMPC_SF & 0x01) == 0x01)
-        ;
-}
-
 void buildTree(void)
 {
     sint32 update, s, w, adjoin;
@@ -2180,7 +1801,6 @@ static void sortLeafList(SectorDrawRecord** leafList, sint32 leafListSize)
         } */
 }
 
-sint32 slaveSize = 1;
 void drawWalls(MthMatrix* view)
 {
     sint32 i;
@@ -2190,24 +1810,17 @@ void drawWalls(MthMatrix* view)
     sint32 leafToDraw;
     sint32 lastWallCmd;
     SectorDrawRecord *leafList[MAXNMSECTORS], *sdr;
-    checkStack();
 
     plaxBBxmin = 160;
     plaxBBymin = 120;
     plaxBBxmax = -160;
     plaxBBymax = -120;
 
-    slave_plaxBBxmin = 160;
-    slave_plaxBBymin = 120;
-    slave_plaxBBxmax = -160;
-    slave_plaxBBymax = -120;
-
     for (i = 0; i < nmLights; i++)
         MTH_CoordTrans(view, &(lightSource[i]->pos), tLightPos + i);
 
     pushProfile("Find Visible");
 
-    slaveView = view;
     nmPolys = 0;
     autoTarget = NULL;
     bestAutoAimRating = INT_MAX;
@@ -2366,16 +1979,7 @@ void drawWalls(MthMatrix* view)
 
     popProfile();
 
-    if (slaveSize > updateListSize - 1)
-        slaveSize = updateListSize - 1;
-    slaveDrawStart = -1;// slaveSize;
-    /* start slave */
-#ifdef TODO // slave
-    *(uint16 volatile*)0x21000000 = 0xffff;
-#else
-    //slaveDraw(); // we don't have 2nd SH-2, so we call it directly on the main CPU
-#endif
-    for (i = updateListSize - 1; i > slaveDrawStart; i--)
+    for (i = updateListSize - 1; i >= 0; i--)
     {
         parms[0].x = updateList[i]->xmin + 160;
         parms[0].y = updateList[i]->ymin + 120;
@@ -2384,7 +1988,7 @@ void drawWalls(MthMatrix* view)
 #if RECTCLIP
         EZ_userClip(parms);
 #endif
-        drawSector(updateList[i] - sectorDraw, view, 0);
+        drawSector(updateList[i] - sectorDraw, view);
         drawSprites(&(camera->pos), view, updateList[i] - sectorDraw);
     }
 
@@ -2407,33 +2011,11 @@ void drawWalls(MthMatrix* view)
 
 void drawWallsFinish(void)
 {
-#ifdef TODO // slave
-    sint32 i;
-    /* wait for slave to finish */
-    i = 0;
-    while (!(*FTCSR & 0x80))
-        i++;
-    /* sync */
-    *FTCSR = 0x0;
-    if (i > 100 && slaveSize > 0)
-        slaveSize--;
-    if (i < 100 && slaveSize < 50)
-        slaveSize++;
-#endif
-    drawSlaveWalls();
 #ifndef NDEBUG
     drawDebugLines();
 #endif
     updateLights();
     /* merge slave and master plax bbs */
-    if (slave_plaxBBxmin < plaxBBxmin)
-        plaxBBxmin = slave_plaxBBxmin;
-    if (slave_plaxBBymin < plaxBBymin)
-        plaxBBymin = slave_plaxBBymin;
-    if (slave_plaxBBxmax > plaxBBxmax)
-        plaxBBxmax = slave_plaxBBxmax;
-    if (slave_plaxBBymax > plaxBBymax)
-        plaxBBymax = slave_plaxBBymax;
     if (plaxBBxmin < XMIN)
         plaxBBxmin = XMIN;
     if (plaxBBymin < YMIN)

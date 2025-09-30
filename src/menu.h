@@ -1,9 +1,8 @@
 #ifndef __INCLUDEDmenuh
 #define __INCLUDEDmenuh
 
-#include <sega_mth.h>
+#include "mth.h"
 
-#ifdef SEGA_MTH_H
 typedef struct
 {
     sint32 type;
@@ -16,7 +15,6 @@ typedef struct
 
 extern DlgItem dlgItem[];
 extern uint16 lastUsedSelButton;
-#endif
 
 void dlg_clear(void);
 void dlg_addRect(sint32 x, sint32 y, sint32 w, sint32 h, sint32 color);

@@ -51,11 +51,10 @@ void playCDTrackForLevel(sint32 lev);
 
 void testSound(void);
 
-#ifdef SEGA_MTH_H
 void posGetSoundParams(MthXyz* pos, sint32* vol, sint32* pan);
 void posMakeSound(sint32 source, MthXyz* pos, sint32 sndNm);
 void posAdjustSound(sint32 source, MthXyz* pos);
-#endif
+
 void sound_nextFrame(void);
 void setMasterVolume(sint32 vol);
 

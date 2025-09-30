@@ -1,5 +1,5 @@
+#include "app.h"
 #include "util.h"
-#include <sega_per.h>
 #include "file.h"
 
 static sint32 textData[7 * 1024 / 4];
@@ -11,6 +11,7 @@ sint32 getLanguageNumber(void)
     return 0;
 #endif
     skip = 0;
+#ifdef TODO // language
     switch (systemMemory & PER_MSK_LANGU)
     {
         case PER_ENGLISH:
@@ -26,6 +27,7 @@ sint32 getLanguageNumber(void)
             skip = 3;
             break;
     }
+#endif
     return skip;
 }
 

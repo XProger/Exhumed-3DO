@@ -1,7 +1,7 @@
-#ifndef SEGA_MTH_H
-#define SEGA_MTH_H
+#ifndef MTH_H
+#define MTH_H
 
-#include <sega_xpt.h>
+#include "app.h"
 
 typedef struct {
     fix32 x, y, z;

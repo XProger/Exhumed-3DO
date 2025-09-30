@@ -1,8 +1,5 @@
-#include <machine.h>
-#include "sega_int.h"
-#include "sega_mth.h"
-#include "sega_sys.h"
-#include "sega_per.h"
+#include "app.h"
+#include "mth.h"
 #include "file.h"
 #include "util.h"
 

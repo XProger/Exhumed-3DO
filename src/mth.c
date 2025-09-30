@@ -1,7 +1,5 @@
-#ifndef MTH_H
-#define MTH_H
-
-#include <sega_mth.h>
+#include "app.h"
+#include "mth.h"
 
 #define PI          3.14159265358979323846f
 #define DEG2RAD     (PI / 180.0f)
@@ -169,4 +167,3 @@ void MTH_CoordTrans(MthMatrix *matrix, MthXyz *src, MthXyz *ans)
     ans->y = MTH_Mul(m[M10], src->x) + MTH_Mul(m[M11], src->y) + MTH_Mul(m[M12], src->z) + m[M13];
     ans->z = MTH_Mul(m[M20], src->x) + MTH_Mul(m[M21], src->y) + MTH_Mul(m[M22], src->z) + m[M23];
 }
-#endif

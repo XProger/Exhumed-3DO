@@ -1,6 +1,3 @@
-#include <sega_spr.h>
-#include <sega_scl.h>
-
 #include "sequence.h"
 #include "file.h"
 #include "util.h"

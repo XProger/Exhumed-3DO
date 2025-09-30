@@ -1,7 +1,7 @@
 #ifndef __INCLUDEDv_blankh
 #define __INCLUDEDv_blankh
 
-#include <sega_per.h>
+#include "app.h"
 
 void SetVblank(void);
 
@@ -14,7 +14,6 @@ extern sint8 controlerPresent;
 extern uint16 lastInputSample;
 extern uint16 inputAccum;
 extern sint32 fadeDir, fadePos, fadeEnd;
-extern sint32 abcResetEnable;
 extern uint8 PadWorkArea[];
 extern sint8 analogControlerPresent;
 extern sint16 analogX;

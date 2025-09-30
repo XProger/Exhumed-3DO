@@ -2,7 +2,7 @@
 #ifndef __INCLUDEDslevelh
 #define __INCLUDEDslevelh
 
-#include <sega_xpt.h>
+#include "app.h"
 
 struct sLevelHeader
 {

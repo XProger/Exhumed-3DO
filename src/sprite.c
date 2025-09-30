@@ -1,5 +1,5 @@
-#include <machine.h>
-#include "sega_mth.h"
+#include "app.h"
+#include "mth.h"
 #include "level.h"
 #include "sprite.h"
 #include "util.h"
@@ -998,7 +998,6 @@ sint32 findSectorContaining(MthXyz* pos, sint32 guessSector)
     sint16 penetrate[MAXNMSECTORS];
     sint32 nmPenetrate;
 
-    checkStack();
     penetrate[0] = guessSector;
     nmPenetrate = 1;
     for (s = 0; s < nmPenetrate; s++)

@@ -1,8 +1,7 @@
 #ifndef __INCLUDEDutilh
 #define __INCLUDEDutilh
 
-#include <sega_mth.h>
-#include <sega_spr.h>
+#include "mth.h"
 #include "slevel.h"
 
 #ifdef PAL
@@ -19,9 +18,6 @@ extern sint32 extraStuff;
 #define MAXNMWALLS 5500
 #define ROUTESIZE 8
 #define NMOBJECTPALLETES 5
-
-#define DISABLE INT_ChgMsk(INT_MSK_NULL, INT_MSK_DMA0 | INT_MSK_SPR)
-#define ENABLE INT_ChgMsk(INT_MSK_DMA0 | INT_MSK_SPR, INT_MSK_NULL)
 
 #define qmemcpy memcpy
 
@@ -50,12 +46,7 @@ extern uint16 greyTable[];
 sint32 findCeilDistance(sint32 s, MthXyz* p);
 sint32 findFloorDistance(sint32 s, MthXyz* p);
 
-char* catFixed(char* buffer, sint32 fixed, sint32 frac);
-void message(char* message);
-
 #ifndef NDEBUG
-
-void assertFail(char* file, sint32 line);
 
 #define validPtr(x)
 
@@ -68,13 +59,6 @@ void assertFail(char* file, sint32 line);
 #define F(a) ((a) << 16)
 #define f(a) ((a) >> 16)
 
-#ifndef NDEBUG
-extern void _checkStack(char* file, sint32 line);
-#define checkStack() _checkStack(__FILE__, __LINE__)
-#else
-#define checkStack()
-#endif
-
 void mem_init(void);
 void* mem_nocheck_malloc(sint32 area, sint32 size);
 void* mem_malloc(sint32 area, sint32 size);
@@ -82,18 +66,8 @@ void mem_free(void*);
 sint32 mem_coreleft(sint32 area);
 void mem_lock(void);
 
-#ifdef PSYQ
-void debugPrint(char* message);
-#define dPrint(format, args...)        \
-    {                                  \
-        char buff[80];                 \
-        sprintf(buff, format, ##args); \
-        debugPrint(buff);              \
-    }
-#else
 #define debugPrint      printf
 #define dPrint          printf
-#endif
 
 #ifndef NDEBUG
 extern sint32 debugFlag;

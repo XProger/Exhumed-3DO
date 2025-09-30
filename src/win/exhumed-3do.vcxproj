@@ -153,7 +153,6 @@
     <ClInclude Include="..\art.h" />
     <ClInclude Include="..\bigmap.h" />
     <ClInclude Include="..\bup.h" />
-    <ClInclude Include="..\dma.h" />
     <ClInclude Include="..\file.h" />
     <ClInclude Include="..\font1.h" />
     <ClInclude Include="..\font2.h" />
@@ -175,22 +174,6 @@
     <ClInclude Include="..\profile.h" />
     <ClInclude Include="..\rndtab.h" />
     <ClInclude Include="..\route.h" />
-    <ClInclude Include="..\sega\libsn.h" />
-    <ClInclude Include="..\sega\machine.h" />
-    <ClInclude Include="..\sega\sega_bup.h" />
-    <ClInclude Include="..\sega\sega_cdc.h" />
-    <ClInclude Include="..\sega\sega_dbg.h" />
-    <ClInclude Include="..\sega\sega_dma.h" />
-    <ClInclude Include="..\sega\sega_gfs.h" />
-    <ClInclude Include="..\sega\sega_int.h" />
-    <ClInclude Include="..\sega\sega_mem.h" />
-    <ClInclude Include="..\sega\sega_mth.h" />
-    <ClInclude Include="..\sega\sega_per.h" />
-    <ClInclude Include="..\sega\sega_scl.h" />
-    <ClInclude Include="..\sega\sega_snd.h" />
-    <ClInclude Include="..\sega\sega_spr.h" />
-    <ClInclude Include="..\sega\sega_sys.h" />
-    <ClInclude Include="..\sega\sega_xpt.h" />
     <ClInclude Include="..\sequence.h" />
     <ClInclude Include="..\slevel.h" />
     <ClInclude Include="..\sound.h" />
@@ -212,7 +195,6 @@
     <ClCompile Include="..\art.c" />
     <ClCompile Include="..\bigmap.c" />
     <ClCompile Include="..\bup.c" />
-    <ClCompile Include="..\dma.c" />
     <ClCompile Include="..\file.c" />
     <ClCompile Include="..\hitscan.c" />
     <ClCompile Include="..\intro.c" />
@@ -228,7 +210,6 @@
     <ClCompile Include="..\print.c" />
     <ClCompile Include="..\profile.c" />
     <ClCompile Include="..\route.c" />
-    <ClCompile Include="..\scl_func.c" />
     <ClCompile Include="..\sequence.c" />
     <ClCompile Include="..\sound.c" />
     <ClCompile Include="..\spr.c" />

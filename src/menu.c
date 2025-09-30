@@ -1,7 +1,5 @@
-#include <machine.h>
-#include <sega_spr.h>
-#include <sega_scl.h>
-
+#include "app.h"
+#include "vid.h"
 #include "menu.h"
 #include "print.h"
 #include "v_blank.h"
@@ -150,7 +148,6 @@ sint32 loadOverBase(uint8* picData, uint16* pallete, sint32 xsize, sint32 ysize,
     sint32 vramBase = vramUsed;
     extern uint16 doorwayCache;
     uint16* tempData = &doorwayCache;
-    checkStack();
     width = *(sint32*)picData;
     height = *(((sint32*)picData) + 1);
     assert(width * height <= 1024 * 4);
@@ -828,7 +825,6 @@ sint32 dlg_run(sint32 selSound, sint32 pushSound, sint32 movement)
 
     fontHeight = getFontHeight(DLGFONT);
     data = lastInputSample;
-    SCL_SetFrameInterval(0xfffe);
 
     while (1)
     {
@@ -839,12 +835,7 @@ sint32 dlg_run(sint32 selSound, sint32 pushSound, sint32 movement)
         if (texVramPos >= 0)
             plotOverPicW(texX, texY, texWidth, texHeight, texVramPos, COLOR_5 | ECD_DISABLE);
         dlg_draw(currentButton, pressed);
-        SPR_WaitDrawEnd();
         EZ_closeCommand();
-
-        vid_blit();
-        vid_clear();
-        app_poll();
 #if 0
      if (first>=0)
 	{if (!first)
@@ -857,7 +848,11 @@ sint32 dlg_run(sint32 selSound, sint32 pushSound, sint32 movement)
 #ifdef JAPAN
         pic_nextFrame(NULL, NULL);
 #endif
-        SCL_DisplayFrame();
+
+        vid_blit();
+        vid_clear();
+        app_poll();
+
         if (returnTime)
         {
             if (returnTime == 1)
@@ -1010,7 +1005,6 @@ sint32 runTravelQuestion(char* destination)
     POKE_W(SCL_VDP2_VRAM + 0x180114, -255); /* reset color offsets */
     POKE_W(SCL_VDP2_VRAM + 0x180116, -255);
     POKE_W(SCL_VDP2_VRAM + 0x180118, -255);
-#endif
     SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0 | SCL_NBG0 | SCL_RBG0, -255, -255, -255);
     dontDisplayVDP2Pic();
     EZ_openCommand();
@@ -1019,7 +1013,12 @@ sint32 runTravelQuestion(char* destination)
     EZ_openCommand();
     EZ_closeCommand();
     SCL_DisplayFrame();
-    SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0 | SCL_NBG0, 0, 0, 0);
+#endif
+
+    vid_blit();
+    vid_clear();
+    app_poll();
+
     sprintf(buff, getText(LB_PROMPTS, 5), destination);
     return dlg_runYesNo(buff, 200);
 }
@@ -1074,13 +1073,13 @@ void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fad
     sint32 fadeReg = 0, fadeWidth = 0, fadeHeight = 0, fadeSize = 0, fadePic = 0, fadeCount = 0;
     sint32 gotScreenPic = 0;
 
-    checkStack();
-
     saveSoundState();
     stopAllLoopedSounds();
     displayEnable(0);
+#ifdef TODO // inventory
     SCL_DisplayFrame();
     SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0 | SCL_NBG0, 0, 0, 0);
+#endif
     for (i = 0; i < NMINVBUTTONS; i++)
         slidePos[i] = 0;
 
@@ -1094,7 +1093,6 @@ void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fad
 
     data = lastInputSample;
     lastData = data;
-    SCL_SetFrameInterval(0xfffe);
 
     dlg_clear();
     dlg_addBase(-INVWIDTH / 2, -INVHEIGHT / 2, INVWIDTH, INVHEIGHT, inventoryBevel, 3);
@@ -1132,8 +1130,6 @@ void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fad
     frameCount = 0;
     while (1)
     {
-        app_poll();
-
         EZ_openCommand();
         EZ_sysClip();
         EZ_localCoord(320 / 2, 240 / 2);
@@ -1152,16 +1148,20 @@ void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fad
         /* buttons */
 #ifndef JAPAN
         for (i = 0; i < NMINVBUTTONS; i++)
+        {
             if (i == selectedButton)
                 plotOverPic(-114, -74 + i * 20, 2);
             else
                 plotOverPic(-114, -74 + i * 20, 1);
+        }
 #else
         for (i = 0; i < NMINVBUTTONS; i++)
+        {
             if (i == selectedButton)
                 plotOverPic(-130, -91 + i * 26, 2);
             else
                 plotOverPic(-130, -91 + i * 26, 1);
+    }
 #endif
 
         for (i = 0; i < NMINVBUTTONS; i++)
@@ -1204,25 +1204,27 @@ void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fad
         canGoUp = -1;
         canGoDown = -1;
         if (slidePos[selectedButton] != -1)
+        {
             switch (selectedButton)
             {
-                case 0:
-                    if (slidePos[selectedButton] > 0)
-                        canGoDown = 0;
-                    if (slidePos[selectedButton] < 1)
-                        canGoUp = 1;
-                    break;
-                case 1:
-                    canGoDown = bitScanBackwards((inventory >> 8) & 0xff, slidePos[selectedButton]);
-                    canGoUp = bitScanForward((inventory >> 8) & 0xff, slidePos[selectedButton]);
-                    break;
-                case 2:
-                    canGoDown = bitScanBackwards(inventory & 0x3f, slidePos[selectedButton]);
-                    canGoUp = bitScanForward(inventory & 0x3f, slidePos[selectedButton]);
-                    if (canGoUp == -1 && slidePos[selectedButton] < 6 && currentState.dolls)
-                        canGoUp = 6;
-                    break;
+            case 0:
+                if (slidePos[selectedButton] > 0)
+                    canGoDown = 0;
+                if (slidePos[selectedButton] < 1)
+                    canGoUp = 1;
+                break;
+            case 1:
+                canGoDown = bitScanBackwards((inventory >> 8) & 0xff, slidePos[selectedButton]);
+                canGoUp = bitScanForward((inventory >> 8) & 0xff, slidePos[selectedButton]);
+                break;
+            case 2:
+                canGoDown = bitScanBackwards(inventory & 0x3f, slidePos[selectedButton]);
+                canGoUp = bitScanForward(inventory & 0x3f, slidePos[selectedButton]);
+                if (canGoUp == -1 && slidePos[selectedButton] < 6 && currentState.dolls)
+                    canGoUp = 6;
+                break;
             }
+        }
         /* arrows */
         if (canGoDown != -1)
 #ifndef JAPAN
@@ -1515,10 +1517,8 @@ void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fad
                 *mapState = slidePos[0];
                 resetPics();
                 EZ_closeCommand();
-                SCL_DisplayFrame();
                 EZ_openCommand();
                 EZ_closeCommand();
-                SCL_DisplayFrame();
                 stopAllSound(54);
                 restoreSoundState();
                 return;
@@ -1526,11 +1526,14 @@ void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fad
         }
 
         EZ_closeCommand();
-        SCL_DisplayFrame();
         sound_nextFrame();
         pic_nextFrame(NULL, NULL);
         if (frameCount++ == 2)
             displayEnable(1);
+
+        vid_blit();
+        vid_clear();
+        app_poll();
     }
 }
 
@@ -1621,8 +1624,6 @@ void dlg_runSlideIn(void)
         EZ_localCoord(320 / 2, 240 / 2);
         dlg_draw(currentButton, 0);
         EZ_closeCommand();
-        SPR_WaitDrawEnd();
-        SCL_DisplayFrame();
 
         vid_blit();
         vid_clear();

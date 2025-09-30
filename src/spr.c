@@ -1,12 +1,8 @@
-#include <machine.h>
-
-#include <sega_mth.h>
-#include <sega_scl.h>
-#include <sega_spr.h>
-
+#include "app.h"
+#include "mth.h"
+#include "vid.h"
 #include "util.h"
 #include "spr.h"
-#include "dma.h"
 
 #define MAXNMCHARS 512
 #define CMDBUFFERSIZE 256

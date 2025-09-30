@@ -1,4 +1,4 @@
-#include <sega_spr.h>
+#include "app.h"
 
 uint8 stat_compass0[] = {
     0,

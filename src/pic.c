@@ -1,14 +1,6 @@
-#include <machine.h>
-
-#include <sega_spr.h>
-#include <sega_scl.h>
-#include <sega_int.h>
-#include <sega_mth.h>
-#include <sega_sys.h>
-#include <sega_dbg.h>
-#include <sega_per.h>
-#include <sega_dma.h>
-
+#include "app.h"
+#include "vid.h"
+#include "mth.h"
 #include "pic.h"
 #include "util.h"
 #include "spr.h"
@@ -17,7 +9,6 @@
 #include "sequence.h"
 
 #include "art.h"
-#include "dma.h"
 
 #define COMPRESS16BPP 1
 #define MIPMAP 1
@@ -242,7 +233,6 @@ static void map(Pic* p)
 #if COMPRESS16BPP
     uint16 pbuff[1024 * 4];
 #endif
-    checkStack();
     validPtr(p);
     assert(p->class != TILEVDP);
     assert(p->charNm == -1);
@@ -460,10 +450,12 @@ static sint32 vxmin, vymin, vxmax, vymax, vx, vy;
 
 void updateVDP2Pic(void)
 {
+#ifdef TODO // scl
     SCL_Open(SCL_NBG0);
     SCL_MoveTo(vx << 16, vy << 16, 0);
     SCL_Close();
     SCL_SetWindow(SCL_W0, 0, SCL_NBG0, 0xfffffff, vxmin, vymin, vxmax, vymax);
+#endif
 }
 
 void displayVDP2Pic(sint32 picNm, sint32 xo, sint32 yo)
@@ -511,7 +503,6 @@ void delay_dontDisplayVDP2Pic(void)
 
 void dontDisplayVDP2Pic(void)
 {
-    SCL_SetWindow(SCL_W0, 0, SCL_NBG0, 0xfffffff, 0, 0, 0, 0);
     vxmin = 0;
     vymin = 0;
     vxmax = 0;

@@ -1,8 +1,4 @@
-#include <machine.h>
-#include <sega_int.h>
-#include <sega_per.h>
-#include <sega_bup.h>
-
+#include "app.h"
 #include "v_blank.h"
 #include "menu.h"
 #include "util.h"
@@ -10,12 +6,6 @@
 #include "gamestat.h"
 #include "weapon.h"
 
-#ifdef TODO // use a global temporary buffer
-#endif
-uint8 bupSpace[16 * 1024];
-uint8 bupWork[8 * 1024];
-
-static BupConfig config[3];
 typedef struct
 {
     SaveState state;
@@ -59,24 +49,24 @@ SaveState* bup_getGameData(sint32 slot)
 
 static void loadBUP(void)
 {
-    assert(config);
-    resetDisable();
-    BUP_Init(bupSpace, bupWork, config);
-    resetEnable();
+    //
 }
 
 static void unloadBup(void)
 {
+    //
 }
 
 static void checkForCheatKey(void)
 {
+#ifdef TODO // cheats
     sint32 ret;
     ret = BUP_Read(0, CHEATKEY, (uint8*)saveGames);
     if (ret == 0)
         cheatsEnabled = 1;
     else
         cheatsEnabled = 0;
+#endif
 }
 
 static sint32 loadGameFile(void)
@@ -107,41 +97,8 @@ static sint32 loadGameFile(void)
 
 static sint32 saveGameFile(sint32 device, sint32 savingGame)
 {
-    sint32 ret;
-    BupDir writetb;
-    BupDate datetb;
-    assert(device >= 0);
-    strcpy((char*)writetb.filename, FILENAME);
-    strcpy((char*)writetb.comment, "save games");
-    writetb.language = BUP_ENGLISH;
-    {
-        sint32 year, month, day, hour, min;
-        getDateTime(&year, &month, &day, &hour, &min);
-        datetb.year = year;
-        datetb.month = month;
-        datetb.day = day;
-        datetb.time = hour;
-        datetb.min = min;
-    }
-    writetb.date = BUP_SetDate(&datetb);
-    writetb.datasize = SPACENEEDED * 64;
-    writetb.blocksize = SPACENEEDED;
-
-#if 0
- if (savingGame)
-    dlg_flashMessage(getText(LB_BUP,14),getText(LB_BUP,1),
-		     300,50);
- else
-    dlg_flashMessage(getText(LB_BUP,0),getText(LB_BUP,1),
-		     300,50);
- vtimer=0;
- while (vtimer<120) ;
-#endif
-
-    resetDisable();
-    ret = BUP_Write(device, &writetb, (uint8*)saveGames, OFF);
-    resetEnable();
-    return ret;
+    // BUP_Write(device, &writetb, (uint8*)saveGames, OFF);
+    return 1;
 }
 
 sint32 bup_canLoadGame(void)

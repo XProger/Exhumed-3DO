@@ -16,21 +16,9 @@
      light fish
  */
 
-#include <machine.h>
-
-#include <libsn.h>
-
-#include <sega_spr.h>
-#include <sega_scl.h>
-#include <sega_int.h>
-#include <sega_mth.h>
-#include <sega_sys.h>
-#include <sega_dbg.h>
-#include <sega_per.h>
-#include <sega_cdc.h>
-#include <sega_gfs.h>
-#include <sega_snd.h>
-
+#include "app.h"
+#include "vid.h"
+#include "mth.h"
 #include "util.h"
 #include "spr.h"
 #include "file.h"
@@ -51,7 +39,6 @@
 #include "menu.h"
 #include "bup.h"
 #include "weapon.h"
-#include "dma.h"
 #include "local.h"
 #include "bigmap.h"
 #include "profile.h"
@@ -117,30 +104,6 @@ static sint32 colorOffset[3] = { 0, 0, 0 };
 static sint32 colorCenter[3] = { 0, 0, 0 };
 static sint32 colorStepRate = 3;
 
-////////////////////
-// dummy GFS
-#ifdef TODO
-#endif
-#include <sega_gfs.h>
-#include <sega_cdc.h>
-
-void GFS_GetFileSize(GfsHn gfs, sint32* sctsz, sint32* nsct, sint32* lstsz)
-{
-    if (sctsz)
-        *sctsz = 0;
-    if (nsct)
-        *nsct = 0;
-    if (lstsz)
-        *lstsz = 0;
-}
-
-sint32 CDC_GetPeriStat(CdcStat* stat)
-{
-    memset(stat, 0, sizeof(*stat));
-    return 0;
-}
-////////////////////
-
 sint32 getKeyMask(void)
 {
     return keyMask;
@@ -161,7 +124,9 @@ void stepColorOffset(void)
             colorStepRate = 3;
         }
     }
+#ifdef TODO // color offset wtf?
     SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0 | SCL_NBG0 | SCL_RBG0, colorOffset[0], colorOffset[1], colorOffset[2]);
+#endif
 }
 
 void changeColorOffset(sint32 r, sint32 g, sint32 b, sint32 rate)
@@ -1671,7 +1636,6 @@ static void drawMessage(sint32 nmFrames)
         currentMessage = NULL;
 }
 
-extern sint32 slaveSize;
 extern sint32 lastHitWall;
 
 void playerGetCamel(sint32 toLevel)
@@ -2212,18 +2176,9 @@ sint32 runLevel(char* filename, sint32 levelNm)
     dPrint("B!\n");
     displayEnable(0);
 
-    SPR_SetTvMode(SPR_TV_NORMAL, SPR_TV_320X240, OFF);
     EZ_initSprSystem(1448, 4, 1224, 240, 0x8000);
     dPrint("C!\n");
-    SCL_SetFrameInterval(0xfffe);
 
-    for (i = 0; i < 3; i++)
-    {
-        EZ_openCommand();
-        EZ_sysClip();
-        EZ_closeCommand();
-        SCL_DisplayFrame();
-    }
     EZ_setChar(0, COLOR_4, FS_INT((sint32*)stat_bar), FS_INT((sint32*)(stat_bar + 4)), (uint8*)stat_bar + 8);
     EZ_setChar(1, COLOR_4, FS_INT((sint32*)stat_compass0), FS_INT((sint32*)(stat_compass0 + 4)), (uint8*)stat_compass0 + 8);
     EZ_setChar(2, COLOR_4, FS_INT((sint32*)stat_compass1), FS_INT((sint32*)(stat_compass1 + 4)), (uint8*)stat_compass1 + 8);
@@ -2245,9 +2200,6 @@ sint32 runLevel(char* filename, sint32 levelNm)
     initObjects();
     initFlames();
 
-    SCL_SetWindow(SCL_W1, 0, SCL_RBG0, 0xfffffff, 0, 0, 0, 0);
-
-    SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0 | SCL_NBG0 | SCL_RBG0, 0, 0, 0);
     fs_startProgress(1);
     fs_addToProgress("+STATIC.DAT");
     fs_addToProgress(filename);
@@ -2298,16 +2250,13 @@ sint32 runLevel(char* filename, sint32 levelNm)
  }
 #endif
 
-#ifdef TODO // slave process
-    startSlave(wallRenderSlaveMain);
-    delay(1);
-#endif
-
     /* air meter stuff */
     airBase = addPic(TILE16BPP, meter_bubble + 8, NULL, 0);
     addPic(TILE16BPP, meter_back + 8, NULL, 0);
 
+#ifdef TODO // color offset wtf?
     SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0 | SCL_NBG0 | SCL_RBG0, -255, -255, -255);
+#endif
     colorOffset[0] = -255;
     colorOffset[1] = -255;
     colorOffset[2] = -255;
@@ -2379,8 +2328,6 @@ sint32 runLevel(char* filename, sint32 levelNm)
     vtimer = 0;
     smoothVTime = 1;
 
-    SCL_SET_N0CCEN(1);
-    SCL_SetColMixRate(SCL_NBG0, 0);
     invisibleCounter = 0;
 
     if (currentState.gameFlags & GAMEFLAG_DOLLPOWERMODE)
@@ -2467,24 +2414,25 @@ sint32 runLevel(char* filename, sint32 levelNm)
                 weaponPowerUpCounter--;
                 if (weaponPowerUpCounter < 60 && !(weaponPowerUpCounter & 0xf))
                     playStaticSound(ST_ITEM, 5);
+#ifdef TODO // hurt
                 if (weaponPowerUpCounter & 0x2)
                     SCL_SetColOffset(SCL_OFFSET_B, SCL_NBG0, 255, 60, 60);
                 else
                     SCL_SetColOffset(SCL_OFFSET_B, SCL_NBG0, 0, 0, 0);
+#endif
             }
             if (invisibleCounter)
             {
-                sint32 rev;
+                //sint32 rev;
                 invisibleCounter--;
                 if (invisibleCounter < 60 && !(invisibleCounter & 0xf))
                     playStaticSound(ST_ITEM, 5);
+                #ifdef TODO // invisibility
                 rev = INVISIBLEDOSE - invisibleCounter;
                 if (rev > 16 && rev < 16 + 20)
                 {
-                #ifdef TODO // invisibility
                     sint32 c = rev - 16;
                     SCL_SetColMixRate(SCL_NBG0, c);
-                #endif
                 }
                 if (rev < 32)
                 {
@@ -2500,6 +2448,7 @@ sint32 runLevel(char* filename, sint32 levelNm)
                 }
                 if (invisibleCounter < 20)
                     SCL_SetColMixRate(SCL_NBG0, invisibleCounter);
+                #endif
             }
         }
         popProfile();
@@ -2575,16 +2524,20 @@ sint32 runLevel(char* filename, sint32 levelNm)
         if (hitPyramid || hitTeleport)
         {
             EZ_closeCommand();
-            SPR_WaitDrawEnd();
-            SCL_DisplayFrame();
+            vid_blit();
+            vid_clear();
+            app_poll();
             return hitTeleport ? hitTeleport : 3;
         }
         /* used to be here */
         EZ_closeCommand();
-        SPR_WaitDrawEnd();
+
+        vid_blit();
+        vid_clear();
+        app_poll();
+
         lastDraw = htimer - lastCalc;
 
-        DISABLE;
         if (vtimer < smoothVTime)
         {
             vspeedSwitchCount++;
@@ -2598,20 +2551,12 @@ sint32 runLevel(char* filename, sint32 levelNm)
         }
         else
             vspeedSwitchCount = 0;
-        ENABLE;
+
 #ifdef TODO // timer
         while (vtimer < smoothVTime)
             ;
 #endif
 
-        /* sometimes a vtimer switch can occur in here */
-        SCL_DisplayFrame();
-
-        vid_blit();
-        vid_clear();
-        app_poll();
-
-        DISABLE;
         if (vtimer - 1 > smoothVTime)
         {
             smoothVTime = vtimer - 1;
@@ -2623,7 +2568,6 @@ sint32 runLevel(char* filename, sint32 levelNm)
         framesElapsed = vtimer;
         inputEnd = inputQHead;
         vtimer = 0;
-        ENABLE;
 
         movePlax(lastYaw, lastPitch);
         if (currentState.currentLevel == 18)
@@ -2633,7 +2577,6 @@ sint32 runLevel(char* filename, sint32 levelNm)
             plaxBBxmax = 160;
             plaxBBymax = 90;
         }
-        SCL_SetWindow(SCL_W1, 0, SCL_RBG0, 0xfffffff, plaxBBxmin + 160, plaxBBymin + 120, plaxBBxmax + 160, plaxBBymax + 120);
         updateVDP2Pic();
         lastYaw = playerAngle.yaw;
         lastPitch = playerAngle.pitch;
@@ -2693,7 +2636,6 @@ int main(int argc, char *argv[])
 
     enable_stereo = 1;
     enable_music = 1;
-    abcResetEnable = 1;
 
 #ifdef TODO // VDP2
     POKE_W(SCL_VDP2_VRAM + 0x180112, 0x00);
@@ -2752,13 +2694,10 @@ int main(int argc, char *argv[])
         fs_close(fd);
     }
     dPrint("done\n");
-    initDMA();
 
     /* testEZ();*/
 
     EZ_initSprSystem(1540, 8, 1524, 240, 0x8000);
-    SCL_SetFrameInterval(0xfffe);
-    SPR_SetTvMode(SPR_TV_NORMAL, SPR_TV_320X240, OFF);
 
 #ifdef JAPAN
     {
@@ -2809,20 +2748,11 @@ int main(int argc, char *argv[])
 
 intro:
 #ifndef TESTCODE
-    abcResetEnable = 1;
     playIntro();
 #else
     bup_initCurrentGame();
     currentState.inventory = 0x00ffff;
 #endif
-    abcResetEnable = 0;
-    dPrint("1\n");
-    SCL_Vdp2Init();
-    dPrint("2\n");
-    displayEnable(0);
-    SCL_SetDisplayMode(SCL_NON_INTER, SCL_240LINE, SCL_NORMAL_A);
-    setVDP2();
-    dPrint("3\n");
 
 #ifndef TESTCODE
     if ((currentState.gameFlags & GAMEFLAG_JUSTTELEPORTED) && !(currentState.inventory & INV_MUMMY))
@@ -2847,14 +2777,9 @@ intro:
 
         action = runLevel(levelFile, level);
 
-        {
-            extern sint32 SclRotateTableAddress;
-            SclRotateTableAddress = 0;
-        }
         stopAllLoopedSounds();
         dontDisplayVDP2Pic();
         EZ_clearScreen();
-        SCL_SetColOffset(SCL_OFFSET_A, SCL_SP0 | SCL_NBG0 | SCL_RBG0, 0, 0, 0);
 
         if (action >= 100 && action <= 199)
         {

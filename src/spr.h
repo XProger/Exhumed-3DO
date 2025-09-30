@@ -104,6 +104,7 @@ void EZ_setLookupTbl(sint32 tblNm, struct sprLookupTbl* tbl);
 void EZ_openCommand(void);
 void EZ_normSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt* pos, struct gourTable* gTable);
 void EZ_distSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt* xy, struct gourTable* gTable);
+void EZ_specialDistSpr2(sint16 charNm, XyInt* xy, struct gourTable* gTable);
 void EZ_cmd(struct cmdTable* inCmd);
 void EZ_scaleSpr(sint16 dir, sint16 drawMode, sint16 color, sint16 charNm, XyInt* pos, struct gourTable* gTable);
 void EZ_localCoord(sint16 x, sint16 y);

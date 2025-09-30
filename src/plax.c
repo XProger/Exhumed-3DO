@@ -1,17 +1,5 @@
-#include <machine.h>
-#include <libsn.h>
-
-#include <sega_spr.h>
-#include <sega_scl.h>
-#include <sega_int.h>
-#include <sega_mth.h>
-#include <sega_sys.h>
-#include <sega_dbg.h>
-#include <sega_per.h>
-#include <sega_cdc.h>
-#include <sega_gfs.h>
-#include <sega_snd.h>
-
+#include "app.h"
+#include "mth.h"
 #include "v_blank.h"
 #include "file.h"
 #include "util.h"
@@ -21,42 +9,12 @@
 #define PLAXPERSCREEN 128
 void movePlax(fix32 yaw, fix32 pitch)
 {
-    sint32 x, y;
-    extern SclRotreg* SclRotregBuff;
-    x = -(yaw * PLAXPERSCREEN) / F(45);
-    while (x < 0)
-        x += 256;
-    while (x > 256)
-        x -= 256;
-
-    y = -(pitch * PLAXPERSCREEN) / F(45) - 100;
-    /* y=-(pitch*PLAXPERSCREEN)/F(45)-40; */
-
-#if 0
- /* poke x offsets */
- POKE(SCL_VDP2_VRAM_A0+0x500,F(x));
- POKE_W(SCL_VDP2_VRAM_A0+0x500+0x34,160+x);
-
- /* poke y offsets */
- POKE(SCL_VDP2_VRAM_A0+0x500+4,F(y));
- POKE_W(SCL_VDP2_VRAM_A0+0x500+0x36,120+y);
-#endif
-
-    SclRotregBuff->screenst.x = F(x);
-    SclRotregBuff->viewp.x = 160 + x;
-    SclRotregBuff->screenst.y = F(y);
-    SclRotregBuff->viewp.y = 20;
-
-    if (SclProcess == 0)
-        SclProcess = 1;
+    //
 }
 
 void enablePlax(sint32 setting)
 {
-    if (setting)
-        Scl_s_reg.dispenbl |= 0x10;
-    else
-        Scl_s_reg.dispenbl &= ~0x10;
+    //
 }
 
 static uint16 plaxPal[256];
@@ -73,13 +31,7 @@ void retryPlaxPal(void)
 
 void plaxOff(void)
 {
-    Scl_s_reg.dispenbl &= 0xffef;
-    if (SclProcess == 0)
-        SclProcess = 1;
-    /* SclConfig scfg;
-       SCL_InitConfigTb(&scfg);
-       scfg.dispenbl=OFF;
-       SCL_SetConfig(SCL_RBG0, &scfg); */
+    //
 }
 
 void initPlax(sint32 fd)
@@ -128,52 +80,5 @@ void initPlax(sint32 fd)
     fs_read(fd, (sint8*)SCL_VDP2_VRAM_A0, 320 * 4);
 #else
     fs_skip(fd, 512 * 256 + 320 * 4);
-#endif
-
-
-#if 0
- (sint32 x,d;
-  double f;
-  for (x=0;x<320;x++)
-     {f=atan((x-160.0)/160.0)*((double)PLAXPERSCREEN)/0.785398;
-      if (abs(x-160)>1)
-	 {f=f/(x-160);
-	  d=f*65536.0;
-	  d=d&0x007fffff;
-	 }
-      else
-	 d=66754/*83200*/ /*0x400*/;
-      POKE(SCL_VDP2_VRAM_A0+x*4,d);
-     }
- }
-#endif
-
-    {
-        extern SclRotreg* SclRotregBuff;
-        SclRotregBuff->k_tab = 0;
-        SclRotregBuff->k_delta.y = 1 << 16;
-        SclRotregBuff->k_delta.x = 0; /* are these backwards?? */
-        SclRotregBuff->matrix_a = 0;
-        SclRotregBuff->matrix_b = F(-1);
-        SclRotregBuff->matrix_c = 0;
-        SclRotregBuff->matrix_d = F(1);
-        SclRotregBuff->matrix_e = 0;
-        SclRotregBuff->matrix_f = 0;
-    }
-    if (SclProcess == 0)
-        SclProcess = 1;
-
-#if 0
-
-  POKE(SCL_VDP2_VRAM_A0+0x500+0x54,0); /* coeff start address */
-  POKE(SCL_VDP2_VRAM_A0+0x500+0x58,0 /*(160)<<16*/); /* line increment */
-  POKE(SCL_VDP2_VRAM_A0+0x500+0x5c,(1)<<16); /* dot increment */
-
-
-  {static sint32 rotMat[6]={0,-1,0,
-			    1, 0,0};
-   for (i=0;i<6;i++)
-      POKE(SCL_VDP2_VRAM_A0+0x500+0x1c+i*4,F(rotMat[i]));
-  }
 #endif
 }

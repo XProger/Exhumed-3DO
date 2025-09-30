@@ -6,8 +6,6 @@
 
 void drawWalls(MthMatrix* view);
 void drawWallsFinish(void);
-void wallRenderSlaveMain(void);
-void startSlave(void* slaveMain);
 void drawSprites(MthXyz* playerPos, MthMatrix* view, sint32 sector);
 void initWallRenderer(void);
 void removeLight(Sprite* s);

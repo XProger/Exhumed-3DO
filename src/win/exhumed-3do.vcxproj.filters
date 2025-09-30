@@ -1,60 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="..\sega\libsn.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\machine.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\sega_bup.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\sega_cdc.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\sega_dbg.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\sega_dma.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\sega_gfs.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\sega_int.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\sega_mem.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\sega_mth.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\sega_per.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\sega_scl.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\sega_snd.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\sega_spr.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\sega_sys.h">
-      <Filter>sega</Filter>
-    </ClInclude>
-    <ClInclude Include="..\sega\sega_xpt.h">
-      <Filter>sega</Filter>
-    </ClInclude>
     <ClInclude Include="..\ai.h" />
     <ClInclude Include="..\aicommon.h" />
     <ClInclude Include="..\art.h" />
     <ClInclude Include="..\bigmap.h" />
     <ClInclude Include="..\bup.h" />
-    <ClInclude Include="..\dma.h" />
     <ClInclude Include="..\file.h" />
     <ClInclude Include="..\font1.h" />
     <ClInclude Include="..\font2.h" />
@@ -91,11 +42,6 @@
     <ClInclude Include="..\vid.h" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="sega">
-      <UniqueIdentifier>{afc971e9-98d1-4181-814e-ae8c38090feb}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\ai.c" />
     <ClCompile Include="..\ai2.c" />
     <ClCompile Include="..\aicommon.c" />
@@ -103,7 +49,6 @@
     <ClCompile Include="..\art.c" />
     <ClCompile Include="..\bigmap.c" />
     <ClCompile Include="..\bup.c" />
-    <ClCompile Include="..\dma.c" />
     <ClCompile Include="..\file.c" />
     <ClCompile Include="..\hitscan.c" />
     <ClCompile Include="..\intro.c" />
@@ -118,7 +63,6 @@
     <ClCompile Include="..\print.c" />
     <ClCompile Include="..\profile.c" />
     <ClCompile Include="..\route.c" />
-    <ClCompile Include="..\scl_func.c" />
     <ClCompile Include="..\sequence.c" />
     <ClCompile Include="..\sound.c" />
     <ClCompile Include="..\spr.c" />

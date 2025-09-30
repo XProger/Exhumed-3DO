@@ -1,16 +1,8 @@
-#include <machine.h>
-#include <sega_xpt.h>
-#include <sega_int.h>
-#include <sega_per.h>
-#include <sega_spr.h>
-#include <sega_scl.h>
-#include <sega_cdc.h>
-#include <sega_sys.h>
+#include "app.h"
 #include "v_blank.h"
 #include "util.h"
 
 sint32 fadeDir, fadePos, fadeEnd;
-sint32 abcResetEnable = 0, abcResetDisable = 0;
 
 #define INPUTQSIZE 16 /* dont change this */
 uint16 inputQ[INPUTQSIZE];
@@ -31,11 +23,7 @@ uint16	PadData1E = 0x0000;
 uint16	PadData2  = 0x0000;
 uint16	PadData2E = 0x0000;
 */
-uint8* Pad;
-PerMulInfo* Mul;
 uint32 vtimer = 0, htimer = 0, secs = 0;
-
-uint8 PadWorkArea[4 * (PER_SIZE_NCON_15 * 6 + 69)];
 
 void UsrHblankIn(void)
 {
@@ -47,7 +35,6 @@ void processInput(void)
     uint16 accum;
     sint32 i, pos, size, id;
     accum = 0xffff;
-    PER_LGetPer((void**)&Pad, &Mul);
 
 #ifdef TODO // input controlerPresent
     controlerPresent = 0;
@@ -57,46 +44,8 @@ void processInput(void)
     analogControlerPresent = 0;
     analogIndexButtonsPresent = 0;
 
-#ifdef TODO
-    if (!Pad)
-        return;
-
-    pos = 0;
-    for (i = 0; i < Mul[0].con; i++)
-    {
-        id = Pad[pos++];
-        size = Pad[pos++];
-        if (id == PER_ID_DGT || (id == PER_ID_ANL && size != 3 /* ignore steering wheel */))
-        {
-            accum &= (Pad[pos] << 8) | (Pad[pos + 1]);
-            controlerPresent = 1;
-            if (id == PER_ID_ANL)
-            {
-                analogControlerPresent = 1;
-                analogX = Pad[pos + 2] - 128;
-                analogY = Pad[pos + 3] - 128;
-                if (size == 6)
-                {
-                    analogIndexButtonsPresent = 1;
-                    analogTR = Pad[pos + 4];
-                    analogTL = Pad[pos + 5];
-                }
-            }
-            break;
-        }
-        pos += 15;
-    }
-#endif
     accum = app_input();
 
-    if (!(accum & (PER_DGT_A | PER_DGT_B | PER_DGT_C | PER_DGT_S)))
-    {
-        if (abcResetEnable && !abcResetDisable)
-            SYS_EXECDMP();
-        abcResetDisable = 1;
-    }
-    else
-        abcResetDisable = 0;
     lastInputSample = accum;
     inputAccum &= accum;
     /* add input sample */
@@ -108,9 +57,6 @@ sint8 enableDoorReset = 1;
 
 void UsrVblankStart(void)
 {
-    SCL_VblankStart();
-    if (enableDoorReset && (CDC_GetHirqReq() & CDC_HIRQ_DCHG))
-        SYS_EXECDMP();
     if (fadeDir)
     {
         fadePos += fadeDir;
@@ -139,17 +85,13 @@ void UsrVblankStart(void)
 
 void initInput(void)
 {
-    sint32 o = get_imask();
-    set_imask(0xff);
     inputQHead = 0;
     inputAccum = 0xffff;
     lastInputSample = 0xffff;
-    set_imask(o);
 }
 
 void UsrVblankEnd(void)
 {
-    SCL_VblankEnd();
     vtimer++;
     processInput();
 }
