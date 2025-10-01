@@ -1,6 +1,5 @@
 #include "app.h"
 #include "util.h"
-#include "file.h"
 
 static sint32 textData[7 * 1024 / 4];
 
@@ -31,19 +30,19 @@ sint32 getLanguageNumber(void)
     return skip;
 }
 
-void loadLocalText(sint32 fd)
+void loadLocalText(void)
 {
     sint32 size, skip;
     mem_lock();
     skip = getLanguageNumber();
     for (; skip >= 0; skip--)
     {
-        fs_read(fd, (sint8*)&size, 4);
+        fs_read(&size, 4);
 
         size = FS_INT(&size);
 
         assert(size < 7 * 1024);
-        fs_read(fd, (sint8*)textData, size);
+        fs_read(textData, size);
     }
 }
 

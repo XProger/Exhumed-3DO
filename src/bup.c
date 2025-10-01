@@ -177,6 +177,10 @@ void bup_initCurrentGame(void)
     cheatsEnabled = 1; // ?
     currentState.inventory |= INV_M60;
     currentState.desiredWeapon = WP_M60;
+    for (i = 0; i < NMLEVELS; i++)
+    {
+        currentState.levFlags[i] |= LEVFLAG_CANENTER;
+    }
 #endif
 }
 

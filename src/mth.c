@@ -1,10 +1,6 @@
 #include "app.h"
 #include "mth.h"
 
-#define PI          3.14159265358979323846f
-#define DEG2RAD     (PI / 180.0f)
-#define RAD2DEG     (180.0f / PI)
-
 enum {
     M00, M01, M02, M03,
     M10, M11, M12, M13,
@@ -43,7 +39,7 @@ static const uint16 MTH_TBL_SIN[] = { // 0..90 deg [value, step]
     0x0234, 0xDDB3, 0x0221, 0xDFE7, 0x0211, 0xE208, 0x01FE, 0xE419, 0x01EC, 0xE617, 0x01DB, 0xE803, 0x01C8, 0xE9DE, 0x01B5, 0xEBA6, 0x01A4, 0xED5B, 0x0190, 0xEEFF,
     0x017E, 0xF08F, 0x016B, 0xF20D, 0x0158, 0xF378, 0x0145, 0xF4D0, 0x0131, 0xF615, 0x011F, 0xF746, 0x010B, 0xF865, 0x00F7, 0xF970, 0x00E4, 0xFA67, 0x00D1, 0xFB4B,
     0x00BD, 0xFC1C, 0x00A9, 0xFCD9, 0x0095, 0xFD82, 0x0081, 0xFE17, 0x006E, 0xFE98, 0x005A, 0xFF06, 0x0046, 0xFF60, 0x0032, 0xFFA6, 0x001E, 0xFFD8, 0x000A, 0xFFF6,
-    0x0000, 0xFFFF,
+    0x0000, 0xFFFF
 };
 
 static const fix32 MTH_TBL_TAN[] = { // 0..90 deg [value, step]
@@ -182,7 +178,7 @@ void MTH_InitialMatrix(MthMatrixTbl *matrixTbl, uint16 stackSize, MthMatrix *mat
 
 void MTH_ClearMatrix(MthMatrixTbl *matrixTbl)
 {
-    fix32* m = (fix32*)matrixTbl->current;
+    fix32 *m = (fix32*)matrixTbl->current;
 
     memset(m, 0, sizeof(MthMatrix));
     m[M00] = 1 << 16;
@@ -206,7 +202,7 @@ void MTH_PopMatrix(MthMatrixTbl *matrixTbl)
 void MTH_RotateMatrixX(MthMatrixTbl *matrixTbl, fix32 xDegree)
 {
     fix32 s, c, r0, r1;
-    fix32* m = (fix32*)matrixTbl->current;
+    fix32 *m = (fix32*)matrixTbl->current;
 
     s = MTH_Sin(xDegree);
     c = MTH_Cos(xDegree);
@@ -230,7 +226,7 @@ void MTH_RotateMatrixX(MthMatrixTbl *matrixTbl, fix32 xDegree)
 void MTH_RotateMatrixY(MthMatrixTbl *matrixTbl, fix32 yDegree)
 {
     fix32 s, c, r0, r1;
-    fix32* m = (fix32*)matrixTbl->current;
+    fix32 *m = (fix32*)matrixTbl->current;
 
     s = MTH_Sin(yDegree);
     c = MTH_Cos(yDegree);
@@ -254,7 +250,7 @@ void MTH_RotateMatrixY(MthMatrixTbl *matrixTbl, fix32 yDegree)
 void MTH_RotateMatrixZ(MthMatrixTbl *matrixTbl, fix32 zDegree)
 {
     fix32 s, c, r0, r1;
-    fix32* m = (fix32*)matrixTbl->current;
+    fix32 *m = (fix32*)matrixTbl->current;
 
     s = MTH_Sin(zDegree);
     c = MTH_Cos(zDegree);
@@ -277,7 +273,7 @@ void MTH_RotateMatrixZ(MthMatrixTbl *matrixTbl, fix32 zDegree)
 
 void MTH_MoveMatrix(MthMatrixTbl *matrixTbl, fix32 x, fix32 y, fix32 z)
 {
-    fix32* m = (fix32*)matrixTbl->current;
+    fix32 *m = (fix32*)matrixTbl->current;
 
     m[M03] += MTH_Mul(m[M00], x) + MTH_Mul(m[M01], y) + MTH_Mul(m[M02], z);
     m[M13] += MTH_Mul(m[M10], x) + MTH_Mul(m[M11], y) + MTH_Mul(m[M12], z);
@@ -286,7 +282,7 @@ void MTH_MoveMatrix(MthMatrixTbl *matrixTbl, fix32 x, fix32 y, fix32 z)
 
 void MTH_CoordTrans(MthMatrix *matrix, MthXyz *src, MthXyz *ans)
 {
-    fix32* m = (fix32*)matrix;
+    fix32 *m = (fix32*)matrix;
 
     ans->x = MTH_Mul(m[M00], src->x) + MTH_Mul(m[M01], src->y) + MTH_Mul(m[M02], src->z) + m[M03];
     ans->y = MTH_Mul(m[M10], src->x) + MTH_Mul(m[M11], src->y) + MTH_Mul(m[M12], src->z) + m[M13];

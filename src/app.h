@@ -6,24 +6,9 @@
 #include <limits.h>
 
 #ifdef AP_3DO
-#include "stdio.h" //
-
-#include <displayutils.h>
-#include <operamath.h>
-#include <io.h>
-#include <mem.h>
-#include <event.h>
-#include <graphics.h>
-//#include <filestream.h>
-//#include <filestreamfunctions.h>
-
-#define SEEK_CUR    1
-#define SEEK_END    2
-#define SEEK_SET    0
-
+#include "stdio.h" // I'm not passionate enough to find out why 3do-devkit require " to make printf work
 #else
 #include <stdio.h>
-#include <math.h>
 
 typedef signed char sint8;
 typedef signed short sint16;
@@ -41,13 +26,18 @@ typedef sint32 fix32;
 #endif
 
 #define FIXED(a) ((fix32)((a) * 65536.0))
-#define DIV_FIXED(a, b) MTH_Div(a, b)
 
-#define FS_INT(p)   (sint32)( ((uint8*)(p))[3] | (((uint8*)(p))[2] << 8) | (((uint8*)(p))[1] << 16) | (((uint8*)(p))[0] << 24) )
-#define FS_SHORT(p) (sint32)( ((uint8*)(p))[1] | (((uint8*)(p))[0] << 8) )
+#ifdef AP_3DO
+    #define FS_INT(p)   *(p)
+    #define FS_SHORT(p) *(p)
+#else
+    #define FS_INT(p)   (sint32)( ((uint8*)(p))[3] | (((uint8*)(p))[2] << 8) | (((uint8*)(p))[1] << 16) | (((uint8*)(p))[0] << 24) )
+    #define FS_SHORT(p) (sint32)( ((uint8*)(p))[1] | (((uint8*)(p))[0] << 8) )
+#endif
 
-#define DRAM_SIZE   (768 * 1024)
-#define VRAM_SIZE   (640 * 1024)
+//#define DRAM_SIZE   (256 * 1024)
+#define DRAM_SIZE   (256 * 1024)
+#define VRAM_SIZE   (704 * 1024)
 
 #ifdef AP_3DO
     #define assert(expr)
@@ -75,5 +65,17 @@ sint32 app_time(void);
 uint16 app_input(void);
 sint32 app_poll(void);
 void app_init(void);
+
+void fs_open(const char *name);
+void fs_read(void *buffer, sint32 count);
+void fs_skip(sint32 offset);
+void fs_close(void);
+
+#define fs_progress_start(swirly)
+#define fs_progress_add(filename)
+#define fs_progress_stop()
+
+#define track_play(track, repeat)
+#define track_stop()
 
 #endif

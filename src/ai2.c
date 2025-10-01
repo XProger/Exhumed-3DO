@@ -12,7 +12,6 @@
 #include "route.h"
 #include "walls.h"
 #include "pic.h"
-#include "file.h"
 #include "gamestat.h"
 #include "bigmap.h"
 #include "v_blank.h"
@@ -154,11 +153,11 @@ static void loadRamsesBlock(RamsesTriggerObject* this)
         s = RINGSIZE - this->soundRingHead;
         if (s > amount)
         {
-            fs_read(this->fd, (sint8*)(SNDBASE + this->soundRingBase + (this->soundRingHead << 1)), (amount << 1));
+            fs_read((SNDBASE + this->soundRingBase + (this->soundRingHead << 1)), (amount << 1));
             this->soundRingHead += amount;
             break;
         }
-        fs_read(this->fd, (sint8*)(SNDBASE + this->soundRingBase + (this->soundRingHead << 1)), s << 1);
+        fs_read((SNDBASE + this->soundRingBase + (this->soundRingHead << 1)), s << 1);
         this->soundRingHead = 0;
         amount -= s;
     }
@@ -172,11 +171,11 @@ static void loadRamsesBlock(RamsesTriggerObject* this)
         s = RINGSIZE - this->soundRingHead;
         if (s > amount)
         {
-            fs_read(this->fd, (sint8*)(SNDBASE + this->soundRingBase2 + (this->soundRingHead << 1)), (amount << 1));
+            fs_read((SNDBASE + this->soundRingBase2 + (this->soundRingHead << 1)), (amount << 1));
             this->soundRingHead += amount;
             break;
         }
-        fs_read(this->fd, (sint8*)(SNDBASE + this->soundRingBase2 + (this->soundRingHead << 1)), s << 1);
+        fs_read((SNDBASE + this->soundRingBase2 + (this->soundRingHead << 1)), s << 1);
         this->soundRingHead = 0;
         amount -= s;
     }
@@ -264,9 +263,8 @@ void ramsesTrigger_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
             {
                 char name[80];
                 chooseVoiceFile(name);
-                this->fd = fs_open(name);
+                fs_open(name);
             }
-            assert(this->fd >= 0);
             switchPlayerMotion(0);
             this->timer = 0;
             this->disabled = 5;
@@ -289,7 +287,7 @@ void ramsesTrigger_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
                 this->ramses->sequence = level_sequenceMap[OT_RAMSESTRIGGER] + 2;
                 stopAllSound((sint32)this);
                 mem_free(this->frames);
-                fs_close(this->fd);
+                fs_close();
             }
             switch (this->state)
             {
@@ -337,7 +335,7 @@ void ramsesTrigger_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
                     this->soundRingHead = 0;
                     {
                         sint16 s;
-                        fs_read(this->fd, (sint8*)&s, 2);
+                        fs_read(&s, 2);
 
                         s = FS_SHORT(&s);
 
@@ -345,7 +343,7 @@ void ramsesTrigger_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
                     }
                     this->frames = mem_malloc(0, this->nmFrames);
                     this->framePos = 0;
-                    fs_read(this->fd, this->frames, this->nmFrames);
+                    fs_read(this->frames, this->nmFrames);
 #ifdef TODO // sound
                     for (i = 0; i < 16; i++)
                         loadRamsesBlock(this);
@@ -442,7 +440,11 @@ void ramsesTrigger_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
                         loadRamsesBlock(this);
                         if ((this->framePos & 31) != 31)
                             this->framePos++;
+                    #ifdef TODO // ramses frame
                         soundPos = (PEEK_W(SNDBASE + 0x100408) >> 7) & 0xf;
+                    #else
+                        soundPos = (app_time() * 30 >> 7) & 0xf;
+                    #endif
                         if (soundPos < this->lastSndPos)
                             this->framePos = (this->framePos + 32) & (~31);
                         this->lastSndPos = soundPos;
@@ -454,7 +456,7 @@ void ramsesTrigger_func(Object* _this, sint32 msg, sint32 param1, sint32 param2)
                     {
                         this->ramses->frame = 0;
                         stopAllSound((sint32)this);
-                        fs_close(this->fd);
+                        fs_close();
                         this->state = AI_RTRIGGER_FADE;
                         this->ramses->sequence = level_sequenceMap[OT_RAMSESTRIGGER] + 2;
                         mem_free(this->frames);

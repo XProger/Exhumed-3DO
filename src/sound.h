@@ -29,9 +29,9 @@ enum
 };
 
 void initSound(void);
-void loadSound(sint32 fd);
-void loadDynamicSounds(sint32 fd);
-sint32 loadStaticSounds(sint32 fd);
+void loadSound(void);
+void loadDynamicSounds(void);
+sint32 loadStaticSounds(void);
 void playSound(sint32 source, sint32 sNm);
 void playSoundE(sint32 source, sint32 sNm, sint32 vol, sint32 pan);
 

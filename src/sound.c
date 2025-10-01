@@ -1,6 +1,5 @@
 #include "app.h"
 #include "mth.h"
-#include "file.h"
 #include "util.h"
 
 #include "slevel.h"
@@ -136,12 +135,16 @@ void stopSound(sint32 source, sint32 sNm)
 
 static sint32 deQVoice(void)
 {
+#ifdef TODO // sound
     sint32 retVal;
     assert(qHead != qTail);
     retVal = silentQ[qTail];
     qTail = (qTail + 1) & (SILENCE - 1);
     silenceVoice();
     return retVal;
+#else
+    return 0;
+#endif
 }
 
 #ifdef TODO // sound
@@ -225,15 +228,15 @@ void sound_nextFrame(void)
     }
 }
 
-void loadSound(sint32 fd)
+void loadSound(void)
 {
     sint32 size, rate, bps, loopStart;
     //sint32 i;
     //uint16* buffer;
-    fs_read(fd, (sint8*)&size, 4);
-    fs_read(fd, (sint8*)&rate, 4);
-    fs_read(fd, (sint8*)&bps, 4);
-    fs_read(fd, (sint8*)&loopStart, 4);
+    fs_read(&size, 4);
+    fs_read(&rate, 4);
+    fs_read(&bps, 4);
+    fs_read(&loopStart, 4);
 
     size = FS_INT(&size);
     rate = FS_INT(&rate);
@@ -242,7 +245,7 @@ void loadSound(sint32 fd)
 #ifdef TODO // sound
     buffer = (uint16*)mem_malloc(0, size);
     assert(buffer);
-    fs_read(fd, (sint8*)buffer, size);
+    fs_read(buffer, size);
     assert(nmSounds < MAXNMSOUNDS);
     sounds[nmSounds].startAddr = soundTop;
     sounds[nmSounds].sampleRate = rate;
@@ -264,45 +267,45 @@ void loadSound(sint32 fd)
 #endif
 
 #else
-    fs_skip(fd, size);
+    fs_skip(size);
 #endif
 }
 
-sint32 loadSoundSet(sint32 fd, sint16* out_map, sint32 mapSize)
+sint32 loadSoundSet(sint16* out_map, sint32 mapSize)
 {
     sint32 nmSounds, i;
-    fs_read(fd, (sint8*)&nmSounds, 4);
+    fs_read(&nmSounds, 4);
     nmSounds = FS_INT(&nmSounds);
     assert(nmSounds == mapSize);
-    fs_read(fd, (sint8*)out_map, 2 * mapSize);
+    fs_read(out_map, 2 * mapSize);
 
     for (i = 0; i < mapSize; i++)
     {
         out_map[i] = FS_SHORT(out_map + i);
     }
 
-    fs_read(fd, (sint8*)&nmSounds, 4);
+    fs_read(&nmSounds, 4);
 
     nmSounds = FS_INT(&nmSounds);
 
     assert(nmSounds >= 0 && nmSounds < MAXNMSOUNDS);
     for (i = 0; i < nmSounds; i++)
-        loadSound(fd);
+        loadSound();
     return nmSounds;
 }
 
-void loadDynamicSounds(sint32 fd)
+void loadDynamicSounds(void)
 {
     sint32 i;
     sint32 nmStaticSounds = nmSounds;
-    loadSoundSet(fd, level_objectSoundMap, OT_NMTYPES);
+    loadSoundSet(level_objectSoundMap, OT_NMTYPES);
     for (i = 0; i < OT_NMTYPES; i++)
         level_objectSoundMap[i] += nmStaticSounds;
 }
 
-sint32 loadStaticSounds(sint32 fd)
+sint32 loadStaticSounds(void)
 {
-    return loadSoundSet(fd, level_staticSoundMap, ST_NMSTATICSOUNDGROUPS);
+    return loadSoundSet(level_staticSoundMap, ST_NMSTATICSOUNDGROUPS);
 }
 
 #if 0
@@ -457,7 +460,7 @@ sint8 firstVoiceTrack = S_MAP + 1;
 void playCDTrackForLevel(sint32 lev)
 {
     if (enable_music)
-        playCDTrack(trackMap[lev], 1);
+        track_play(trackMap[lev], 1);
 }
 
 void posGetSoundParams(MthXyz* pos, sint32* vol, sint32* pan)
@@ -515,6 +518,7 @@ void adjustSounds(sint32 source, sint32 vol, sint32 pan)
 
 void saveSoundState(void)
 {
+#ifdef TODO // sound
     sint32 i;
     for (i = 0; i < 32; i++)
     {
@@ -529,6 +533,7 @@ void saveSoundState(void)
         else
             soundSave[i].sound = -1;
     }
+#endif
 }
 
 void restoreSoundState(void)

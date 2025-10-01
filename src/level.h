@@ -24,6 +24,6 @@ extern sint32 level_nmPushBlocks;
 extern sint32 level_nmWaveVert;
 extern sint32 level_nmVertex;
 
-sint32 loadLevel(sint32 fd, sint32 tileBase);
+sint32 loadLevel(sint32 tileBase);
 
 #endif

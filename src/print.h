@@ -23,5 +23,5 @@ void drawStringN(sint32 x, sint32 y, sint32 font, const char* text, sint32 n);
 
 #ifdef JAPAN
 void loadJapanFontPics(void);
-void loadJapanFontData(sint32 fd);
+void loadJapanFontData(void);
 #endif

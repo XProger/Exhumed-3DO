@@ -12,7 +12,6 @@
 #include "route.h"
 #include "walls.h"
 #include "pic.h"
-#include "file.h"
 #include "gamestat.h"
 #include "bigmap.h"
 

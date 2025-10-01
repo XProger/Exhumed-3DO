@@ -1,5 +1,4 @@
 #include "sequence.h"
-#include "file.h"
 #include "util.h"
 #include "spr.h"
 #include "pic.h"
@@ -17,21 +16,21 @@ sFrameType* level_frame;
 sChunkType* level_chunk;
 sint16* level_sequenceMap;
 
-static sint8 level_seq_data[16 * 1024];
+static sint8 level_seq_data[80 * 1024];
 static sint8 weapon_seq_data[16 * 1024];
 
-sint32 loadSequences(sint32 fd, sint32 tileBase, sint32 soundBase)
+sint32 loadSequences(sint32 tileBase, sint32 soundBase)
 {
     sint32 size, i;
     sint8* buffer = level_seq_data;
     struct seqHeader* head;
-    assert(fd >= 0);
-    fs_read(fd, (sint8*)&size, 4);
+
+    fs_read(&size, 4);
 
     size = FS_INT(&size);
 
     assert(size > 0 && size < sizeof(level_seq_data));
-    fs_read(fd, buffer, size);
+    fs_read(buffer, size);
 
     head = (struct seqHeader*)buffer;
 
@@ -123,19 +122,19 @@ sint16* level_wSequence;
 sFrameType* level_wFrame;
 sChunkType* level_wChunk;
 
-sint32 loadWeaponSequences(sint32 fd)
+sint32 loadWeaponSequences(void)
 {
     sint32 size, i;
     sint32 level_nmSequences, level_nmFrames, level_nmChunks;
     sint8* buffer = weapon_seq_data;
     struct seqHeader* head;
-    assert(fd >= 0);
-    fs_read(fd, (sint8*)&size, 4);
+
+    fs_read(&size, 4);
 
     size = FS_INT(&size);
 
     assert(size > 0 && size < sizeof(weapon_seq_data));
-    fs_read(fd, buffer, size);
+    fs_read(buffer, size);
 
     head = (struct seqHeader*)buffer;
 

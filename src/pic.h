@@ -31,8 +31,8 @@ sint32 mapPic(sint32 picNm);
 
 void pic_nextFrame(sint32* swaps, sint32* used);
 
-void loadTiles(sint32 fd);
-sint32 loadWeaponTiles(sint32 fd);
+void loadTiles(void);
+sint32 loadWeaponTiles(void);
 
 sint32 getPicClass(sint32 p);
 void displayVDP2Pic(sint32 picNm, sint32 xo, sint32 yo);
@@ -46,7 +46,7 @@ void setDrawModeBit(sint32 class, sint32 bit, sint32 onOff);
 void markAnimTiles(void);
 void advanceWallAnimations(void);
 
-sint32 loadPicSetAsPics(sint32 fd, sint32 class);
+sint32 loadPicSetAsPics(sint32 class);
 
 sint32 createMippedPics(void);
 

@@ -17,8 +17,8 @@ extern sint16* level_wSequence;
 extern sFrameType* level_wFrame;
 extern sChunkType* level_wChunk;
 
-sint32 loadSequences(sint32 fd, sint32 tileBase, sint32 soundBase);
-sint32 loadWeaponSequences(sint32 fd);
+sint32 loadSequences(sint32 tileBase, sint32 soundBase);
+sint32 loadWeaponSequences(void);
 
 void initWeaponQ(void);
 sint32 weaponSequenceQEmpty(void);

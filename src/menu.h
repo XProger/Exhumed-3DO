@@ -44,7 +44,7 @@ void dlg_flashMessage(char* message1, char* message2, sint32 w, sint32 h);
 sint32 dlg_runYesNo(char* message, sint32 w);
 void runInventory(sint32 inventory, sint32 keyMask, sint32* mapState, sint32 fade, sint32 fadeButton, sint32 fadeSelection);
 
-void dlg_init(sint32 fd);
+void dlg_init(void);
 
 void dlg_setupSlideIn(void);
 void dlg_setupSlideOut(void);

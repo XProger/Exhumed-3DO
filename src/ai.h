@@ -136,7 +136,7 @@ typedef struct
     struct __sprite* ramses;
     sint32 baseY;
     sint32 homeSector;
-    sint32 fd, soundRingBase, soundRingHead;
+    sint32 soundRingBase, soundRingHead;
 #ifdef JAPAN
     sint32 soundRingBase2;
 #endif

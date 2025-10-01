@@ -2,7 +2,6 @@
 #include "vid.h"
 #include "mth.h"
 #include "pic.h"
-#include "file.h"
 #include "util.h"
 #include "spr.h"
 #include "print.h"
@@ -13,7 +12,6 @@
 #include "sound.h"
 
 static sint32 levelPos[NMLEVELS][2] = {
-
     { 419, 292 },
     { 572, 300 },
     { 368, 202 },
@@ -44,7 +42,6 @@ static sint32 levelPos[NMLEVELS][2] = {
     { 0, 0 },
     { 0, 0 },
     { 0, 0 },
-
 };
 
 typedef struct
@@ -55,43 +52,43 @@ typedef struct
 
 /* up, right, down, left */
 static LevData levelGraph[NMLEVELS] = {
-    /* 0*/ { { 2, 1, 5, 3 }, "+KARNAK.LEV" },
-    /* 1*/ { { 18, -1, -1, -1 }, "+SANCTUAR.LEV" },
-    /* 2*/ { { 4, -1, -1, -1 }, "+PASS.LEV" },
-    /* 3*/ { { -1, -1, -1, -1 }, "+TOMB.LEV" },
-    /* 4*/ { { -1, -1, -1, 16 }, "+SHRINE.LEV" },
+    /* 0*/ { { 2, 1, 5, 3 },        "KARNAK.LEV"    },
+    /* 1*/ { { 18, -1, -1, -1 },    "SANCTUAR.LEV"  },
+    /* 2*/ { { 4, -1, -1, -1 },     "PASS.LEV"      },
+    /* 3*/ { { -1, -1, -1, -1 },    "TOMB.LEV"      },
+    /* 4*/ { { -1, -1, -1, 16 },    "SHRINE.LEV"    },
 
-    /* 5*/ { { -1, 6, -1, 8 }, "+MINES.LEV" },
-    /* 6*/ { { -1, 7, -1, 5 }, "+SETPALAC.LEV" },
-    /* 7*/ { { -1, -1, -1, -1 }, "+SETARENA.LEV" },
-    /* 8*/ { { -1, -1, -1, 21 }, "+CAVERN.LEV" },
-    /* 9*/ { { 10, 21, -1, -1 }, "+THOTH.LEV" },
+    /* 5*/ { { -1, 6, -1, 8 },      "MINES.LEV"     },
+    /* 6*/ { { -1, 7, -1, 5 },      "SETPALAC.LEV"  },
+    /* 7*/ { { -1, -1, -1, -1 },    "SETARENA.LEV"  },
+    /* 8*/ { { -1, -1, -1, 21 },    "CAVERN.LEV"    },
+    /* 9*/ { { 10, 21, -1, -1 },    "THOTH.LEV"     },
 
-    /*10*/ { { 11, -1, -1, -1 }, "+CHAOS.LEV" },
-    /*11*/ { { 13, -1, -1, -1 }, "+COLONY.LEV" },
-    /*12*/ { { -1, 20, -1, 15 }, "+SELPATH.LEV" },
-    /*13*/ { { -1, -1, -1, -1 }, "+KILENTRY.LEV" },
-    /*14*/ { { -1, -1, -1, -1 }, "+QUARRY.LEV" },
+    /*10*/ { { 11, -1, -1, -1 },    "CHAOS.LEV"     },
+    /*11*/ { { 13, -1, -1, -1 },    "COLONY.LEV"    },
+    /*12*/ { { -1, 20, -1, 15 },    "SELPATH.LEV"   },
+    /*13*/ { { -1, -1, -1, -1 },    "KILENTRY.LEV"  },
+    /*14*/ { { -1, -1, -1, -1 },    "QUARRY.LEV"    },
 
-    /*15*/ { { -1, -1, -1, -1 }, "+SELBUROW.LEV" },
-    /*16*/ { { -1, -1, 17, -1 }, "+MAGMA.LEV" },
-    /*17*/ { { -1, -1, -1, -1 }, "+PEAK.LEV" },
-    /*18*/ { { 19, -1, -1, -1 }, "+MARSH.LEV" },
-    /*19*/ { { -1, -1, -1, 20 }, "+SUNKEN.LEV" },
+    /*15*/ { { -1, -1, -1, -1 },    "SELBUROW.LEV"  },
+    /*16*/ { { -1, -1, 17, -1 },    "MAGMA.LEV"     },
+    /*17*/ { { -1, -1, -1, -1 },    "PEAK.LEV"      },
+    /*18*/ { { 19, -1, -1, -1 },    "MARSH.LEV"     },
+    /*19*/ { { -1, -1, -1, 20 },    "SUNKEN.LEV"    },
 
-    /*20*/ { { -1, -1, -1, -1 }, "+SLAVCAMP.LEV" },
-    /*21*/ { { -1, -1, -1, -1 }, "+GORGE.LEV" },
-    /*22*/ { { -1, -1, -1, -1 }, "+TEST.LEV" },
-    /*23*/ { { -1, -1, -1, -1 }, "+KILMAAT1.LEV" },
-    /*24*/ { { -1, -1, -1, -1 }, "+KILMAAT2.LEV" },
+    /*20*/ { { -1, -1, -1, -1 },    "SLAVCAMP.LEV"  },
+    /*21*/ { { -1, -1, -1, -1 },    "GORGE.LEV"     },
+    /*22*/ { { -1, -1, -1, -1 },    "TEST.LEV"      },
+    /*23*/ { { -1, -1, -1, -1 },    "KILMAAT1.LEV"  },
+    /*24*/ { { -1, -1, -1, -1 },    "KILMAAT2.LEV"  },
 
-    /*25*/ { { -1, -1, -1, -1 }, "+KILMAAT3.LEV" },
-    /*26*/ { { -1, -1, -1, -1 }, "+KILMAAT4.LEV" },
-    /*27*/ { { -1, -1, -1, -1 }, "+KILMAAT5.LEV" },
-    /*28*/ { { -1, -1, -1, -1 }, "+KILMAAT6.LEV" },
-    /*29*/ { { -1, -1, -1, -1 }, "+KILARENA.LEV" },
+    /*25*/ { { -1, -1, -1, -1 },    "KILMAAT3.LEV"  },
+    /*26*/ { { -1, -1, -1, -1 },    "KILMAAT4.LEV"  },
+    /*27*/ { { -1, -1, -1, -1 },    "KILMAAT5.LEV"  },
+    /*28*/ { { -1, -1, -1, -1 },    "KILMAAT6.LEV"  },
+    /*29*/ { { -1, -1, -1, -1 },    "KILARENA.LEV"  },
 
-    /*30*/ { { -1, -1, -1, -1 }, "+TOMBEND.LEV" },
+    /*30*/ { { -1, -1, -1, -1 },    "TOMBEND.LEV"   },
 };
 
 char* getLevelName(sint32 lNm)
@@ -124,25 +121,25 @@ sint32 getMapLink(sint32 fromLevel, sint32 direction)
 
 static sint32 firstMapTile;
 
-sint32 loadMapTiles(sint32 fd)
+sint32 loadMapTiles(void)
 { /* returns # of map tiles loaded */
     sint32 nmTiles, i, j;
     uint8* b;
     sint16 flags;
     firstMapTile = -1;
-    fs_read(fd, (sint8*)&nmTiles, 4);
+    fs_read(&nmTiles, 4);
 
     nmTiles = FS_INT(&nmTiles);
 
     assert(nmTiles < 100 && nmTiles >= 0);
     for (i = 0; i < nmTiles; i++)
     {
-        fs_read(fd, (sint8*)&flags, 2);
+        fs_read(&flags, 2);
 
         flags = FS_SHORT(&flags);
 
         b = (uint8*)mem_malloc(1, 64 * 64 * 2);
-        fs_read(fd, b, 64 * 64 * 2);
+        fs_read(b, 64 * 64 * 2);
         j = addPic(TILE16BPP, b, NULL, 0);
         if (firstMapTile == -1)
             firstMapTile = j;
@@ -197,10 +194,10 @@ sint32 runMap(sint32 currentLevel)
     fadeDir = -4;
 
     mem_init();
-    stopCD();
+    track_stop();
     initSound();
     {
-        sint32 fd = fs_open("+MAP.DAT"); /* start read ahead of file */
+        fs_open("MAP.DAT"); /* start read ahead of file */
 #ifdef TODO
         while (fadeDir)
             ;
@@ -218,18 +215,18 @@ sint32 runMap(sint32 currentLevel)
 #endif
         initPicSystem(i, class_sizes);
 
-        loadPicSetAsPics(fd, TILESMALL16BPP);
-        loadSound(fd);
-        loadSound(fd);
-        loadMapTiles(fd);
-        fs_close(fd);
+        loadPicSetAsPics(TILESMALL16BPP);
+        loadSound();
+        loadSound();
+        loadMapTiles();
+        fs_close();
     }
 #ifdef JAPAN
     loadJapanFontPics();
 #endif
 
     if (enable_music)
-        playCDTrack(mapMusic, 1);
+        track_play(mapMusic, 1);
     displayEnable(0);
 
     selectedLevel = currentLevel;

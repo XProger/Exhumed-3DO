@@ -16,7 +16,7 @@ enum
 };
 
 char* getText(sint32 block, sint32 string);
-void loadLocalText(sint32 fd);
+void loadLocalText(void);
 
 sint32 getLanguageNumber(void);
 

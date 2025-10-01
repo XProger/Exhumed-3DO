@@ -2,7 +2,6 @@
 #include "vid.h"
 #include "mth.h"
 #include "pic.h"
-#include "file.h"
 #include "util.h"
 #include "print.h"
 #include "v_blank.h"
@@ -412,18 +411,21 @@ void playIntro(void)
     i = initFonts(0, 4);
 #endif
     initPicSystem(i, class_sizes);
-    stopCD();
+    track_stop();
     {
+        fs_open(
 #ifndef JAPAN
-        sint32 fd = fs_open("+INTRO.PCS");
+            "INTRO.PCS"
 #else
-        sint32 fd = fs_open("+JINTRO.PCS");
+            "JINTRO.PCS"
 #endif
-        loadPicSet(fd, picPals, picDatas, MAXNMPICS);
-        loadPicSetAsPics(fd, TILE16BPP);
-        loadSound(fd);
-        loadSound(fd);
-        fs_close(fd);
+        );
+
+        loadPicSet(picPals, picDatas, MAXNMPICS);
+        loadPicSetAsPics(TILE16BPP);
+        loadSound();
+        loadSound();
+        fs_close();
     }
 #ifdef JAPAN
     loadJapanFontPics();
@@ -464,7 +466,7 @@ void playIntro(void)
     }
 
     if (enable_music)
-        playCDTrack(titleMusic, 1);
+        track_play(titleMusic, 1);
 
     displayEnable(1);
 
@@ -564,7 +566,6 @@ void playIntro(void)
                         enableDoorReset = 0;
                         while (lastInputSample == ((~(PER_DGT_S | PER_DGT_C)) & 0xffff))
                             ;
-                        fs_init();
                     }
 #ifdef TODO // overlays
                     link("BONUS.BIN");

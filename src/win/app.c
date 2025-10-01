@@ -14,6 +14,8 @@ static LARGE_INTEGER timer_start;
 
 static uint16 pad = 0xFFFF;
 
+static FILE *app_file;
+
 static LRESULT CALLBACK WndProc(HWND hWnd, uint32 msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
@@ -171,4 +173,33 @@ void app_init(void)
 
     QueryPerformanceFrequency(&timer_freq);
     QueryPerformanceCounter(&timer_start);
+}
+
+void fs_open(const char *name)
+{
+    if (name[0] == '+')
+        name++;
+    printf("open: %s\n", name);
+    app_file = fopen(name, "rb");
+    assert(app_file);
+}
+
+void fs_read(void *buffer, sint32 count)
+{
+    assert(app_file);
+    fread(buffer, 1, count, app_file);
+}
+
+void fs_skip(sint32 offset)
+{
+    assert(app_file);
+    fseek(app_file, offset, SEEK_CUR);
+}
+
+void fs_close(void)
+{
+    printf("close\n");
+    assert(app_file);
+    fclose(app_file);
+    app_file = NULL;
 }

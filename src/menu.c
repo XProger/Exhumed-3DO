@@ -6,7 +6,6 @@
 #include "util.h"
 #include "spr.h"
 #include "pic.h"
-#include "file.h"
 #include "local.h"
 #include "sound.h"
 #include "bup.h"
@@ -251,6 +250,7 @@ sint32 loadOverBase(uint8* picData, uint16* pallete, sint32 xsize, sint32 ysize,
 
 void plotOverPicW(sint32 x, sint32 y, sint32 w, sint32 h, sint32 vram, sint32 drawWord)
 {
+#ifdef TODO // plot
     uint16 cmd[16];
     cmd[0] = 0;
     cmd[1] = 0;
@@ -271,6 +271,7 @@ void plotOverPicW(sint32 x, sint32 y, sint32 w, sint32 h, sint32 vram, sint32 dr
     cmd[14] = 0;
     cmd[15] = 0;
     EZ_cmd((struct cmdTable*)cmd);
+#endif
 }
 
 void plotOverPic(sint32 x, sint32 y, sint32 picNm)
@@ -296,9 +297,9 @@ void dlg_clear(void)
     fontHeight = getFontHeight(DLGFONT);
 }
 
-void dlg_init(sint32 fd)
+void dlg_init(void)
 {
-    loadPicSet(fd, picPals, picDatas, MAXNMPICS);
+    loadPicSet(picPals, picDatas, MAXNMPICS);
     mem_lock();
     dlg_clear();
 }

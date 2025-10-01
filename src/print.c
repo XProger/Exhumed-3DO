@@ -27,10 +27,10 @@ static sint8 heights[MAXNMFONTS];
 static uint32* charData[MAXNMJCHARS];
 static sint32 nmJChars;
 
-void loadJapanFontData(sint32 fd)
+void loadJapanFontData(void)
 {
     uint16* palData[MAXNMJCHARS];
-    nmJChars = loadPicSet(fd, palData, charData, MAXNMJCHARS);
+    nmJChars = loadPicSet(palData, charData, MAXNMJCHARS);
 }
 
 #define PICDATA(d) (((uint8*)d) + 8)

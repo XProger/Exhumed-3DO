@@ -1,10 +1,9 @@
 #include "app.h"
 #include "mth.h"
 #include "util.h"
-#include "file.h"
 #include "picset.h"
 
-sint32 loadPicSet(sint32 fd, uint16** palletes, uint32** datas, sint32 maxNmPics)
+sint32 loadPicSet(uint16** palletes, uint32** datas, sint32 maxNmPics)
 {
     sint8* data;
     sint8* d;
@@ -12,12 +11,12 @@ sint32 loadPicSet(sint32 fd, uint16** palletes, uint32** datas, sint32 maxNmPics
     sint32 chunkSize;
     sint32 size;
     sint32 pic, w, h;
-    fs_read(fd, (sint8*)&size, 4);
+    fs_read(&size, 4);
 
     size = FS_INT(&size);
 
     data = mem_malloc(0, size);
-    fs_read(fd, data, size);
+    fs_read(data, size);
     pic = 0;
     d = data;
     lastPallete = NULL;

@@ -4,7 +4,6 @@
 #include "pic.h"
 #include "util.h"
 #include "spr.h"
-#include "file.h"
 #include "slevel.h"
 #include "sequence.h"
 
@@ -72,7 +71,12 @@ static Pic *__VDPSPACE[2], *__TILESMALL16BPPSPACE[40 + 1], *__TILESMALL8BPPSPACE
 static Pic* __JFONTSPACE[80];
 #endif
 
-ClassType classType[NMCLASSES] = { { COLOR_5, UCLPIN_ENABLE | COLOR_5 | HSS_ENABLE | ECD_DISABLE | DRAW_GOURAU, 64, 64, 0, 64 * 64 * 2, __TILE16BPPSPACE }, { COLOR_4, UCLPIN_ENABLE | COLOR_4 | HSS_ENABLE | ECD_DISABLE, 64, 64, 0, 64 * 64, __TILE8BPPSPACE }, { 0, 0, 0, 0, 1, sizeof(struct _vdp2PicData), __VDPSPACE }, { COLOR_5, UCLPIN_ENABLE | COLOR_5 | HSS_ENABLE | ECD_DISABLE | DRAW_GOURAU, 32, 32, 0, 32 * 32 * 2, __TILESMALL16BPPSPACE }, { COLOR_4, UCLPIN_ENABLE | COLOR_4 | HSS_ENABLE | ECD_DISABLE, 32, 32, 0, 32 * 32, __TILESMALL8BPPSPACE }
+ClassType classType[NMCLASSES] = {
+    { COLOR_5, UCLPIN_ENABLE | COLOR_5 | HSS_ENABLE | ECD_DISABLE | DRAW_GOURAU, 64, 64, 0, 64 * 64 * 2, __TILE16BPPSPACE },
+    { COLOR_4, UCLPIN_ENABLE | COLOR_4 | HSS_ENABLE | ECD_DISABLE, 64, 64, 0, 64 * 64, __TILE8BPPSPACE },
+    { 0, 0, 0, 0, 1, sizeof(struct _vdp2PicData), __VDPSPACE },
+    { COLOR_5, UCLPIN_ENABLE | COLOR_5 | HSS_ENABLE | ECD_DISABLE | DRAW_GOURAU, 32, 32, 0, 32 * 32 * 2, __TILESMALL16BPPSPACE },
+    { COLOR_4, UCLPIN_ENABLE | COLOR_4 | HSS_ENABLE | ECD_DISABLE, 32, 32, 0, 32 * 32, __TILESMALL8BPPSPACE }
 #ifdef JAPAN
     ,
     { COLOR_1, UCLPIN_ENABLE | COLOR_5 | HSS_ENABLE | ECD_DISABLE, 24, 18, 0, 24 * 18 / 2, __JFONTSPACE }
@@ -93,6 +97,8 @@ static sint32 animTileStart[MAXNMANIMSETS];
 static sint32 animTileEnd[MAXNMANIMSETS];
 static sint32 nmAnimTileSets;
 static sint32 animTileChunk[MAXNMANIMSETS];
+
+static uint8 rleBuffer[4096];
 
 void advanceWallAnimations(void)
 {
@@ -145,13 +151,18 @@ void pic_nextFrame(sint32* swaps, sint32* used)
 {
 #ifndef NDEBUG
     sint32 i, j;
+
     if (swaps)
+    {
         for (i = 0; i < NMCLASSES; i++)
         {
             swaps[i] = classType[i].nmSwaps;
             classType[i].nmSwaps = 0;
         }
+    }
+
     if (used)
+    {
         for (i = 0; i < NMCLASSES; i++)
         {
             used[i] = 0;
@@ -159,6 +170,7 @@ void pic_nextFrame(sint32* swaps, sint32* used)
                 if (classType[i].slots[j] && classType[i].slots[j]->lastUse == frameCount)
                     used[i]++;
         }
+    }
 #endif
     frameCount++;
 }
@@ -172,8 +184,6 @@ uint8* getPicData(sint32 p)
 {
     return pics[p].data;
 }
-
-static uint8 rleBuffer[4096];
 
 /* returns new pic num */
 sint32 initPicSystem(sint32 _picNmBase, sint32* classSizes)
@@ -509,7 +519,7 @@ void dontDisplayVDP2Pic(void)
     vymax = 0;
 }
 
-static void load16BPPTile(sint32 fd, sint32 lock)
+static void load16BPPTile(sint32 lock)
 {
     sint16 width, height, palNm;
 #if !COMPRESS16BPP
@@ -525,12 +535,12 @@ static void load16BPPTile(sint32 fd, sint32 lock)
 #endif
     b = (uint8*)mem_malloc(1, width * height);
     assert(b);
-    fs_read(fd, (sint8*)&palNm, 2);
+    fs_read(&palNm, 2);
 
     palNm = FS_SHORT(&palNm);
 
     pal = palletes + 256 * palNm + 1;
-    fs_read(fd, b, width * height);
+    fs_read(b, width * height);
 #if COMPRESS16BPP
     buffer = b;
 #else
@@ -547,7 +557,7 @@ static void load16BPPTile(sint32 fd, sint32 lock)
         mem_free(buffer);
 }
 
-static void loadSmall16BPPTile(sint32 fd, sint32 lock)
+static void loadSmall16BPPTile(sint32 lock)
 {
     sint16 width, height, palNm;
 #if !COMPRESS16BPP
@@ -563,12 +573,12 @@ static void loadSmall16BPPTile(sint32 fd, sint32 lock)
 #endif
     b = (uint8*)mem_malloc(1, width * height);
     assert(b);
-    fs_read(fd, (sint8*)&palNm, 2);
+    fs_read(&palNm, 2);
 
     palNm = FS_SHORT(&palNm);
 
     pal = palletes + 256 * palNm + 1;
-    fs_read(fd, b, width * height);
+    fs_read(b, width * height);
 #if COMPRESS16BPP
     buffer = b;
 #else
@@ -585,12 +595,12 @@ static void loadSmall16BPPTile(sint32 fd, sint32 lock)
         mem_free(buffer);
 }
 
-static void load8BPPRLETile(sint32 fd, sint32 lock)
+static void load8BPPRLETile(sint32 lock)
 {
     uint8* buffer;
     sint16 size, palNm;
-    fs_read(fd, (sint8*)&palNm, 2);
-    fs_read(fd, (sint8*)&size, 2);
+    fs_read(&palNm, 2);
+    fs_read(&size, 2);
 
     palNm = FS_SHORT(&palNm);
     size = FS_SHORT(&size);
@@ -598,18 +608,18 @@ static void load8BPPRLETile(sint32 fd, sint32 lock)
     assert(size);
     buffer = (uint8*)mem_malloc(0, size);
     assert(buffer);
-    fs_read(fd, buffer, size);
+    fs_read(buffer, size);
     addPic(TILE8BPP, buffer, NULL, (lock ? PICFLAG_LOCKED : 0) | PICFLAG_RLE);
     if (lock)
         mem_free(buffer);
 }
 
-static void loadSmall8BPPRLETile(sint32 fd, sint32 lock)
+static void loadSmall8BPPRLETile(sint32 lock)
 {
     uint8* buffer;
     sint16 size, palNm;
-    fs_read(fd, (sint8*)&palNm, 2);
-    fs_read(fd, (sint8*)&size, 2);
+    fs_read(&palNm, 2);
+    fs_read(&size, 2);
 
     palNm = FS_SHORT(&palNm);
     size = FS_SHORT(&size);
@@ -617,42 +627,42 @@ static void loadSmall8BPPRLETile(sint32 fd, sint32 lock)
     assert(size);
     buffer = (uint8*)mem_malloc(0, size);
     assert(buffer);
-    fs_read(fd, buffer, size);
+    fs_read(buffer, size);
     addPic(TILESMALL8BPP, buffer, NULL, (lock ? PICFLAG_LOCKED : 0) | PICFLAG_RLE);
     if (lock)
         mem_free(buffer);
 }
 
-static void load16BPPRLETile(sint32 fd, sint32 lock)
+static void load16BPPRLETile(sint32 lock)
 {
     uint8* buffer;
     sint16 size, palNm;
     uint16* pal;
-    fs_read(fd, (sint8*)&palNm, 2);
-    fs_read(fd, (sint8*)&size, 2);
+    fs_read(&palNm, 2);
+    fs_read(&size, 2);
 
     palNm = FS_SHORT(&palNm);
     size = FS_SHORT(&size);
 
     assert(size);
     buffer = (uint8*)mem_malloc(0, size);
-    fs_read(fd, buffer, size);
+    fs_read(buffer, size);
     pal = palletes + 256 * palNm + 1;
     addPic(TILE16BPP, buffer, pal, (lock ? PICFLAG_LOCKED : 0) | PICFLAG_RLE);
     if (lock)
         mem_free(buffer);
 }
 
-void loadPalletes(sint32 fd)
+void loadPalletes(void)
 {
     sint32 size, i;// , j;
     //uint16* colorRam = (uint16*)SCL_COLRAM_ADDR;
-    fs_read(fd, (sint8*)&size, 4);
+    fs_read(&size, 4);
 
     size = FS_INT(&size);
 
     assert(size > 0 && size < sizeof(palletes));
-    fs_read(fd, (sint8*)palletes, size);
+    fs_read(palletes, size);
 
     *palletes = FS_SHORT(palletes);
 
@@ -709,32 +719,32 @@ void loadPalletes(sint32 fd)
 }
 
 /* return # of tiles loaded */
-sint32 loadTileSet(sint32 fd, sint32 lock)
+sint32 loadTileSet(sint32 lock)
 {
     sint32 nmTiles, i;
     sint16 flags;
 
-    fs_read(fd, (sint8*)&nmTiles, 4);
+    fs_read(&nmTiles, 4);
 
     nmTiles = FS_INT(&nmTiles);
 
     for (i = 0; i < nmTiles; i++)
     {
-        fs_read(fd, (sint8*)&flags, 2);
+        fs_read(&flags, 2);
 
         flags = FS_SHORT(&flags);
 
         switch (flags)
         {
             case (TILEFLAG_64x64 | TILEFLAG_16BPP | TILEFLAG_PALLETE):
-                load16BPPTile(fd, lock);
+                load16BPPTile(lock);
                 break;
             case (TILEFLAG_VDP2):
             {
                 struct _vdp2PicData *pic = vdp2PicData + nmVDP2Pics;
 
                 assert(nmVDP2Pics < MAXNMVDP2PICS);
-                fs_read(fd, (sint8*)pic, 8);
+                fs_read(pic, 8);
 
                 pic->x = FS_SHORT(&pic->x);
                 pic->y = FS_SHORT(&pic->y);
@@ -746,16 +756,16 @@ sint32 loadTileSet(sint32 fd, sint32 lock)
                 break;
             }
             case (TILEFLAG_64x64 | TILEFLAG_8BPP | TILEFLAG_RLE | TILEFLAG_PALLETE):
-                load8BPPRLETile(fd, lock);
+                load8BPPRLETile(lock);
                 break;
             case (TILEFLAG_32x32 | TILEFLAG_8BPP | TILEFLAG_RLE | TILEFLAG_PALLETE):
-                loadSmall8BPPRLETile(fd, lock);
+                loadSmall8BPPRLETile(lock);
                 break;
             case (TILEFLAG_32x32 | TILEFLAG_16BPP | TILEFLAG_PALLETE):
-                loadSmall16BPPTile(fd, lock);
+                loadSmall16BPPTile(lock);
                 break;
             case (TILEFLAG_64x64 | TILEFLAG_16BPP | TILEFLAG_PALLETE | TILEFLAG_RLE):
-                load16BPPRLETile(fd, lock);
+                load16BPPRLETile(lock);
                 break;
             default:
                 assert(0);
@@ -766,24 +776,24 @@ sint32 loadTileSet(sint32 fd, sint32 lock)
 }
 
 /* returns # of weapon tiles loaded */
-sint32 loadWeaponTiles(sint32 fd)
+sint32 loadWeaponTiles(void)
 {
-    return loadTileSet(fd, 0);
+    return loadTileSet(0);
 }
 
-void loadTiles(sint32 fd)
+void loadTiles(void)
 {
-    loadPalletes(fd);
-    loadTileSet(fd, 0);
+    loadPalletes();
+    loadTileSet(0);
 }
 
-sint32 loadPicSetAsPics(sint32 fd, sint32 class)
+sint32 loadPicSetAsPics(sint32 class)
 {
     uint32* datas[50];
     uint16* palletes[50];
     sint32 nmSetPics, i, x, y, picBase;
     picBase = nmPics;
-    nmSetPics = loadPicSet(fd, palletes, datas, 50);
+    nmSetPics = loadPicSet(palletes, datas, 50);
 
     for (i = 0; i < nmSetPics; i++)
     {

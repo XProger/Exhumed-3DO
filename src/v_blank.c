@@ -32,10 +32,6 @@ void UsrHblankIn(void)
 
 void processInput(void)
 {
-    uint16 accum;
-    sint32 i, pos, size, id;
-    accum = 0xffff;
-
 #ifdef TODO // input controlerPresent
     controlerPresent = 0;
 #else
@@ -44,12 +40,10 @@ void processInput(void)
     analogControlerPresent = 0;
     analogIndexButtonsPresent = 0;
 
-    accum = app_input();
-
-    lastInputSample = accum;
-    inputAccum &= accum;
+    lastInputSample = app_input();
+    inputAccum &= lastInputSample;
     /* add input sample */
-    inputQ[(sint32)inputQHead] = accum;
+    inputQ[(sint32)inputQHead] = lastInputSample;
     inputQHead = (inputQHead + 1) & 0xf;
 }
 
@@ -109,7 +103,6 @@ sint32 errorQ[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 sint32 prQ[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 sint32 errorQSize = 0;
 
-#pragma interrupt
 void userBreakBlam(void)
 {
 #ifdef TODO // remove

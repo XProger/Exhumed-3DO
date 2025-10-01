@@ -153,7 +153,6 @@
     <ClInclude Include="..\art.h" />
     <ClInclude Include="..\bigmap.h" />
     <ClInclude Include="..\bup.h" />
-    <ClInclude Include="..\file.h" />
     <ClInclude Include="..\font1.h" />
     <ClInclude Include="..\font2.h" />
     <ClInclude Include="..\gamestat.h" />
@@ -195,7 +194,6 @@
     <ClCompile Include="..\art.c" />
     <ClCompile Include="..\bigmap.c" />
     <ClCompile Include="..\bup.c" />
-    <ClCompile Include="..\file.c" />
     <ClCompile Include="..\hitscan.c" />
     <ClCompile Include="..\intro.c" />
     <ClCompile Include="..\level.c" />

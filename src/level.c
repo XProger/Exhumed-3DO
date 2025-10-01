@@ -1,5 +1,4 @@
 #include "level.h"
-#include "file.h"
 #include "util.h"
 
 sVertexType* level_vertex;
@@ -24,28 +23,27 @@ sint32 level_nmPushBlocks;
 sint32 level_nmWaveVert;
 sint32 level_nmVertex;
 
-static uint8 level_data[512 * 1024];
+static uint8 level_data[768 * 1024 - 256 * 1024]; // -256 for 3DO
 
 #define LOADPART(array, type, number)   \
     array = (type*)ptr;                 \
     ptr += number * sizeof(type);
 
-sint32 loadLevel(sint32 fd, sint32 tileBase)
+sint32 loadLevel(sint32 tileBase)
 {
     sint32 size;
     sint32 i;
     struct sLevelHeader* head;
     uint8 *ptr = level_data;
 
-    assert(fd >= 0);
-    fs_read(fd, (sint8*)&size, 4);
+    fs_read(&size, 4);
 
     size = FS_INT(&size);
 
     dPrint("level size=%d\n", size);
     assert(size < sizeof(level_data));
 
-    fs_read(fd, ptr, size);
+    fs_read(ptr, size);
 
     LOADPART(head, struct sLevelHeader, 1);
 

@@ -21,7 +21,6 @@
 #include "mth.h"
 #include "util.h"
 #include "spr.h"
-#include "file.h"
 #include "v_blank.h"
 #include "level.h"
 #include "art.h"
@@ -1224,13 +1223,13 @@ void setVDP2(void)
 #endif
 }
 
-void loadVDP2Sprites(sint32 fd)
+void loadVDP2Sprites(void)
 {
 #ifdef TODO // VDP2 sprites
     uint8* vram;
     SclConfig scfg;
     vram = (uint8*)SCL_VDP2_VRAM;
-    fs_read(fd, vram + 1024 * 256, 1024 * 256);
+    fs_read(vram + 1024 * 256, 1024 * 256);
     /* setup VDP2Sprite screen */
     SCL_InitConfigTb(&scfg);
     scfg.dispenbl = 1;
@@ -1243,19 +1242,19 @@ void loadVDP2Sprites(sint32 fd)
     SCL_SetConfig(SCL_NBG0, &scfg);
     dontDisplayVDP2Pic();
 #else
-    fs_skip(fd, 1024 * 256);
+    fs_skip(1024 * 256);
 #endif
 }
 
-void loadLoadingScreen(sint32 fd)
+void loadLoadingScreen(void)
 {
 #ifdef TODO // loading screen
     uint8* data;
     sint32 xsize, ysize;// , y, x;
     uint16 colorRam[256];
-    fs_read(fd, (sint8*)&colorRam, 512);
-    fs_read(fd, (sint8*)&xsize, 4);
-    fs_read(fd, (sint8*)&ysize, 4);
+    fs_read(&colorRam, 512);
+    fs_read(&xsize, 4);
+    fs_read(&ysize, 4);
 
     xsize = FS_INT(&xsize);
     ysize = FS_INT(&ysize);
@@ -1263,7 +1262,7 @@ void loadLoadingScreen(sint32 fd)
     assert(xsize == 320);
     assert(ysize == 240);
     data = mem_malloc(1, 320 * 240);
-    fs_read(fd, (sint8*)data, 320 * 240);
+    fs_read(data, 320 * 240);
     EZ_setErase(0, 0x0000);
 #ifdef TODO // render loading screen
     for (y = 0; y < 240; y++)
@@ -1277,7 +1276,7 @@ void loadLoadingScreen(sint32 fd)
 #endif
     mem_free(data);
 #else
-    fs_skip(fd, 512 + 4 + 4 + 320 * 240);
+    fs_skip(512 + 4 + 4 + 320 * 240);
 #endif
 }
 
@@ -2163,7 +2162,7 @@ sint32 runLevel(char* filename, sint32 levelNm)
     dPrint("vroom!\n");
     nmFullBowls = 0;
     healthMeterPos = 0;
-    stopCD();
+    track_stop();
     initSound();
 
     quitRequest = 0;
@@ -2200,39 +2199,35 @@ sint32 runLevel(char* filename, sint32 levelNm)
     initObjects();
     initFlames();
 
-    fs_startProgress(1);
-    fs_addToProgress("+STATIC.DAT");
-    fs_addToProgress(filename);
+    fs_progress_start(1);
+    fs_progress_add("STATIC.DAT");
+    fs_progress_add(filename);
     /* load static data */
     {
-        sint32 fd;
-        fd = fs_open("+STATIC.DAT");
-        assert(fd >= 0);
+        fs_open("STATIC.DAT");
         dPrint("blat!\n");
-        loadLoadingScreen(fd);
+        loadLoadingScreen();
         dPrint("frop!\n");
         displayEnable(1);
-        loadVDP2Sprites(fd);
-        nmStaticSounds = loadStaticSounds(fd);
-        nmWeaponTiles = loadWeaponTiles(fd);
-        loadWeaponSequences(fd);
-        fs_close(fd);
+        loadVDP2Sprites();
+        nmStaticSounds = loadStaticSounds();
+        nmWeaponTiles = loadWeaponTiles();
+        loadWeaponSequences();
+        fs_close();
     }
 
     /* load level file */
     debugPrint("Loaded static\n");
     {
-        sint32 fd;
-        fd = fs_open(filename);
-        assert(fd >= 0);
-        initPlax(fd);
-        loadLevel(fd, nmWeaponTiles);
-        loadDynamicSounds(fd);
-        loadTiles(fd);
-        loadSequences(fd, nmWeaponTiles, nmStaticSounds);
-        fs_close(fd);
+        fs_open(filename);
+        initPlax();
+        loadLevel(nmWeaponTiles);
+        loadDynamicSounds();
+        loadTiles();
+        loadSequences(nmWeaponTiles, nmStaticSounds);
+        fs_close();
     }
-    fs_closeProgress();
+    fs_progress_stop();
 
 #ifdef JAPAN
     loadJapanFontPics();
@@ -2647,7 +2642,6 @@ int main(int argc, char *argv[])
     app_init();
 
     dPrint("Start...\n");
-    fs_init();
 
 #ifdef TODO // VDP2
     set_imask(0);
@@ -2673,25 +2667,25 @@ int main(int argc, char *argv[])
 #endif
 
     mem_init();
-    dPrint("loading initial...");
+    dPrint("loading initial...\n");
     /* do initial load */
     {
-        sint32 fd = fs_open(
+        fs_open(
 #ifndef JAPAN
-            "+INITLOAD.DAT"
+            "INITLOAD.DAT"
 #else
-            "+JINITLOD.DAT"
+            "JINITLOD.DAT"
 #endif
         );
-        dlg_init(fd); /* warning, locks memory */
+        dlg_init(); /* warning, locks memory */
 #ifndef JAPAN
-        loadLocalText(fd); /* locks memory */
+        loadLocalText(); /* locks memory */
 #else
-        loadJapanFontData(fd);
+        loadJapanFontData();
         mem_lock();
-        loadLocalText(fd);
+        loadLocalText();
 #endif
-        fs_close(fd);
+        fs_close();
     }
     dPrint("done\n");
 
